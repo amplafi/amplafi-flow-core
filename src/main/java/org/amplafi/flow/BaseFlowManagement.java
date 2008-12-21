@@ -170,7 +170,8 @@ public class BaseFlowManagement implements FlowManagement {
         if ( MapUtils.isNotEmpty(transitions) && isNotBlank(finishKey)) {
             FlowTransition flowTransition = transitions.get(finishKey);
             if ( flowTransition != null ) {
-                String flowType = flowState.getCurrentActivity().resolve(flowTransition.getNextFlow());
+                FlowActivityImplementor currentActivity = flowState.getCurrentActivity();
+                String flowType = currentActivity.resolve(flowTransition.getNextFlow());
                 if (isNotBlank(flowType)) {
                     nextFlowState = this.createFlowState(flowType, flowState.getClearFlowValuesMap(), false);
                 }

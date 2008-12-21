@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
@@ -203,9 +204,9 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
             initAndResolveCollection(values);
         }
-        List<FlowActivity> activities = flow.getActivities();
+        List<FlowActivityImplementor> activities = flow.getActivities();
         if ( activities != null ) {
-            for(FlowActivity flowActivity: activities) {
+            for(FlowActivityImplementor flowActivity: activities) {
                 resolve(flowActivity);
                 // TODO ideally here...
 //                if ( !flow.isInstance()) {

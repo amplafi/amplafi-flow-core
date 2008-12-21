@@ -6,7 +6,6 @@ package org.amplafi.flow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.FlowImpl;
@@ -46,7 +45,7 @@ public class FlowTestingUtils {
         flowTranslatorResolver.initializeService();
     }
 
-    public String addDefinition(FlowActivity...flowActivities) {
+    public <T extends FlowActivityImplementor> String addDefinition(T...flowActivities) {
         String flowTypeName = "testflow"+counter.incrementAndGet()+":"+System.nanoTime();
         this.flowDefinitionsManager.addDefinitions(new FlowImpl(flowTypeName, flowActivities));
         return flowTypeName;

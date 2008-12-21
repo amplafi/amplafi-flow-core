@@ -55,7 +55,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
      */
     private String flowTypeName;
 
-    private List<FlowActivity> activities;
+    private List<FlowActivityImplementor> activities;
 
     private String flowTitle;
     private String continueFlowTitle;
@@ -131,9 +131,9 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
     }
 
     public FlowImpl(String flowTypeName,
-            FlowActivity... flowActivities) {
+            FlowActivityImplementor... flowActivities) {
         this(flowTypeName);
-        for(FlowActivity flowActivity : flowActivities) {
+        for(FlowActivityImplementor flowActivity : flowActivities) {
             addActivity(flowActivity);
         }
     }
@@ -144,11 +144,11 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
 
     public Flow createInstance() {
         FlowImpl inst = new FlowImpl(this);
-        inst.activities = new ArrayList<FlowActivity>();
+        inst.activities = new ArrayList<FlowActivityImplementor>();
 
         if ( CollectionUtils.isNotEmpty(this.activities)) {
-            for(FlowActivity activity: this.activities) {
-                FlowActivity fa = activity.createInstance();
+            for(FlowActivityImplementor activity: this.activities) {
+                FlowActivityImplementor fa = activity.createInstance();
                 if ( isActivatable() ) {
                     fa.setActivatable(true);
                 }
@@ -163,37 +163,35 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
     /**
      * @see org.amplafi.flow.Flow#setActivities(java.util.List)
      */
-    public void setActivities(List<FlowActivity> activities) {
+    public void setActivities(List<FlowActivityImplementor> activities) {
         this.activities = null;
-        for(FlowActivity activity: activities) {
+        for(FlowActivityImplementor activity: activities) {
             this.addActivity(activity);
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getActivities()
-     */
-    public List<FlowActivity> getActivities() {
+    @Override
+    public List<FlowActivityImplementor> getActivities() {
         return activities;
     }
 
     /**
      * @see org.amplafi.flow.Flow#getActivity(int)
      */
-    public FlowActivity getActivity(int activityIndex) {
+    @SuppressWarnings("unchecked")
+    public <T extends FlowActivity> T getActivity(int activityIndex) {
         if ( activityIndex < 0 || activityIndex >= activities.size()) {
             // this may be case if done with the flow or we haven't started it yet.
             return null;
         }
-        return activities.get(activityIndex);
+        return (T) activities.get(activityIndex);
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#addActivity(org.amplafi.flow.FlowActivity)
-     */
-    public void addActivity(FlowActivity activity) {
+
+    @Override
+    public void addActivity(FlowActivityImplementor activity) {
         if ( activities == null ) {
-            activities = new ArrayList<FlowActivity>();
+            activities = new ArrayList<FlowActivityImplementor>();
         }
         activity.setFlow(this);
         activities.add(activity);
@@ -209,14 +207,14 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
         return this.definitionFlow != null;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getVisibleActivities()
-     */
-    public List<FlowActivity> getVisibleActivities() {
-        List<FlowActivity> list = new ArrayList<FlowActivity>();
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends FlowActivity> List<T> getVisibleActivities() {
+        List<T> list = new ArrayList<T>();
         for(FlowActivity flowActivity: this.activities) {
             if (!flowActivity.isInvisible() && !StringUtils.isBlank(flowActivity.getComponentName())) {
-                list.add(flowActivity);
+                list.add((T)flowActivity);
             }
         }
         return list;

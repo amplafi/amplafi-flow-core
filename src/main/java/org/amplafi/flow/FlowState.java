@@ -67,21 +67,23 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * returns true from beginActivity().
      * <p/>
      * This method can also be used to move to previous activities.
+     * @param <T>
      *
      * @param newActivity the index of the activity to move to.
      * @param verifyValues if true, verifies the values for each {@link FlowActivity} examined.
      *
      * @return the now current {@link FlowActivity}
      */
-    public FlowActivity selectActivity(int newActivity, boolean verifyValues);
+    public <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues);
 
     /**
      * Move to the specified visible activity.
+     * @param <T>
      *
      * @param visibleIndex The index of the activity among the visible ones.
      * @return the now current FlowActivity
      */
-    public FlowActivity selectVisibleActivity(int visibleIndex);
+    public <T extends FlowActivity> T selectVisibleActivity(int visibleIndex);
 
     public void saveChanges();
 
@@ -110,9 +112,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     public String getActiveFlowLabel();
 
-    public FlowActivity getActivity(int activityIndex);
+    public <T extends FlowActivity> T getActivity(int activityIndex);
 
-    public FlowActivity getActivity(String activityName);
+    public <T extends FlowActivity> T getActivity(String activityName);
 
     /**
      * @return Returns the flowId.
@@ -127,7 +129,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     public boolean hasLookupKey(Object key);
 
-    public FlowActivity getCurrentActivity();
+    public <T extends FlowActivity> T getCurrentActivity();
 
     public void setCurrentActivityByName(String currentActivityByName);
 
@@ -175,9 +177,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     public boolean hasProperty(String key);
 
-    public List<FlowActivity> getActivities();
+    public <T extends FlowActivity> List<T> getActivities();
 
-    public List<FlowActivity> getVisibleActivities();
+    public <T extends FlowActivity> List<T> getVisibleActivities();
 
     /**
      * can this flow be ended.
@@ -322,8 +324,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @param verifyValues if true, verifies the values that the current flow activity
      * is interested in.
-     *
-     * @see org.amplafi.flow.FlowActivity#passivate(boolean)
+     * @return result from {@link FlowActivity#passivate(boolean)}
      */
     public FlowValidationResult passivate(boolean verifyValues);
 

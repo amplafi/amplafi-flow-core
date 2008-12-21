@@ -181,8 +181,8 @@ public class FlowStateImpl implements FlowState {
             return this.getCurrentPage();
         }
         Flow nextFlow = getFlowManagement().getInstanceFromDefinition(morphingToFlowTypeName);
-        List<FlowActivity> originalFAs = getActivities();
-        List<FlowActivity> nextFAs = nextFlow.getActivities();
+        List<FlowActivityImplementor> originalFAs = getActivities();
+        List<FlowActivityImplementor> nextFAs = nextFlow.getActivities();
 
         // make sure FAs in both the flows are in order
         boolean inOrder = areFlowActivitiesInOrder(originalFAs, nextFAs);
@@ -193,7 +193,7 @@ public class FlowStateImpl implements FlowState {
         }
 
         // complete the current FA in the current Flow
-        FlowActivity currentFAInOriginalFlow = getCurrentActivity();
+        FlowActivityImplementor currentFAInOriginalFlow = getCurrentFlowActivityImplementor();
         // So the current FlowActivity does not try to do validation.
         passivate(false);
 
@@ -203,7 +203,7 @@ public class FlowStateImpl implements FlowState {
         this.setCurrentActivityIndex(0);
         begin();
 
-        FlowActivity targetFAInNextFlow = getTargetFAInNextFlow(currentFAInOriginalFlow,
+        FlowActivityImplementor targetFAInNextFlow = getTargetFAInNextFlow(currentFAInOriginalFlow,
                                                                 originalFAs, nextFAs);
 
         // No common FAs, No need to run nextFlow at all, just return
@@ -217,12 +217,12 @@ public class FlowStateImpl implements FlowState {
         return this.getCurrentPage();
     }
 
-    private FlowActivity getTargetFAInNextFlow(FlowActivity currentFAInOriginalFlow,
-            List<FlowActivity> originalFAs, List<FlowActivity> nextFAs) {
+    private FlowActivityImplementor getTargetFAInNextFlow(FlowActivityImplementor currentFAInOriginalFlow,
+            List<FlowActivityImplementor> originalFAs, List<FlowActivityImplementor> nextFAs) {
         FlowActivity flowActivity = this.getActivity(currentFAInOriginalFlow.getActivityName());
         if ( flowActivity != null ) {
             // cool .. exact match on the names.
-            return flowActivity;
+            return (FlowActivityImplementor) flowActivity;
         }
         // find the first FlowActivity that is after all the flowActivities with the same names
         // as FlowActivities in the previous flow.to find the same approximate spot in the the new flow.
@@ -239,14 +239,14 @@ public class FlowStateImpl implements FlowState {
                 }
             }
         }
-        return this.getActivity(newCurrentIndex);
+        return (FlowActivityImplementor) this.getActivity(newCurrentIndex);
     }
 
     private boolean isEqualTo(FlowActivity fa1, FlowActivity fa2) {
         return fa1 != null && fa2 != null && fa1.getActivityName().equals(fa2.getActivityName());
     }
 
-    private boolean areFlowActivitiesInOrder(List<FlowActivity> prevFAs, List<FlowActivity> nextFAs) {
+    private boolean areFlowActivitiesInOrder(List<FlowActivityImplementor> prevFAs, List<FlowActivityImplementor> nextFAs) {
         int lastPrevIndex = -1;
         int lastNextIndex = -1;
         for(int prevIndex = 0; prevIndex < prevFAs.size(); prevIndex++) {
@@ -550,8 +550,8 @@ public class FlowStateImpl implements FlowState {
      * @see org.amplafi.flow.FlowState#getActivity(int)
      */
     @Override
-    public FlowActivity getActivity(int activityIndex) {
-        FlowActivity flowActivity = this.getFlow().getActivity(activityIndex);
+    public <T extends FlowActivity> T getActivity(int activityIndex) {
+        T flowActivity = (T) this.getFlow().getActivity(activityIndex);
         return resolveActivity(flowActivity);
     }
 
@@ -563,7 +563,7 @@ public class FlowStateImpl implements FlowState {
      * @param flowActivity
      * @return flowActivity
      */
-    public FlowActivity resolveActivity(FlowActivity flowActivity) {
+    public <T extends FlowActivity> T resolveActivity(T flowActivity) {
         getFlowManagement().resolveFlowActivity(flowActivity);
         return flowActivity;
     }
@@ -572,11 +572,11 @@ public class FlowStateImpl implements FlowState {
      * @see org.amplafi.flow.FlowState#getActivity(java.lang.String)
      */
     @Override
-    public FlowActivity getActivity(String activityName) {
+    public <T extends FlowActivity> T  getActivity(String activityName) {
         // HACK we need to set up a map.
         for (FlowActivity flowActivity : this.getFlow().getActivities()) {
             if (flowActivity.getActivityName().equals(activityName)) {
-                return resolveActivity(flowActivity);
+                return (T) resolveActivity(flowActivity);
             }
         }
         return null;
@@ -606,7 +606,9 @@ public class FlowStateImpl implements FlowState {
     public FlowActivity getCurrentActivity() {
         return getActivity(this.getCurrentActivityIndex());
     }
-
+    public FlowActivityImplementor getCurrentFlowActivityImplementor() {
+        return (FlowActivityImplementor) getActivity(this.getCurrentActivityIndex());
+    }
     /**
      * Use selectActivity to change the current activity.
      *
@@ -742,7 +744,8 @@ public class FlowStateImpl implements FlowState {
             if (b) {
                 throw new IllegalStateException(flowActivityName+"."+key+": no change allowed to readonly flow properties");
             }
-            value = getActivity(flowActivityName).propertyChange(flowActivityName, key, value,
+            FlowActivityImplementor activity = getActivity(flowActivityName);
+            value = activity.propertyChange(flowActivityName, key, value,
                                                                  oldValue);
             getFlowValuesMap().put(flowActivityName, key, value);
             return true;
@@ -778,7 +781,7 @@ public class FlowStateImpl implements FlowState {
                 throw new IllegalStateException(key+": no change allowed to readonly flow properties");
             }
             if (this.isActive()) {
-                value = getCurrentActivity().propertyChange(null, key, value, oldValue);
+                value = getCurrentFlowActivityImplementor().propertyChange(null, key, value, oldValue);
                 if (value == oldValue) {
                     return false;
                 }
@@ -804,7 +807,7 @@ public class FlowStateImpl implements FlowState {
      * @see org.amplafi.flow.FlowState#getActivities()
      */
     @Override
-    public List<FlowActivity> getActivities() {
+    public List<FlowActivityImplementor> getActivities() {
         return getFlow().getActivities();
     }
 

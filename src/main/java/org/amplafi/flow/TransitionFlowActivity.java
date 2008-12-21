@@ -16,7 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 /**
  * A FlowActivity used to launch a new flow.
  */
-public class TransitionFlowActivity extends FlowActivity {
+public class TransitionFlowActivity extends FlowActivityImpl {
 
     /**
      *
@@ -53,7 +53,7 @@ public class TransitionFlowActivity extends FlowActivity {
         initTransition();
     }
     @Override
-    protected void copyTo(FlowActivity instance) {
+    protected <T extends FlowActivityImpl>void copyTo(T instance) {
         super.copyTo(instance);
         TransitionFlowActivity transitionFlowActivity = (TransitionFlowActivity) instance;
         transitionFlowActivity.nextFlowId = nextFlowId;

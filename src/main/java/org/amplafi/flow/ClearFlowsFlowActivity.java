@@ -15,7 +15,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
  * which this {@link FlowActivity} is in.
  *
  */
-public class ClearFlowsFlowActivity extends FlowActivity {
+public class ClearFlowsFlowActivity extends FlowActivityImpl {
 
     /**
      *

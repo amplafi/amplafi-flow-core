@@ -25,8 +25,8 @@ public class TestFlowTransitions {
     private static final String FLOW_TYPE_2 = "ftype2";
     @Test
     public void testSimpleFlowTransitionMapChecking() throws Exception {
-        Flow flow = new FlowImpl(FLOW_TYPE_1);
-        FlowActivity fa1 = new FlowActivity();
+        FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
+        FlowActivityImpl fa1 = new FlowActivityImpl();
         FlowPropertyDefinition definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNull(definition);
         flow.addActivity(fa1);
@@ -43,20 +43,20 @@ public class TestFlowTransitions {
 
     @Test
     public void testReturnToFlow() throws Exception {
-        Flow flow1 = new FlowImpl(FLOW_TYPE_1);
+        FlowImpl flow1 = new FlowImpl(FLOW_TYPE_1);
         String defaultAfterPage1 = "end-of-"+FLOW_TYPE_1;
         String defaultPage1 = "page-of-"+FLOW_TYPE_1;
         flow1.setPageName(defaultPage1);
         flow1.setDefaultAfterPage(defaultAfterPage1);
-        FlowActivity fa1 = new FlowActivity();
+        FlowActivityImpl fa1 = new FlowActivityImpl();
         flow1.addActivity(fa1);
 
-        Flow flow2 = new FlowImpl(FLOW_TYPE_2);
+        FlowImpl flow2 = new FlowImpl(FLOW_TYPE_2);
         String defaultAfterPage2 = "end-of-"+FLOW_TYPE_2;
         String defaultPage2 = "page-of-"+FLOW_TYPE_2;
         flow2.setPageName(defaultPage2);
         flow2.setDefaultAfterPage(defaultAfterPage2);
-        FlowActivity fa2_1 = new FlowActivity();
+        FlowActivityImpl fa2_1 = new FlowActivityImpl();
         flow2.addActivity(fa2_1);
         Object returnToFlowLookupKey = true;
         BaseFlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);

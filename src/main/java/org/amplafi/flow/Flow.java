@@ -39,23 +39,23 @@ public interface Flow {
      * @param activities
      *            The activities to set.
      */
-    public void setActivities(List<FlowActivity> activities);
+    public void setActivities(List<FlowActivityImplementor> activities);
 
     /**
-     * @return Returns the activities.
+     * @return the activities.
      */
-    public List<FlowActivity> getActivities();
+    public <T extends FlowActivity> List<T> getActivities();
 
-    public FlowActivity getActivity(int activityIndex);
+    public <T extends FlowActivity> T getActivity(int activityIndex);
 
-    public void addActivity(FlowActivity activity);
+    public void addActivity(FlowActivityImplementor activity);
 
     /**
      * @return Returns the definition.
      */
     public boolean isInstance();
 
-    public List<FlowActivity> getVisibleActivities();
+    public <T extends FlowActivity> List<T> getVisibleActivities();
 
     public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
 

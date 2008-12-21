@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.amplafi.flow.BaseFlowManagement;
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.FlowImpl;
@@ -75,11 +74,11 @@ public class TestTransitionFlowActivity extends Assert {
     public void testTransitionFlowActivityWithFlowTransitions() throws Exception {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        String nextFlowType = flowTestingUtils.addDefinition(new FlowActivity());
+        String nextFlowType = flowTestingUtils.addDefinition(new FlowActivityImpl());
         TransitionFlowActivity transitionFlowActivity = new TransitionFlowActivity();
         transitionFlowActivity.setTransitionType(TransitionType.alternate);
         transitionFlowActivity.setNextFlowType(nextFlowType);
-        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivity(), transitionFlowActivity);
+        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity);
         FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getSessionFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
@@ -103,10 +102,10 @@ public class TestTransitionFlowActivity extends Assert {
     public void testTransitionFlowActivityWithNormalFinish() throws Exception {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        String nextFlowType = flowTestingUtils.addDefinition(new FlowActivity());
+        String nextFlowType = flowTestingUtils.addDefinition(new FlowActivityImpl());
         TransitionFlowActivity transitionFlowActivity = new TransitionFlowActivity();
         transitionFlowActivity.setNextFlowType(nextFlowType);
-        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivity(), transitionFlowActivity);
+        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity);
         FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getSessionFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
@@ -123,22 +122,22 @@ public class TestTransitionFlowActivity extends Assert {
     public void testTransitionFlowActivityWithMultipleFlowTransitions() throws Exception {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        String nextFlowType0 = flowTestingUtils.addDefinition(new FlowActivity());
+        String nextFlowType0 = flowTestingUtils.addDefinition(new FlowActivityImpl());
         TransitionFlowActivity transitionFlowActivity0 = new TransitionFlowActivity();
         transitionFlowActivity0.setTransitionType(TransitionType.alternate);
         transitionFlowActivity0.setNextFlowType(nextFlowType0);
 
-        String nextFlowType1 = flowTestingUtils.addDefinition(new FlowActivity());
+        String nextFlowType1 = flowTestingUtils.addDefinition(new FlowActivityImpl());
         TransitionFlowActivity transitionFlowActivity1 = new TransitionFlowActivity();
         transitionFlowActivity1.setTransitionType(TransitionType.alternate);
         transitionFlowActivity1.setFinishKey("foo1");
         transitionFlowActivity1.setNextFlowType(nextFlowType1);
 
-        String nextFlowType2 = flowTestingUtils.addDefinition(new FlowActivity());
+        String nextFlowType2 = flowTestingUtils.addDefinition(new FlowActivityImpl());
         TransitionFlowActivity transitionFlowActivity2 = new TransitionFlowActivity();
         transitionFlowActivity2.setNextFlowType(nextFlowType2);
 
-        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivity(), transitionFlowActivity0, transitionFlowActivity1, transitionFlowActivity2);
+        String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity0, transitionFlowActivity1, transitionFlowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getSessionFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
