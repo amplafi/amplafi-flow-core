@@ -11,12 +11,11 @@ import java.util.Set;
 import static org.testng.Assert.*;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowTestingUtils;
 import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.PropertyRequired;
-import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
-import org.amplafi.flow.translator.ShortFlowTranslator;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 
@@ -49,7 +48,7 @@ public class TestFlowPropertyDefinition {
     @Test
     public void testUriProperty() {
         FlowPropertyDefinition definition = new FlowPropertyDefinition("uri", URI.class, PropertyRequired.advance);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         assertNull(definition.getDefaultValue());
         assertNull(definition.getDefaultObject(null));
     }
@@ -73,7 +72,7 @@ public class TestFlowPropertyDefinition {
     @Test
     public void testDefaultHandlingWithAutoCreate() throws Exception {
         FlowPropertyDefinition definition = new FlowPropertyDefinition("foo");
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         assertFalse(definition.isAutoCreate());
         definition.initDefaultObject(Boolean.TRUE);
         assertEquals(definition.getDataClass(), Boolean.class);
@@ -88,7 +87,7 @@ public class TestFlowPropertyDefinition {
         definition = new FlowPropertyDefinition("foo");
         definition.setDefaultValue("true");
         definition.setDataClass(Boolean.class);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         t = (Boolean) definition.parse(null);
         assertNull(t);
         t = (Boolean) definition.getDefaultObject(null);
@@ -111,22 +110,14 @@ public class TestFlowPropertyDefinition {
 
     private void assertDefaultObject(Class<?> clazz, Object value) {
         FlowPropertyDefinition definition = new FlowPropertyDefinition("u", clazz, PropertyRequired.advance);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         assertEquals(definition.getDefaultObject(null), value);
-    }
-
-    private void resolveAndInit(FlowPropertyDefinition definition) {
-        BaseFlowTranslatorResolver flowTranslatorResolver = new BaseFlowTranslatorResolver();
-        flowTranslatorResolver.addStandardFlowTranslators();
-        flowTranslatorResolver.initializeService();
-        flowTranslatorResolver.addFlowTranslator(new ShortFlowTranslator());
-        flowTranslatorResolver.resolve(definition);
     }
 
     @Test
     public void testFlowPropertyDefinitionCtor() {
         FlowPropertyDefinition definition = new FlowPropertyDefinition("foo", Boolean.class, PropertyRequired.advance);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         assertTrue(definition.isRequired());
         assertEquals(definition.getName(), "foo");
 
@@ -229,7 +220,7 @@ public class TestFlowPropertyDefinition {
     @SuppressWarnings("unchecked")
     public void testListCollectionHandling() throws Exception {
         FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, List.class);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV = definition.serialize(list);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
@@ -245,7 +236,7 @@ public class TestFlowPropertyDefinition {
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
         FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, Set.class);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV = definition.serialize(set);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
@@ -258,7 +249,7 @@ public class TestFlowPropertyDefinition {
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
         FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, Map.class);
-        resolveAndInit(definition);
+        new FlowTestingUtils().resolveAndInit(definition);
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));
         map.put("second", new URI("http://gg.gov"));

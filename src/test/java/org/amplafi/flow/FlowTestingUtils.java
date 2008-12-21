@@ -10,8 +10,11 @@ import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.FlowImpl;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
+import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.translator.ShortFlowTranslator;
 
 
 /**
@@ -24,6 +27,8 @@ public class FlowTestingUtils {
 
     private BaseFlowTranslatorResolver flowTranslatorResolver;
 
+    private BaseFlowManagement flowManagement;
+
     private AtomicInteger counter = new AtomicInteger();
     public FlowTestingUtils() {
         this(new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
@@ -32,6 +37,7 @@ public class FlowTestingUtils {
     public FlowTestingUtils(FlowDefinitionsManagerImpl flowDefinitionsManager, BaseFlowTranslatorResolver flowTranslatorResolver) {
         this.flowDefinitionsManager = flowDefinitionsManager;
         this.flowTranslatorResolver = flowTranslatorResolver;
+        this.flowManagement = new BaseFlowManagement();
         initializeService();
     }
 
@@ -39,10 +45,16 @@ public class FlowTestingUtils {
      *
      */
     private void initializeService() {
+        flowTranslatorResolver.addStandardFlowTranslators();
+        flowTranslatorResolver.initializeService();
+        flowTranslatorResolver.addFlowTranslator(new ShortFlowTranslator());
+        flowTranslatorResolver.addFlowTranslator(new EnumFlowTranslator());
         flowDefinitionsManager.setFlowTranslatorResolver(flowTranslatorResolver);
         flowTranslatorResolver.setFlowDefinitionsManager(flowDefinitionsManager);
         flowDefinitionsManager.initializeService();
-        flowTranslatorResolver.initializeService();
+        this.flowManagement.setFlowDefinitionsManager(flowDefinitionsManager);
+        this.flowManagement.setFlowTranslatorResolver(flowTranslatorResolver);
+
     }
 
     public <T extends FlowActivityImplementor> String addDefinition(T...flowActivities) {
@@ -73,4 +85,15 @@ public class FlowTestingUtils {
             flowState.next();
         }
     }
+    public void resolveAndInit(FlowPropertyDefinition definition) {
+        flowTranslatorResolver.resolve(definition);
+    }
+
+    /**
+     * @return the flowManagement
+     */
+    public FlowManagement getFlowManagement() {
+        return flowManagement;
+    }
+
 }
