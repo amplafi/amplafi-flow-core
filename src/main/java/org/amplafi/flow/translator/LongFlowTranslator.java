@@ -1,8 +1,8 @@
 package org.amplafi.flow.translator;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.json.JSONWriter;
@@ -57,7 +57,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
         return 0L;
     }
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.flowproperty.FlowPropertyDefinition, org.amplafi.flow.flowproperty.DataClassDefinition, java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
      */
     @Override
     protected Long doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {

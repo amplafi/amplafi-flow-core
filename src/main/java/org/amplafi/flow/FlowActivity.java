@@ -5,10 +5,6 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.flowproperty.PropertyRequired;
-import org.amplafi.flow.validation.FlowValidationResult;
-
 /*
  * @author patmoore
  */

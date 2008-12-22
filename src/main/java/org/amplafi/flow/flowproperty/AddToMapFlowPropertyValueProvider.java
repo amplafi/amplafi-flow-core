@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.MapKeyProvider;
+import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.collections.MapUtils;
 
 
@@ -25,7 +28,7 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
     public AddToMapFlowPropertyValueProvider(V...valuesToAdd) {
         values = new LinkedHashMap<K, V>();
         for (V value: valuesToAdd) {
-            values.put(((MapKeyProvider<K>)value).getKey(), value);
+            values.put((K)((MapKeyProvider)value).getKey(), value);
         }
     }
     public AddToMapFlowPropertyValueProvider(K key, V valueToAdd) {
@@ -39,7 +42,7 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
         }
     }
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -54,7 +57,7 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
     /**
      * @param flowActivity
      * @param flowPropertyDefinition
-     * @return the value from the previous {@link FlowPropertyValueProvider} in the chain of {@link FlowPropertyValueProvider}
+     * @return the value from the previous {@link org.amplafi.flow.FlowPropertyValueProvider} in the chain of {@link org.amplafi.flow.FlowPropertyValueProvider}
      */
     @SuppressWarnings("unchecked")
     protected <T> T getPreviousGet(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
@@ -65,7 +68,7 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
         return result;
     }
     /**
-     * @see org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider#setPrevious(org.amplafi.flow.flowproperty.FlowPropertyValueProvider)
+     * @see org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider#setPrevious(org.amplafi.flow.FlowPropertyValueProvider)
      */
     @Override
     public void setPrevious(FlowPropertyValueProvider previous) {
@@ -77,7 +80,4 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
         return getClass()+": adding "+values + " chain: ["+this.previous+"]";
     }
 
-    public static interface MapKeyProvider<K> {
-        K getKey();
-    }
 }

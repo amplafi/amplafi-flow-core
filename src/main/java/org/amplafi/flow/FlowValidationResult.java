@@ -1,4 +1,6 @@
-package org.amplafi.flow.validation;
+package org.amplafi.flow;
+
+import org.amplafi.flow.FlowValidationTracking;
 
 import java.util.List;
 
@@ -22,7 +24,7 @@ public interface FlowValidationResult {
      */
     FlowValidationResult addTracking(FlowValidationTracking... tracking);
     /**
-     * add a {@link SimpleValidationTracking} if valid is false.
+     * add a {@link org.amplafi.flow.validation.SimpleValidationTracking} if valid is false.
      * @param valid add if false
      * @param key
      * @param params

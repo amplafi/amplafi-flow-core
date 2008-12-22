@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.validation.FlowValidationResult;
 import org.apache.commons.logging.Log;
 
 

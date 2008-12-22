@@ -1,4 +1,4 @@
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.amplafi.flow.FlowValuesMap;
+import org.amplafi.flow.FlowValueMapKey;
 
 public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
 

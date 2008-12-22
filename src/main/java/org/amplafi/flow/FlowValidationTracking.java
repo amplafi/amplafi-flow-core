@@ -1,4 +1,4 @@
-package org.amplafi.flow.validation;
+package org.amplafi.flow;
 
 /**
  * Tracks flow validation problems.

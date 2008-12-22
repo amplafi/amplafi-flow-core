@@ -4,8 +4,6 @@
  */
 package org.amplafi.flow;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-
 /**
  *  TODO Convert this to {@link FlowPropertyDefinition}s
  */

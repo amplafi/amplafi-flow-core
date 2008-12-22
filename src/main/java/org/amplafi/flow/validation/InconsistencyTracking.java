@@ -1,7 +1,7 @@
 package org.amplafi.flow.validation;
 
 /**
- * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for
+ * {@link org.amplafi.flow.FlowValidationTracking Tracking} for
  * incosistent data.<p/>
  * This should be typically used for data that shouldn't
  * coexist (male and pregnant) or that are simply invalid (negative age).

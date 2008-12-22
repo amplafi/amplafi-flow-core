@@ -4,6 +4,7 @@
 package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
  * FlowPropertyValueProvider where many FlowPropertyValueProvider may be contributing to a single

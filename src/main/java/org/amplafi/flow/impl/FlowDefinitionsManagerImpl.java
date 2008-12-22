@@ -1,15 +1,19 @@
 /**
  * Copyright 2006-8 by Amplafi, Inc.
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
+import org.amplafi.flow.impl.BaseFlowManagement;
+import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowManagement;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

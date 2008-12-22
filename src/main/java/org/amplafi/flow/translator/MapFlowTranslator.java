@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.MapJsonRenderer;
@@ -14,7 +14,7 @@ import org.apache.commons.collections.MapUtils;
 
 
 /**
- * {@link FlowTranslator} that serializes/deserializes {@link Map}s for flows.
+ * {@link org.amplafi.flow.FlowTranslator} that serializes/deserializes {@link Map}s for flows.
  * @author patmoore
  *
  * @param <K>

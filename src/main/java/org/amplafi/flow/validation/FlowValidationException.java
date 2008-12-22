@@ -3,6 +3,9 @@ package org.amplafi.flow.validation;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.FlowValidationTracking;
+import org.amplafi.flow.FlowException;
 
 
 /**
@@ -11,7 +14,7 @@ import org.amplafi.flow.FlowActivity;
  * expecting a number.
  *
  */
-public class FlowValidationException extends RuntimeException {
+public class FlowValidationException extends FlowException {
     private final FlowValidationResult validationResult;
 
     public FlowValidationException(FlowValidationResult validationResult) {

@@ -4,6 +4,8 @@
  */
 package org.amplafi.flow.translator;
 
+import org.amplafi.flow.FlowTranslator;
+
 /**
  * {@link FlowTranslator}s that should be cloned before being used.
  *

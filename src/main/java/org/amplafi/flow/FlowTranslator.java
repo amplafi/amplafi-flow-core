@@ -1,14 +1,9 @@
-package org.amplafi.flow.translator;
+package org.amplafi.flow;
 
 import java.util.List;
 
-import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
-
 
 /**
  *
@@ -24,7 +19,7 @@ import org.amplafi.json.JsonRenderer;
 public interface FlowTranslator <T>{
     /**
      *
-     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition, DataClassDefinition, Object)}.
+     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
      */
     public Class<?> getTranslatedClass();
     /**
@@ -40,7 +35,8 @@ public interface FlowTranslator <T>{
      */
     public JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, T object);
 
-    public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException;
+    public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
+            throws FlowException;
 
     /**
      * Determine if an instance of this class can be assigned to an
@@ -49,7 +45,7 @@ public interface FlowTranslator <T>{
      * If so then the class used store serialized form must be accepted.
      * @param differentClass
      * @return true if differentClass is a subclass of {@link #getTranslatedClass()}
-     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition, DataClassDefinition, JSONWriter, Object)}
+     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition , DataClassDefinition , JSONWriter, Object)}
      */
     public boolean isAssignableFrom(Class<?> differentClass);
 
@@ -59,7 +55,7 @@ public interface FlowTranslator <T>{
      * @param dataClassDefinition TODO
      * @param value
      * @return true if this object can be translated by the FlowTranslator to
-     * the class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition, DataClassDefinition, Object)}.
+     * the class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
      */
     public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object value);
     /**

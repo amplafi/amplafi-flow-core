@@ -2,9 +2,8 @@ package org.amplafi.flow.translator;
 
 import java.util.Collection;
 
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.translator.AbstractFlowTranslator;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.JSONArray;
 import org.amplafi.json.JSONWriter;
@@ -46,7 +45,7 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
         return jsonWriter.endArray();
     }
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.flowproperty.FlowPropertyDefinition, org.amplafi.flow.flowproperty.DataClassDefinition, java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
      */
     @Override
     protected C doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {

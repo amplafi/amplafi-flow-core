@@ -1,10 +1,11 @@
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import java.io.Serializable;
 
 import org.apache.commons.lang.ObjectUtils;
 
 import static org.apache.commons.lang.StringUtils.*;
+import org.amplafi.flow.FlowValueMapKey;
 
 /**
  * Avoids string concatenation performance issues.

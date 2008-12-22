@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
 import org.apache.commons.logging.Log;
 
 

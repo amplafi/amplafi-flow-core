@@ -1,7 +1,7 @@
 /*
  * Created on Apr 20, 2005
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowLifecycleState.*;
@@ -20,9 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.*;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -152,7 +153,7 @@ public class FlowStateImpl implements FlowState {
     }
 
     /**
-     * Copy all Flow-level {@link FlowPropertyDefinition}'s initial values to the flowState's key value map.
+     * Copy all Flow-level {@link org.amplafi.flow.FlowPropertyDefinition}'s initial values to the flowState's key value map.
      * Call each {@link FlowActivity#initializeFlow()}.
      */
     protected void initializeFlow() {
@@ -691,7 +692,7 @@ public class FlowStateImpl implements FlowState {
 
     /**
      * @see org.amplafi.flow.FlowState#getProperty(org.amplafi.flow.FlowActivity,
-     *      org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     *      org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -1451,11 +1452,11 @@ public class FlowStateImpl implements FlowState {
             // from it.
             // propertyDefinition = new FlowPropertyDefinition(key,
             // Hibernate.getClass(sampleValue));
-            propertyDefinition = new FlowPropertyDefinition(key, expected);
+            propertyDefinition = new FlowPropertyDefinitionImpl(key, expected);
             getFlow().addPropertyDefinition(propertyDefinition);
         } else {
             // assume it to be the default type. but don't save it
-            propertyDefinition = new FlowPropertyDefinition(key);
+            propertyDefinition = new FlowPropertyDefinitionImpl(key);
         }
         return propertyDefinition;
     }

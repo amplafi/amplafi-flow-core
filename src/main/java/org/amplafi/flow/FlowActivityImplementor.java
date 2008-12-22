@@ -6,8 +6,6 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-
 /**
  * @author patmoore
  *

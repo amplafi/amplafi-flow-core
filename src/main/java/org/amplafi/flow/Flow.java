@@ -3,8 +3,6 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-
 /**
  * defines a definition of a flow or a specific flow.
  *

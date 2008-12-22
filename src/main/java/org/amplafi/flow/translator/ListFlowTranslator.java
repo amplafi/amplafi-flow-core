@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 
 

@@ -1,4 +1,4 @@
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.*;
@@ -13,8 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;

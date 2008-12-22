@@ -1,7 +1,7 @@
 package org.amplafi.flow.validation;
 
 /**
- * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for
+ * {@link org.amplafi.flow.FlowValidationTracking Tracking} for
  * exceptions.<p/>
  * This should be used only when there's no other way to correctly categorize
  * the desired tracking.

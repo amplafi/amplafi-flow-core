@@ -6,8 +6,8 @@ package org.amplafi.flow.translator;
 
 import java.util.TimeZone;
 
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
@@ -20,7 +20,7 @@ import org.amplafi.json.JsonRenderer;
 public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> implements JsonRenderer<TimeZone> {
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslator#getTranslatedClass()
+     * @see org.amplafi.flow.FlowTranslator#getTranslatedClass()
      */
     @Override
     public Class<TimeZone> getTranslatedClass() {
@@ -28,7 +28,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslator#serialize(org.amplafi.flow.flowproperty.FlowPropertyDefinition, org.amplafi.flow.flowproperty.DataClassDefinition, org.amplafi.json.JSONWriter, java.lang.Object)
+     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.JSONWriter, java.lang.Object)
      */
     @Override
     public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, TimeZone object) {
@@ -63,7 +63,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.flowproperty.FlowPropertyDefinition, org.amplafi.flow.flowproperty.DataClassDefinition, java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
      */
     @Override
     protected TimeZone doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {

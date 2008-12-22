@@ -2,7 +2,6 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
@@ -16,7 +15,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
-public class FlowTransition implements JsonSelfRenderer, AddToMapFlowPropertyValueProvider.MapKeyProvider<String> {
+public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
 
     private static final String INITIAL_VALUES = "initialValues";
 
@@ -114,7 +113,7 @@ public class FlowTransition implements JsonSelfRenderer, AddToMapFlowPropertyVal
     }
 
     /**
-     * @see org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider.MapKeyProvider#getKey()
+     * @see org.amplafi.flow.MapKeyProvider#getKey()
      */
     @Override
     public String getKey() {

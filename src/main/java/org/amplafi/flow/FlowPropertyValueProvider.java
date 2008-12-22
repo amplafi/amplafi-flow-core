@@ -2,9 +2,7 @@
  * Copyright 2006-2008 by Amplafi. All rights reserved.
  * Confidential.
  */
-package org.amplafi.flow.flowproperty;
-
-import org.amplafi.flow.FlowActivity;
+package org.amplafi.flow;
 
 /**
  * Used to provide a smarter way generating a FlowProperty value than just deserializing.

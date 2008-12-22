@@ -1,15 +1,21 @@
 /*
  * Created on May 12, 2005
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import org.amplafi.flow.PropertyUsage;
+import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowTransition;
+import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.flowproperty.PropertyUsage;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.apache.commons.lang.ObjectUtils;
 
 
@@ -49,7 +55,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
     @Override
     public void addStandardFlowPropertyDefinitions() {
         super.addStandardFlowPropertyDefinitions();
-        this.addPropertyDefinitions(new FlowPropertyDefinition(FS_FLOW_TRANSITION_LABEL).initPropertyUsage(PropertyUsage.activityLocal));
+        this.addPropertyDefinitions(new FlowPropertyDefinitionImpl(FS_FLOW_TRANSITION_LABEL).initPropertyUsage(PropertyUsage.activityLocal));
         initTransition();
     }
     @Override

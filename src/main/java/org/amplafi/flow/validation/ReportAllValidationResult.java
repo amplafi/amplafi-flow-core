@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.FlowValidationTracking;
 
 /**
- * A {@link org.amplafi.flow.validation.FlowValidationResult} that considers
+ * A {@link org.amplafi.flow.FlowValidationResult} that considers
  * all trackings as problematic. This should currently be the desired behavior.
  */
 public class ReportAllValidationResult implements FlowValidationResult {

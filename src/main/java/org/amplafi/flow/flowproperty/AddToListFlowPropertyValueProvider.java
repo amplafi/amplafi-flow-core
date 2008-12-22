@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
-
+import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowPropertyDefinition;
 
 import static org.apache.commons.collections.CollectionUtils.*;
 /**
@@ -28,7 +29,7 @@ public class AddToListFlowPropertyValueProvider<V> implements ChainedFlowPropert
         this.values = Arrays.asList(valuesToAdd);
     }
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -45,7 +46,7 @@ public class AddToListFlowPropertyValueProvider<V> implements ChainedFlowPropert
     /**
      * @param flowActivity
      * @param flowPropertyDefinition
-     * @return the value from the previous {@link FlowPropertyValueProvider} in the chain of {@link FlowPropertyValueProvider}
+     * @return the value from the previous {@link org.amplafi.flow.FlowPropertyValueProvider} in the chain of {@link FlowPropertyValueProvider}
      */
     @SuppressWarnings("unchecked")
     protected <T> T getPreviousGet(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
@@ -56,7 +57,7 @@ public class AddToListFlowPropertyValueProvider<V> implements ChainedFlowPropert
         return result;
     }
     /**
-     * @see org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider#setPrevious(org.amplafi.flow.flowproperty.FlowPropertyValueProvider)
+     * @see org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider#setPrevious(org.amplafi.flow.FlowPropertyValueProvider)
      */
     @Override
     public void setPrevious(FlowPropertyValueProvider previous) {

@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
 import org.amplafi.json.JSONStringer;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -61,7 +60,8 @@ public class FlowUtils {
      * @return the default property name.
      */
     public String toPropertyName(Class<?> dataClass) {
-        return FlowPropertyDefinition.toPropertyName(dataClass);
+        String className = dataClass.getSimpleName();
+        return className.substring(0, 1).toLowerCase() + className.substring(1);
     }
     /**
      * Converts a {@link Map} into a {@link List} of <em>key='value'</em> strings.

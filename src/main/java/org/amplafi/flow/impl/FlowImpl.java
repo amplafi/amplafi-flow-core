@@ -2,7 +2,7 @@
  * Created on May 23, 2005
  *
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.flowproperty.PropertyUsage.*;
-
+import static org.amplafi.flow.PropertyUsage.*;
+import org.amplafi.flow.*;
 
 
 /**
@@ -86,28 +86,28 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
     public FlowImpl() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinition(FSTITLE_TEXT).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSCANCEL_TEXT).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSFINISH_TEXT).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
+            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
             .initFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String, FlowTransition>(
                     new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null))),
-            new FlowPropertyDefinition(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
             // io -- for now because need to communicate the next page to be displayed
-            new FlowPropertyDefinition(FSPAGE_NAME).initPropertyUsage(io),
-            new FlowPropertyDefinition(FSAFTER_PAGE).initPropertyUsage(io),
-            new FlowPropertyDefinition(FSDEFAULT_AFTER_PAGE).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSDEFAULT_AFTER_CANCEL_PAGE).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSREDIRECT_URL, URI.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSACTIVATABLE, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSAUTO_COMPLETE, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSALT_FINISHED).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinition(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinition(FSRETURN_TO_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinition(FSNEXT_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinition(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal)
+            new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSAFTER_PAGE).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_PAGE).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_CANCEL_PAGE).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSALT_FINISHED).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal)
 
         );
     }
@@ -252,7 +252,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
         }
     }
     /**
-     * @see org.amplafi.flow.Flow#addPropertyDefinition(org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.Flow#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
      */
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
         if ( definition == null ) {

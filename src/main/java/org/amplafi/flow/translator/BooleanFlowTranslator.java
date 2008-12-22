@@ -19,7 +19,7 @@ public class BooleanFlowTranslator extends AbstractFlowTranslator<Boolean> {
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslator#getTranslatedClass()
+     * @see org.amplafi.flow.FlowTranslator#getTranslatedClass()
      */
     @Override
     public Class<Boolean> getTranslatedClass() {

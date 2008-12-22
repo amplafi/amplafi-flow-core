@@ -1,10 +1,10 @@
 /*
  * Created on May 9, 2005
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.flowproperty.PropertyUsage.*;
+import static org.amplafi.flow.PropertyUsage.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
@@ -16,12 +16,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.PropertyRequired;
+import org.amplafi.flow.flowproperty.*;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.*;
 import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -39,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * instances (but not both instances and definitions).
  *
  * FlowActivities must be stateless. FlowActivityImpl instances can be reused
- * between different users and different {@link Flow}s.
+ * between different users and different {@link org.amplafi.flow.Flow}s.
  *
  * <p/> Lifecycle methods:
  * <ol>
@@ -57,7 +54,7 @@ import org.apache.commons.logging.LogFactory;
  * <li>{@link #saveChanges()} - called when the flow is completing. <i>Only
  * place where db modifications can be made.</i> This allows canceling the flow
  * to meaningfully revert all changes.</li>
- * <li>{@link #finishFlow(FlowState)} - called when the flow is finishing.</li>
+ * <li>{@link #finishFlow(org.amplafi.flow.FlowState)} - called when the flow is finishing.</li>
  * </ol>
  * <p/> This structure is in place so that FlowActivities that create
  * relationships are not put into the position of having to be aware of the
@@ -112,13 +109,13 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     private boolean persistFlow;
 
     /**
-     * if this is an instance, this is the {@link Flow} instance.
+     * if this is an instance, this is the {@link org.amplafi.flow.Flow} instance.
      */
     private Flow flow;
 
     /**
-     * if this is an instance {@link FlowActivity}, then this is the definition
-     * {@link FlowActivity}.
+     * if this is an instance {@link org.amplafi.flow.FlowActivity}, then this is the definition
+     * {@link org.amplafi.flow.FlowActivity}.
      */
     private FlowActivity definitionFlowActivity;
 
@@ -149,10 +146,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     protected void addStandardFlowPropertyDefinitions() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinition(FATITLE_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinition(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinition(FANEXT_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinition(FAPREV_TEXT).initPropertyUsage(activityLocal)
+            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initPropertyUsage(activityLocal),
+            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
+            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initPropertyUsage(activityLocal),
+            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initPropertyUsage(activityLocal)
         );
     }
 
@@ -326,7 +323,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.flowproperty.PropertyRequired)
+     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired)
      */
     public FlowValidationResult getFlowValidationResult(PropertyRequired required) {
         FlowValidationResult result = new ReportAllValidationResult();
@@ -588,7 +585,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinition(org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
      */
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
         FlowPropertyDefinition currentLocal;
@@ -652,7 +649,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyDefinition[])
+     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(org.amplafi.flow.FlowPropertyDefinition[])
      */
     public void addPropertyDefinitions(FlowPropertyDefinition... definitions) {
         for (FlowPropertyDefinition definition : definitions) {
@@ -926,7 +923,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     /**
      * HACK ... should only be called from  {@link #addStandardFlowPropertyDefinitions()} NOT {@link #initializeFlow()}
-     * this is because adding to standard properties will not happen correctly ( the {@link org.amplafi.flow.translator.FlowTranslatorResolver} is
+     * this is because adding to standard properties will not happen correctly ( the {@link org.amplafi.flow.FlowTranslatorResolver} is
      * visible.
      * other wise will affect the definitions.
      * see #2179 / #2192

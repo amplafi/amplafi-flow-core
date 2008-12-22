@@ -10,32 +10,34 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
-import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.FlowTranslator;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.JSONWriter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 
 /**
- * Handles the issues around data structure for the {@link FlowPropertyDefinition}. This way {@link FlowPropertyDefinition}
+ * Handles the issues around data structure for the {@link FlowPropertyDefinitionImpl}. This way {@link FlowPropertyDefinitionImpl}
  * focuses on required status, name, etc. and DataClassDefinition focuses just on the way the data is structured.
  * Allows the FlowDefinitionProperty structure to be a middling complex chain of nested collections.
  *
  * @author patmoore
  *
  */
-public class DataClassDefinition {
+public class DataClassDefinitionImpl implements DataClassDefinition {
     private Class<?> dataClass;
     @SuppressWarnings("unchecked")
     private FlowTranslator flowTranslator;
-    private DataClassDefinition keyDataClassDefinition;
-    private DataClassDefinition elementDataClassDefinition;
+    private DataClassDefinitionImpl keyDataClassDefinition;
+    private DataClassDefinitionImpl elementDataClassDefinition;
 
-    public static final DataClassDefinition DEFAULT;
+    public static final DataClassDefinitionImpl DEFAULT;
     static {
-        DEFAULT = new DataClassDefinition(String.class);
+        DEFAULT = new DataClassDefinitionImpl(String.class);
         DEFAULT.setFlowTranslator(CharSequenceFlowTranslator.INSTANCE);
     }
-    public DataClassDefinition() {
+    public DataClassDefinitionImpl() {
     }
 
     /**
@@ -45,7 +47,7 @@ public class DataClassDefinition {
      * @param elementClassDefinition
      */
     @SuppressWarnings("unchecked")
-    public DataClassDefinition(Class<? extends Map> mapClass, DataClassDefinition keyClassDefinition, DataClassDefinition elementClassDefinition) {
+    public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinitionImpl keyClassDefinition, DataClassDefinitionImpl elementClassDefinition) {
         this.dataClass = mapClass;
         this.setKeyDataClassDefinition(keyClassDefinition);
         this.setElementDataClassDefinition(elementClassDefinition);
@@ -54,22 +56,22 @@ public class DataClassDefinition {
      * clone ctor
      * @param dataClassDefinition
      */
-    public DataClassDefinition(DataClassDefinition dataClassDefinition) {
+    public DataClassDefinitionImpl(DataClassDefinitionImpl dataClassDefinition) {
         this.dataClass = dataClassDefinition.dataClass;
-        this.setKeyDataClassDefinition(dataClassDefinition.keyDataClassDefinition == null? null: new DataClassDefinition(dataClassDefinition.keyDataClassDefinition));
-        this.setElementDataClassDefinition(dataClassDefinition.elementDataClassDefinition == null? null: new DataClassDefinition(dataClassDefinition.elementDataClassDefinition));
+        this.setKeyDataClassDefinition(dataClassDefinition.keyDataClassDefinition == null? null: new DataClassDefinitionImpl(dataClassDefinition.keyDataClassDefinition));
+        this.setElementDataClassDefinition(dataClassDefinition.elementDataClassDefinition == null? null: new DataClassDefinitionImpl(dataClassDefinition.elementDataClassDefinition));
         this.flowTranslator = dataClassDefinition.flowTranslator;
     }
     // don't use yet.
-    public DataClassDefinition(Class<?> element, Class<?>... collections) {
+    public DataClassDefinitionImpl(Class<?> element, Class<?>... collections) {
         if ( collections.length == 0 ) {
             this.setDataClass(element);
         } else if ( collections.length == 1 ) {
             this.setDataClass(collections[0]);
-            this.setElementDataClassDefinition(new DataClassDefinition(element));
+            this.setElementDataClassDefinition(new DataClassDefinitionImpl(element));
         } else {
             this.setDataClass(collections[0]);
-            this.setElementDataClassDefinition(new DataClassDefinition(element, Arrays.copyOfRange(collections, 1, collections.length)));
+            this.setElementDataClassDefinition(new DataClassDefinitionImpl(element, Arrays.copyOfRange(collections, 1, collections.length)));
         }
     }
 
@@ -78,29 +80,29 @@ public class DataClassDefinition {
      * @param keyClass
      * @param elementClass
      * @param collectionClasses
-     * @return a {@link DataClassDefinition} that defines a {@link Map} property.
+     * @return a {@link DataClassDefinitionImpl} that defines a {@link Map} property.
      */
-    public static DataClassDefinition map(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
-        return new DataClassDefinition(Map.class, new DataClassDefinition(keyClass), new DataClassDefinition(elementClass, collectionClasses));
+    public static DataClassDefinitionImpl map(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
+        return new DataClassDefinitionImpl(Map.class, new DataClassDefinitionImpl(keyClass), new DataClassDefinitionImpl(elementClass, collectionClasses));
     }
     /**
      * Helper to define a NavigableMap (TreeMap for example)
      * @param keyClass
      * @param elementClass
      * @param collectionClasses
-     * @return a {@link DataClassDefinition} that defines a {@link NavigableMap} property.
+     * @return a {@link DataClassDefinitionImpl} that defines a {@link NavigableMap} property.
      */
-    public static DataClassDefinition navigableMap(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
-        return new DataClassDefinition(NavigableMap.class, new DataClassDefinition(keyClass), new DataClassDefinition(elementClass, collectionClasses));
+    public static DataClassDefinitionImpl navigableMap(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
+        return new DataClassDefinitionImpl(NavigableMap.class, new DataClassDefinitionImpl(keyClass), new DataClassDefinitionImpl(elementClass, collectionClasses));
     }
     /**
      * Helper to define a map.
      * @param keyClass
      * @param elementDataClassDefinition
-     * @return a {@link DataClassDefinition} that defines a {@link Map} property.
+     * @return a {@link DataClassDefinitionImpl} that defines a {@link Map} property.
      */
-    public static DataClassDefinition map(Class<?> keyClass, DataClassDefinition elementDataClassDefinition) {
-        return new DataClassDefinition(Map.class, new DataClassDefinition(keyClass), elementDataClassDefinition);
+    public static DataClassDefinitionImpl map(Class<?> keyClass, DataClassDefinitionImpl elementDataClassDefinition) {
+        return new DataClassDefinitionImpl(Map.class, new DataClassDefinitionImpl(keyClass), elementDataClassDefinition);
     }
     /**
      * @param <T>
@@ -134,7 +136,7 @@ public class DataClassDefinition {
     /**
      * @param dataClassDefinition
      */
-    public void merge(DataClassDefinition dataClassDefinition) {
+    public void merge(DataClassDefinitionImpl dataClassDefinition) {
         if ( dataClassDefinition == null ) {
             return;
         }
@@ -148,17 +150,17 @@ public class DataClassDefinition {
     /**
      * @param dataClassDefinition
      */
-    private DataClassDefinition mergeIt(DataClassDefinition original, DataClassDefinition dataClassDefinition) {
+    private DataClassDefinitionImpl mergeIt(DataClassDefinitionImpl original, DataClassDefinitionImpl dataClassDefinition) {
         if ( dataClassDefinition != null ) {
             if( original == null ) {
-                return new DataClassDefinition(dataClassDefinition);
+                return new DataClassDefinitionImpl(dataClassDefinition);
             } else {
                 original.merge(dataClassDefinition);
             }
         }
         return original;
     }
-    public boolean isMergable(DataClassDefinition dataClassDefinition) {
+    public boolean isMergable(DataClassDefinitionImpl dataClassDefinition) {
         if(equals(dataClassDefinition) || dataClassDefinition == null) {
             return true;
         } else if (dataClassDefinition.dataClass != null &&getDataClassReplaced(dataClassDefinition)==null) {
@@ -178,7 +180,7 @@ public class DataClassDefinition {
      * @param dataClassDefinition
      * @return
      */
-    private Boolean getDataClassReplaced(DataClassDefinition dataClassDefinition) {
+    private Boolean getDataClassReplaced(DataClassDefinitionImpl dataClassDefinition) {
         if ( dataClassDefinition == null || this.dataClass == dataClassDefinition.dataClass || dataClassDefinition.dataClass == null) {
             return false;
         } else if ( this.dataClass == null ) {
@@ -225,10 +227,10 @@ public class DataClassDefinition {
     public boolean equals(Object o) {
         if ( o == this) {
             return true;
-        } else if ( o == null || !(o instanceof DataClassDefinition)) {
+        } else if ( o == null || !(o instanceof DataClassDefinitionImpl)) {
             return false;
         }
-        DataClassDefinition dataClassDefinition = (DataClassDefinition) o;
+        DataClassDefinitionImpl dataClassDefinition = (DataClassDefinitionImpl) o;
         // selectively use the accessor methods so that defaults will compare to the equivalent explicitly
         // specified value.
         // cannot do this on element and key because of infinite loop.
@@ -242,13 +244,13 @@ public class DataClassDefinition {
     /**
      * @param keyDataClassDefinition the keyDataClassDefinition to set
      */
-    public void setKeyDataClassDefinition(DataClassDefinition keyDataClassDefinition) {
+    public void setKeyDataClassDefinition(DataClassDefinitionImpl keyDataClassDefinition) {
         this.keyDataClassDefinition = keyDataClassDefinition;
     }
     /**
      * @return the keyDataClassDefinition
      */
-    public DataClassDefinition getKeyDataClassDefinition() {
+    public DataClassDefinitionImpl getKeyDataClassDefinition() {
         if ( keyDataClassDefinition != null) {
             return keyDataClassDefinition;
         } else if ( isMap() ){
@@ -260,13 +262,13 @@ public class DataClassDefinition {
     /**
      * @param elementDataClassDefinition the elementDataClassDefinition to set
      */
-    public void setElementDataClassDefinition(DataClassDefinition elementDataClassDefinition) {
+    public void setElementDataClassDefinition(DataClassDefinitionImpl elementDataClassDefinition) {
         this.elementDataClassDefinition = elementDataClassDefinition;
     }
     /**
      * @return the elementDataClassDefinition
      */
-    public DataClassDefinition getElementDataClassDefinition() {
+    public DataClassDefinitionImpl getElementDataClassDefinition() {
         if ( elementDataClassDefinition != null ) {
             return elementDataClassDefinition;
         } else if ( isCollection()){
@@ -340,7 +342,7 @@ public class DataClassDefinition {
      * @param value
      * @return true if value can be deserialized
      */
-    public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value) {
+    public boolean isDeserializable(FlowPropertyDefinitionImpl flowPropertyDefinition, Object value) {
         return value == null || this.getFlowTranslator().isDeserializable(flowPropertyDefinition, this, value);
     }
 

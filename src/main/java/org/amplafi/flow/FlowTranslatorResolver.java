@@ -1,12 +1,8 @@
 /**
  * Copyright 2006-8 by Amplafi, Inc.
  */
-package org.amplafi.flow.translator;
+package org.amplafi.flow;
 
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
 import org.amplafi.json.JSONWriter;
 
 

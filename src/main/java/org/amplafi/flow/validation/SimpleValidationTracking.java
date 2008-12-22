@@ -1,9 +1,10 @@
 package org.amplafi.flow.validation;
 
 import org.apache.commons.lang.StringUtils;
+import org.amplafi.flow.FlowValidationTracking;
 
 /**
- * General purpose {@link org.amplafi.flow.validation.FlowValidationTracking}.
+ * General purpose {@link org.amplafi.flow.FlowValidationTracking}.
  */
 public class SimpleValidationTracking implements FlowValidationTracking {
 

@@ -2,17 +2,18 @@
  * Copyright 2006-2008 by Amplafi. All rights reserved.
  * Confidential.
  */
-package org.amplafi.flow;
+package org.amplafi.flow.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.FlowState;
 
 
 /**
  * A FlowActivity that can be used to clear other flowStates other than the current FlowState
- * which this {@link FlowActivity} is in.
+ * which this {@link org.amplafi.flow.FlowActivity} is in.
  *
  */
 public class ClearFlowsFlowActivity extends FlowActivityImpl {
@@ -24,7 +25,7 @@ public class ClearFlowsFlowActivity extends FlowActivityImpl {
     @Override
     protected void addStandardFlowPropertyDefinitions() {
         super.addStandardFlowPropertyDefinitions();
-        addPropertyDefinitions(new FlowPropertyDefinition(FLOWS, List.class));
+        addPropertyDefinitions(new FlowPropertyDefinitionImpl(FLOWS, List.class));
     }
 
     @Override

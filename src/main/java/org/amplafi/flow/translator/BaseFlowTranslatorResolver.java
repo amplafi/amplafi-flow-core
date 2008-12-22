@@ -10,12 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.*;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
@@ -26,8 +22,8 @@ import org.apache.commons.collections.MapUtils;
 import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
- * Intended to be a stateless singleton service that will provide {@link FlowTranslator} to {@link FlowPropertyDefinition}
- * that do have their {@link FlowPropertyDefinition#getDataClassDefinition()}.{@link DataClassDefinition#isFlowTranslatorSet()} == false
+ * Intended to be a stateless singleton service that will provide {@link FlowTranslator} to {@link org.amplafi.flow.FlowPropertyDefinition}
+ * that do have their {@link org.amplafi.flow.FlowPropertyDefinition#getDataClassDefinition()}.{@link org.amplafi.flow.flowproperty.DataClassDefinitionImpl#isFlowTranslatorSet()} == false
  *
  */
 public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
@@ -37,7 +33,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
     private FlowDefinitionsManager flowDefinitionsManager;
     /**
-     * These are {@link FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
+     * These are {@link org.amplafi.flow.FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
      * These should not be altered.
      */
     private Map<String, FlowPropertyDefinition> coreFlowPropertyDefinitions;
@@ -153,7 +149,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         return translators.put(clazz, flowTranslator);
     }
     /**
-     * @see org.amplafi.flow.translator.FlowTranslatorResolver#resolve(org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowTranslatorResolver#resolve(org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -175,7 +171,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslatorResolver#resolve(java.lang.Class)
+     * @see org.amplafi.flow.FlowTranslatorResolver#resolve(java.lang.Class)
      */
     @Override
     public FlowTranslator<?> resolve(Class<?> clazz) {
@@ -195,7 +191,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslatorResolver#resolveFlow(org.amplafi.flow.Flow)
+     * @see org.amplafi.flow.FlowTranslatorResolver#resolveFlow(org.amplafi.flow.Flow)
      */
     @Override
     public void resolveFlow(Flow flow) {

@@ -2,7 +2,7 @@
  * Copyright 2006-2008 by Amplafi. All rights reserved.
  * Confidential.
  */
-package org.amplafi.flow.flowproperty;
+package org.amplafi.flow;
 
 /**
  * @author patmoore

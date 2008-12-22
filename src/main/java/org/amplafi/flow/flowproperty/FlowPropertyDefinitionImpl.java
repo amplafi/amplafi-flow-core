@@ -10,11 +10,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
-import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.*;
 import org.amplafi.json.JsonSelfRenderer;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +30,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinition {
+public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     private static final String REQUIRED = "required";
 
     private String name;
@@ -90,7 +87,7 @@ public class FlowPropertyDefinition {
      */
     private Boolean autoCreate;
 
-    private DataClassDefinition dataClassDefinition;
+    private DataClassDefinitionImpl dataClassDefinition;
 
     private Set<String> alternates;
 
@@ -103,8 +100,8 @@ public class FlowPropertyDefinition {
     private PropertyRequired propertyRequired;
     private PropertyUsage propertyUsage;
     /**
-     * once set no further changes to this {@link FlowPropertyDefinition} are permitted.
-     * calling init* methods will return a new {@link FlowPropertyDefinition} that can be modified.
+     * once set no further changes to this {@link FlowPropertyDefinitionImpl} are permitted.
+     * calling init* methods will return a new {@link FlowPropertyDefinitionImpl} that can be modified.
      * calling set* will result in an exception.
      */
     private boolean templateFlowPropertyDefinition;
@@ -112,17 +109,17 @@ public class FlowPropertyDefinition {
     /**
      * Creates an unnamed String property.
      */
-    public FlowPropertyDefinition() {
-        dataClassDefinition = new DataClassDefinition();
+    public FlowPropertyDefinitionImpl() {
+        dataClassDefinition = new DataClassDefinitionImpl();
         // Set the propertyUsage to 'use' so that properties created via xml are used and
         // passed through to following flows.
         // think this is
         this.propertyUsage = PropertyUsage.use;
     }
 
-    public FlowPropertyDefinition(FlowPropertyDefinition clone) {
+    public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
         this.setName(clone.name);
-        dataClassDefinition = new DataClassDefinition(clone.dataClassDefinition);
+        dataClassDefinition = new DataClassDefinitionImpl(clone.dataClassDefinition);
         if (isNotEmpty(clone.alternates)) {
             alternates = new HashSet<String>();
             alternates.addAll(clone.alternates);
@@ -149,8 +146,8 @@ public class FlowPropertyDefinition {
      *
      * @param name The name of the property.
      */
-    public FlowPropertyDefinition(String name) {
-        dataClassDefinition = new DataClassDefinition();
+    public FlowPropertyDefinitionImpl(String name) {
+        dataClassDefinition = new DataClassDefinitionImpl();
         this.setName(name);
         this.dataClassDefinition.setFlowTranslator(new CharSequenceFlowTranslator());
     }
@@ -161,11 +158,11 @@ public class FlowPropertyDefinition {
      * @param name property name
      * @param validators validators for the property.
      */
-    public FlowPropertyDefinition(String name, String validators) {
+    public FlowPropertyDefinitionImpl(String name, String validators) {
         this.setName(name);
         this.validators = validators;
         this.propertyRequired = isRequired()?PropertyRequired.advance: PropertyRequired.optional;
-        dataClassDefinition = new DataClassDefinition();
+        dataClassDefinition = new DataClassDefinitionImpl();
     }
 
     /**
@@ -175,7 +172,7 @@ public class FlowPropertyDefinition {
      * @param dataClass
      * @param collectionClasses
      */
-    public FlowPropertyDefinition(String name, Class<?> dataClass, Class<?>...collectionClasses) {
+    public FlowPropertyDefinitionImpl(String name, Class<?> dataClass, Class<?>...collectionClasses) {
         this(name, dataClass, PropertyRequired.optional, collectionClasses);
     }
 
@@ -185,7 +182,7 @@ public class FlowPropertyDefinition {
      * @param name
      * @param required
      */
-    public FlowPropertyDefinition(String name, PropertyRequired required) {
+    public FlowPropertyDefinitionImpl(String name, PropertyRequired required) {
         this(name, null, required);
     }
 
@@ -197,13 +194,13 @@ public class FlowPropertyDefinition {
      * @param required how required is this property?
      * @param collectionClasses
      */
-    public FlowPropertyDefinition(String name, Class<? extends Object> dataClass, PropertyRequired required, Class<?>...collectionClasses) {
-        this(name, required, new DataClassDefinition(dataClass, collectionClasses));
+    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, PropertyRequired required, Class<?>...collectionClasses) {
+        this(name, required, new DataClassDefinitionImpl(dataClass, collectionClasses));
     }
-    public FlowPropertyDefinition(String name, DataClassDefinition dataClassDefinition) {
+    public FlowPropertyDefinitionImpl(String name, DataClassDefinitionImpl dataClassDefinition) {
         this(name, PropertyRequired.optional, dataClassDefinition);
     }
-    public FlowPropertyDefinition(String name, PropertyRequired required, DataClassDefinition dataClassDefinition) {
+    public FlowPropertyDefinitionImpl(String name, PropertyRequired required, DataClassDefinitionImpl dataClassDefinition) {
         this.setName(name);
         this.propertyRequired = required;
         this.setRequired(required==PropertyRequired.advance);
@@ -228,7 +225,7 @@ public class FlowPropertyDefinition {
      *
      * @param flowActivity
      * @return defaultObject Should not save default object in
-     *         {@link FlowPropertyDefinition} if it is mutable.
+     *         {@link FlowPropertyDefinitionImpl} if it is mutable.
      */
     public Object getDefaultObject(FlowActivity flowActivity) {
         if (defaultObject == null) {
@@ -236,7 +233,7 @@ public class FlowPropertyDefinition {
             if (getDefaultValue() != null) {
                 try {
                     value = parse(getDefaultValue());
-                } catch (FlowValidationException e1) {
+                } catch (FlowException e1) {
                 }
             }
             if (value == null && flowPropertyValueProvider != null) {
@@ -253,8 +250,8 @@ public class FlowPropertyDefinition {
     }
 
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initDefaultObject(Object defaultObject) {
-        FlowPropertyDefinition flowPropertyDefinition = cloneIfTemplate(this.defaultObject, defaultObject);
+    public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.defaultObject, defaultObject);
         flowPropertyDefinition.setDefaultObject(defaultObject);
         return flowPropertyDefinition;
     }
@@ -284,14 +281,14 @@ public class FlowPropertyDefinition {
         }
     }
 
-    public FlowPropertyDefinition validateWith(String... fields) {
+    public FlowPropertyDefinitionImpl validateWith(String... fields) {
         addValidator("flowField="+join(fields,"-"));
         return this;
     }
 
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initValidators(String validators) {
-        FlowPropertyDefinition flowPropertyDefinition = cloneIfTemplate(this.validators, validators);
+    public FlowPropertyDefinitionImpl initValidators(String validators) {
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.validators, validators);
         flowPropertyDefinition.setValidators(validators);
         return flowPropertyDefinition;
     }
@@ -307,7 +304,7 @@ public class FlowPropertyDefinition {
      * @param alternateNames
      * @return this
      */
-    public FlowPropertyDefinition addAlternateNames(String... alternateNames) {
+    public FlowPropertyDefinitionImpl addAlternateNames(String... alternateNames) {
         getAlternates().addAll(Arrays.asList(alternateNames));
         return this;
     }
@@ -337,8 +334,8 @@ public class FlowPropertyDefinition {
         return initial;
     }
 
-    public FlowPropertyDefinition initInitial(String initialValue) {
-        FlowPropertyDefinition flowPropertyDefinition = cloneIfTemplate(this.initial, initialValue);
+    public FlowPropertyDefinitionImpl initInitial(String initialValue) {
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.initial, initialValue);
         flowPropertyDefinition.setInitial(initialValue);
         return flowPropertyDefinition;
     }
@@ -351,7 +348,7 @@ public class FlowPropertyDefinition {
      * also sets {@link PropertyUsage#flowLocal}
      * @return this
      */
-    public FlowPropertyDefinition initCacheOnly() {
+    public FlowPropertyDefinitionImpl initCacheOnly() {
         setCacheOnly(true);
         setPropertyUsage(PropertyUsage.flowLocal);
         return this;
@@ -369,7 +366,7 @@ public class FlowPropertyDefinition {
     }
 
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initParameterName(String parameterName) {
+    public FlowPropertyDefinitionImpl initParameterName(String parameterName) {
         setParameterName(parameterName);
         return this;
     }
@@ -451,7 +448,7 @@ public class FlowPropertyDefinition {
     }
 
     @SuppressWarnings("unchecked")
-    public <V> V parse(String value) throws FlowValidationException {
+    public <V> V parse(String value) throws FlowException {
         return (V) this.dataClassDefinition.deserialize(this, value);
     }
 
@@ -483,7 +480,7 @@ public class FlowPropertyDefinition {
         return propertyUsage == null?PropertyUsage.consume:propertyUsage;
     }
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initPropertyUsage(PropertyUsage propertyUsage) {
+    public FlowPropertyDefinitionImpl initPropertyUsage(PropertyUsage propertyUsage) {
         setPropertyUsage(propertyUsage);
         return this;
     }
@@ -536,14 +533,14 @@ public class FlowPropertyDefinition {
     /**
      * @param dataClassDefinition the dataClassDefinition to set
      */
-    public void setDataClassDefinition(DataClassDefinition dataClassDefinition) {
+    public void setDataClassDefinition(DataClassDefinitionImpl dataClassDefinition) {
         this.dataClassDefinition = dataClassDefinition;
     }
 
     /**
      * @return the dataClassDefinition
      */
-    public DataClassDefinition getDataClassDefinition() {
+    public DataClassDefinitionImpl getDataClassDefinition() {
         return dataClassDefinition;
     }
 
@@ -581,7 +578,7 @@ public class FlowPropertyDefinition {
         return getBoolean(sensitive);
     }
 
-    public FlowPropertyDefinition initSensitive() {
+    public FlowPropertyDefinitionImpl initSensitive() {
         setSensitive(true);
         return this;
     }
@@ -613,7 +610,7 @@ public class FlowPropertyDefinition {
         }
         return newObject;
     }
-    protected <T> FlowPropertyDefinition cloneIfTemplate(T oldObject, T newObject) {
+    protected <T> FlowPropertyDefinitionImpl cloneIfTemplate(T oldObject, T newObject) {
         if ( !ObjectUtils.equals(oldObject, newObject) && templateFlowPropertyDefinition) {
             return this.clone();
         }
@@ -624,7 +621,11 @@ public class FlowPropertyDefinition {
         return this.dataClassDefinition.isAssignableFrom(clazz);
     }
 
-    public boolean isMergeable(FlowPropertyDefinition source) {
+    public boolean isMergeable(FlowPropertyDefinition property) {
+        if (!(property instanceof FlowPropertyDefinitionImpl)) {
+            return false;
+        }
+        FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean result = dataClassDefinition.isMergable(source.dataClassDefinition);
         result &= this.defaultObject == null || source.defaultObject == null || this.defaultObject.equals(source.defaultObject);
         result &= this.defaultValue == null || source.defaultValue == null || this.defaultValue.equals(source.defaultValue);
@@ -634,18 +635,19 @@ public class FlowPropertyDefinition {
 
     /**
      * For any fields that are not already set in this
-     * {@link FlowPropertyDefinition}, this use previous to supply any missing
+     * {@link FlowPropertyDefinitionImpl}, this use previous to supply any missing
      * values.
      *
-     * @param source
+     * @param property
      * @return true if there is no conflict in the dataClass, true if
      *         this.dataClass cannot be assigned by previous.dataClass
      *         instances.
      */
-    public boolean merge(FlowPropertyDefinition source) {
-        if (source == null) {
+    public boolean merge(FlowPropertyDefinition property) {
+        if (! (property instanceof FlowPropertyDefinitionImpl)) {
             return true;
         }
+        FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean noMergeConflict = isMergeable(source);
         if (autoCreate == null && source.autoCreate != null) {
             this.setAutoCreate(source.autoCreate);
@@ -694,8 +696,8 @@ public class FlowPropertyDefinition {
     }
 
     @Override
-    public FlowPropertyDefinition clone() {
-        return new FlowPropertyDefinition(this);
+    public FlowPropertyDefinitionImpl clone() {
+        return new FlowPropertyDefinitionImpl(this);
     }
 
     public void setSaveBack(Boolean saveBack) {
@@ -720,14 +722,9 @@ public class FlowPropertyDefinition {
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initSaveBack(Boolean saveBack) {
+    public FlowPropertyDefinitionImpl initSaveBack(Boolean saveBack) {
         setSaveBack(saveBack);
         return this;
-    }
-
-    public static String toPropertyName(Class<?> clazz) {
-        String className = clazz.getSimpleName();
-        return className.substring(0, 1).toLowerCase() + className.substring(1);
     }
 
     /**
@@ -737,7 +734,7 @@ public class FlowPropertyDefinition {
      *
      * @return this
      */
-    public FlowPropertyDefinition initAutoCreate() {
+    public FlowPropertyDefinitionImpl initAutoCreate() {
         setAutoCreate(true);
         return this;
     }
@@ -761,19 +758,19 @@ public class FlowPropertyDefinition {
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinition initFlowPropertyValueProvider(FlowPropertyValueProvider flowPropertyValueProvider) {
+    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider flowPropertyValueProvider) {
         setFlowPropertyValueProvider(flowPropertyValueProvider);
         return this;
     }
 
     @Override
     public boolean equals(Object o) {
-        if ( o == null || ! (o instanceof FlowPropertyDefinition)) {
+        if ( o == null || ! (o instanceof FlowPropertyDefinitionImpl)) {
             return false;
         } else if (o == this) {
             return true;
         }
-        FlowPropertyDefinition flowPropertyDefinition = (FlowPropertyDefinition) o;
+        FlowPropertyDefinitionImpl flowPropertyDefinition = (FlowPropertyDefinitionImpl) o;
         EqualsBuilder equalsBuilder = new EqualsBuilder()
             .append(this.defaultObject, flowPropertyDefinition.defaultObject)
             .append(this.alternates, flowPropertyDefinition.alternates)

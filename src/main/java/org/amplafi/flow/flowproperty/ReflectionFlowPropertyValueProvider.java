@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.json.MapByClass;
 
 
@@ -75,7 +77,7 @@ public class ReflectionFlowPropertyValueProvider implements FlowPropertyValuePro
         throw new IllegalArgumentException(clazz+"."+propertyName+ " " + join(parameterTypes));
     }
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.flowproperty.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override
