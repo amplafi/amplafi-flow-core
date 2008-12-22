@@ -64,9 +64,10 @@ public class FlowUtils {
         return FlowPropertyDefinition.toPropertyName(dataClass);
     }
     /**
-     * Used to provide the correct values for {@link org.amplafi.flow.web.components.FlowEntryPoint#getInitialValues()}
-     * @param map
-     * @return list of strings for {@link org.amplafi.flow.web.components.FlowEntryPoint}
+     * Converts a {@link Map} into a {@link List} of <em>key='value'</em> strings.
+     *
+     * @param map The map to convert
+     * @return list of strings in <em>key='value'</em> form
      */
     public List<String> createInitialValues(Map<String, String> map) {
         List<String> result = new ArrayList<String>();
@@ -82,9 +83,13 @@ public class FlowUtils {
     public void addInitialValues(List<String> values, Object keyValue) {
         addInitialValues(values, keyValue, keyValue);
     }
+
     /**
-     * @param values
-     * @param keyValues
+     * Converts each passed key value pair to the form: <em>key='value'</em>
+     * and adds the result into the given list.
+     *
+     * @param values the list in which to include the key value pairs
+     * @param keyValues the key value pairs
      */
     public static void addInitialValues(List<String> values, Object... keyValues) {
         for(int i = 0; i < keyValues.length; i+=2) {

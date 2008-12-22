@@ -303,7 +303,7 @@ public class FlowStateImpl implements FlowState {
         boolean goingForward = newActivity > originalIndex;
         boolean goingBack = newActivity < originalIndex;
         int next = newActivity;
-        FlowActivity currentActivity = null;
+        FlowActivity currentActivity;
         boolean lastBeginAutoFinished;
         boolean canContinue;
         do {

@@ -100,7 +100,7 @@ public class TestFlowTranslatorResolver extends Assert {
         map.put(new Long(3), expected3);
 
         String serializedResult = (String) dataClassDefinition.serialize(null, map);
-        assertEquals(serializedResult.toString(), "{\"34\":[\"foo34\",\"bar34\"],\"3\":[\"foo3\",\"bar3\"]}");
+        assertEquals(serializedResult, "{\"34\":[\"foo34\",\"bar34\"],\"3\":[\"foo3\",\"bar3\"]}");
         Map<Long, List<String>> reMap = dataClassDefinition.deserialize(null, serializedResult);
         assertEquals(reMap.size(), 2);
         List<String> set34 = reMap.get(new Long(34));

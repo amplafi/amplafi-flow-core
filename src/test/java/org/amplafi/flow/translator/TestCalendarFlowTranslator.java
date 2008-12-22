@@ -39,10 +39,10 @@ public class TestCalendarFlowTranslator extends AbstractTestFlowTranslators {
     protected Object[][] getFlowTranslatorExpectations() {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.clear();
-        calendar.set(2008, 10, 9, 11, 57, 00);
+        calendar.set(2008, 10, 9, 11, 57, 0);
         Calendar calendar1 = Calendar.getInstance(TimeZone.getTimeZone("America/Los_Angeles"));
         calendar1.clear();
-        calendar1.set(2008, 10, 9, 11, 57, 00);
+        calendar1.set(2008, 10, 9, 11, 57, 0);
         return new Object[][] {
             new Object[] { calendar, "{\""+CalendarJsonRenderer.TIME_IN_MILLIS+"\":1226231820000,\""+CalendarJsonRenderer.TIMEZONE_ID+"\":\""+"GMT"+"\"}" },
             new Object[] { calendar1, "{\""+CalendarJsonRenderer.TIME_IN_MILLIS+"\":1226260620000,\""+CalendarJsonRenderer.TIMEZONE_ID+"\":\""+"America/Los_Angeles"+"\"}" },

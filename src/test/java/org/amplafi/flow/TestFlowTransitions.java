@@ -35,7 +35,7 @@ public class TestFlowTransitions {
         String returnToFlowLookupKey = null;
         definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
         BaseFlowManagement baseFlowManagement = getFlowManagement(flow);
-        FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, (Map<String, String>) null, returnToFlowLookupKey);
+        FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null, returnToFlowLookupKey);
 
         Map<String, FlowTransition> propValue = flowState.getCurrentActivity().getProperty(FSFLOW_TRANSITIONS);
         assertTrue( propValue.keySet().contains("foo"));
@@ -60,9 +60,9 @@ public class TestFlowTransitions {
         flow2.addActivity(fa2_1);
         Object returnToFlowLookupKey = true;
         BaseFlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);
-        FlowState flowState1 = baseFlowManagement.startFlowState(FLOW_TYPE_1, true, (Map<String, String>) null, returnToFlowLookupKey);
+        FlowState flowState1 = baseFlowManagement.startFlowState(FLOW_TYPE_1, true, null, returnToFlowLookupKey);
         assertEquals(flowState1.getCurrentPage(), defaultPage1);
-        FlowState flowState2 = baseFlowManagement.startFlowState(FLOW_TYPE_2, true, (Map<String, String>) null, true);
+        FlowState flowState2 = baseFlowManagement.startFlowState(FLOW_TYPE_2, true, null, true);
         String lookupKey1 = flowState2.getPropertyAsObject(FSRETURN_TO_FLOW);
         assertEquals(flowState2.getCurrentPage(), defaultPage2);
         assertEquals(flowState1.getLookupKey(), lookupKey1);

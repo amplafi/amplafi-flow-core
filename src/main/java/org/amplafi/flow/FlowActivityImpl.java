@@ -808,7 +808,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#setProperty(T)
+     * @see org.amplafi.flow.FlowActivity#setProperty(Object)
      */
     public <T> void setProperty(T value) {
         if (value == null) {
@@ -819,7 +819,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#setProperty(java.lang.Class, T)
+     * @see org.amplafi.flow.FlowActivity#setProperty(Class, Object) 
      */
     public <T> void setProperty(Class<? extends T> dataClass, T value) {
         setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);
