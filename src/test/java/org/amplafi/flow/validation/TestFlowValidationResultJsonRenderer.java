@@ -5,7 +5,7 @@
 package org.amplafi.flow.validation;
 
 import org.amplafi.flow.validation.FlowValidationResultJsonRenderer;
-import org.amplafi.flow.validation.FlowValidationTracking;
+import org.amplafi.flow.FlowValidationTracking;
 import org.amplafi.flow.validation.FlowValidationTrackingJsonRenderer;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONStringer;

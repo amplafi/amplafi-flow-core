@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.amplafi.flow.translator.CalendarFlowTranslator;
-import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.FlowTranslator;
 import org.amplafi.json.renderers.CalendarJsonRenderer;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

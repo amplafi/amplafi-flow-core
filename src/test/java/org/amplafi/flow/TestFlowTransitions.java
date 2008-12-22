@@ -10,9 +10,13 @@ import static org.testng.Assert.*;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.ShortFlowTranslator;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.BaseFlowManagement;
+import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.testng.annotations.Test;
 
 /**

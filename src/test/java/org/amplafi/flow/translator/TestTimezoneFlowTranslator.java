@@ -6,7 +6,7 @@ package org.amplafi.flow.translator;
 
 import java.util.TimeZone;
 
-import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.translator.TimezoneFlowTranslator;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

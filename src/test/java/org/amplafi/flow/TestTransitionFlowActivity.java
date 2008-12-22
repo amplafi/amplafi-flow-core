@@ -2,14 +2,12 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.BaseFlowManagement;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowDefinitionsManagerImpl;
-import org.amplafi.flow.FlowImpl;
+import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
+import org.amplafi.flow.impl.*;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.TransitionFlowActivity;
 import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.easymock.classextension.EasyMock;

@@ -7,7 +7,7 @@ package org.amplafi.flow;
 import org.amplafi.flow.FlowLifecycleState;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowStateImpl;
+import org.amplafi.flow.impl.FlowStateImpl;
 import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationResultJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationTrackingJsonRenderer;

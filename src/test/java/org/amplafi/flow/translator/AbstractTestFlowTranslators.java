@@ -4,11 +4,10 @@
  */
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
-import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Recreate the {@link FlowTranslator}s a bunch of times to make sure that
+ * Recreate the {@link org.amplafi.flow.FlowTranslator}s a bunch of times to make sure that
  * no state is passed between serialize and deserialize steps.
  *
  */
@@ -35,15 +34,15 @@ public abstract class AbstractTestFlowTranslators<T> {
     @DataProvider(name="flowTranslatorExpectations")
     protected abstract Object[][] getFlowTranslatorExpectations();
 
-    protected DataClassDefinition createDataClassDefinition() {
+    protected DataClassDefinitionImpl createDataClassDefinition() {
         FlowTranslator<T> flowTranslator = createFlowTranslator();
-        DataClassDefinition dataClassDefinition = new DataClassDefinition(flowTranslator.getTranslatedClass());
+        DataClassDefinitionImpl dataClassDefinition = new DataClassDefinitionImpl(flowTranslator.getTranslatedClass());
         dataClassDefinition.setFlowTranslator(flowTranslator);
         return dataClassDefinition;
     }
 
     protected FlowPropertyDefinition createFlowPropertyDefinition() {
-        return new FlowPropertyDefinition("foo", createDataClassDefinition());
+        return new FlowPropertyDefinitionImpl("foo", createDataClassDefinition());
     }
 
     @Test(dataProvider="flowTranslatorExpectations")

@@ -6,7 +6,9 @@ package org.amplafi.flow;
 
 import java.util.HashMap;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -24,7 +26,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testPositiveStateFlowMorphingPositive() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinition morphFlowFPD = new FlowPropertyDefinition(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
         fa1.addPropertyDefinition(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -60,7 +62,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testNegativeStateFlowMorphing() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinition morphFlowFPD = new FlowPropertyDefinition(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
         fa1.addPropertyDefinition(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -87,7 +89,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testNoCommonFAs() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinition morphFlowFPD = new FlowPropertyDefinition(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
         fa1.addPropertyDefinition(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -118,7 +120,7 @@ public class TestFlowStateMorphing {
     @Test(expectedExceptions = IllegalStateException.class)
     public void testFAsNotInOrder() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinition morphFlowFPD = new FlowPropertyDefinition(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
         fa1.addPropertyDefinition(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");

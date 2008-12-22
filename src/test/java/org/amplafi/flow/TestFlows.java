@@ -8,17 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowActivityImpl;
-import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowImpl;
-import org.amplafi.flow.FlowManagement;
-import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowStateImpl;
-import org.amplafi.flow.ServicesConstants;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -176,10 +169,10 @@ public class TestFlows {
     @Test
     public void testInitialValuesOnFlow() {
         Flow flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinition globalDef = new FlowPropertyDefinition(PROPERTY1);
+        FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl(PROPERTY1);
         globalDef.setInitial(INITIAL_VALUE);
         flow.addPropertyDefinition(globalDef);
-        FlowPropertyDefinition globalDef1 = new FlowPropertyDefinition(PROPERTY2);
+        FlowPropertyDefinitionImpl globalDef1 = new FlowPropertyDefinitionImpl(PROPERTY2);
         globalDef1.setInitial(INITIAL_VALUE);
         flow.addPropertyDefinition(globalDef1);
         // activity #0
@@ -190,7 +183,7 @@ public class TestFlows {
         flow.addActivity(activity);
         // activity #2
         activity = new FlowActivityImpl();
-        FlowPropertyDefinition localDef1 = new FlowPropertyDefinition(PROPERTY1);
+        FlowPropertyDefinitionImpl localDef1 = new FlowPropertyDefinitionImpl(PROPERTY1);
         activity.addPropertyDefinition(localDef1);
         flow.addActivity(activity);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -215,7 +208,7 @@ public class TestFlows {
         String returnToFlowLookupKey = null;
         Map<String, String> initialFlowState = new HashMap<String, String>();
         Flow flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinition definition = new FlowPropertyDefinition("foo", Long.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Long.class);
         flow.addPropertyDefinition(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
         flow.addActivity(fa1);
@@ -239,10 +232,10 @@ public class TestFlows {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
                 "foo", SampleEnum.EXTERNAL);
         Flow flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinition definition = new FlowPropertyDefinition("foo", SampleEnum.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
         flow.addPropertyDefinition(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
-        definition = new FlowPropertyDefinition("fa1", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
+        definition = new FlowPropertyDefinitionImpl("fa1", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
         fa1.addPropertyDefinition(definition);
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();

@@ -6,14 +6,11 @@ package org.amplafi.flow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.FlowDefinitionsManagerImpl;
-import org.amplafi.flow.FlowImpl;
-import org.amplafi.flow.FlowState;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
+import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
 import org.amplafi.flow.translator.ShortFlowTranslator;
 
 

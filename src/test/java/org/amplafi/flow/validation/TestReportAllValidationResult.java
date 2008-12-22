@@ -1,7 +1,7 @@
 package org.amplafi.flow.validation;
 
 import org.amplafi.flow.validation.ExceptionTracking;
-import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.flow.validation.MismatchTracking;
 import org.amplafi.flow.validation.MissingRequiredTracking;

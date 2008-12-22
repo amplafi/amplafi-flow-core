@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.amplafi.flow.flowproperty.DataClassDefinition;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinition;
-import org.amplafi.flow.flowproperty.PropertyRequired;
+import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.PropertyRequired;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
-import org.amplafi.flow.translator.FlowTranslatorResolver;
+import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.ListFlowTranslator;
 import org.amplafi.flow.translator.LongFlowTranslator;
 import org.amplafi.flow.translator.MapFlowTranslator;
@@ -48,12 +49,12 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     public void testResolvingClassWithCollections() {
 
-        DataClassDefinition dataClassDefinition = new DataClassDefinition(Long.class, Set.class);
+        DataClassDefinitionImpl dataClassDefinition = new DataClassDefinitionImpl(Long.class, Set.class);
         getFlowTranslatorResolver().resolve(dataClassDefinition);
         assertEquals(dataClassDefinition.getDataClass(), Set.class);
         assertNotNull(dataClassDefinition.getFlowTranslator());
         assertTrue(dataClassDefinition.getFlowTranslator() instanceof SetFlowTranslator, dataClassDefinition.getFlowTranslator().toString());
-        DataClassDefinition elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
+        DataClassDefinitionImpl elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
         assertNotNull(elementDataClassDefinition);
         assertEquals(elementDataClassDefinition.getDataClass(), Long.class);
         assertNotNull(elementDataClassDefinition.getFlowTranslator());
@@ -69,7 +70,7 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testResolvingClassWithMaps() {
-        DataClassDefinition dataClassDefinition = DataClassDefinition.map(Long.class, String.class, List.class);
+        DataClassDefinitionImpl dataClassDefinition = DataClassDefinitionImpl.map(Long.class, String.class, List.class);
         getFlowTranslatorResolver().resolve(dataClassDefinition);
 
         assertEquals(dataClassDefinition.getDataClass(), Map.class);
@@ -77,7 +78,7 @@ public class TestFlowTranslatorResolver extends Assert {
         assertTrue(dataClassDefinition.getFlowTranslator() instanceof MapFlowTranslator, dataClassDefinition.getFlowTranslator().toString());
 
         // look at the map's values
-        DataClassDefinition elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
+        DataClassDefinitionImpl elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
         assertNotNull(elementDataClassDefinition);
         assertEquals(elementDataClassDefinition.getDataClass(), List.class);
         assertNotNull(elementDataClassDefinition.getFlowTranslator());
@@ -110,7 +111,7 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testListCollectionHandling() throws Exception {
-        FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, List.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, List.class);
         getFlowTranslatorResolver().resolve(definition);
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV =definition.serialize(list);
@@ -122,7 +123,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
-        FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, Set.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Set.class);
         getFlowTranslatorResolver().resolve(definition);
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV =definition.serialize(set);
@@ -134,7 +135,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
-        FlowPropertyDefinition definition = new FlowPropertyDefinition(URI, URI.class, PropertyRequired.advance, Map.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Map.class);
         getFlowTranslatorResolver().resolve(definition);
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));
@@ -152,14 +153,16 @@ public class TestFlowTranslatorResolver extends Assert {
      */
     @Test(enabled=false) // for now #2179, #2192 forces these to be defined in FlowImpl
     public void testMergingWithStandardFlowPropertyDefinition() throws Exception {
-        FlowPropertyDefinition flowPropertyDefinition = new FlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
+        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL);
         assertEquals(flowPropertyDefinition.getDataClass(), String.class);
-        FlowPropertyDefinition standardFlowPropertyDefinition = this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
+        FlowPropertyDefinition standardFlowPropertyDefinition =
+                this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
         assertEquals(standardFlowPropertyDefinition.getDataClass(), boolean.class);
         getFlowTranslatorResolver().resolve(flowPropertyDefinition);
         assertEquals(flowPropertyDefinition.getDataClass(), boolean.class);
         assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
-        standardFlowPropertyDefinition = this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
+        standardFlowPropertyDefinition =
+                this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
         assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
     }
 }
