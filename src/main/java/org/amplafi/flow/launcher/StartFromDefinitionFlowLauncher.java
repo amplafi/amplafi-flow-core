@@ -135,6 +135,13 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
             addAll(this.initialValues, initialValues.iterator());
         }
     }
+    public void addInitialValues(Iterable<String> initialValues) {
+        if ( isEmpty(this.initialValues)) {
+            setInitialValues(initialValues);
+        } else if ( initialValues != null ) {
+            addAll(this.initialValues, initialValues.iterator());
+        }
+    }
     public Iterable<String> getInitialValues() {
         return initialValues;
     }
