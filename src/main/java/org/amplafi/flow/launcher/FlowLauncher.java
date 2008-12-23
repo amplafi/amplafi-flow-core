@@ -39,4 +39,19 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      * @return map of initial parameters that will be set to the {@link FlowState} of the {@link Flow} to launch.
      */
     public Map<String,String> getInitialFlowState();
+
+    /**
+     * add to the flow values Map if the key does not exist.
+     * @param key
+     * @param defaultValue
+     * @return the previous value.
+     */
+    public String putIfAbsent(String key, String defaultValue);
+    /**
+     * add to the flow values Map
+     * @param key
+     * @param defaultValue
+     * @return the previous value
+     */
+    public String put(String key, String value);
 }

@@ -20,17 +20,16 @@ public class ContinueFlowLauncher extends BaseFlowLauncher {
     private static final long serialVersionUID = -1221490458104629351L;
     private String lookupKey;
     private String flowTypeName;
-    private Map<String, String> changesToFlowState;
 
     public ContinueFlowLauncher() {
 
     }
     public ContinueFlowLauncher(String lookupKey, FlowManagement flowManagement) {
-        super(flowManagement);
+        super(flowManagement, null);
         this.lookupKey = lookupKey;
     }
     public ContinueFlowLauncher(FlowState flowState, FlowManagement flowManagement) {
-        super(flowManagement);
+        super(flowManagement, null);
         this.lookupKey = flowState.getLookupKey();
         this.flowTypeName = flowState.getFlowTypeName();
     }
@@ -46,7 +45,7 @@ public class ContinueFlowLauncher extends BaseFlowLauncher {
      * @return the flow that was continued
      */
     public FlowState call() {
-        return getFlowManagement().continueFlowState(lookupKey, true, this.changesToFlowState);
+        return getFlowManagement().continueFlowState(lookupKey, true, this.getValuesMap());
     }
     public String getFlowLabel() {
         if ( getFlowState() == null ) {
@@ -83,11 +82,4 @@ public class ContinueFlowLauncher extends BaseFlowLauncher {
     public Map<String, String> getInitialFlowState() {
         return getFlowState().getFlowValuesMap();
     }
-    public void setChangesToFlowState(Map<String, String> changesToFlowState) {
-        this.changesToFlowState = changesToFlowState;
-    }
-    public Map<String, String> getChangesToFlowState() {
-        return changesToFlowState;
-    }
-
 }

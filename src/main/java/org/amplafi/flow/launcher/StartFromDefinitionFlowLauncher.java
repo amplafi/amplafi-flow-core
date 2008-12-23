@@ -23,7 +23,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
     private static final long serialVersionUID = 7909909329479094947L;
     private String flowTypeName;
     private String flowLabel;
-    private Map<String, String> initialFlowState;
     /**
      * Used for Listable items.
      */
@@ -44,9 +43,8 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
 
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
             FlowManagement flowManagement, Object keyExpression) {
-        super(flowManagement);
+        super(flowManagement, initialFlowState);
         this.flowTypeName = flowTypeName;
-        this.initialFlowState = initialFlowState;
         this.keyExpression = keyExpression;
     }
     /**
@@ -63,9 +61,8 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
     */
     public StartFromDefinitionFlowLauncher(String flowTypeName, Object propertyRoot, Iterable<String> initialValues,
             FlowManagement flowManagement, Object keyExpression) {
-        super(flowManagement);
+        super(flowManagement, null);
         this.flowTypeName = flowTypeName;
-        this.initialFlowState = null;
         this.setInitialValues(initialValues);
         this.keyExpression = keyExpression;
         this.propertyRoot = propertyRoot;
@@ -77,7 +74,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
         if(this.initialValues != null && !this.initialValues.isEmpty()) {
             flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, propertyRoot, initialValues, getReturnToFlowLookupKey());
         } else {
-            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, this.initialFlowState, getReturnToFlowLookupKey());
+            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, this.getValuesMap(), getReturnToFlowLookupKey());
         }
         return flowState;
     }
@@ -119,10 +116,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
         return this.keyExpression.equals(key);
     }
 
-    @Override
-    public Map<String, String> getInitialFlowState() {
-        return initialFlowState;
-    }
     public void setPropertyRoot(Object propertyRoot) {
         this.propertyRoot = propertyRoot;
     }
@@ -148,6 +141,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
 
     @Override
     public String toString() {
-        return "StartFromDefinitionFlowLauncher :" +this.flowTypeName+ " initialValues="+initialFlowState;
+        return "StartFromDefinitionFlowLauncher :" +this.flowTypeName+ " initialValues="+getValuesMap();
     }
 }
