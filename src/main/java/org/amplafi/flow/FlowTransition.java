@@ -2,6 +2,10 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
+import org.amplafi.flow.launcher.ContinueFlowLauncher;
+import org.amplafi.flow.launcher.FlowLauncher;
+import org.amplafi.flow.launcher.MorphFlowLauncher;
+import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
@@ -22,6 +26,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
     private static final String TRANSITION_TYPE = "transitionType";
 
     private static final String NEXT_FLOW = "nextFlow";
+    private static final String NEXT_FLOW_TYPE = "nextFlowType";
 
     private static final String LABEL = "label";
     private static final String KEY = "key";
@@ -31,6 +36,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
     private String label;
 
     private String nextFlow;
+    private String nextFlowType;
 
     private TransitionType transitionType;
 
@@ -44,18 +50,18 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
     }
     /**
      * the transition key will be nextFlow
-     * @param nextFlow the type of the next flow to be executed.
+     * @param nextFlowType the type of the next flow to be executed.
      * @param label
      * @param transitionType
      * @param initialValues
      */
-    public FlowTransition(String nextFlow, String label, TransitionType transitionType, Map<String, String> initialValues) {
-        this(nextFlow, nextFlow, label, transitionType, initialValues);
+    public FlowTransition(String nextFlowType, String label, TransitionType transitionType, Map<String, String> initialValues) {
+        this(nextFlowType, nextFlowType, label, transitionType, initialValues);
     }
-    public FlowTransition(String transitionKey, String nextFlow, String label, TransitionType transitionType, Map<String, String> initialValues) {
+    public FlowTransition(String transitionKey, String nextFlowType, String label, TransitionType transitionType, Map<String, String> initialValues) {
         this.key = isBlank(transitionKey)?transitionType.toString():transitionKey;
         this.label = label;
-        this.nextFlow = nextFlow;
+        this.nextFlowType = nextFlowType;
         this.setTransitionType(transitionType);
         this.initialValues = initialValues;
     }
@@ -72,6 +78,13 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
         this.nextFlow = nextFlow;
     }
 
+    public String getNextFlowType() {
+        return nextFlowType;
+    }
+
+    public void setNextFlowType(String nextFlowType) {
+        this.nextFlowType = nextFlowType;
+    }
     public String getLabel() {
         return label;
     }
@@ -95,6 +108,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
         this.key = json.optString(KEY);
         this.label = json.optString(LABEL);
         this.nextFlow = json.optString(NEXT_FLOW);
+        this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
         this.transitionType = json.opt(TRANSITION_TYPE);
         this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
         return (T) this;
@@ -106,6 +120,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
         jsonWriter.keyValueIfNotNullValue(KEY, getKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());
         jsonWriter.keyValueIfNotNullValue(NEXT_FLOW, getNextFlow());
+        jsonWriter.keyValueIfNotNullValue(NEXT_FLOW_TYPE, getNextFlowType());
         jsonWriter.keyValue(TRANSITION_TYPE, transitionType);
         jsonWriter.keyValue(INITIAL_VALUES, getInitialValues());
         jsonWriter.endObject();
@@ -130,6 +145,21 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
      */
     public TransitionType getTransitionType() {
         return transitionType;
+    }
+
+    public FlowLauncher getFlowLauncher(FlowState flowState) {
+        FlowActivityImplementor flowActivity = flowState.getCurrentActivity();
+        FlowLauncher flowLauncher = null;
+        String resolvedNextFlow = flowActivity.resolve(getNextFlow());
+        String resolvedNextFlowType = flowActivity.resolve(getNextFlowType());
+        if ( isMorphingFlow()) {
+            flowLauncher = new MorphFlowLauncher(resolvedNextFlowType, resolvedNextFlow, flowActivity.getFlowManagement());
+        } else if ( resolvedNextFlow != null) {
+            flowLauncher = new ContinueFlowLauncher(resolvedNextFlow, flowActivity.getFlowManagement());
+        } else if ( resolvedNextFlowType != null) {
+            flowLauncher = new StartFromDefinitionFlowLauncher(resolvedNextFlowType, flowActivity.getFlowManagement());
+        }
+        return flowLauncher;
     }
     /**
      * @return true if causes flow to morph

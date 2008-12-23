@@ -281,7 +281,7 @@ public class BaseFlowManagement implements FlowManagement {
      * Used to map object properties into flowState values.
      * <p/>
      * TODO: current implementation ignores lookup and just returns the root object.
-     *  
+     *
      * @param root the root object.
      * @param lookup the property 'path' that will result in the value to be assigned.
      * For example, 'bar.foo' will look for a 'bar' property in the "current" object.

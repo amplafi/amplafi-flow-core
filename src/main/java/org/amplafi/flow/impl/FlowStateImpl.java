@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.*;
@@ -268,10 +269,11 @@ public class FlowStateImpl implements FlowState {
         FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this);
         int size = this.getActivities().size();
         for (int i = 0; i < size; i++) {
-            FlowState returned = getActivity(i).finishFlow(currentNextFlowState);
+            FlowActivity activity = getActivity(i);
+            FlowState returned = activity.finishFlow(currentNextFlowState);
             // avoids lose track of FlowState if another FA is later in the Flow
             // definition.
-            if (returned != null) {
+            if (returned != null && currentNextFlowState != returned) {
                 currentNextFlowState = returned;
             }
         }
@@ -407,31 +409,34 @@ public class FlowStateImpl implements FlowState {
             this.setFlowLifecycleState(nextFlowLifecycleState);
             boolean success = false;
             try {
+                // getting continueWithFlow should use FlowLauncher more correctly.
                 continueWithFlow = finishFlowActivities();
                 success = true;
             } finally {
                 this.setCurrentActivityByName(null);
                 clearCache();
-                // if continueWithFlow is not null then we do not want start
-                // any other flows except continueWithFlow. Autorun flows should
-                // start only if we have no flow specified by the finishingActivity. This
-                // caused bad UI behavior when we used TransitionFlowActivity to start new
-                // flow.
-                boolean newFlowActive = continueWithFlow != null;
-                if (success) {
-                    pageName = getFlowManagement().completeFlowState(this, newFlowActive);
-                } else {
+                if (!success) {
                     getFlowManagement().dropFlowState(this);
                 }
             }
+            // OLD note but may still be valid:
+            // if continueWithFlow is not null then we do not want start
+            // any other flows except continueWithFlow. Autorun flows should
+            // start only if we have no flow specified by the finishingActivity. This
+            // caused bad UI behavior when we used TransitionFlowActivity to start new
+            // flow.
             // make sure that don't get into trouble by a finishFlow that
             // returns the current FlowState.
-            if (continueWithFlow != null && continueWithFlow != this) {
+            if (continueWithFlow == null || continueWithFlow == this) {
+                pageName = getFlowManagement().completeFlowState(this, false);
+            } else {
                 // pass on the return flow.
                 String returnToFlow = this.getPropertyAsObject(FSRETURN_TO_FLOW);
                 if ( isNotBlank(returnToFlow)) {
                     continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
                 }
+                this.setProperty(FSRETURN_TO_FLOW, null);
+                pageName = getFlowManagement().completeFlowState(this, true);
                 if (!continueWithFlow.isActive()) {
                     pageName = continueWithFlow.begin();
                 } else if (!continueWithFlow.isCompleted()) {

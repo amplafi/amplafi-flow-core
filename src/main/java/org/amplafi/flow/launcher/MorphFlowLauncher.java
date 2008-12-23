@@ -17,21 +17,31 @@ public class MorphFlowLauncher extends BaseFlowLauncher {
 
     private String flowLabel;
 
-    public MorphFlowLauncher(String flowTypeName, FlowManagement flowManagement) {
-        this(flowTypeName, null, flowManagement);
+    private String lookupKey;
+
+    public MorphFlowLauncher(String flowTypeName, String lookupKey, FlowManagement flowManagement) {
+        this(flowTypeName, lookupKey, null, flowManagement);
     }
 
-    public MorphFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
-            FlowManagement flowManagement) {
+    public MorphFlowLauncher(String flowTypeName, String lookupKey,
+            Map<String, String> initialFlowState, FlowManagement flowManagement) {
         super(flowManagement, initialFlowState);
         this.flowTypeName = flowTypeName;
+        this.lookupKey = lookupKey;
     }
 
     @Override
     public FlowState call() {
-        FlowState currentFlowState = getFlowManagement().getCurrentFlowState();
+        FlowState currentFlowState = getFlowState();
         currentFlowState.morphFlow(flowTypeName, getValuesMap());
         return currentFlowState;
+    }
+
+    /**
+     * @return
+     */
+    public FlowState getFlowState() {
+        return getFlowManagement().getFlowState(lookupKey);
     }
 
 

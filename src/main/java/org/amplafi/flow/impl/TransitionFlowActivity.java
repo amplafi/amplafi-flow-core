@@ -86,8 +86,9 @@ public class TransitionFlowActivity extends FlowActivityImpl {
 //                    this.setFsFlowTransitionLabel(this.getFlowManagement().getFlowDefinition(getNextFlowType()).getLinkTitle());
 //                }
 //            }
+            // HACK should really have FlowTransitions return a getFlowLauncher()
             this.handleFlowPropertyValueProvider(FSFLOW_TRANSITIONS,
-                new AddToMapFlowPropertyValueProvider<String, FlowTransition>(new FlowTransition(getFinishKey(), getNextFlowType(), getFsFlowTransitionLabel(), transitionType, null)));
+                new AddToMapFlowPropertyValueProvider<String, FlowTransition>(new FlowTransition(getFinishKey(), null, getFsFlowTransitionLabel(), transitionType, null)));
         }
     }
     /**
@@ -115,7 +116,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
     }
 
     /**
-     *
+     * HACK should really have FlowTransitions do the work.
      * @return the now current FlowState.
      */
     @Override
