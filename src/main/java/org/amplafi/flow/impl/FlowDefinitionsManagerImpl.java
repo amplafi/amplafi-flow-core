@@ -68,6 +68,9 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      */
     @Override
     public Flow getFlowDefinition(String flowTypeName) {
+        if ( flowTypeName == null) {
+            throw new IllegalArgumentException("null flowTypeName");
+        }
         Flow flow = this.getFlowDefinitions().get(flowTypeName);
         if (flow==null) {
             throw new FlowValidationException("flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
