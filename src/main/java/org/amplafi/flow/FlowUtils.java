@@ -91,7 +91,7 @@ public class FlowUtils {
      * @param values the list in which to include the key value pairs
      * @param keyValues the key value pairs
      */
-    public static void addInitialValues(List<String> values, Object... keyValues) {
+    public void addInitialValues(List<String> values, Object... keyValues) {
         for(int i = 0; i < keyValues.length; i+=2) {
             if ( keyValues[i] != null) {
                 values.add(keyValues[i].toString()+"='"+ObjectUtils.toString(keyValues[i+1])+"'");
