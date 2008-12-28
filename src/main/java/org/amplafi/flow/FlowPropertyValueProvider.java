@@ -10,6 +10,7 @@ package org.amplafi.flow;
  *
  * TODO hook this in some how with the FlowPropertyBinding use of @Parameter(defaultValue="")
  * @author patmoore
+ * @param <FA> extends {@link FlowActivity}.
  *
  */
 public interface FlowPropertyValueProvider<FA extends FlowActivity> {

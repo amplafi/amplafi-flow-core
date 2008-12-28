@@ -19,7 +19,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
-public class FlowTransition implements JsonSelfRenderer, MapKeyProvider {
+public class FlowTransition implements JsonSelfRenderer, MapKeyProvider<String> {
 
     private static final String INITIAL_VALUES = "initialValues";
 

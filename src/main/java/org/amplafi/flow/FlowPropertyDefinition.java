@@ -44,6 +44,7 @@ public interface FlowPropertyDefinition {
     String getParameterName();
 
     PropertyRequired getPropertyRequired();
+    void setPropertyRequired(PropertyRequired propertyRequired);
 
     boolean isSaveBack();
 

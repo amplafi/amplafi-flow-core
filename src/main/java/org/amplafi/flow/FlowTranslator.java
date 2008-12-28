@@ -32,6 +32,7 @@ public interface FlowTranslator <T>{
      * @param dataClassDefinition TODO
      * @param jsonWriter write a version of an object.
      * @param object
+     * @return the jsonWriter.
      */
     public JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, T object);
 

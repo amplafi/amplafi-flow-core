@@ -6,15 +6,10 @@ import org.amplafi.json.JSONWriter;
  * @author Andreas Andreou
  */
 public interface DataClassDefinition {
-    Class<?> getDataClass();
 
     DataClassDefinition getKeyDataClassDefinition();
 
     DataClassDefinition getElementDataClassDefinition();
-
-    boolean isFlowTranslatorSet();
-
-    void setFlowTranslator(FlowTranslator flowTranslator);
 
     <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value);
 
@@ -23,4 +18,37 @@ public interface DataClassDefinition {
 
     @SuppressWarnings("unchecked")
     <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value);
+
+    /**
+     * @return the flowTranslator
+     */
+    FlowTranslator getFlowTranslator();
+    void setFlowTranslator(FlowTranslator flowTranslator);
+    boolean isFlowTranslatorSet();
+
+    /**
+     * @return the element class (after unpeeling all the collection )
+     */
+    Class<?> getElementClass();
+
+    /**
+     * @return
+     */
+    Class<? extends Object> getCollection();
+
+    /**
+     * @return
+     */
+    boolean isDataClassDefined();
+    /**
+     * @param dataClass
+     */
+    void setDataClass(Class<? extends Object> dataClass);
+    Class<?> getDataClass();
+
+    /**
+     * @return
+     */
+    boolean isCollection();
+
 }
