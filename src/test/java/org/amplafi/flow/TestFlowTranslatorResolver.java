@@ -54,7 +54,7 @@ public class TestFlowTranslatorResolver extends Assert {
         assertEquals(dataClassDefinition.getDataClass(), Set.class);
         assertNotNull(dataClassDefinition.getFlowTranslator());
         assertTrue(dataClassDefinition.getFlowTranslator() instanceof SetFlowTranslator, dataClassDefinition.getFlowTranslator().toString());
-        DataClassDefinitionImpl elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
+        DataClassDefinition elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
         assertNotNull(elementDataClassDefinition);
         assertEquals(elementDataClassDefinition.getDataClass(), Long.class);
         assertNotNull(elementDataClassDefinition.getFlowTranslator());
@@ -78,7 +78,7 @@ public class TestFlowTranslatorResolver extends Assert {
         assertTrue(dataClassDefinition.getFlowTranslator() instanceof MapFlowTranslator, dataClassDefinition.getFlowTranslator().toString());
 
         // look at the map's values
-        DataClassDefinitionImpl elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
+        DataClassDefinition elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
         assertNotNull(elementDataClassDefinition);
         assertEquals(elementDataClassDefinition.getDataClass(), List.class);
         assertNotNull(elementDataClassDefinition.getFlowTranslator());

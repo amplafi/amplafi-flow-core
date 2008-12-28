@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
-import org.amplafi.json.MapByClass;
 import org.apache.commons.collections.MapUtils;
+
+import com.sworddance.beans.MapByClass;
 
 
 import static org.apache.commons.collections.CollectionUtils.*;

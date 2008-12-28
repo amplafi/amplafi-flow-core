@@ -50,7 +50,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
     /**
      * add to the flow values Map
      * @param key
-     * @param defaultValue
+     * @param value
      * @return the previous value
      */
     public String put(String key, String value);
