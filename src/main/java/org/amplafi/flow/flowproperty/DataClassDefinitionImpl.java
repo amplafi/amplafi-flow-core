@@ -198,6 +198,10 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
     public Class<?> getCollection() {
         return this.isCollection()?this.getDataClass():null;
     }
+
+    public Class<?> getElementClass() {
+        return this.isCollection()?this.getElementDataClassDefinition().getElementClass():this.getDataClass();
+    }
     /**
      * @param dataClass the dataClass to set
      */
@@ -250,7 +254,7 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
     /**
      * @return the keyDataClassDefinition
      */
-    public DataClassDefinitionImpl getKeyDataClassDefinition() {
+    public DataClassDefinition getKeyDataClassDefinition() {
         if ( keyDataClassDefinition != null) {
             return keyDataClassDefinition;
         } else if ( isMap() ){
@@ -268,7 +272,7 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
     /**
      * @return the elementDataClassDefinition
      */
-    public DataClassDefinitionImpl getElementDataClassDefinition() {
+    public DataClassDefinition getElementDataClassDefinition() {
         if ( elementDataClassDefinition != null ) {
             return elementDataClassDefinition;
         } else if ( isCollection()){

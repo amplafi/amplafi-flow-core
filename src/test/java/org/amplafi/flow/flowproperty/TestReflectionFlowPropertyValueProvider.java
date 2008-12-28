@@ -23,16 +23,16 @@ public class TestReflectionFlowPropertyValueProvider extends Assert {
         Integer age2 = get(you, "age");
         assertEquals(age2.intValue(), 7);
 
-        assertEquals(get(you, "friend", "name"), "me");
+        assertEquals(get(you, "friend.name"), "me");
 
-        assertNull(get(me, "friend", "name"));
+        assertNull(get(me, "friend.name"));
     }
 
     private <T> T get(Object object, String... properties) {
         return (T)new ReflectionFlowPropertyValueProvider(object, properties).get(null, null);
     }
 
-    private class User {
+    public class User {
         private String name;
         private int age;
         private User friend;

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.*;
 import org.amplafi.json.JsonSelfRenderer;
 import org.apache.commons.lang.ObjectUtils;
@@ -149,7 +148,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     public FlowPropertyDefinitionImpl(String name) {
         dataClassDefinition = new DataClassDefinitionImpl();
         this.setName(name);
-        this.dataClassDefinition.setFlowTranslator(new CharSequenceFlowTranslator());
     }
 
     /**
@@ -236,11 +234,14 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
                 } catch (FlowException e1) {
                 }
             }
-            if (value == null && flowPropertyValueProvider != null) {
-                value = flowPropertyValueProvider.get(flowActivity, this);
-            }
-            if ( value == null ) {
-                value = this.dataClassDefinition.getFlowTranslator().getDefaultObject(flowActivity);
+            if (value == null) {
+                if ( flowPropertyValueProvider != null) {
+                    value = flowPropertyValueProvider.get(flowActivity, this);
+                } else {
+                    // TODO -- may still want to call this if flowPropertyValueProvider returns null.
+                    // for example the property type is a primitive.
+                    value = this.dataClassDefinition.getFlowTranslator().getDefaultObject(flowActivity);
+                }
             }
             // TODO -- do we want to set the default object? or recalculate it each time?
             // might be important if the default object is to get modified or if a FPD is shared.
@@ -404,6 +405,13 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         if (isDefaultAvailable()) {
             return true;
         }
+        return isDefaultByClassAvailable();
+    }
+
+    /**
+     * @return
+     */
+    private boolean isDefaultByClassAvailable() {
         if ( autoCreate != null) {
             return getBoolean(autoCreate);
         }
