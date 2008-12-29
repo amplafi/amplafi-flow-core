@@ -33,10 +33,11 @@ public interface FlowActivity {
      * {@link FlowConstants#FSAUTO_COMPLETE} = true and
      * {@link #getFlowValidationResult()} {@link FlowValidationResult#isValid()}
      * = true.
+     * @param flowStepDirection TODO
      *
      * @return if true, immediately complete this FlowActivity.
      */
-    public boolean activate();
+    public boolean activate(FlowStepDirection flowStepDirection);
 
     /**
      * Passivate this flow activity. This method is invoked whenever the flow
@@ -47,9 +48,10 @@ public interface FlowActivity {
      *
      * @param verifyValues verify the current values that the FlowActivity is
      *        concerned about.
+     * @param flowStepDirection TODO
      * @return the {@link FlowValidationResult} if verifyValues is true otherwise an empty {@link FlowValidationResult} object.
      */
-    public FlowValidationResult passivate(boolean verifyValues);
+    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
 
     /**
      * called when changes accumulated to flow properties should be saved
@@ -214,7 +216,7 @@ public interface FlowActivity {
     public <T> void setProperty(Class<? extends T> dataClass, T value);
 
     /**
-     * Called before a flow is {@link #passivate(boolean)} also called if the flow is not
+     * Called before a flow is {@link #passivate(boolean, FlowStepDirection)} also called if the flow is not
      * advancing but wants to inform the current FlowActivity that all the
      * values from the UI have been refreshed so the FlowActivity can do any
      * in-place updates. This can be used for the rare case when it is desireable

@@ -138,6 +138,8 @@ public class TestFlows {
 
     /**
      * Test for hasVisibleNext and hasVisiblePrevious of FlowState when there are invisibles.
+     *
+     * Also test when invisible is turned on/off during the flow.
      */
     @Test
     public void testVisiblePreviousNextWithHidden() {
@@ -160,6 +162,7 @@ public class TestFlows {
         FlowState fs = new FlowStateImpl(FLOW_TYPE, flowManagement);
         fs.begin();
 
+        assertEquals(fs.getCurrentActivityIndex(), 1);
         assertTrue(fs.hasNext());
         assertFalse(fs.hasVisibleNext());
         assertTrue(fs.hasPrevious());

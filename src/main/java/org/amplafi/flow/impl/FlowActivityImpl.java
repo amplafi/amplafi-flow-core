@@ -43,11 +43,11 @@ import org.apache.commons.logging.LogFactory;
  * <li>{@link #initializeFlow()} - used to initialize the FlowState with any
  * defaults for missing values. <b>No</b> modifications should occur in this
  * method.</li>
- * <li>{@link #activate()} - called each time the FlowActivityImpl is made the
+ * <li>{@link #activate(FlowStepDirection)} - called each time the FlowActivityImpl is made the
  * current FlowActivityImpl. Returns true if the Flow should immediately advance to
  * the next FlowActivityImpl. If this is the last FlowActivityImpl, then the Flow
  * completes. <b>No</b> modifications should occur in this method.</li>
- * <li>{@link #passivate(boolean)} - called each time the FlowActivityImpl was the
+ * <li>{@link #passivate(boolean, FlowStepDirection)} - called each time the FlowActivityImpl was the
  * current FlowActivityImpl and is now no longer the current FlowActivityImpl. Used to
  * validate input as needed. <b>No</b> modifications should occur in this
  * method.</li>
@@ -149,7 +149,8 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
             new FlowPropertyDefinitionImpl(FATITLE_TEXT).initPropertyUsage(activityLocal),
             new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
             new FlowPropertyDefinitionImpl(FANEXT_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initPropertyUsage(activityLocal)
+            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initPropertyUsage(activityLocal),
+            new FlowPropertyDefinitionImpl(FAINVISIBLE).initPropertyUsage(activityLocal)
         );
     }
 
@@ -197,16 +198,16 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#activate()
+     * @see org.amplafi.flow.FlowActivity#activate(FlowStepDirection)
      */
-    public boolean activate() {
+    public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
         FlowValidationResult activationValidationResult = getFlowValidationResult(PropertyRequired.activate);
         if (!activationValidationResult.isValid()) {
             throw new FlowValidationException(activationValidationResult);
         }
 
-        if (!invisible) {
+        if (!isInvisible()) {
             boolean autoComplete = isTrue(FSAUTO_COMPLETE);
             if (autoComplete) {
                 FlowValidationResult flowValidationResult = getFlowValidationResult();
@@ -219,9 +220,9 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#passivate(boolean)
+     * @see org.amplafi.flow.FlowActivity#passivate(boolean, FlowStepDirection)
      */
-    public FlowValidationResult passivate(boolean verifyValues) {
+    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         if (verifyValues) {
             FlowValidationResult validationResult = getFlowValidationResult();
             return validationResult;
@@ -528,6 +529,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#setInvisible(boolean)
      */
     public void setInvisible(boolean invisible) {
+        this.setProperty(FAINVISIBLE, invisible);
         this.invisible = invisible;
     }
 
@@ -535,7 +537,11 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#isInvisible()
      */
     public boolean isInvisible() {
-        return invisible;
+        if (isPropertyNotSet(FAINVISIBLE)) {
+            return invisible;
+        } else {
+            return isTrue(FAINVISIBLE);
+        }
     }
 
     /**
@@ -797,11 +803,13 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     public <T> void setProperty(String key, T value) {
         Class<T> expected = (Class<T>) (value == null?null:value.getClass());
-        FlowPropertyDefinition propertyDefinition = getPropertyDefinition(key);
-        if (propertyDefinition == null && getFlowState() != null) {
-            propertyDefinition = getFlowState().createFlowPropertyDefinition(key, expected, value);
+        if ( getFlowState() != null) {
+            FlowPropertyDefinition propertyDefinition = getPropertyDefinition(key);
+            if (propertyDefinition == null ) {
+                propertyDefinition = getFlowState().createFlowPropertyDefinition(key, expected, value);
+            }
+            getFlowState().setProperty(this, propertyDefinition, value);
         }
-        getFlowState().setProperty(this, propertyDefinition, value);
     }
 
     /**
@@ -816,7 +824,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#setProperty(Class, Object) 
+     * @see org.amplafi.flow.FlowActivity#setProperty(Class, Object)
      */
     public <T> void setProperty(Class<? extends T> dataClass, T value) {
         setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);

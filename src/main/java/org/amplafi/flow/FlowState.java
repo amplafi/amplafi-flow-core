@@ -19,7 +19,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     /**
      * Start the FlowState. Call each FlowActivity's initializeFlow(). Then
      * starting with the first FlowActivity, activate the FlowActivity by
-     * calling {@link FlowActivity#activate()} until reaching a
+     * calling {@link FlowActivity#activate(FlowStepDirection)} until reaching a
      * {@link FlowActivity} that returns false or the flow has been completed.
      *
      * @return the page to be displayed after this flow has completed its
@@ -29,7 +29,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     /**
      * If this flow is not completed then we resume this flow by calling the
-     * {@link #getCurrentActivity()}'s {@link FlowActivity#activate()}. If that
+     * {@link #getCurrentActivity()}'s {@link FlowActivity#activate(FlowStepDirection)}. If that
      * method returns true, we then advance through the flow. If the Flow has
      * not been started then resume() calls {@link #begin()}
      *
@@ -322,9 +322,10 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @param verifyValues if true, verifies the values that the current flow activity
      * is interested in.
-     * @return result from {@link FlowActivity#passivate(boolean)}
+     * @param flowStepDirection TODO
+     * @return result from {@link FlowActivity#passivate(boolean, FlowStepDirection)}
      */
-    public FlowValidationResult passivate(boolean verifyValues);
+    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
 
     public <T> FlowPropertyDefinition getFlowPropertyDefinition(String key);
 

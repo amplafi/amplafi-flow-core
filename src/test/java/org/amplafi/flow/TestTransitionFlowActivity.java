@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.impl.*;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
@@ -27,7 +26,7 @@ public class TestTransitionFlowActivity extends Assert {
     }
 
     /**
-     * Test to make sure that a {@link TransitionFlowActivity} returns true in {@link TransitionFlowActivity#activate()} if there
+     * Test to make sure that a {@link TransitionFlowActivity} returns true in {@link TransitionFlowActivity#activate(FlowStepDirection)} if there
      * is no page or component name.
      * @throws Exception
      */
@@ -40,13 +39,13 @@ public class TestTransitionFlowActivity extends Assert {
         expect(flow.getPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(null).anyTimes();
         obj.setFlow(flow);
         EasyMock.replay(flow, flowState);
-        assertTrue(obj.activate());
+        assertTrue(obj.activate(FlowStepDirection.inPlace));
         obj.setPageName("foo");
-        assertFalse(obj.activate());
+        assertFalse(obj.activate(FlowStepDirection.inPlace));
         obj.setPageName(null);
-        assertTrue(obj.activate());
+        assertTrue(obj.activate(FlowStepDirection.inPlace));
         obj.setComponentName("foo");
-        assertFalse(obj.activate());
+        assertFalse(obj.activate(FlowStepDirection.inPlace));
     }
 
     @Test

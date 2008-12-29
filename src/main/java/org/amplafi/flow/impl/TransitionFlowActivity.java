@@ -7,6 +7,7 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.PropertyUsage;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowLifecycleState;
@@ -96,8 +97,8 @@ public class TransitionFlowActivity extends FlowActivityImpl {
      * superclass
      */
     @Override
-    public boolean activate() {
-        return super.activate() || (isBlank(getPageName()) && isBlank(getComponentName()));
+    public boolean activate(FlowStepDirection flowStepDirection) {
+        return super.activate(flowStepDirection) || (isBlank(getPageName()) && isBlank(getComponentName()));
     }
 
     @Override

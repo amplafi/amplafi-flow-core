@@ -72,7 +72,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     private Boolean cacheOnly;
 
     /**
-     * on {@link FlowActivity#passivate(boolean)} the object should be saved
+     * on {@link FlowActivity#passivate(boolean, FlowStepDirection)} the object should be saved
      * back. This allows complex object to have their string representation
      * saved. Necessary for cases when setProperty() is not used to save value
      * changes, because the object stored in the property is being modified not

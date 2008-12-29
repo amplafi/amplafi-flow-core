@@ -45,6 +45,12 @@ public interface FlowConstants {
      */
     public static final String FAPREV_TEXT = "faPrevText";
     /**
+     * Invisible flowactivities are activities that do things like database updates,
+     * but have no UI component to them.
+     * Set on a per FlowActivity basis.
+     */
+    public static final String FAINVISIBLE = "faInvisible";
+    /**
      * Flow state is readonly. The FlowActivities are not allowed to change the
      * state of any object.
      *

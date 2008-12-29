@@ -23,6 +23,7 @@ import java.util.NoSuchElementException;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.*;
 import org.apache.commons.lang.ObjectUtils;
@@ -146,7 +147,7 @@ public class FlowStateImpl implements FlowState {
         if (!isActive()) {
             return begin();
         } else {
-            if (getCurrentActivity().activate()) {
+            if (getCurrentActivity().activate(FlowStepDirection.inPlace)) {
                 selectActivity(nextIndex(), true);
             }
             return getCurrentPage();
@@ -197,7 +198,7 @@ public class FlowStateImpl implements FlowState {
         // complete the current FA in the current Flow
         FlowActivityImplementor currentFAInOriginalFlow = getCurrentFlowActivityImplementor();
         // So the current FlowActivity does not try to do validation.
-        passivate(false);
+        passivate(false, FlowStepDirection.inPlace);
 
         // morph and initialize to next flow
         setFlowTypeName(morphingToFlowTypeName);
@@ -296,27 +297,27 @@ public class FlowStateImpl implements FlowState {
     /**
      * @see org.amplafi.flow.FlowState#selectActivity(int, boolean)
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public FlowActivity selectActivity(int newActivity, boolean verifyValues) {
+    public <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues) {
         if (isCompleted()) {
             return null;
         }
         // so selecting same activity is neither up nor down....
         int originalIndex = getCurrentActivityIndex();
-        boolean goingForward = newActivity > originalIndex;
-        boolean goingBack = newActivity < originalIndex;
         int next = newActivity;
         FlowActivity currentActivity;
         boolean lastBeginAutoFinished;
         boolean canContinue;
+        FlowStepDirection flowStepDirection = FlowStepDirection.get(originalIndex, newActivity);
         do {
             if(this.isActive()) {
                 FlowValidationResult flowValidationResult;
                 // call passivate even if just returning to the current
                 // activity. but not if we are going back to a previous step
-                flowValidationResult = this.passivate(verifyValues);
+                flowValidationResult = this.passivate(verifyValues, flowStepDirection);
                 if ( !flowValidationResult.isValid()) {
-                    getCurrentActivity().activate();
+                    getCurrentActivity().activate(flowStepDirection);
                     throw new FlowValidationException(getCurrentActivity(), flowValidationResult);
                 }
             }
@@ -325,32 +326,37 @@ public class FlowStateImpl implements FlowState {
             currentActivity = getCurrentActivity();
             // TODO should really already be so...
             currentActivity.setActivatable(true);
-            if (goingForward) {
+            switch(flowStepDirection) {
+            case forward:
                 next = nextIndex();
                 canContinue = hasNext();
-            } else if (goingBack) {
+                break;
+            case backward:
                 next = previousIndex();
                 canContinue = hasPrevious();
-            } else {
+                break;
+            default:
                 canContinue = false;
+                break;
             }
-            lastBeginAutoFinished = currentActivity.activate();
+            lastBeginAutoFinished = currentActivity.activate(flowStepDirection);
         } while (lastBeginAutoFinished && canContinue);
-        if (lastBeginAutoFinished && goingForward && !canContinue) {
+        if (lastBeginAutoFinished && flowStepDirection == FlowStepDirection.forward && !canContinue) {
             // ran out .. time to complete...
             // if chaining FlowStates the actual page may be from another
             // flowState.
             finishFlow();
             currentActivity = null;
         }
-        return currentActivity;
+        return (T) currentActivity;
     }
 
     /**
      * @see org.amplafi.flow.FlowState#selectVisibleActivity(int)
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public FlowActivity selectVisibleActivity(int visibleIndex) {
+    public <T extends FlowActivity> T selectVisibleActivity(int visibleIndex) {
         int index = -1;
         int realIndex = -1;
         for (FlowActivity activity : getActivities()) {
@@ -362,7 +368,7 @@ public class FlowStateImpl implements FlowState {
                 break;
             }
         }
-        return selectActivity(realIndex, false);
+        return (T) selectActivity(realIndex, false);
     }
 
     /**
@@ -396,7 +402,7 @@ public class FlowStateImpl implements FlowState {
         if (!isCompleted()) {
             FlowState continueWithFlow = null;
             boolean verifyValues = nextFlowLifecycleState != FlowLifecycleState.canceled;
-            FlowValidationResult flowValidationResult = passivate(verifyValues);
+            FlowValidationResult flowValidationResult = passivate(verifyValues, FlowStepDirection.inPlace);
 
             if (verifyValues) {
                 if (flowValidationResult.isValid()) {
@@ -503,11 +509,11 @@ public class FlowStateImpl implements FlowState {
     }
 
     @Override
-    public FlowValidationResult passivate(boolean verifyValues) {
+    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         FlowActivity currentActivity = getCurrentActivity();
         if ( currentActivity != null ) {
             currentActivity.refresh();
-            return currentActivity.passivate(verifyValues);
+            return currentActivity.passivate(verifyValues, flowStepDirection);
         }
         return null;
     }
@@ -555,6 +561,7 @@ public class FlowStateImpl implements FlowState {
     /**
      * @see org.amplafi.flow.FlowState#getActivity(int)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends FlowActivity> T getActivity(int activityIndex) {
         T flowActivity = (T) this.getFlow().getActivity(activityIndex);
@@ -565,6 +572,7 @@ public class FlowStateImpl implements FlowState {
      * All accesses to a {@link FlowActivity} should occur through this method.
      * This allows {@link FlowState} implementations to a chance to add in any
      * objects needed to access other parts of the service (database transactions for example).
+     * @param <T>
      * @see FlowManagement#resolveFlowActivity(FlowActivity)
      * @param flowActivity
      * @return flowActivity
@@ -577,6 +585,7 @@ public class FlowStateImpl implements FlowState {
     /**
      * @see org.amplafi.flow.FlowState#getActivity(java.lang.String)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends FlowActivity> T  getActivity(String activityName) {
         // HACK we need to set up a map.
@@ -608,9 +617,10 @@ public class FlowStateImpl implements FlowState {
     /**
      * @see org.amplafi.flow.FlowState#getCurrentActivity()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public FlowActivity getCurrentActivity() {
-        return getActivity(this.getCurrentActivityIndex());
+    public  <T extends FlowActivity> T getCurrentActivity() {
+        return (T) getActivity(this.getCurrentActivityIndex());
     }
     public FlowActivityImplementor getCurrentFlowActivityImplementor() {
         return (FlowActivityImplementor) getActivity(this.getCurrentActivityIndex());
@@ -831,11 +841,20 @@ public class FlowStateImpl implements FlowState {
     @Override
     public boolean isFinishable() {
         FlowActivity currentActivity = this.getCurrentActivity();
-        if (currentActivity.isFinishingActivity()) {
+        if (currentActivity.isFinishingActivity() || !hasVisibleNext()) {
+            // explicitly able to finish.
+            // or last visible step, which must always be able to finish.
             return true;
         } else {
-            List<FlowActivity> visible = getVisibleActivities();
-            return visible.get(visible.size() - 1) == currentActivity;
+            for(int i = this.getCurrentActivityIndex(); i < this.getActivities().size(); i++) {
+                FlowActivity flowActivity = this.getActivity(i);
+                if ( !flowActivity.getFlowValidationResult().isValid()) {
+                    return false;
+                }
+            }
+            // all remaining activities claim they have valid data.
+            // this enables a user to go back to a previous step and still finish the flow.
+            return true;
         }
     }
 
