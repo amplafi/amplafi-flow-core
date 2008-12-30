@@ -38,7 +38,7 @@ public class MorphFlowLauncher extends BaseFlowLauncher {
     }
 
     /**
-     * @return
+     * @return the flow lookupKey that will be morphed.
      */
     public FlowState getFlowState() {
         return getFlowManagement().getFlowState(lookupKey);

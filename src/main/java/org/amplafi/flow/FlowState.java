@@ -159,11 +159,11 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     /**
      *
      * @param flowActivity
-     * @param key
+     * @param propertyDefinition
      * @param value
      * @return true if the value has changed.
      */
-    public boolean setRawProperty(FlowActivity flowActivity, String key, String value);
+    public boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, String value);
 
     /**
      *

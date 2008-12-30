@@ -11,7 +11,7 @@ package org.amplafi.flow;
 public enum PropertyRequired {
     optional,
     /**
-     * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate()}.
+     * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(FlowStepDirection)}.
      * Use for properties that must be set by prior steps for the FlowActivity to function correctly.
      *
      * Properties of this sort should be minimized. "activate" properties impose an ordering that may not

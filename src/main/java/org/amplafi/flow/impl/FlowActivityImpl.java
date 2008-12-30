@@ -150,7 +150,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
             new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
             new FlowPropertyDefinitionImpl(FANEXT_TEXT).initPropertyUsage(activityLocal),
             new FlowPropertyDefinitionImpl(FAPREV_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FAINVISIBLE).initPropertyUsage(activityLocal)
+            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initPropertyUsage(activityLocal)
         );
     }
 
@@ -727,7 +727,12 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivityImplementor#setRawProperty(java.lang.String, java.lang.String)
      */
     public boolean setRawProperty(String key, String value) {
-        return getFlowState().setRawProperty(this, key, value);
+        String oldValue = getFlowState().getProperty(this.getActivityName(), key);
+        if (oldValue == null) {
+            return getFlowState().setProperty(key, value);
+        } else {
+            return getFlowState().setProperty(this.getActivityName(), key, value);
+        }
     }
 
     public Boolean getRawBoolean(String key) {

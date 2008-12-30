@@ -590,7 +590,7 @@ public class FlowStateImpl implements FlowState {
     public <T extends FlowActivity> T  getActivity(String activityName) {
         // HACK we need to set up a map.
         for (FlowActivity flowActivity : this.getFlow().getActivities()) {
-            if (flowActivity.getActivityName().equals(activityName)) {
+            if (StringUtils.equals(flowActivity.getActivityName(), activityName)) {
                 return (T) resolveActivity(flowActivity);
             }
         }
@@ -738,8 +738,10 @@ public class FlowStateImpl implements FlowState {
         }
         boolean cacheValue = !(actual instanceof String);
         if (!propertyDefinition.isCacheOnly()) {
-            cacheValue &= this.setRawProperty(flowActivity, propertyDefinition.getName(),
-                                              stringValue == null ? propertyDefinition.serialize(actual) : stringValue);
+            if ( stringValue==null ) {
+                stringValue = propertyDefinition.serialize(actual);
+            }
+            cacheValue &= this.setRawProperty(flowActivity, propertyDefinition, stringValue);
         }
         if (cacheValue) {
             // HACK FPD can't currently parse AmpEntites to actual objects.
@@ -761,8 +763,7 @@ public class FlowStateImpl implements FlowState {
                 throw new IllegalStateException(flowActivityName+"."+key+": no change allowed to readonly flow properties");
             }
             FlowActivityImplementor activity = getActivity(flowActivityName);
-            value = activity.propertyChange(flowActivityName, key, value,
-                                                                 oldValue);
+            value = activity.propertyChange(flowActivityName, key, value, oldValue);
             getFlowValuesMap().put(flowActivityName, key, value);
             return true;
         } else {
@@ -770,20 +771,14 @@ public class FlowStateImpl implements FlowState {
         }
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setRawProperty(org.amplafi.flow.FlowActivity,
-     *      java.lang.String, java.lang.String)
-     */
     @Override
-    public boolean setRawProperty(FlowActivity flowActivity, String key, String value) {
-        String oldValue = getProperty(flowActivity.getActivityName(), key);
-        if (oldValue == null) {
-            return setProperty(key, value);
+    public boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String value) {
+        if (flowPropertyDefinition.getPropertyUsage() != PropertyUsage.activityLocal) {
+            return setProperty(flowPropertyDefinition.getName(), value);
         } else {
-            return setProperty(flowActivity.getActivityName(), key, value);
+            return setProperty(flowActivity.getActivityName(), flowPropertyDefinition.getName(), value);
         }
     }
-
     /**
      * @see org.amplafi.flow.FlowState#setProperty(java.lang.String,
      *      java.lang.String)
