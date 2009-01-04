@@ -1480,4 +1480,8 @@ public class FlowStateImpl implements FlowState {
         return propertyDefinition;
     }
 
+    public boolean isApiCall() {
+        return isTrue(FlowConstants.FSAPI_CALL);
+    }
+
 }

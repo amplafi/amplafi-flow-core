@@ -100,15 +100,18 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
             new FlowPropertyDefinitionImpl(FSAFTER_PAGE).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_PAGE).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_CANCEL_PAGE).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal),
+
+            new FlowPropertyDefinitionImpl(FSAPI_CALL, boolean.class).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSALT_FINISHED).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSREFERING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal)
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );
     }
