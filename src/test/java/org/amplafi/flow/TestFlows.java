@@ -92,13 +92,13 @@ public class TestFlows {
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState fs = new FlowStateImpl(FLOW_TYPE, flowManagement);
         fs.begin();
-        fs.setProperty("key", ServicesConstants.FLOW_SERVICE_LISTENER);
+        fs.setProperty("key", "fs");
         fs.setProperty("fs0", "key", "fs0");
 
         FlowActivityImplementor activity0 = fs.getActivity(0);
         assertEquals(activity0.getRawProperty("key"), "fs0");
         FlowActivityImplementor activity1 = fs.getActivity(1);
-        assertEquals(activity1.getRawProperty("key"), ServicesConstants.FLOW_SERVICE_LISTENER);
+        assertEquals(activity1.getRawProperty("key"), "fs");
 
         activity0.setRawProperty("key", "new-fs0");
         activity1.setRawProperty("key", "new-fs");
