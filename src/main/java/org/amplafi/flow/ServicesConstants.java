@@ -21,5 +21,13 @@ public class ServicesConstants {
      *
      */
     public static final String COOKIE_OBJECT = "cookieObject";
+    /**
+     * json object key containing an array of validation errors.
+     */
+    public static final String VALIDATION_ERRORS = "validationErrors";
+    /**
+     * json object key for the errormessage text.
+     */
+    public static final String ERROR_MESSAGE = "errorMessage";
 
 }
