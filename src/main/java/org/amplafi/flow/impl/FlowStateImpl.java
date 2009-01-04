@@ -406,6 +406,12 @@ public class FlowStateImpl implements FlowState {
 
             if (verifyValues) {
                 if (flowValidationResult.isValid()) {
+                    FlowActivity currentActivity = getCurrentActivity();
+                    if ( currentActivity != null ) {
+                        flowValidationResult = currentActivity.getFlowValidationResult(PropertyRequired.saveChanges);
+                    }
+                }
+                if (flowValidationResult.isValid()) {
                     saveChanges();
                 } else {
                     throw new FlowValidationException(flowValidationResult);
