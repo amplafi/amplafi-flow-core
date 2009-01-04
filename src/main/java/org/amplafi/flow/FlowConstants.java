@@ -83,6 +83,11 @@ public interface FlowConstants {
      * Used to store where an arbitrary uri to redirect to as soon as flow ends.
      */
     public static final String FSREDIRECT_URL = "fsRedirectUrl";
+    /**
+     * Used to store the external refering url as reported in the http request.
+     * TODO -- 3 Jan 2009 most usages of this are bad -- need to indicate which flow will redirect to refering uri once completed.
+     */
+    public static final String FSREFERING_URL = "fsReferingUrl";
 
     /**
      * hide the tabbed flow controls.
@@ -154,4 +159,8 @@ public interface FlowConstants {
      *
      */
     public static final String HANDLED = "handled";
+    /**
+     * set this as a boolean flowState property when the flow is running as a api call.
+     */
+    public static final String FSAPI_CALL = "fsApiCall";
 }
