@@ -13,9 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
-import org.amplafi.flow.*;
+import org.amplafi.flow.FlowTx;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -390,9 +398,9 @@ public class BaseFlowManagement implements FlowManagement {
 
     // TODO: how to handle ReturnToFlow situation as well.
     private String readRedirect(FlowState fs) {
-        if (fs.hasProperty(FlowConstants.FSREDIRECT_URL)) {
-            String redirect = fs.getRawProperty(FlowConstants.FSREDIRECT_URL);
-            fs.setProperty(FlowConstants.FSREDIRECT_URL, null);
+        if (fs.hasProperty(FSREDIRECT_URL)) {
+            String redirect = fs.getRawProperty(FSREDIRECT_URL);
+            fs.setProperty(FSREDIRECT_URL, null);
             return redirect;
         } else {
             return null;
