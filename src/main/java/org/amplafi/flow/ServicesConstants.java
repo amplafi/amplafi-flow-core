@@ -11,8 +11,15 @@ package org.amplafi.flow;
  *
  */
 public class ServicesConstants {
-
+    // would really like to fold this into FlowConstants.FSNEXT_FLOW
+    // as of 3 Jan 2009 doesn't look like the this constant's value is used directly in javascript.
+    @Deprecated
     public static final String FLOW_TYPE = "flow";
+    @Deprecated // don't really see the advantage / need for this.
     public static final String FLOW_SERVICE_LISTENER = "fs";
+    /**
+     *
+     */
+    public static final String COOKIE_OBJECT = "cookieObject";
 
 }
