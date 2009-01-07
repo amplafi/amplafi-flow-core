@@ -560,12 +560,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return this.dataClassDefinition.getCollection();
     }
 
-    /**
-     *
-     * @return
-     * all possible names for this FlowPropertyDefinition, including
-     * {@link #getName()}.
-     */
     public Set<String> getAlternates() {
         if (alternates == null) {
             alternates = new HashSet<String>();

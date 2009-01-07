@@ -5,8 +5,8 @@
 package org.amplafi.flow;
 
 /**
+ * Describes how a property is to be used.
  * @author patmoore
- *
  */
 public enum PropertyUsage {
     /**

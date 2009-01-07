@@ -20,9 +20,11 @@ public interface FlowPropertyDefinition {
 
     Class<? extends Object> getDataClass();
 
-    @SuppressWarnings("unchecked")
     <V> V parse(String value) throws FlowException;
 
+    /**
+     * @return true if a default value for this property can be created.
+     */
     boolean isAutoCreate();
 
     Object getDefaultObject(FlowActivity flowActivity);
@@ -35,6 +37,10 @@ public interface FlowPropertyDefinition {
 
     FlowPropertyDefinition clone();
 
+    /**
+     * @return if property is local to the flow activity
+     * @see org.amplafi.flow.PropertyUsage#activityLocal
+     */
     boolean isLocal();
 
     void setRequired(boolean required);
@@ -50,10 +56,21 @@ public interface FlowPropertyDefinition {
 
     String getInitial();
 
+    /**
+     * @return if true, the initial value of the property can be overridden by a
+     * passed in value.
+     */
     boolean isInitialMode();
 
+    /**
+     * @return all possible names for this FlowPropertyDefinition, including
+     * {@link #getName()}.
+     */
     Set<String> getAlternates();
 
+    /**
+     * @return how to use the property.
+     */
     PropertyUsage getPropertyUsage();
 
     void setPropertyUsage(PropertyUsage propertyUsage);
