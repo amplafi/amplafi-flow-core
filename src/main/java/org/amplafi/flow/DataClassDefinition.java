@@ -3,7 +3,13 @@ package org.amplafi.flow;
 import org.amplafi.json.JSONWriter;
 
 /**
- * @author Andreas Andreou
+ * Handles the issues around data structure for the {@link FlowPropertyDefinition}.
+ * This way {@link FlowPropertyDefinition}  focuses on required status, name, etc. and DataClassDefinition
+ * focuses just on the way the data is structured.
+ * <p/>
+ * Allows the FlowDefinitionProperty structure to be a middling complex chain of nested collections.
+ *
+ * @author patmoore
  */
 public interface DataClassDefinition {
 
@@ -44,6 +50,10 @@ public interface DataClassDefinition {
      * @param dataClass
      */
     void setDataClass(Class<? extends Object> dataClass);
+
+    /**
+     * @return the {@link Class} that this definition describes
+     */
     Class<?> getDataClass();
 
     /**

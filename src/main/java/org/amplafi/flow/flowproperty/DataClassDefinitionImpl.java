@@ -16,15 +16,6 @@ import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.JSONWriter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-
-/**
- * Handles the issues around data structure for the {@link FlowPropertyDefinitionImpl}. This way {@link FlowPropertyDefinitionImpl}
- * focuses on required status, name, etc. and DataClassDefinition focuses just on the way the data is structured.
- * Allows the FlowDefinitionProperty structure to be a middling complex chain of nested collections.
- *
- * @author patmoore
- *
- */
 public class DataClassDefinitionImpl implements DataClassDefinition {
     private Class<?> dataClass;
     @SuppressWarnings("unchecked")

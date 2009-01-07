@@ -18,7 +18,10 @@ public interface FlowPropertyDefinition {
 
     boolean merge(FlowPropertyDefinition source);
 
-    Class<? extends Object> getDataClass();
+    /**
+     * @return the {@link Class} of this property
+     */
+    Class<?> getDataClass();
 
     <V> V parse(String value) throws FlowException;
 
