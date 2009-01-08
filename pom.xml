@@ -15,11 +15,13 @@
     <packaging>jar</packaging>
     <name>Amplafi Flow - Core</name>
     <description>Flow core services (including data objects)</description>
+    <scm>
+        <developerConnection>scm:svn:${svn-base}/${artifactId}/trunk</developerConnection>
+    </scm>    
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <inherited>false</inherited>
@@ -30,7 +32,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <inherited>false</inherited>
@@ -48,7 +49,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <!--  !!!!!!!!!!should only be used for non-secret sauce code !!!!!!!! -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <inherited>false</inherited>
@@ -82,9 +82,9 @@
             </plugin>
         </plugins>
     </build>
-    <reporting>
-        <outputDirectory>../target/site/${pom.artifactId}</outputDirectory>
-    </reporting>
+    <!--<reporting>-->
+        <!--<outputDirectory>../target/site/${pom.artifactId}</outputDirectory>-->
+    <!--</reporting>-->
     <dependencies>
         <dependency>
             <groupId>org.amplafi</groupId>

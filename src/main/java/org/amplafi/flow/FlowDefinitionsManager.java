@@ -4,10 +4,7 @@
  */
 package org.amplafi.flow;
 
-
 import java.util.Map;
-
-import org.amplafi.flow.FlowTranslatorResolver;
 
 
 /**

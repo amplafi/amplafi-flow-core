@@ -1,7 +1,5 @@
 package org.amplafi.flow;
 
-import org.amplafi.flow.FlowValidationTracking;
-
 import java.util.List;
 
 /**

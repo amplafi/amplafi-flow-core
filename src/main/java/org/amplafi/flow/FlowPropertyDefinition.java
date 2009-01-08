@@ -1,11 +1,11 @@
 package org.amplafi.flow;
 
-import org.amplafi.flow.FlowPropertyValueProvider;
-
 import java.util.Set;
 
 /**
- * @author Andreas Andreou
+ * Defines a property that will be assigned as part of a {@link Flow} or
+ * {@link FlowActivity}. This allows the value to be available to the component
+ * or page referenced by a {@link FlowActivity}.
  */
 public interface FlowPropertyDefinition {
     String getName();

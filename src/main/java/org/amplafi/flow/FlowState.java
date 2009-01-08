@@ -11,8 +11,6 @@ import org.apache.commons.logging.Log;
 /**
  * Implementations hold the state of an active Flow. Implementers should expect
  * to be stored in a Session and should be serializable.
- *
- *
  */
 public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity> {
 

@@ -20,12 +20,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowStepDirection;
+import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.FlowValuesMap;
+import org.amplafi.flow.PropertyRequired;
+import org.amplafi.flow.PropertyUsage;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.*;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -1487,7 +1496,7 @@ public class FlowStateImpl implements FlowState {
     }
 
     public boolean isApiCall() {
-        return isTrue(FlowConstants.FSAPI_CALL);
+        return isTrue(FSAPI_CALL);
     }
 
 }
