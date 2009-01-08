@@ -10,6 +10,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.apache.commons.lang.StringUtils.*;
 /**
  * @author patmoore
  *
@@ -26,8 +27,11 @@ public class CancelTextFlowPropertyValueProvider implements FlowPropertyValuePro
         if ( lookupKey != null ) {
             FlowState flowState = flowActivity.getFlowManagement().getFlowState(lookupKey);
             if ( flowState != null) {
-                // TODO -- how to internationalize?
-                label = "Return to "+flowState.getFlowTitle();
+                label = flowActivity.getProperty(FSRETURN_TO_TEXT);
+                if (isBlank(label)) {
+                    // TODO -- how to internationalize?
+                    label = "Return to "+flowState.getFlowTitle();
+                }
             }
         }
         return (T) label;

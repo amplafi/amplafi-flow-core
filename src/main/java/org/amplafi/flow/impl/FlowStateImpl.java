@@ -875,7 +875,7 @@ public class FlowStateImpl implements FlowState {
      */
     @Override
     public String getFlowTitle() {
-        String flowTitle = getPropertyAsObject(FlowConstants.FSTITLE_TEXT);
+        String flowTitle = getPropertyAsObject(FSTITLE_TEXT);
         if (isBlank(flowTitle)) {
             flowTitle = this.getFlow().getFlowTitle();
         }

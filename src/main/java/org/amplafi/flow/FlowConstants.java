@@ -18,6 +18,7 @@ public interface FlowConstants {
      */
     public static final String FATITLE_TEXT = "faTitleText";
     public static final String FSCANCEL_TEXT = "fsCancelText";
+    public static final String FSRETURN_TO_TEXT = "fsReturnToText";
     public static final String DEFAULT_FSCANCEL_TEXT = "message:flow.label-cancel";
     /**
      * if true then cancel is not an option.
