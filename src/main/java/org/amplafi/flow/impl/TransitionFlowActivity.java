@@ -139,7 +139,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
                     String flowType = resolve(getNextFlowType());
                     if (isBlank(flowType)) {
                         flowType = getResolvedProperty(FlowConstants.FSNEXT_FLOW);
-                        setProperty(FlowConstants.FSNEXT_FLOW, null);
+                        setProperty(FlowConstants.FSNEXT_FLOW, null); // TODO why?
                     }
                     if (isNotBlank(flowType)) {
                         nextFlowState = this.createNewFlow(flowType);

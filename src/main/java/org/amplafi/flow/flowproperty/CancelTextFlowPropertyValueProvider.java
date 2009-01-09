@@ -27,7 +27,7 @@ public class CancelTextFlowPropertyValueProvider implements FlowPropertyValuePro
         if ( lookupKey != null ) {
             FlowState flowState = flowActivity.getFlowManagement().getFlowState(lookupKey);
             if ( flowState != null) {
-                label = flowActivity.getProperty(FSRETURN_TO_TEXT);
+                label = flowState.getCurrentActivity().getProperty(FSRETURN_TO_TEXT);
                 if (isBlank(label)) {
                     // TODO -- how to internationalize?
                     label = "Return to "+flowState.getFlowTitle();
