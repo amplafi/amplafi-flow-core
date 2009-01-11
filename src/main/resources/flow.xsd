@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://amplafi.org/flow" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ampflow="http://amplafi.org/flow">
+    <element name="flow" type="ampflow:FlowType"></element>
+    <element name="activity" type="ampflow:FlowActivityType"></element>
+    <element name="property" type="ampflow:FlowPropertyType"></element>
+    
+    <attribute name="name" type="string"></attribute>
+    <attribute name="class" type="string"></attribute>
+
+    <complexType name="FlowPropertyType">
+        <attribute ref="ampflow:name"></attribute>
+        <attribute name="default" type="string"></attribute>
+    </complexType>
+
+    <complexType name="FlowActivityType">
+        <attribute ref="ampflow:name"></attribute>
+        <attribute ref="ampflow:class"></attribute>
+    </complexType>
+    <complexType name="FlowType">
+        <attribute ref="ampflow:name"></attribute>
+    </complexType>
+
+    <group name="FlowPropertyTypeList">
+        <sequence>
+            <element ref="ampflow:property"></element>
+        </sequence>
+    </group>
+    <group name="FlowActivityTypeList">
+        <sequence>
+            <element ref="ampflow:activity"></element>
+        </sequence>
+    </group>
+    <group name="FlowTypeList">
+        <sequence>
+            <element ref="ampflow:flow"></element>
+        </sequence>
+    </group>
+
+    <element name="flows">
+        <complexType>
+
+            <sequence>
+                <group ref="ampflow:FlowTypeList"></group>
+                <sequence>
+                    <group ref="ampflow:FlowTypeList"></group></sequence>
+            </sequence>
+        </complexType>
+    </element>
+</schema>
