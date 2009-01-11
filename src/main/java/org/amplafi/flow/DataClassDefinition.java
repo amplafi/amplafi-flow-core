@@ -19,10 +19,8 @@ public interface DataClassDefinition {
 
     <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value);
 
-    @SuppressWarnings("unchecked")
     <T> JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, JSONWriter jsonWriter, T value);
 
-    @SuppressWarnings("unchecked")
     <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value);
 
     /**
@@ -38,12 +36,12 @@ public interface DataClassDefinition {
     Class<?> getElementClass();
 
     /**
-     * @return
+     * @return the collection class
      */
     Class<? extends Object> getCollection();
 
     /**
-     * @return
+     * @return true if the data class has been explicitly defined.
      */
     boolean isDataClassDefined();
     /**
@@ -57,7 +55,7 @@ public interface DataClassDefinition {
     Class<?> getDataClass();
 
     /**
-     * @return
+     * @return true if this DataClassDefinition represents a collection of values.
      */
     boolean isCollection();
 
