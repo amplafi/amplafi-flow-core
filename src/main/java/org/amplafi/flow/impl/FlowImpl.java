@@ -14,6 +14,7 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -90,7 +91,8 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
             new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE),
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
             .initFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String, FlowTransition>(
                     new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null))),
