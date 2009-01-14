@@ -79,5 +79,8 @@ public abstract class BaseFlowLauncher implements FlowLauncher {
             return null;
         }
     }
+    public String getListDisplayValue() {
+        return getFlowLabel();
+    }
 
 }

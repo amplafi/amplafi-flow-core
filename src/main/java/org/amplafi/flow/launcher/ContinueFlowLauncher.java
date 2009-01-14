@@ -15,7 +15,7 @@ import org.amplafi.flow.FlowState;
  * This FlowLauncher continues a previously created FlowState.
  * @author Patrick Moore
  */
-public class ContinueFlowLauncher extends BaseFlowLauncher {
+public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
 
     private static final long serialVersionUID = -1221490458104629351L;
     private String lookupKey;
@@ -67,10 +67,6 @@ public class ContinueFlowLauncher extends BaseFlowLauncher {
 
     public boolean hasKey(Object key) {
         return this.lookupKey.equals(key);
-    }
-
-    public String getListDisplayValue() {
-        return getFlowLabel();
     }
 
     @Override

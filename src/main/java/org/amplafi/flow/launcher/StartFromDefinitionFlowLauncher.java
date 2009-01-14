@@ -1,7 +1,3 @@
-/*
- * Created on May 31, 2007
- * Copyright 2006 by Patrick Moore
- */
 package org.amplafi.flow.launcher;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +7,7 @@ import java.util.Map;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
+import org.apache.commons.lang.ObjectUtils;
 
 
 import static org.apache.commons.collections.CollectionUtils.*;
@@ -19,7 +16,7 @@ import static org.apache.commons.collections.CollectionUtils.*;
  * {@link FlowLauncher} that starts a new {@link FlowState}.
  * @author Patrick Moore
  */
-public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
+public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
     private static final long serialVersionUID = 7909909329479094947L;
     private String flowTypeName;
     private String flowLabel;
@@ -100,10 +97,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
         return flowLabel;
     }
 
-    public String getListDisplayValue() {
-        return getFlowLabel();
-    }
-
     public void setKeyExpression(Object keyExpression) {
         this.keyExpression = keyExpression;
     }
@@ -113,7 +106,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
     }
 
     public boolean hasKey(Object key) {
-        return this.keyExpression.equals(key);
+        return ObjectUtils.equals(this.keyExpression, key);
     }
 
     public void setPropertyRoot(Object propertyRoot) {
@@ -128,11 +121,11 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher {
             addAll(this.initialValues, initialValues.iterator());
         }
     }
-    public void addInitialValues(Iterable<String> initialValues) {
+    public void addInitialValues(Iterable<String> additionalValues) {
         if ( isEmpty(this.initialValues)) {
-            setInitialValues(initialValues);
-        } else if ( initialValues != null ) {
-            addAll(this.initialValues, initialValues.iterator());
+            setInitialValues(additionalValues);
+        } else if ( additionalValues != null ) {
+            addAll(this.initialValues, additionalValues.iterator());
         }
     }
     public Iterable<String> getInitialValues() {
