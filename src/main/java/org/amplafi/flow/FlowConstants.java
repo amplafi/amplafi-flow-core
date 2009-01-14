@@ -110,6 +110,8 @@ public interface FlowConstants {
     /**
      * Used to indicate that the flow was finished with an
      * alternative way / button.
+     *
+     * This property's value will be set to the FlowTransition key.
      */
     public static final String FSALT_FINISHED = "fsAltFinished";
     /**
