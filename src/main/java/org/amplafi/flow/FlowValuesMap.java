@@ -10,6 +10,8 @@ import java.util.Map;
  * Roughly follows the java.util.Map definition - so respect
  * that interface's conventions.
  * @author Patrick Moore
+ * @param <K> extends {@link FlowValueMapKey} the key class.
+ * @param <V> extends CharSequence the value class.
  *
  */
 public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence> extends Map<K, V> {

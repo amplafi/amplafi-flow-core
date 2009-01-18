@@ -3,6 +3,7 @@
  */
 package org.amplafi.flow.impl;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -26,6 +27,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private boolean running;
     private ConcurrentMap<String, Flow> flowDefinitions;
     private Log log;
+    private URI defaultHomePage;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, Flow>();
     }
@@ -138,5 +140,19 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         return flowTranslatorResolver;
+    }
+
+    /**
+     * @param defaultHomePage the defaultHomePage to set
+     */
+    public void setDefaultHomePage(URI defaultHomePage) {
+        this.defaultHomePage = defaultHomePage;
+    }
+
+    /**
+     * @return the defaultHomePage
+     */
+    public URI getDefaultHomePage() {
+        return defaultHomePage;
     }
 }

@@ -4,6 +4,7 @@
  */
 package org.amplafi.flow;
 
+import java.net.URI;
 import java.util.Map;
 
 
@@ -46,4 +47,11 @@ public interface FlowDefinitionsManager {
     public void setFlowTranslatorResolver(FlowTranslatorResolver flowTranslatorResolver);
 
     public FlowTranslatorResolver getFlowTranslatorResolver();
+
+    /**
+     * If the URI is relative, then the URI is to refer to a local page. This is usually a static setting.
+     * @see FlowManagement#getDefaultHomePage()
+     * @return the default home to use when a flow ends and there is no other place to return.
+     */
+    public URI getDefaultHomePage();
 }

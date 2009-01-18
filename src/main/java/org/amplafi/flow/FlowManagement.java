@@ -1,5 +1,6 @@
 package org.amplafi.flow;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -197,4 +198,12 @@ public interface FlowManagement {
      * @return the global {@link FlowPropertyDefinition}
      */
     public FlowPropertyDefinition getFlowPropertyDefinition(String key);
+
+    /**
+     * similar to {@link FlowDefinitionsManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
+     * object the value returned by this method may be customized to the session settings and may not be
+     * {@link FlowDefinitionsManager#getDefaultHomePage()}.
+     * @return the default home to use when a flow ends and there is no other place to return.
+     */
+    public URI getDefaultHomePage();
 }

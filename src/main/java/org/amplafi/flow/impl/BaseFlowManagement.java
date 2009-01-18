@@ -3,6 +3,7 @@ package org.amplafi.flow.impl;
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -517,6 +518,15 @@ public class BaseFlowManagement implements FlowManagement {
     @Override
     public FlowPropertyDefinition getFlowPropertyDefinition(String key) {
         return this.getFlowTranslatorResolver().getFlowPropertyDefinition(key);
+    }
+
+
+    /**
+     * @see org.amplafi.flow.FlowManagement#getDefaultHomePage()
+     */
+    @Override
+    public URI getDefaultHomePage() {
+        return this.getFlowDefinitionsManager().getDefaultHomePage();
     }
 
 
