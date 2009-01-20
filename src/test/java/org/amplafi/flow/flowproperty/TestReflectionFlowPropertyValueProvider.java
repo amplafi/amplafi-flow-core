@@ -28,6 +28,7 @@ public class TestReflectionFlowPropertyValueProvider extends Assert {
         assertNull(get(me, "friend.name"));
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T get(Object object, String... properties) {
         return (T)new ReflectionFlowPropertyValueProvider(object, properties).get(null, null);
     }
@@ -50,7 +51,7 @@ public class TestReflectionFlowPropertyValueProvider extends Assert {
             this.name = name;
         }
 
-       public int getAge() {
+        public int getAge() {
             return age;
         }
 
