@@ -25,13 +25,13 @@ public interface FlowActivityImplementor extends FlowActivity {
         String oldValue);
 
     /**
-     * @return
+     * @return instance of this definition
      */
     public FlowActivityImplementor createInstance();
 
     /**
      * @param nextFlow
-     * @return
+     * @return the nextFlow after all property substitution has had a change to find the real name.
      */
     public String resolve(String nextFlow);
 
@@ -68,7 +68,7 @@ public interface FlowActivityImplementor extends FlowActivity {
      *
      * @param key
      * @param value
-     * @return {@link FlowState#setRawProperty(FlowActivity, String, String)}
+     * @return {@link FlowState#setRawProperty(FlowActivity, FlowPropertyDefinition, String)}
      */
     public boolean setRawProperty(String key, String value);
 }
