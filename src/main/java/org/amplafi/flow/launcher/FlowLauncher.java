@@ -20,6 +20,10 @@ import org.amplafi.flow.SerializableCallable;
  * @author Patrick Moore
  */
 public interface FlowLauncher extends SerializableCallable<FlowState> {
+    public static final String FLOW_ID = "fid";
+    // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
+    // is addressed.
+    public static final String _KEY_LIST = "_key_List__";
     public void setFlowManagement(FlowManagement sessionFlowManagement);
     /**
      * enter the flow.
