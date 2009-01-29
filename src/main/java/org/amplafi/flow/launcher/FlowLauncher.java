@@ -24,6 +24,21 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
     // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
     // is addressed.
     public static final String _KEY_LIST = "_key_List__";
+    public static final String ADVANCE_TO_END = "advance";
+    public static final String AS_FAR_AS_POSSIBLE = "afap";
+    /**
+     * advance through the flow until either the flow completes or
+     * the current {@link org.amplafi.flow.FlowActivity} is named with the advanceTo value.
+     *
+     * In future it may be considered an error to not have a matching {@link FlowActivity} name
+     */
+    public static final String ADV_FLOW_ACTIVITY = "fsAdvanceTo";
+    /**
+     * {@link ADVANCE_TO_END} "advance" --> go through all remaining FlowActivities until the flow completes.
+     * {@link AS_FAR_AS_POSSIBLE} "afap" --> advance flow until it can be completed.
+     */
+    public static final String COMPLETE_FLOW = "fsCompleteFlow";
+    public static final String FLOW_STATE_JSON_KEY = "flowState";
     public void setFlowManagement(FlowManagement sessionFlowManagement);
     /**
      * enter the flow.
