@@ -33,7 +33,7 @@ public interface FlowDefinitionsManager {
      */
     public Map<String, Flow> getFlowDefinitions();
 
-    public FlowManagement getSessionFlowManagement();
+    public FlowManagement getFlowManagement();
 
     /**
      * @param key (usually) the {@link Flow#getFlowTypeName()}.

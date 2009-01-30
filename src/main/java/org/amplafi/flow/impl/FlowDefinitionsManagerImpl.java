@@ -117,10 +117,10 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
 
     /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#getSessionFlowManagement()
+     * @see org.amplafi.flow.FlowDefinitionsManager#getFlowManagement()
      */
     @Override
-    public FlowManagement getSessionFlowManagement() {
+    public FlowManagement getFlowManagement() {
         BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
         baseFlowManagement.setFlowDefinitionsManager(this);
         baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
