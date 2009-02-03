@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="amplafi-flow-core">
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </skin>
+    <publishDate format="dd MMM yyyy" />
+
+    <body>
+        <head></head>
+        <menu name="Main Project">
+            <item name="Amplafi" href="../index.html" />
+        </menu>
+        
+        <menu ref="reports"/>
+    </body>
+    
+</project>
+
