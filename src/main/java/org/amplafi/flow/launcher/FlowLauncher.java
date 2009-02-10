@@ -1,12 +1,7 @@
-/*
- * Created on May 31, 2007
- * Copyright 2006 by Patrick Moore
- */
 package org.amplafi.flow.launcher;
 
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.SerializableCallable;
@@ -30,12 +25,12 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      * advance through the flow until either the flow completes or
      * the current {@link org.amplafi.flow.FlowActivity} is named with the advanceTo value.
      *
-     * In future it may be considered an error to not have a matching {@link FlowActivity} name
+     * In future it may be considered an error to not have a matching {@link org.amplafi.flow.FlowActivity} name
      */
     public static final String ADV_FLOW_ACTIVITY = "fsAdvanceTo";
     /**
-     * {@link ADVANCE_TO_END} "advance" --> go through all remaining FlowActivities until the flow completes.
-     * {@link AS_FAR_AS_POSSIBLE} "afap" --> advance flow until it can be completed.
+     * {@link #ADVANCE_TO_END} "advance" --> go through all remaining FlowActivities until the flow completes.
+     * {@link #AS_FAR_AS_POSSIBLE} "afap" --> advance flow until it can be completed.
      */
     public static final String COMPLETE_FLOW = "fsCompleteFlow";
     public static final String FLOW_STATE_JSON_KEY = "flowState";
@@ -55,7 +50,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
     public String getFlowTypeName();
 
     /**
-     * @return map of initial parameters that will be set to the {@link FlowState} of the {@link Flow} to launch.
+     * @return map of initial parameters that will be set to the {@link FlowState} of the {@link org.amplafi.flow.Flow} to launch.
      */
     public Map<String,String> getInitialFlowState();
 
@@ -73,4 +68,8 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      * @return the previous value
      */
     public String put(String key, String value);
+    /**
+     * @param lookupKeyOrBoolean
+     */
+    public void setReturnToFlow(Object lookupKeyOrBoolean);
 }

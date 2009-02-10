@@ -74,6 +74,7 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
         return this.flowTypeName;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, String> getInitialFlowState() {
         return getFlowState().getFlowValuesMap();

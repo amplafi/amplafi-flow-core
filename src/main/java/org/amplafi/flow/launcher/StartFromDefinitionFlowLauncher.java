@@ -69,9 +69,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     public FlowState call() {
         FlowState flowState;
         if(this.initialValues != null && !this.initialValues.isEmpty()) {
-            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, propertyRoot, initialValues, getReturnToFlowLookupKey());
+            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, propertyRoot, initialValues, getReturnToFlow());
         } else {
-            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, this.getValuesMap(), getReturnToFlowLookupKey());
+            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, this.getValuesMap(), getReturnToFlow());
         }
         return flowState;
     }

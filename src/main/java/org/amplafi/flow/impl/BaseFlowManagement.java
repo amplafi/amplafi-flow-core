@@ -194,6 +194,33 @@ public class BaseFlowManagement implements FlowManagement {
      * @see org.amplafi.flow.FlowManagement#startFlowState(java.lang.String, boolean, java.util.Map, Object)
      */
     public FlowState startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState, Object returnToFlow) {
+        initialFlowState = initReturnToFlow(initialFlowState, returnToFlow);
+        FlowState flowState = createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
+        /* If you want tapestry stuff injected here...
+        // set default page to go to after flow if flow is successful
+        if (flowState.getDefaultAfterPage() == null ) {
+            IPage currentCyclePage;
+            try {
+                currentCyclePage = cycle.getPage();
+            } catch(NullPointerException e) {
+                // because of the way cycle is injected - it is impossible to see if the cycle is null.
+                // (normal java checks are looking at the proxy object)
+                currentCyclePage = null;
+            }
+            if ( currentCyclePage != null) {
+                flowState.setDefaultAfterPage(currentCyclePage.getPageName());
+            }
+        }
+        */
+        return beginFlowState(flowState);
+    }
+
+    /**
+     * @param initialFlowState
+     * @param returnToFlow
+     * @return
+     */
+    protected Map<String, String> initReturnToFlow(Map<String, String> initialFlowState, Object returnToFlow) {
         if ( returnToFlow != null) {
             String returnToFlowLookupKey = null;
             if ( returnToFlow instanceof Boolean) {
@@ -215,24 +242,7 @@ public class BaseFlowManagement implements FlowManagement {
                 initialFlowState.put(FSRETURN_TO_FLOW, returnToFlowLookupKey);
             }
         }
-        FlowState flowState = createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
-        /* If you want tapestry stuff injected here...
-        // set default page to go to after flow if flow is successful
-        if (flowState.getDefaultAfterPage() == null ) {
-            IPage currentCyclePage;
-            try {
-                currentCyclePage = cycle.getPage();
-            } catch(NullPointerException e) {
-                // because of the way cycle is injected - it is impossible to see if the cycle is null.
-                // (normal java checks are looking at the proxy object)
-                currentCyclePage = null;
-            }
-            if ( currentCyclePage != null) {
-                flowState.setDefaultAfterPage(currentCyclePage.getPageName());
-            }
-        }
-        */
-        return beginFlowState(flowState);
+        return initialFlowState;
     }
     /**
      * @see org.amplafi.flow.FlowManagement#startFlowState(java.lang.String, boolean, java.lang.Object, java.lang.Iterable, Object)
