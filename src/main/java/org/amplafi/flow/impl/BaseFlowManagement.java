@@ -218,7 +218,7 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @param initialFlowState
      * @param returnToFlow
-     * @return
+     * @return initialFlowState if existed otherwise a new map if returnToFlow was legal.
      */
     protected Map<String, String> initReturnToFlow(Map<String, String> initialFlowState, Object returnToFlow) {
         if ( returnToFlow != null) {
