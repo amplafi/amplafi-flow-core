@@ -1,7 +1,4 @@
-/**
- * Copyright 2006-2008 by Amplafi. All rights reserved.
- * Confidential.
- */
+
 package org.amplafi.flow;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +9,8 @@ import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
+import org.easymock.IAnswer;
+import org.easymock.classextension.EasyMock;
 
 
 /**
@@ -20,15 +19,20 @@ import org.amplafi.flow.translator.ShortFlowTranslator;
  */
 public class FlowTestingUtils {
 
-    private FlowDefinitionsManagerImpl flowDefinitionsManager;
+    private FlowDefinitionsManager flowDefinitionsManager;
 
-    private BaseFlowTranslatorResolver flowTranslatorResolver;
+    private FlowTranslatorResolver flowTranslatorResolver;
 
     private BaseFlowManagement flowManagement;
 
     private AtomicInteger counter = new AtomicInteger();
     public FlowTestingUtils() {
         this(new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
+    }
+    public FlowTestingUtils(FlowDefinitionsManager flowDefinitionsManager, FlowTranslatorResolver flowTranslatorResolver) {
+        this.flowDefinitionsManager = flowDefinitionsManager;
+        this.flowTranslatorResolver = flowTranslatorResolver;
+        this.flowManagement = new BaseFlowManagement();
     }
 
     public FlowTestingUtils(FlowDefinitionsManagerImpl flowDefinitionsManager, BaseFlowTranslatorResolver flowTranslatorResolver) {
@@ -42,13 +46,13 @@ public class FlowTestingUtils {
      *
      */
     private void initializeService() {
-        flowTranslatorResolver.addStandardFlowTranslators();
-        flowTranslatorResolver.initializeService();
-        flowTranslatorResolver.addFlowTranslator(new ShortFlowTranslator());
-        flowTranslatorResolver.addFlowTranslator(new EnumFlowTranslator());
-        flowDefinitionsManager.setFlowTranslatorResolver(flowTranslatorResolver);
-        flowTranslatorResolver.setFlowDefinitionsManager(flowDefinitionsManager);
-        flowDefinitionsManager.initializeService();
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addStandardFlowTranslators();
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).initializeService();
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new ShortFlowTranslator());
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new EnumFlowTranslator());
+        ((FlowDefinitionsManagerImpl)flowDefinitionsManager).setFlowTranslatorResolver(flowTranslatorResolver);
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowDefinitionsManager(flowDefinitionsManager);
+        ((FlowDefinitionsManagerImpl)flowDefinitionsManager).initializeService();
         this.flowManagement.setFlowDefinitionsManager(flowDefinitionsManager);
         this.flowManagement.setFlowTranslatorResolver(flowTranslatorResolver);
 
@@ -58,6 +62,54 @@ public class FlowTestingUtils {
         String flowTypeName = "testflow"+counter.incrementAndGet()+":"+System.nanoTime();
         this.flowDefinitionsManager.addDefinitions(new FlowImpl(flowTypeName, flowActivities));
         return flowTypeName;
+    }
+
+    /**
+     * Instantiates a FlowActivity of the given class, attaches it to a new (dummy)
+     * flow (and optionally sets the flow's state).
+     * @param clazz
+     * @param state
+     * @param <T>
+     * @return a new T
+     */
+    public <T extends FlowActivityImplementor> T initActivity(Class<T> clazz, FlowState state)  {
+        try {
+            T activity = clazz.newInstance();
+            Flow flow = new FlowImpl();
+            flow.addActivity(activity);
+            if (state!=null) {
+                flow.setFlowState(state);
+            }
+            return activity;
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Instantiates a FlowActivity of the given class and attaches it to a new (dummy)
+     * flow.
+     * @param clazz
+     * @param <T>
+     * @return a new T
+     */
+    public <T extends FlowActivityImplementor> T initActivity(Class<T> clazz) {
+        return initActivity(clazz, null);
+    }
+    public FlowDefinitionsManager programFlowDefinitionManager(String flowTypeName, FlowActivityImplementor... activities) {
+        final Flow def = new FlowImpl(flowTypeName, activities);
+        getFlowTranslatorResolver().resolveFlow(def);
+        EasyMock.expect(getFlowDefinitionsManager().getFlowDefinition(flowTypeName)).andReturn(def).anyTimes();
+        EasyMock.expect(getFlowDefinitionsManager().isFlowDefined(flowTypeName)).andReturn(true).anyTimes();
+        EasyMock.expect(getFlowDefinitionsManager().getInstanceFromDefinition(flowTypeName)).andAnswer(new IAnswer<Flow>() {
+            @Override
+            public Flow answer() throws Throwable {
+                return def.createInstance();
+            }
+        }).anyTimes();
+        return getFlowDefinitionsManager();
     }
 
     /**
