@@ -9,10 +9,7 @@
     <publishDate format="dd MMM yyyy" />
 
     <body>
-        <head></head>
-        <menu name="Main Project">
-            <item name="Amplafi-Flow" href="../index.html" />
-        </menu>
+        <head>Amplafi-Flow</head>
         <menu name="Why Amplafi-Flow?">
             <item name="Goals" href="project-purpose/overview.html"/>
             <item name="What Amplafi Flow is NOT" href="project-purpose/not-goals.html"/>
