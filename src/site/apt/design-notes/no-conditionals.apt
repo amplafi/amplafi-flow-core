@@ -1,0 +1,78 @@
+                    ------
+                    Amplafi Flow Design Notes
+                    No Conditionals
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Feb 2009
+                    ------
+                    
+ Amplafi Flow definitions do not have the ability to branch like Seam and other MVC web controller frameworks do. 
+This is a purposeful limitation.
+
+Problems with branching
+
+* Control Logic scattered
+
+ Seam and others support a xml representation of control logic. This control logic uses a scripting-like mechanism to access the underlying java instances.
+Using this mechanism, a Seam developer can embedded in xml branching logic. ( seam transitions ).
+
+ However, under normal maintenance such code quickly ends up with:
+  * some branching done purely in java and completely hidden from the xml, (the scripting support is inadequete, the test too complex, individual developer decision)
+  * some branching is partially done in xml, ( a value is set via xml that triggers a limited set of choices )
+  * some branching is completely done in xml
+ 
+ Because of this script-like access via xml, java refactoring tools can introduce bugs. Renaming a member variable could result in a broken xml definition. Additionally,
+the problem of determining what java methods are accessed and from where becomes more difficult. String text searches must be resorted to.
+
+* Use Case confusion
+
+ A Product Manager typically describes a linear sequence of steps he would like the user to follow as a {{{http://en.wikipedia.org/wiki/Use_case}use case}}.
+Once a product has under gone multiple iterations, the xml definitions become complex and cluttered. Neither the Project Manager nor the developer can easily answer 
+if a given use case is still supported. The tangled web of xml transitions must be followed to try to determine what use cases are still supported.
+
+* Bugs
+
+ As a program's logic becomes more involved, sections of the xml definitions will be reused. Additional exit conditions will be added. Some of those new exit conditions 
+will really be bugs.
+
+* Transaction boundaries
+
+ Most modern apps have multiple steps to any operation the user does. Multiple steps make it easier on the user and avoid overwhelming the user. Unfortunately, multiple
+steps combined with conditional logic start making it difficult to determine when a change should be committed to the database.
+
+ For example, if a flow can be called independently or as part of a larger operation:
+  * when should the changes be committed to the database? 
+  * Does the subflow always commit the changes? 
+  * Should the subflow be modified so that if being called as part of a larger flow then the subflow does not commit
+the changes but lets the caller handle the commit? 
+  * How does the change information get communicated back to the controlling flow? 
+  * What happens if the user wants to cancel an operation that involved several subflows?
+  * What happens if the user wants to cancel a subflow but not the entire operation?
+   ( for example, adding a new credit card to their account as part of the shopping cart check out. The customer just wants to cancel the "Add new credit card" operation,
+   not the "Check out" operation )
+   
+* Back button
+
+ Once conditionals start getting used then the developer must then provide conditionals if the user backs up.
+ 
+ For example, if:
+ 
+ A -> C  and B -> C and the user wants to "go back" step C must now remember to return to A or B. 
+ 
+ But what happens if a transactional boundary was crossed going from A to C but not B to C? Should the developer allow backing up to A? 
+ 
+ What if the sequence looks like:
+ 
+ A -> C -> E -> F
+ 
+ and 
+ 
+ B -> C -> G -> E
+ 
+ B -> C -> E -> F -> G
+ 
+Conclusions
+
+ Conditional branching places too much of the burden of managing transitions on the developer of each step of a flow.
+ 

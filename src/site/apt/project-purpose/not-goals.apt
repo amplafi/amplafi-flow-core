@@ -1,0 +1,17 @@
+                    ------
+                    Amplafi Flow NOT Goals
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Feb 2009
+                    ------
+                
+NOT Goals
+
+ Some times it is easier to understand a code base if it is clear what the code in question is NOT intended to do, or will never do.
+ 
+ In this spirit here are the NOT Goals for Amplafi-Flow, things that Amplafi-Flow will:
+ 
+* Never Be a Controller
+
+ Amplafi-Flow is 

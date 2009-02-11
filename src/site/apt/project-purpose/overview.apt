@@ -1,0 +1,28 @@
+                    ------
+                    Amplafi Flow Goals
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Feb 2009
+                    ------
+Purpose
+
+ Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
+ 
+Need
+ 
+  Existing solutions assume many things about the interaction that users have with the 
+  
+Goals
+
+ * Limited scope - do one thing and do it well.
+ * Play well with others ( Able to be easily retrofitted to an existing project)
+ * Limited to no expectations about the usage context (web app or client app should not matter)
+ * Configurable by non-technical project managers
+ * Understandable and easily configured without having to read lots of documentation
+ * Encourage proper loose-coupling of different steps of a flow, so that order of flow steps should be easily rearranged.
+ * Enable clear demarcation of transaction boundaries.
+ * Enable incremental management of session state so there are no out of control http session sizes.
+ * Enable automatic test generation of the flows. 
+<li>Leverage the knowledge of the flow to provide additional benefits beyond the just the sequence of steps in a web UI. Specifically:
+<ul><li>API support
