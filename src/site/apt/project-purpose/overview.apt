@@ -3,16 +3,23 @@
                     ------
                     Patrick Moore
                     ------
-                    9 Feb 2009
+                    11 Feb 2009
                     ------
-Purpose
-
- Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
  
 Need
  
-  Existing solutions assume many things about the interaction that users have with the 
-  
+  Existing frameworks are primarily Controller frameworks and offer rich mechanism for describing how the user can navigate a website.
+Existing frameworks assume many things about the users' method of interaction with the application. Trying to combine multiple frameworks,
+such as Tapestry with Spring results in a tug-of-war between frameworks over which framework will provide the base javax.servlet implementation.
+
+Purpose
+
+ Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
+Amplafi-Flow provides a framework to manage the model. Amplafi-Flow's core compentancy is managing data that needs
+to exist across multiple (web usually) interactions before the changes are used to modify the persisted objects and 
+stored in the database. 
+
+ 
 Goals
 
  * Limited scope - do one thing and do it well.
@@ -24,5 +31,4 @@ Goals
  * Enable clear demarcation of transaction boundaries.
  * Enable incremental management of session state so there are no out of control http session sizes.
  * Enable automatic test generation of the flows. 
-<li>Leverage the knowledge of the flow to provide additional benefits beyond the just the sequence of steps in a web UI. Specifically:
-<ul><li>API support
+ * API support

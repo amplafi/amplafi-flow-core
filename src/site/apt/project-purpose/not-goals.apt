@@ -12,6 +12,24 @@ NOT Goals
  
  In this spirit here are the NOT Goals for Amplafi-Flow, things that Amplafi-Flow will:
  
-* Never Be a Controller
+* Never be a Controller
 
- Amplafi-Flow is 
+ Amplafi-Flow is not controlling the way the applications behaves. There are lots of controllers:
+ * Spring
+ * Seam
+ * Tapestry
+ * Struts
+ 
+* Never manage transactions
+
+ Amplafi-Flow calls external code to trigger transaction boundaries. However, Amplafi-Flwo itself does not enforce transactions nor manage transactions.
+Hibernate and other tools that layer on top of database accesses manage the transactions just fine.
+
+* Never be tightly integrated with Http Sessions
+
+ Amplafi-Flow does have code to help manage the data stored in a Http Session. However, Amplafi-Flow itself does not have any concept of the HttpSession.
+As far as Amplafi-Flow is concerned, the user's session data is stored in some data structures that are magically made available to the Amplafi-Flow code.
+
+ This allows Amplafi-Flow usage to be completely separated from the conversation mechanics.
+ 
+    
