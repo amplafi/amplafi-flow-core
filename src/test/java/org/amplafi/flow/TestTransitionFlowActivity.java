@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+ * the specific language governing permissions and limitations under the
+ * License.
+ */
 package org.amplafi.flow;
 
 import java.util.Map;
@@ -28,10 +41,9 @@ public class TestTransitionFlowActivity extends Assert {
     /**
      * Test to make sure that a {@link TransitionFlowActivity} returns true in {@link TransitionFlowActivity#activate(FlowStepDirection)} if there
      * is no page or component name.
-     * @throws Exception
      */
     @Test
-    public void testTransitionActivate() throws Exception {
+    public void testTransitionActivate() {
         TransitionFlowActivity obj = new TransitionFlowActivity();
         Flow flow = EasyMock.createMock(Flow.class);
         FlowState flowState = EasyMock.createNiceMock(FlowState.class);
@@ -49,7 +61,7 @@ public class TestTransitionFlowActivity extends Assert {
     }
 
     @Test
-    public void testTransitionFinishFlow() throws Exception {
+    public void testTransitionFinishFlow() {
         String returnToFlowLookupKey = null;
         FlowDefinitionsManagerImpl flowDefinitionsManager = new FlowDefinitionsManagerImpl();
         flowDefinitionsManager.initializeService();
@@ -68,7 +80,7 @@ public class TestTransitionFlowActivity extends Assert {
     }
 
     @Test
-    public void testTransitionFlowActivityWithFlowTransitions() throws Exception {
+    public void testTransitionFlowActivityWithFlowTransitions() {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType = flowTestingUtils.addDefinition(new FlowActivityImpl());
@@ -93,10 +105,9 @@ public class TestTransitionFlowActivity extends Assert {
     }
     /**
      * test a {@link TransitionFlowActivity} that transitions on a normal finish
-     * @throws Exception
      */
     @Test
-    public void testTransitionFlowActivityWithNormalFinish() throws Exception {
+    public void testTransitionFlowActivityWithNormalFinish() {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType = flowTestingUtils.addDefinition(new FlowActivityImpl());
@@ -113,10 +124,9 @@ public class TestTransitionFlowActivity extends Assert {
     }
     /**
      * 2 alternate finishes + 1 normal finish
-     * @throws Exception
      */
     @Test
-    public void testTransitionFlowActivityWithMultipleFlowTransitions() throws Exception {
+    public void testTransitionFlowActivityWithMultipleFlowTransitions() {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType0 = flowTestingUtils.addDefinition(new FlowActivityImpl());

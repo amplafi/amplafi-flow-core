@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+ * the specific language governing permissions and limitations under the
+ * License.
+ */
 package org.amplafi.flow.flowproperty;
 
 import java.net.URI;
@@ -96,6 +109,7 @@ public class TestFlowPropertyDefinition {
         final FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo");
         definition1.setFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowActivity>() {
             @Override
+            @SuppressWarnings({ "unused", "unchecked" })
             public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
                 assertSame(flowPropertyDefinition, definition1);
                 return (T) Boolean.TRUE;
@@ -127,10 +141,9 @@ public class TestFlowPropertyDefinition {
 
     /**
      * Check merging with no collection types
-     * @throws Exception
      */
     @Test
-    public void testFlowPropertyDefinitionSimpleMerging() throws Exception {
+    public void testFlowPropertyDefinitionSimpleMerging() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class);
         FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo", Boolean.class).initDefaultObject(true);
         assertTrue( definition.isMergeable(definition1));
@@ -141,7 +154,7 @@ public class TestFlowPropertyDefinition {
     }
 
     @Test
-    public void testFlowPropertyDefinitionComplexMerging() throws Exception {
+    public void testFlowPropertyDefinitionComplexMerging() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, Set.class);
         FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo", Boolean.class).initDefaultObject(true);
         assertFalse( definition.isMergeable(definition1));
@@ -167,7 +180,7 @@ public class TestFlowPropertyDefinition {
     }
 
     @Test
-    public void testDataClassDefinition() throws Exception {
+    public void testDataClassDefinition() {
         DataClassDefinitionImpl dataClassDefinition =
             new DataClassDefinitionImpl(Boolean.class, Set.class);
         assertEquals(dataClassDefinition.getElementDataClassDefinition().getDataClass(), Boolean.class);
@@ -175,7 +188,7 @@ public class TestFlowPropertyDefinition {
     }
 
     @Test
-    public void testDataClassDefinitionCollection() throws Exception {
+    public void testDataClassDefinitionCollection() {
         DataClassDefinitionImpl dataClassDefinition =
             new DataClassDefinitionImpl(Boolean.class, Set.class);
         assertTrue(dataClassDefinition.isCollection());
@@ -196,7 +209,7 @@ public class TestFlowPropertyDefinition {
     }
 
     @Test
-    public void testFlowPropertyDefinitionCloning() throws Exception {
+    public void testFlowPropertyDefinitionCloning() {
         FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance, Set.class, List.class);
         FlowPropertyDefinitionImpl cloned = new FlowPropertyDefinitionImpl(original);
         assertEquals(original, cloned, "cloning failed");
