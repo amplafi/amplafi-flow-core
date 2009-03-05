@@ -397,7 +397,8 @@ public class FlowStateImpl implements FlowState {
     @Override
     public void saveChanges() {
         for (int i = 0; i < this.getActivities().size(); i++) {
-            getActivity(i).saveChanges();
+            FlowActivity activity = getActivity(i);
+            activity.saveChanges();
         }
     }
 
