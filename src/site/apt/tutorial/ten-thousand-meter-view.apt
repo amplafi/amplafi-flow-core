@@ -1,0 +1,211 @@
+                    ------
+                    Getting started with Amplafi Flow
+                    (10K meter view) 
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Mar 2009
+                    ------
+
+Getting Started
+
+Choice a use case (org.amplafi.flow.Flow)
+
+ A {{{http://en.wikipedia.org/wiki/Use_case}"use case"}} is a linear series of operations the user is doing to accomplish a task. For example, login, change profile settings, 
+create content, etc. are all use case examples. In Amplafi-Flow, a use case cannot branch or have an alternate path. 
+[[ footnote: Refer to the design notes [[TODO: create links]]]
+[[[footnote: Amplafi handles conditionals through [[[flow morphing]]]. 
+
+ A use case is defined with a Flow object.
+ A well-defined Flow (use case):
+ 1. linear
+ 2. represents a single complete operation.
+ 3. represents changes that should be committed in a single database transaction. 
+
+Define the series of steps in the Use-Case (org.amplafi.flow.FlowActivity)
+
+ Next define the individual steps the user would take ignoring screen layout issues and possible branching needs.[[flow morphing]]] 
+For example, a signup flow could consist of:
+
+ 1. User clicks signup
+ 2. User is asked email
+ 3. System checks to see if email is a new email address
+ 4. User enters name
+ 5. User enters birth year
+ 6. User clicks that they have read the terms of service
+ 7. User enters brief description of themselves.
+ 8. System sends confirmation email with verification link.
+ 
+ Quite likely a number of steps will be on the same webpage, for example the name, birth year, and the affirmation of reading the ToS.
+ Other steps might have no UI component ("System sends confirmation email")  and other steps represent input validation steps 
+("System checks to see if email is a new email address")
+
+ Set aside input verification/validation steps. What remains should be a linear series of operations that will complete the desired operation,
+in this example, signing up a new user. Notice that the signup completion that happens after the user clicks on the verification link in the email is *not*
+part of this flow. How to handle this need is covered later. [[[launching new flow]]]
+ 
+Define each step's (FlowActivity's) UI
+
+ Next define each FlowActivity's UI. The UI framework used distinguishes between a "page" and a "component" within a page. If this is the case, then the UI must be defined
+as a UI "component", not a "page". 
+
+Define each property (org.amplafi.flow.FlowPropertDefinition)
+ Once the UI components are defined, the product manager will know:
+ 1. what values are being gathered,
+ 2. what information is displayed but not being altered, 
+ 3. how each value entered should be verified, 
+ 4. user access permissions (some steps may allow a user to edit if they have a certain set of permissions)
+ 
+ Using this information , FlowPropertyDefinitions can be created.
+ 
+ 
+patrick moore
+11:44 AM
+yes ... because no branchig is allowed it is easy to know what the previous step was
+11:44 AM
+ 
+some flow activities are invisible
+11:45 AM
+ 
+all changes happen to a flow state and are not commited to db until the flow completes
+11:45 AM
+ 
+each flow activity has an initializeFlow() step that is used to get all existing state that the flow needs to run
+11:46 AM
+ 
+(much of this is idealized -- but this is the goal that we are moving toward -- so don't do anything that takes us in oppose direction )
+James Massey
+11:46 AM
+ok
+patrick moore
+11:47 AM
+FlowActivities are injected like hivemind services
+11:47 AM
+ 
+FlowActivites have no stte
+11:47 AM
+ 
+state
+11:47 AM
+ 
+so no member variables except those that are hivemind services
+11:48 AM
+ 
+FlowPropertyValueProviders are used to provide initial state to FlowPropertys ( as defined by FlowPropertyDefinitions
+11:49 AM
+ 
+Each FlowActivity that is visible has a component with a similar name as the FlowActivity
+11:49 AM
+ 
+so AlertContentFlowActivity has a AlertContent component.
+11:49 AM
+ 
+please take time now to look... and make sure  u understand so far
+James Massey
+11:50 AM
+ok...
+11:55 AM
+ 
+so, propertyDefinitions are kind of String based Key-Value pairs that get put into a map of some kind, for keeping state?
+patrick moore
+11:56 AM
+propertyDefinitions are definitions ..not the properties .
+11:56 AM
+ 
+the flow property definitins define how to interpret the string-ified state
+James Massey
+11:56 AM
+Whether it's boolean or String, or etc
+11:57 AM
+ 
+but the properties themselves are a map with String keys that represent state
+11:57 AM
+ 
+So in AlertContentFlowActivity...
+11:58 AM
+ 
+"new FlowPropertyDefinitionImpl(MESSAGE_HEADLINE, PropertyRequired.advance).addAlternateNames(MESSAGE_HEADLINE_ALT)" defines the property MESSAGE_HEADLINE (actual String messageHeadline)
+patrick moore
+11:59 AM
+
+James Massey
+11:59 AM
+" initPropertyIfBlank(MESSAGE_HEADLINE, broadcastMessage.getHeadline());" sets the headline to the headline of the BroadcastMessage that is being actioned
+11:59 AM
+ 
+And we get the value back by "getString(MESSAGE_HEADLINE)"
+patrick moore
+11:59 AM
+if the property is not already set
+James Massey
+12:00 PM
+Where is MESSAGE_HEADLINE set as String?
+12:00 PM
+ 
+yes, got that
+patrick moore
+12:00 PM
+String is default class if none is specified
+James Massey
+12:01 PM
+ok. So we end up woth run-time type checking? for getString() not being used on an int?
+12:04 PM
+ 
+Just as a potential gotcha I'll need to wathc out for.
+12:04 PM
+ 
+What sets AlertControl as the component for AlertControlFlowActivity?
+12:04 PM
+ 
+Content not Control, sorry.
+patrick moore
+12:05 PM
+the name
+James Massey
+12:05 PM
+and AlertContent is just a POJO that follows bean convention so that we can use {$language} in the tapestry html, right?
+patrick moore
+12:06 PM
+same parent package + same name  - "FlowActivity"
+James Massey
+12:06 PM
+ok. Naming conventions - that's easy
+patrick moore
+12:06 PM
+{$language} ??
+12:06 PM
+ 
+we are using tapestry 4
+James Massey
+12:06 PM
+ah
+12:08 PM
+ 
+so ognl:language?
+patrick moore
+12:10 PM
+y
+12:11 PM
+ 
+but you need the @Parameter definition in a stub java file
+12:11 PM
+ 
+AlertContent.java
+12:11 PM
+ 
+the flow properties are "wired" to the @Parameter by name and magic happens
+12:16 PM
+ 
+so the user should always interact with amplafi while in a flow ...
+12:17 PM
+ 
+no screens that are not prt of a flow.
+12:18 PM
+ 
+Flows start automaticaalyy when the user goes to a page or when a <a href="#" jwcid="flowName@flow:FlowEntryPoint"></a>
+12:18 PM
+ 
+is clicked
+12:19 PM
+ 
+so you will need to create a flow that lists all the uris for a user that can be reverted

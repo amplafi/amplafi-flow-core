@@ -14,13 +14,16 @@
             <item name="Goals" href="project-purpose/overview.html"/>
             <item name="What Amplafi Flow is NOT" href="project-purpose/not-goals.html"/>
         </menu>
+        <menu name="Getting Started">
+            <item name="Defining a 
+        </menu>
         <menu name="Design Notes">
             <item name="MV, but no C" href="design-notes/model-but-no-controller.html"/>
             <item name="Incremental Session Management" href="design-notes/session-management.html"/>
             <item name="Self-describing" href="design-notes/self-describing.html"/>
             <item name="No Conditional Support" href="design-notes/no-conditionals.html"/>
-            
         </menu>
+        
         <menu ref="reports"/>
     </body>
     
