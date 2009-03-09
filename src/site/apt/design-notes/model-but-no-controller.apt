@@ -8,3 +8,10 @@
                     ------
                     
 Model but no controller
+
+ Amplafi-Flow has no direct controller. Amplafi-Flow does not have a servlet implementation. This enables Amplafi-Flow to plug-in easily with whatever existing UI 
+framework in use. A simple adaptor may needed for the exact framework in use.
+
+Benefits
+
+ Because there is no assumption about the environment in use, Amplafi-Flow can be used in any environment including a pure desktop application. 

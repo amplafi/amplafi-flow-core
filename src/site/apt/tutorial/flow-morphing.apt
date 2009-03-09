@@ -1,0 +1,21 @@
+                    ------
+                    Getting started with Amplafi Flow
+                    Handling Conditionals and Branching Needs
+                    ------
+                    Patrick Moore
+                    ------
+                    9 Mar 2009
+                    ------
+
+Handling Conditionals and Branching Needs
+
+ Within a flow there is no concept of branching, however conditionals do need to be handled. This discussion will not discuss cancelling a flow.
+ 
+Conditionals come in these flavors:
+ * Conditionals that do not commit existing changes
+ * Conditionals that do.
+ * Conditionals that require an extra operation and then a return to the current activity.
+ 
+
+ 
+   Amplafi-Flow can handle conditions in  
