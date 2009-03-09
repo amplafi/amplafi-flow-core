@@ -26,13 +26,11 @@ import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.JSONWriter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public class DataClassDefinitionImpl implements DataClassDefinition {
-    private Class<?> dataClass;
+import com.sworddance.beans.PropertyDefinition;
+
+public class DataClassDefinitionImpl extends PropertyDefinition implements DataClassDefinition {
     @SuppressWarnings("unchecked")
     private FlowTranslator flowTranslator;
-    private DataClassDefinitionImpl keyDataClassDefinition;
-    private DataClassDefinitionImpl elementDataClassDefinition;
-
     public static final DataClassDefinitionImpl DEFAULT;
     static {
         DEFAULT = new DataClassDefinitionImpl(String.class);
@@ -49,18 +47,16 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
      */
     @SuppressWarnings("unchecked")
     public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinitionImpl keyClassDefinition, DataClassDefinitionImpl elementClassDefinition) {
-        this.dataClass = mapClass;
-        this.setKeyDataClassDefinition(keyClassDefinition);
-        this.setElementDataClassDefinition(elementClassDefinition);
+        super(mapClass, keyClassDefinition, elementClassDefinition);
     }
     /**
      * clone ctor
      * @param dataClassDefinition
      */
     public DataClassDefinitionImpl(DataClassDefinitionImpl dataClassDefinition) {
-        this.dataClass = dataClassDefinition.dataClass;
-        this.setKeyDataClassDefinition(dataClassDefinition.keyDataClassDefinition == null? null: new DataClassDefinitionImpl(dataClassDefinition.keyDataClassDefinition));
-        this.setElementDataClassDefinition(dataClassDefinition.elementDataClassDefinition == null? null: new DataClassDefinitionImpl(dataClassDefinition.elementDataClassDefinition));
+        super(dataClassDefinition.getPropertyClass(),
+            dataClassDefinition.isKeyPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getKeyPropertyDefinition()):null,
+            dataClassDefinition.isElementPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getElementPropertyDefinition()):null);
         this.flowTranslator = dataClassDefinition.flowTranslator;
     }
     // don't use yet.
@@ -142,10 +138,10 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
             return;
         }
         if ( getDataClassReplaced(dataClassDefinition) == Boolean.TRUE) {
-            this.dataClass = dataClassDefinition.dataClass;
+            this.setPropertyClass(dataClassDefinition.getPropertyClass());
         }
-        this.setElementDataClassDefinition(mergeIt(this.elementDataClassDefinition, dataClassDefinition.elementDataClassDefinition));
-        this.setKeyDataClassDefinition(mergeIt(this.keyDataClassDefinition, dataClassDefinition.keyDataClassDefinition));
+        this.setElementDataClassDefinition(mergeIt(this.getElementPropertyDefinition(), dataClassDefinition.getElementPropertyDefinition()));
+        this.setKeyDataClassDefinition(mergeIt(this.getKeyPropertyDefinition(), dataClassDefinition.getKeyPropertyDefinition()));
     }
 
     /**
@@ -164,13 +160,13 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
     public boolean isMergable(DataClassDefinitionImpl dataClassDefinition) {
         if(equals(dataClassDefinition) || dataClassDefinition == null) {
             return true;
-        } else if (dataClassDefinition.dataClass != null &&getDataClassReplaced(dataClassDefinition)==null) {
+        } else if (dataClassDefinition.isDataClassDefined() &&getDataClassReplaced(dataClassDefinition)==null) {
             return false;
-        } else if (this.elementDataClassDefinition != null
-                && !this.elementDataClassDefinition.isMergable(dataClassDefinition.elementDataClassDefinition)) {
+        } else if (this.isElementPropertyDefinitionSet()
+                && !this.getElementPropertyDefinition().isMergable(dataClassDefinition.getElementPropertyDefinition())) {
             return false;
-        } else if (this.keyDataClassDefinition != null
-                && !this.keyDataClassDefinition.isMergable(dataClassDefinition.keyDataClassDefinition)) {
+        } else if (this.isKeyPropertyDefinitionSet()
+                && !this.getKeyPropertyDefinition().isMergable(dataClassDefinition.getKeyPropertyDefinition())) {
             return false;
         } else {
             return true;
@@ -182,18 +178,18 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
      * @return
      */
     private Boolean getDataClassReplaced(DataClassDefinitionImpl dataClassDefinition) {
-        if ( dataClassDefinition == null || this.dataClass == dataClassDefinition.dataClass || dataClassDefinition.dataClass == null) {
+        if ( dataClassDefinition == null || this.isSameDataClass(dataClassDefinition) || !dataClassDefinition.isDataClassDefined()) {
             return false;
-        } else if ( this.dataClass == null ) {
+        } else if ( !this.isDataClassDefined() ) {
             return true;
         } else {
             // currently have a superclass ( we know because earlier == check failed. )
-            return this.dataClass.isAssignableFrom(dataClassDefinition.dataClass)?true:null;
+            return this.isAssignableFrom(dataClassDefinition)?true:null;
         }
     }
 
     /**
-     * if this represents a collection then the {@link #elementDataClassDefinition} will not be null.
+     * if this represents a collection then the {@link #elementPropertyDefinition} will not be null.
      * @return the collection
      */
     public Class<?> getCollection() {
@@ -207,15 +203,16 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
      * @param dataClass the dataClass to set
      */
     public void setDataClass(Class<?> dataClass) {
-        this.dataClass = dataClass != String.class && dataClass != CharSequence.class?dataClass:null;
+        super.setPropertyClass(dataClass != String.class && dataClass != CharSequence.class?dataClass:null);
         this.flowTranslator = null;
     }
     /**
      * @return the dataClass
      */
+    @Override
     public Class<?> getDataClass() {
-        if ( this.dataClass != null ) {
-            return dataClass;
+        if ( super.getPropertyClass() != null ) {
+            return super.getPropertyClass();
         } else if ( isMap()){
             return Map.class;
         } else if ( isCollection()) {
@@ -224,9 +221,8 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
             return String.class;
         }
     }
-
     public boolean isDataClassDefined() {
-        return dataClass != null;
+        return super.isPropertyClassDefined();
     }
     @Override
     public boolean equals(Object o) {
@@ -241,23 +237,23 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
         // cannot do this on element and key because of infinite loop.
         EqualsBuilder equalsBuilder = new EqualsBuilder()
             .append(this.getDataClass(), dataClassDefinition.getDataClass())
-            .append(this.elementDataClassDefinition, dataClassDefinition.elementDataClassDefinition)
-            .append(this.keyDataClassDefinition, dataClassDefinition.keyDataClassDefinition)
+            .append(this.getElementPropertyDefinition(), dataClassDefinition.getElementPropertyDefinition())
+            .append(this.getKeyPropertyDefinition(), dataClassDefinition.getKeyPropertyDefinition())
             .append(this.getFlowTranslator(), dataClassDefinition.getFlowTranslator());
         return equalsBuilder.isEquals();
     }
     /**
-     * @param keyDataClassDefinition the keyDataClassDefinition to set
+     * @param keyDataClassDefinition the keyPropertyDefinition to set
      */
     public void setKeyDataClassDefinition(DataClassDefinitionImpl keyDataClassDefinition) {
-        this.keyDataClassDefinition = keyDataClassDefinition;
+        this.setKeyPropertyDefinition(keyDataClassDefinition);
     }
     /**
-     * @return the keyDataClassDefinition
+     * @return the keyPropertyDefinition
      */
     public DataClassDefinition getKeyDataClassDefinition() {
-        if ( keyDataClassDefinition != null) {
-            return keyDataClassDefinition;
+        if ( isKeyPropertyDefinitionSet()) {
+            return getKeyPropertyDefinition();
         } else if ( isMap() ){
             return DEFAULT;
         } else {
@@ -265,22 +261,31 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
         }
     }
     /**
-     * @param elementDataClassDefinition the elementDataClassDefinition to set
+     * @param elementDataClassDefinition the elementPropertyDefinition to set
      */
     public void setElementDataClassDefinition(DataClassDefinitionImpl elementDataClassDefinition) {
-        this.elementDataClassDefinition = elementDataClassDefinition;
+        this.setElementPropertyDefinition(elementDataClassDefinition);
     }
     /**
-     * @return the elementDataClassDefinition
+     * @return the elementPropertyDefinition
      */
     public DataClassDefinition getElementDataClassDefinition() {
-        if ( elementDataClassDefinition != null ) {
-            return elementDataClassDefinition;
+        if ( isElementPropertyDefinitionSet() ) {
+            return getElementPropertyDefinition();
         } else if ( isCollection()){
             return DEFAULT;
         } else {
             return null;
         }
+    }
+
+    @Override
+    public DataClassDefinitionImpl getKeyPropertyDefinition() {
+        return (DataClassDefinitionImpl) super.getKeyPropertyDefinition();
+    }
+    @Override
+    public DataClassDefinitionImpl getElementPropertyDefinition() {
+        return (DataClassDefinitionImpl) super.getElementPropertyDefinition();
     }
     /**
      * @param flowTranslator the flowTranslator to set
@@ -312,25 +317,25 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
 
     @Override
     public String toString() {
-        String name = this.getDataClass().getName();
+        StringBuilder name = new StringBuilder( this.getDataClass().getName());
         if ( isCollection()) {
-            name +="<";
-            if ( this.keyDataClassDefinition != null || Map.class.isAssignableFrom(this.getDataClass())) {
-                name += this.getKeyDataClassDefinition()+", ";
+            name.append("<");
+            if ( this.isKeyPropertyDefinitionSet() || Map.class.isAssignableFrom(this.getDataClass())) {
+                name.append(this.getKeyDataClassDefinition()).append(", ");
             }
             if ( isCollection()) {
-                name += this.getElementDataClassDefinition();
+                name.append(this.getElementDataClassDefinition());
             }
-            name +=">";
+            name.append(">");
         }
-        return name;
+        return name.toString();
     }
 
     public boolean isCollection() {
         return
-            this.elementDataClassDefinition != null
+            this.isElementPropertyDefinitionSet()
             || isMap()
-            || (this.dataClass != null && Collection.class.isAssignableFrom(this.dataClass))
+            || (this.isDataClassDefined() && Collection.class.isAssignableFrom(super.getPropertyClass()))
             ;
     }
 
@@ -338,8 +343,8 @@ public class DataClassDefinitionImpl implements DataClassDefinition {
      * @return this represents a map
      */
     public boolean isMap() {
-        return this.keyDataClassDefinition != null
-        || (this.dataClass != null && Map.class.isAssignableFrom(this.dataClass));
+        return this.isKeyPropertyDefinitionSet()
+        || (this.isDataClassDefined() && Map.class.isAssignableFrom(super.getPropertyClass()));
     }
 
     /**
