@@ -50,6 +50,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 
+import com.sworddance.util.perf.LapTimer;
+
 
 /**
  * Application State Object that tracks the current state of a flow. Holds any
@@ -396,10 +398,13 @@ public class FlowStateImpl implements FlowState {
      */
     @Override
     public void saveChanges() {
+        LapTimer.sLap(this.getActiveFlowLabel()," beginning saveChanges()");
         for (int i = 0; i < this.getActivities().size(); i++) {
             FlowActivity activity = getActivity(i);
             activity.saveChanges();
+            LapTimer.sLap(activity.getFullActivityName(), ".saveChanges() completed");
         }
+        LapTimer.sLap(this.getActiveFlowLabel()," end saveChanges()");
     }
 
     /**
