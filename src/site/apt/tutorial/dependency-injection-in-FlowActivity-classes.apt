@@ -1,6 +1,13 @@
-Let us try to understand how dependency Injection in working in various flow activities i.e. *FlowActivity.java.
+                    ------
+                    Getting started with Amplafi Flow
+                    Dependency Injection
+                    ------
+                    9 Mar 2009
+                    ------
 
-Let us take an example
+Dependency Injection in working in various flow activities i.e. *FlowActivity.java.
+
+Example
 
 public class LogoutFlowActivity extends BroadcastProviderFlowActivity {
 
@@ -23,15 +30,15 @@ public class LogoutFlowActivity extends BroadcastProviderFlowActivity {
     
 }
 
-If you search references to method "public void setAuthenticationService(AuthenticationService authenticationService)" in the amplafi project, you will not find any. Then who is calling the method 
+ If you search references to method "public void setAuthenticationService(AuthenticationService authenticationService)" in the amplafi project, you will not find any.
+Then who is calling the method 
 setAuthenticationService(AuthenticationService authenticationService) 
 where is the magic happening?
 
-Let us find out what is happening behind the scene. 
 
-The LogoutFlowActivity is called when a user clicks on "Sign out" link. The code of interest which does this is present in ShowUserDetail.html and relevant line is
+ The LogoutFlowActivity is called when a user clicks on "Sign out" link. The code of interest which does this is present in ShowUserDetail.html and relevant line is
 
-</span> | <a jwcid="logout@flow:FlowEntryPoint" stateful="false"><span key="label.signout">Sign Out</span></a>
+ <a jwcid="logout@flow:FlowEntryPoint" stateful="false"><span key="label.signout">Sign Out</span></a>
 
 The definition of LogoutFlowActivity is present in amplafi.memberflows.xml and the relevant section is 
 
@@ -63,14 +70,13 @@ StartFlowFromDefinition.call() line: 71
 $FlowEntryPoint_409(FlowEntryPoint).doEnterFlow(FlowLauncher, String, Iterable<String>) line: 284	
 
 
-If you see the stack trace carefully it is evident that the property "authenticationService" is set when the flow is initialized. In case of FlowActivities we explicitly do the dependency injection and the relevant line from stack trace is
-
+ If you see the stack trace carefully it is evident that the property "authenticationService" is set when the flow is initialized. In case of FlowActivities we explicitly do the dependency injection and the relevant line from stack trace is
 SessionFlowManagement.autowire(Object) line: 371 which in turns calls ServicesSetterImpl.wire(Object) line: 36 and this service setter sets all the services in class LogoutFlowActivity plus all the properties of the parent classes.
 
 Few other points which shall be noted are:-
 
---One important thing is that Flow Activity (*FlowActivity.java) should be stateless, that is there should be no member variables other than services or  Managers (Usually the classes which end in *Service or *Manager).
+ *One important thing is that Flow Activity (*FlowActivity.java) should be stateless, that is there should be no member variables other than services or  Managers (Usually the classes which end in *Service or *Manager).
 
---Almost anything that is declared in hivemodule.xml and the files included in hivemodule.xml can be easily accessed using getters/setters (For example TransPolSessionManager in LogoutFlowActivity.java
+ *Almost anything that is declared in hivemodule.xml and the files included in hivemodule.xml can be easily accessed using getters/setters (For example TransPolSessionManager in LogoutFlowActivity.java
 
 

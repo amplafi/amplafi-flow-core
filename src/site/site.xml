@@ -10,12 +10,14 @@
 
     <body>
         <head>Amplafi-Flow</head>
+        <menu ref="parent"/>
         <menu name="Why Amplafi-Flow?">
             <item name="Goals" href="project-purpose/overview.html"/>
             <item name="What Amplafi Flow is NOT" href="project-purpose/not-goals.html"/>
         </menu>
         <menu name="Getting Started">
-            <item name="Defining a 
+            <item name="10,000 meter view" href="tutorial/ten-thousand-meter-view.html"/>
+            <item name="Conditionals through flow morphing" href="tutorial/flow-morphing.html"/>
         </menu>
         <menu name="Design Notes">
             <item name="MV, but no C" href="design-notes/model-but-no-controller.html"/>
@@ -23,8 +25,9 @@
             <item name="Self-describing" href="design-notes/self-describing.html"/>
             <item name="No Conditional Support" href="design-notes/no-conditionals.html"/>
         </menu>
-        
+        <!-- 
         <menu ref="reports"/>
+         -->
     </body>
     
 </project>

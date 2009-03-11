@@ -49,14 +49,14 @@ Define each step's (FlowActivity's) UI
  Next define each FlowActivity's UI. The UI framework used distinguishes between a "page" and a "component" within a page. If this is the case, then the UI must be defined
 as a UI "component", not a "page". 
 
-Define each property (org.amplafi.flow.FlowPropertDefinition)
+Define each property (org.amplafi.flow.FlowPropertyDefinition)
  Once the UI components are defined, the product manager will know:
  1. what values are being gathered,
  2. what information is displayed but not being altered, 
  3. how each value entered should be verified, 
  4. user access permissions (some steps may allow a user to edit if they have a certain set of permissions)
  
- Using this information , FlowPropertyDefinitions can be created.
+ Using this information, FlowPropertyDefinitions can be created.
  
  
 patrick moore

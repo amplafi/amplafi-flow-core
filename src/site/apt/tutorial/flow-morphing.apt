@@ -11,11 +11,19 @@ Handling Conditionals and Branching Needs
 
  Within a flow there is no concept of branching, however conditionals do need to be handled. This discussion will not discuss cancelling a flow.
  
-Conditionals come in these flavors:
- * Conditionals that do not commit existing changes
- * Conditionals that do.
- * Conditionals that require an extra operation and then a return to the current activity.
+ Conditionals come in these flavors:
+ * During a flow, it is discovered that the current flow is the wrong flow
+ * Additional steps are needed after the current flow ends.
+ * Additional steps are needed in order for the current flow to end.
+ 
+Wrong flow
+
+ During a flow, the user makes a selection (or the flow code discovers that) the flow the user is currently in is incorrect. For example,
+the user is signing up to use a web service. The web service has two flows, one for a small business, another for a larger business. The user is started on the small business
+flow. However, the user answers the company's revenue question with "$350 million / year". Clearly, the "small business signup" flow is not appropriate; the large business flow 
+really should be used.
+
+ Amplafi uses Flow morphing to shift to the correct flow.  
  
 
- 
    Amplafi-Flow can handle conditions in  
