@@ -18,8 +18,11 @@ Problems with branching
 Using this mechanism, a Seam developer can embedded in xml branching logic. ( seam transitions ).
 
  However, under normal maintenance such code quickly ends up with:
+ 
   * some branching done purely in java and completely hidden from the xml, (the scripting support is inadequete, the test too complex, individual developer decision)
+  
   * some branching is partially done in xml, ( a value is set via xml that triggers a limited set of choices )
+  
   * some branching is completely done in xml
  
  Because of this script-like access via xml, java refactoring tools can introduce bugs. Renaming a member variable could result in a broken xml definition. Additionally,
@@ -42,12 +45,18 @@ will really be bugs.
 steps combined with conditional logic start making it difficult to determine when a change should be committed to the database.
 
  For example, if a flow can be called independently or as part of a larger operation:
+ 
   * when should the changes be committed to the database? 
+  
   * Does the subflow always commit the changes? 
+  
   * Should the subflow be modified so that if being called as part of a larger flow then the subflow does not commit
 the changes but lets the caller handle the commit? 
+  
   * How does the change information get communicated back to the controlling flow? 
+  
   * What happens if the user wants to cancel an operation that involved several subflows?
+  
   * What happens if the user wants to cancel a subflow but not the entire operation?
    ( for example, adding a new credit card to their account as part of the shopping cart check out. The customer just wants to cancel the "Add new credit card" operation,
    not the "Check out" operation )

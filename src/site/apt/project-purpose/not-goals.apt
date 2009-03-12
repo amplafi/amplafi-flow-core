@@ -17,8 +17,11 @@ NOT Goals
  Amplafi-Flow is not controlling the way the applications behaves. There are lots of controllers:
  
  * Spring
+ 
  * Seam
+ 
  * Tapestry
+ 
  * Struts
  
 * Never manage transactions

@@ -18,23 +18,35 @@ create content, etc. are all use case examples. In Amplafi-Flow, a use case cann
 
  A use case is defined with a Flow object.
  A well-defined Flow (use case):
- 1. linear
- 2. represents a single complete operation.
- 3. represents changes that should be committed in a single database transaction. 
+ 
+   [[1]] linear
+   
+   [[2]] represents a single complete operation.
+   
+   [[3]] represents changes that should be committed in a single database transaction. 
 
 Define the series of steps in the Use-Case (org.amplafi.flow.FlowActivity)
 
  Next define the individual steps the user would take ignoring screen layout issues and possible branching needs.[[flow morphing]]] 
 For example, a signup flow could consist of:
 
- 1. User clicks signup
- 2. User is asked email
- 3. System checks to see if email is a new email address
- 4. User enters name
- 5. User enters birth year
- 6. User clicks that they have read the terms of service
- 7. User enters brief description of themselves.
- 8. System sends confirmation email with verification link.
+ [[1]] User clicks signup
+ 
+ [[2]] User is asked email
+ 
+ [[3]] System checks to see if email is a new email address
+ 
+ [[4]] User enters name
+ 
+ [[5]] User enters birth year
+ 
+ [[6]] User clicks that they have read the terms of service
+ 
+ [[7]] User enters brief description of themselves.
+ 
+ [[8]] System sends confirmation email with verification link.
+ 
+ []
  
  Quite likely a number of steps will be on the same webpage, for example the name, birth year, and the affirmation of reading the ToS.
  Other steps might have no UI component ("System sends confirmation email")  and other steps represent input validation steps 
@@ -52,10 +64,14 @@ as a UI "component", not a "page".
 Define each property (org.amplafi.flow.FlowPropertyDefinition)
 
  Once the UI components are defined, the product manager will know:
- 1. what values are being gathered,
- 2. what information is displayed but not being altered, 
- 3. how each value entered should be verified, 
- 4. user access permissions (some steps may allow a user to edit if they have a certain set of permissions)
+ 
+ [[1]] what values are being gathered,
+ 
+ [[2]] what information is displayed but not being altered, 
+ 
+ [[3]] how each value entered should be verified, 
+ 
+ [[4]] user access permissions (some steps may allow a user to edit if they have a certain set of permissions)
  
  Using this information, FlowPropertyDefinitions can be created.
  
