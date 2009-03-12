@@ -9,7 +9,7 @@
 
 Getting Started
 
-Choice a use case (org.amplafi.flow.Flow)
+Choose a use case (org.amplafi.flow.Flow)
 
  A {{{http://en.wikipedia.org/wiki/Use_case}"use case"}} is a linear series of operations the user is doing to accomplish a task. For example, login, change profile settings, 
 create content, etc. are all use case examples. In Amplafi-Flow, a use case cannot branch or have an alternate path. 
@@ -50,6 +50,7 @@ Define each step's (FlowActivity's) UI
 as a UI "component", not a "page". 
 
 Define each property (org.amplafi.flow.FlowPropertyDefinition)
+
  Once the UI components are defined, the product manager will know:
  1. what values are being gathered,
  2. what information is displayed but not being altered, 

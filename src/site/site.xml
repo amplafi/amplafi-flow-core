@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <project name="amplafi-flow-core">
-    <skin>
-        <groupId>org.apache.tapestry</groupId>
-        <artifactId>maven-skin</artifactId>
-        <version>1.1-SNAPSHOT</version>
-    </skin>
     <publishDate format="dd MMM yyyy" />
 
     <body>
@@ -25,9 +20,7 @@
             <item name="Self-describing" href="design-notes/self-describing.html"/>
             <item name="No Conditional Support" href="design-notes/no-conditionals.html"/>
         </menu>
-        <!-- 
         <menu ref="reports"/>
-         -->
     </body>
     
 </project>

@@ -15,6 +15,7 @@ NOT Goals
 * Never be a Controller
 
  Amplafi-Flow is not controlling the way the applications behaves. There are lots of controllers:
+ 
  * Spring
  * Seam
  * Tapestry
