@@ -1,0 +1,62 @@
+                    ------
+                    Amplafi Flow Design Notes
+                    Comparison to other frameworks
+                    ------
+                    Patrick Moore
+                    ------
+                    11 Feb 2009
+                    ------
+
+Important Note
+
+ Amplafi-flow is different from other solutions (Seam and Spring Web Flow):
+ 
+ [[1]] Amplafi-flow does not expect to be the "controller"
+ [[2]] Amplafi-flow does not expect/require that the code is being called as part of a http request.
+ [[3]] Amplafi-flow does not support any conditionals in the xml flow definitions.
+ [[4]] Amplafi-flow separates the edit/modification operations from the persist operations.
+ 
+ Amplafi-Flow does not claimed to be a replacement for the control functionality provided by any of the frameworks
+described here. As noted in here [[ link to model-but-no-controller]] Amplafi-Flow manages just the state with limited controller
+functionality.
+                    
+Seam ({http://jboss.org/seam} )
+
+ Seam encourages decision logic to be embedded within the seam xml definitions. 
+
+Problems with seam
+
+* Seam has decision branching
+
+  * java code that makes decisions will be blended with seam declarations that make decisions.
+  * branching makes it hard to read what the true sequence of steps really is.
+  * hard to create a visual wizard representation if earlier steps can include entirely different subsequewnt steps
+  * how to handle the user backing up through a decision point? seam doesn't handle this issue.
+  * over time some decisions will be in java code others in the xml definition. since seam's hello world example
+      shows (suggests) putting branching logic in the xml - it is reasonable that there will be a mix
+      of branching decisions in java code and in xml with no clear consistency in a projecet.
+
+* seam doesn't help with the ui representation of the step sequence.
+
+  * seam will integrate with the ui component java code but provides no support for the developer to create the control
+     ui pieces for a user to go forward and back through the flow.
+
+* seam uses the idea of conversational transaction boundaries. 
+
+  * means that the developer faces the real possibility of a 'partial' merge. which happens if multiple dbo's are changed
+       and another user changes some of those dbos.
+  * no clear transaction boundary symantics.
+ * conversation symantics encourages the anti-pattern of including dbos with potentially large object graphs in the session.
+  * this creates problems with large sessions that cannot be easily transfered between servers, nor cached to disk.
+  * it also can easily result in session size ballooning uncontrollably. and even when the root case is known, 
+        correcting the problem usually results in major code reworking.
+  * keeping the session size down is usually a game of whack-a-mole every time new code is added. The session size is at
+    continuous risk every time the object structure changes. Even with lazy evaluation, 
+
+* it looks a lot like struts
+
+* does little to nothing to manage session state. Being able to selective garbage-collect session data is extremely valuable.
+
+* does not provide any support for canceling a series of operations.
+
+* does not provide a serialization mechanism to reduce session size.

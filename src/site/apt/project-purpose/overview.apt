@@ -8,9 +8,13 @@
  
 Need
  
-  Existing frameworks are primarily Controller frameworks and offer rich mechanism for describing how the user can navigate a website.
+ Existing frameworks are primarily controller frameworks and offer rich mechanism for describing how the user can navigate a website.
 Existing frameworks assume many things about the users' method of interaction with the application. Trying to combine multiple frameworks,
 such as Tapestry with Spring results in a tug-of-war between frameworks over which framework will provide the base javax.servlet implementation.
+
+ As has been noted, numerous times Tapestry is missing an easy-to-use wizard mechanism.
+The wizard concept is fundamental to modern web design. Tapestry's failing here is the reason for
+AmpFlow's existence.
 
 Purpose
 
@@ -24,22 +28,60 @@ Goals
 
  * Limited scope - do one thing and do it well.
  
- * Play well with others ( Able to be easily retrofitted to an existing project)
+ * Play well with others. 
+  Amplafi-Flow can easily retrofitted to an existing project without global re-architecture or a global commitment. 
+  It is possible for only part of a project to use amplafi-flow.
  
- * Limited to no expectations about the usage context (web app or client app should not matter)
+ * Limited to no expectations about the usage context.
+  Amplafi-Flow can be used in a client java application or a "headless" server.
  
  * Configurable by non-technical project managers
  
- * Understandable and easily configured without having to read lots of documentation
+ * Understandable and easily configured without having to read lots of documentation.
+  Understandable and easily configured -- even for developers that have never looked at Amplafi-Flows before.
  
- * Encourage proper loose-coupling of different steps of a flow, so that order of flow steps should be easily rearranged.
+ * Encourage proper loose-coupling of different steps of a flow.
+  The order of the flow steps should be easily rearranged by
+  non-developers.
  
  * Enable clear demarcation of transaction boundaries.
+  Amplafi-Flow enables cancel operations on a multi-page flow.
  
- * Enable incremental management of session state so there are no out of control http session sizes.
+ * Enable incremental management of session state so there are no out-of-control http session sizes.
+ 
+ * Fully support and enables forward/back browser actions without explicit transition definitions by the developer.
+ 
+ * Enables user "in-progress" changes to be preserved without changing the business logic objects in a database.
  
  * Enable automatic test generation of the flows. 
  
  * API support
+
+What does Amplafi-Flow do
+
+ * connects tapestry ui components to business logic.
+ * segments session data allowing portions of the session to be garbage-collected.
+ * seamless manages conversion of the serialized representation.
+ * automatic API creation
+   * provides a standard mechanism to invoke a flow directly with a browser call.
+   * this means that as a developer defines a ui wizard flow they are defining a API call that does the same thing.
+   * every step of a sequence of steps can be represented by a unique uri that is not tied to the session. 
+   * provides a standard way of returning the result of the flow.
+
+ * provides a standardize way of managing changes so that cancel operations are trivial to support.
+
+* various operations can be segmented into different  flows that can all be active at the same time. 
+  [[ note: have a url query parameter to determine which flow is active?]      
+
+* Amplafi-Flow tracks which fields have changed. 
+  * this makes it easy to merge changes when multiple users are making changes.
+  * it also makes it possible to discard changes and resotre the original values without 
+     hitting the database. This preserve transaction isolation without involving the database resources.
+      the cumulated changes should be applied. 
+      
+      This project manages program (usually web) flow and web page /web component generation. Currently this project is only integrated with Tapestry 4. However, the code is separated out and implementing different web UI frameworks should be possible. 
+
+
+
  
  
