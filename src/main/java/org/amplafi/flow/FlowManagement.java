@@ -201,7 +201,8 @@ public interface FlowManagement {
     public FlowTranslatorResolver getFlowTranslatorResolver();
 
     /**
-     * @param activity
+     * Do the Dependency Injection on this activity.
+     * @param activity may be null.
      */
     public void resolveFlowActivity(FlowActivity activity);
 

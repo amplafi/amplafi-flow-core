@@ -374,10 +374,12 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @Override
     public void resolveFlowActivity(FlowActivity activity) {
-        Map<String, FlowPropertyDefinition> propertyDefinitions = activity.getPropertyDefinitions();
-        if ( MapUtils.isNotEmpty(propertyDefinitions)) {
-            for(FlowPropertyDefinition flowPropertyDefinition: propertyDefinitions.values()) {
-                getFlowTranslatorResolver().resolve(flowPropertyDefinition);
+        if ( activity != null) {
+            Map<String, FlowPropertyDefinition> propertyDefinitions = activity.getPropertyDefinitions();
+            if ( MapUtils.isNotEmpty(propertyDefinitions)) {
+                for(FlowPropertyDefinition flowPropertyDefinition: propertyDefinitions.values()) {
+                    getFlowTranslatorResolver().resolve(flowPropertyDefinition);
+                }
             }
         }
     }
