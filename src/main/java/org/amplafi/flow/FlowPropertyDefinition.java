@@ -47,9 +47,9 @@ public interface FlowPropertyDefinition {
 
     boolean isCacheOnly();
 
-    void setFlowPropertyValueProvider(FlowPropertyValueProvider flowPropertyValueProvider);
+    <FA extends FlowActivity> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
 
-    FlowPropertyValueProvider getFlowPropertyValueProvider();
+    <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
 
     FlowPropertyDefinition clone();
 
@@ -63,7 +63,7 @@ public interface FlowPropertyDefinition {
 
     boolean isMergeable(FlowPropertyDefinition source);
 
-    String getParameterName();
+    String getUiComponentParameterName();
 
     PropertyRequired getPropertyRequired();
     void setPropertyRequired(PropertyRequired propertyRequired);
@@ -96,4 +96,10 @@ public interface FlowPropertyDefinition {
     boolean isAssignableFrom(Class<?> clazz);
 
     boolean isRequired();
+    /**
+     *
+     * @param possiblePropertyName
+     * @return true if {@link #getName()} or {@link #getAlternates()} equals possiblePropertyName ( case sensitive check)
+     */
+    boolean isNamed(String possiblePropertyName);
 }

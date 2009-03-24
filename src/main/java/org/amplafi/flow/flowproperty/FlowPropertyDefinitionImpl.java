@@ -43,6 +43,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     private static final String REQUIRED = "required";
 
+    /**
+     * Name of the property as used in the flow code.
+     */
     private String name;
 
     /**
@@ -73,7 +76,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * Or a component that is used in multiple places and changing the UI component itself could cause a ripple of
      * cascading problems and possible regressions.
      */
-    private String parameterName;
+    private String uiComponentParameterName;
 
     /**
      * Property should not be persisted as string in the FlowState map. This is
@@ -140,7 +143,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.setDefaultValue(clone.defaultValue);
         this.setInitial(clone.initial);
-        this.setParameterName(clone.parameterName);
+        this.setUiComponentParameterName(clone.uiComponentParameterName);
         if (clone.sensitive != null) {
             this.setSensitive(clone.sensitive);
         }
@@ -366,20 +369,20 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return this;
     }
 
-    public void setParameterName(String parameterName) {
-        this.parameterName = parameterName;
+    public void setUiComponentParameterName(String parameterName) {
+        this.uiComponentParameterName = parameterName;
     }
 
-    public String getParameterName() {
-        if (parameterName == null) {
+    public String getUiComponentParameterName() {
+        if (uiComponentParameterName == null) {
             return getName();
         }
-        return parameterName;
+        return uiComponentParameterName;
     }
 
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initParameterName(String parameterName) {
-        setParameterName(parameterName);
+        setUiComponentParameterName(parameterName);
         return this;
     }
 
@@ -450,7 +453,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     public String toComponentDef() {
-        return getParameterName();
+        return getUiComponentParameterName();
     }
 
     public static String toString(String paramName, String flowPropName) {
@@ -692,8 +695,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         if (saveBack == null && source.saveBack != null) {
             this.setSaveBack(source.saveBack);
         }
-        if (parameterName == null && source.parameterName != null) {
-            parameterName = source.parameterName;
+        if (uiComponentParameterName == null && source.uiComponentParameterName != null) {
+            uiComponentParameterName = source.uiComponentParameterName;
         }
         if (sensitive == null && source.sensitive != null) {
             this.setSensitive(source.sensitive);
@@ -753,16 +756,19 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     /**
+     * @param <FA>
      * @param flowPropertyValueProvider the flowPropertyValueProvider to set
      */
-    public void setFlowPropertyValueProvider(FlowPropertyValueProvider flowPropertyValueProvider) {
+    public <FA extends FlowActivity>void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider) {
         this.flowPropertyValueProvider = flowPropertyValueProvider;
     }
 
     /**
+     * @param <FA>
      * @return the flowPropertyValueProvider
      */
-    public FlowPropertyValueProvider getFlowPropertyValueProvider() {
+    @SuppressWarnings("unchecked")
+    public <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
         return flowPropertyValueProvider;
     }
 
@@ -795,7 +801,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             .append(this.initial, flowPropertyDefinition.initial)
             .append(this.initialOptional, this.initialOptional)
             .append(this.name, flowPropertyDefinition.name)
-            .append(this.parameterName, flowPropertyDefinition.parameterName)
+            .append(this.uiComponentParameterName, flowPropertyDefinition.uiComponentParameterName)
                 // use getter so that defaults can be calculated.
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
@@ -804,4 +810,18 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             .append(this.validators, flowPropertyDefinition.validators);
         return equalsBuilder.isEquals();
     }
+
+    /**
+     * @see org.amplafi.flow.FlowPropertyDefinition#isNamed(java.lang.String)
+     */
+    @Override
+    public boolean isNamed(String possiblePropertyName) {
+        if ( isBlank(possiblePropertyName)) {
+            return false;
+        } else {
+            return getName().equals(possiblePropertyName) ||
+                this.getAlternates().contains(possiblePropertyName);
+        }
+    }
+
 }
