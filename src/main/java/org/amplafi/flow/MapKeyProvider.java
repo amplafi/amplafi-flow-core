@@ -13,6 +13,13 @@
  */
 package org.amplafi.flow;
 
+/**
+ * Implementers supply their own key if stored in a map.
+ * @author patmoore
+ *
+ * @param <K> Key value's class
+ */
 public interface MapKeyProvider<K> {
+    // TODO rename to getMapKey()
     K getKey();
 }
