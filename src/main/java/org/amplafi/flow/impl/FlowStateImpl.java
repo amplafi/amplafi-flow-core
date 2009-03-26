@@ -1163,11 +1163,6 @@ public class FlowStateImpl implements FlowState {
         }
     }
 
-    @Override
-    public String toString() {
-        return this.lookupKey + " [type:" + this.flowTypeName + "]";
-    }
-
     /**
      * @see org.amplafi.flow.FlowState#getCurrentActivityFlowValidationResult()
      */
@@ -1514,6 +1509,11 @@ public class FlowStateImpl implements FlowState {
 
     public boolean isApiCall() {
         return isTrue(FSAPI_CALL);
+    }
+
+    @Override
+    public String toString() {
+        return this.lookupKey + " [type:" + this.flowTypeName + "] flowStateMap="+this.flowValuesMap;
     }
 
 }
