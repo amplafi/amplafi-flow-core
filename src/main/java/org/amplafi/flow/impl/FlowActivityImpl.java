@@ -344,7 +344,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
             for (FlowPropertyDefinition def : propDefs.values()) {
                 if ((required != null && def.getPropertyRequired() == required)
                         && isPropertyNotSet(def.getName())
-                        && def.getDefaultObject(this) == null && def.getFlowPropertyValueProvider() == null) {
+                        && def.getDefaultObject(this) == null ) {
                     result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));
                 }
             }
