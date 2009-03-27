@@ -938,7 +938,12 @@ public class FlowStateImpl implements FlowState {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCached(String key) {
-        return (T) (cachedValues != null? cachedValues.get(key) : null);
+        if(cachedValues != null) {
+            T value = (T) cachedValues.get(key);
+            return value;
+        } else {
+            return null;
+        }
     }
 
     /**

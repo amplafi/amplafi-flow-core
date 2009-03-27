@@ -540,7 +540,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#setInvisible(boolean)
      */
     public void setInvisible(boolean invisible) {
-        this.setProperty(FAINVISIBLE, invisible);
+        // HACK -- larger problem this value is cached so the next FA looks invisible as well.
+        // good test case complete the registration of a new user which transitions to the FinishSignUp.
+        // the ChangePasswordFA acts as if it is invisible because of cached "faInvisible" value = true.
+//        this.setProperty(FAINVISIBLE, invisible);
         this.invisible = invisible;
     }
 
