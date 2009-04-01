@@ -25,6 +25,8 @@ import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonSelfRenderer;
 import org.amplafi.json.renderers.MapJsonRenderer;
 
+import com.sworddance.util.MapKeyed;
+
 
 import static org.apache.commons.lang.StringUtils.*;
 /**
@@ -32,7 +34,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
-public class FlowTransition implements JsonSelfRenderer, MapKeyProvider<String> {
+public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
 
     private static final String INITIAL_VALUES = "initialValues";
 
@@ -130,7 +132,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider<String> 
     @Override
     public void toJson(JSONWriter jsonWriter) {
         jsonWriter.object();
-        jsonWriter.keyValueIfNotNullValue(KEY, getKey());
+        jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());
         jsonWriter.keyValueIfNotNullValue(NEXT_FLOW, getNextFlow());
         jsonWriter.keyValueIfNotNullValue(NEXT_FLOW_TYPE, getNextFlowType());
@@ -141,10 +143,10 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyProvider<String> 
     }
 
     /**
-     * @see org.amplafi.flow.MapKeyProvider#getKey()
+     * @see com.sworddance.util.MapKeyed#getMapKey()
      */
     @Override
-    public String getKey() {
+    public String getMapKey() {
         return key;
     }
     /**

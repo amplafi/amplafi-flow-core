@@ -18,10 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.MapKeyProvider;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.collections.MapUtils;
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -34,12 +34,9 @@ public class AddToMapFlowPropertyValueProvider<K,V> implements ChainedFlowProper
 
     private FlowPropertyValueProvider<FlowActivity> previous;
     private Map<K,V> values;
-    @SuppressWarnings("unchecked")
     public AddToMapFlowPropertyValueProvider(V...valuesToAdd) {
         values = new LinkedHashMap<K, V>();
-        for (V value: valuesToAdd) {
-            values.put((K)((MapKeyProvider)value).getKey(), value);
-        }
+        putAll(values, valuesToAdd);
     }
     public AddToMapFlowPropertyValueProvider(K key, V valueToAdd) {
         values = new LinkedHashMap<K, V>();
