@@ -337,12 +337,12 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     /**
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired)
      */
-    public FlowValidationResult getFlowValidationResult(PropertyRequired required) {
+    public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired) {
         FlowValidationResult result = new ReportAllValidationResult();
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
         if (MapUtils.isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
-                if ((required != null && def.getPropertyRequired() == required)
+                if ((propertyRequired != null && def.getPropertyRequired() == propertyRequired)
                         && isPropertyNotSet(def.getName())
                         && def.getDefaultObject(this) == null ) {
                     result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));
