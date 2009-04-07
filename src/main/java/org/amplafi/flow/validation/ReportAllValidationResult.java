@@ -62,13 +62,13 @@ public class ReportAllValidationResult implements FlowValidationResult {
     /**
      * add a {@link SimpleValidationTracking} if valid is false.
      * @param valid add if false
-     * @param key
-     * @param params
+     * @param messageKey
+     * @param messageParams
      */
     @Override
-    public FlowValidationResult addTracking(boolean valid, String key, String...params) {
+    public FlowValidationResult addTracking(boolean valid, String messageKey, Object...messageParams) {
         if (!valid) {
-            addTracking(new SimpleValidationTracking(key, params));
+            addTracking(new SimpleValidationTracking(messageKey, messageParams));
         }
         return this;
     }

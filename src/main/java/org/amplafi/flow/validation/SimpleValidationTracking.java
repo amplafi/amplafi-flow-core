@@ -21,23 +21,44 @@ import org.amplafi.flow.FlowValidationTracking;
  */
 public class SimpleValidationTracking implements FlowValidationTracking {
 
-    private String key;
+    private String activityKey;
+    private String messageKey;
     private Object[] params;
 
-    public SimpleValidationTracking(String key, Object... params) {
-        this.key = key;
+    public SimpleValidationTracking(String messageKey, Object... params) {
+        this.messageKey = messageKey;
         this.params = params;
+    }
+
+    @SuppressWarnings({ "hiding", "unchecked" })
+    public <T extends SimpleValidationTracking> T initActivityKey(String activityKey) {
+        this.setActivityKey(activityKey);
+        return (T) this;
     }
 
     @Override
     public String getMessageKey() {
-        return key;
+        return messageKey;
     }
 
     @Override
     public Object[] getMessageParameters() {
         return params;
     }
+    /**
+     * @param activityKey the activityKey to set
+     */
+    public void setActivityKey(String activityKey) {
+        this.activityKey = activityKey;
+    }
+
+    /**
+     * @return the activityKey
+     */
+    public String getActivityKey() {
+        return activityKey;
+    }
+
     @Override
     public String toString() {
         return getMessageKey()+"["+StringUtils.join(params, ",")+"]";
