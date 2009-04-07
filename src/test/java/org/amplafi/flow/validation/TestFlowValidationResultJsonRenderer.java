@@ -52,8 +52,8 @@ public class TestFlowValidationResultJsonRenderer extends Assert {
         };
         for(int i =0 ; i < flowValidationTrackings.length; i++) {
             flowValidationTrackings[i] = EasyMock.createMock(FlowValidationTracking.class);
-            EasyMock.expect(flowValidationTrackings[i].getKey()).andReturn(Integer.toString(i)).anyTimes();
-            EasyMock.expect(flowValidationTrackings[i].getParameters()).andReturn(new String[] {
+            EasyMock.expect(flowValidationTrackings[i].getMessageKey()).andReturn(Integer.toString(i)).anyTimes();
+            EasyMock.expect(flowValidationTrackings[i].getMessageParameters()).andReturn(new String[] {
                     i+" error-1",
                     i+" error-2"
             }).anyTimes();

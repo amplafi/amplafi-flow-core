@@ -34,11 +34,11 @@ public class FlowValidationTrackingJsonRenderer implements JsonRenderer<FlowVali
     @Override
     public JSONWriter toJson(JSONWriter jsonWriter, FlowValidationTracking flowValidationTracking) {
         jsonWriter.object();
-        jsonWriter.key("key").value(flowValidationTracking.getKey());
-        if ( flowValidationTracking.getParameters() != null ) {
+        jsonWriter.key("key").value(flowValidationTracking.getMessageKey());
+        if ( flowValidationTracking.getMessageParameters() != null ) {
             jsonWriter.key("parameters");
             jsonWriter.array();
-            for(String parameter: flowValidationTracking.getParameters()) {
+            for(Object parameter: flowValidationTracking.getMessageParameters()) {
                 jsonWriter.value(parameter);
             }
             jsonWriter.endArray();

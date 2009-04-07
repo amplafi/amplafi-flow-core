@@ -17,6 +17,14 @@ package org.amplafi.flow;
  * Tracks flow validation problems.
  */
 public interface FlowValidationTracking {
-    String getKey();
-    String[] getParameters();
+    /**
+     *
+     * @return the message key which is used to look up the actual localized validation message.
+     */
+    String getMessageKey();
+    /**
+     *
+     * @return message parameters which are used to format the message string to display to the user.
+     */
+    Object[] getMessageParameters();
 }

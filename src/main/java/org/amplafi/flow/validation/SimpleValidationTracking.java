@@ -22,24 +22,24 @@ import org.amplafi.flow.FlowValidationTracking;
 public class SimpleValidationTracking implements FlowValidationTracking {
 
     private String key;
-    private String[] params;
+    private Object[] params;
 
-    public SimpleValidationTracking(String key, String... params) {
+    public SimpleValidationTracking(String key, Object... params) {
         this.key = key;
         this.params = params;
     }
 
     @Override
-    public String getKey() {
+    public String getMessageKey() {
         return key;
     }
 
     @Override
-    public String[] getParameters() {
+    public Object[] getMessageParameters() {
         return params;
     }
     @Override
     public String toString() {
-        return getKey()+"["+StringUtils.join(params, ",")+"]";
+        return getMessageKey()+"["+StringUtils.join(params, ",")+"]";
     }
 }
