@@ -288,19 +288,27 @@ public class FlowStateImpl implements FlowState {
         }
         return true;
     }
-    protected FlowState finishFlowActivities() {
-        FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this);
-        int size = this.getActivities().size();
-        for (int i = 0; i < size; i++) {
-            FlowActivity activity = getActivity(i);
-            FlowState returned = activity.finishFlow(currentNextFlowState);
-            // avoids lose track of FlowState if another FA is later in the Flow
-            // definition.
-            if (returned != null && currentNextFlowState != returned) {
-                currentNextFlowState = returned;
-            }
+    protected FlowState finishFlowActivities(boolean verifyValues) {
+        FlowValidationResult flowValidationResult = null;
+        if (verifyValues) {
+            flowValidationResult = getFullFlowValidationResult(PropertyRequired.finish, FlowStepDirection.forward);
         }
-        return currentNextFlowState;
+        if (flowValidationResult == null || flowValidationResult.isValid()) {
+            FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this);
+            int size = this.getActivities().size();
+            for (int i = 0; i < size; i++) {
+                FlowActivity activity = getActivity(i);
+                FlowState returned = activity.finishFlow(currentNextFlowState);
+                // avoids lose track of FlowState if another FA is later in the Flow
+                // definition.
+                if (returned != null && currentNextFlowState != returned) {
+                    currentNextFlowState = returned;
+                }
+            }
+            return currentNextFlowState;
+        } else {
+            throw new FlowValidationException(flowValidationResult);
+        }
     }
 
     /**
@@ -432,12 +440,9 @@ public class FlowStateImpl implements FlowState {
 
             if (verifyValues) {
                 if (flowValidationResult.isValid()) {
-                    FlowActivity currentActivity = getCurrentActivity();
-                    if ( currentActivity != null ) {
-                        flowValidationResult = currentActivity.getFlowValidationResult(PropertyRequired.saveChanges);
-                    }
+                    flowValidationResult = getFullFlowValidationResult(PropertyRequired.saveChanges, FlowStepDirection.forward);
                 }
-                if (flowValidationResult.isValid()) {
+                if (flowValidationResult == null || flowValidationResult.isValid()) {
                     saveChanges();
                 } else {
                     throw new FlowValidationException(flowValidationResult);
@@ -448,7 +453,7 @@ public class FlowStateImpl implements FlowState {
             boolean success = false;
             try {
                 // getting continueWithFlow should use FlowLauncher more correctly.
-                continueWithFlow = finishFlowActivities();
+                continueWithFlow = finishFlowActivities(verifyValues);
                 success = true;
             } finally {
                 this.setCurrentActivityByName(null);
@@ -516,6 +521,15 @@ public class FlowStateImpl implements FlowState {
         }
     }
 
+    protected FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+        for(FlowActivity flowActivity: this.getActivities()) {
+            FlowValidationResult flowValidationResult = flowActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
+            if ( !flowValidationResult.isValid()) {
+                return flowValidationResult;
+            }
+        }
+        return null;
+    }
     /**
      * @param possibleReferencedState
      * @return true if this flowState references possibleReferencedState

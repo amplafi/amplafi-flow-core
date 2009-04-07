@@ -106,10 +106,11 @@ public interface FlowActivity {
     /**
      * Determines if the flow passes validation for a specific level of required properties.
      * @param required
+     * @param flowStepDirection
      *
      * @return result of validation
      */
-    public FlowValidationResult getFlowValidationResult(PropertyRequired required);
+    public FlowValidationResult getFlowValidationResult(PropertyRequired required, FlowStepDirection flowStepDirection);
 
     /**
      * @param activityName The activityName to set.

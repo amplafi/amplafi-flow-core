@@ -213,7 +213,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
-        FlowValidationResult activationValidationResult = getFlowValidationResult(PropertyRequired.activate);
+        FlowValidationResult activationValidationResult = getFlowValidationResult(PropertyRequired.activate, flowStepDirection);
         if (!activationValidationResult.isValid()) {
             throw new FlowValidationException(activationValidationResult);
         }
@@ -331,13 +331,13 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult()
      */
     public FlowValidationResult getFlowValidationResult() {
-        return this.getFlowValidationResult(PropertyRequired.advance);
+        return this.getFlowValidationResult(PropertyRequired.advance, FlowStepDirection.forward);
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired)
+     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired, FlowStepDirection)
      */
-    public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired) {
+    public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         FlowValidationResult result = new ReportAllValidationResult();
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
         if (MapUtils.isNotEmpty(propDefs)) {

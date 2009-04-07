@@ -19,6 +19,7 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValidationTracking;
 import org.amplafi.flow.FlowException;
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -75,6 +76,8 @@ public class FlowValidationException extends FlowException {
     }
     @Override
     public String toString() {
-        return this.getMessage()+" : "+ this.validationResult.toString();
+        return this.getMessage()+" : "+ this.validationResult.toString()
+            // CHECK Is the toString() used to print on the screen and that is why the stack trace is not visible?
+            + StringUtils.join(super.getStackTrace(), "\n");
     }
 }
