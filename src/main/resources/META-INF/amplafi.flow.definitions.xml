@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module id="amplafi.flow.definitions" version="0.8.0">
+    <configuration-point id="flows" schema-id="flowsSchema">
+        Flow definitions are contributed to this configuration point
+    </configuration-point>
+    <configuration-point id="flowTranslators" schema-id="amplafi.factory.servicelist">
+        Translators are contributed here.
+    </configuration-point>
+    <!-- SCHEMA DEFINITION FOR FLOWS -->
+    <schema id="flowsSchema">
+        <element name="definition" key-attribute="name">
+            <!-- no two definitions can be named the same, the name is the unique id! -->
+            <attribute name="name" required="true"/>
+            <attribute name="flow-title">
+                Text displayed as page title and title over the top of the running flow.
+                TODO able to be set with a FlowProperty.
+            </attribute>
+            <attribute name="link-title">
+                The text in the link
+                starting the flow or continues the flow.
+            </attribute>
+            <attribute name="continue-link-title">
+                The text in the link
+                continuing the flow.
+            </attribute>
+            <attribute name="pageName">
+                Page that the flow should start on. Also can be set with property, "fsPageName"
+            </attribute>
+            <attribute name="default-after-page">
+                Default page returned to after flow has completed.
+                "fsDefaultAfterPage" property can also be used.
+            </attribute>
+            <attribute name="activatable">
+                All FlowActivities are activatable immediately.
+            </attribute>
+            <attribute name="not-current-allowed">
+                This flow is allowed to not be the current (nor a parent of the current) flow
+                in a session.
+                If false (default), then if any other flow becomes the current flow,
+                this flow is dropped.
+            </attribute>
+            <!-- TODO implement
+                <attribute name="scope">
+                provider: everyone within this provider can see the flow instances
+                user: only user creating flow can see the flow instances (default)
+                </attribute>
+            -->
+            <element name="activity">
+                <attribute name="name" required="true"/>
+                <attribute name="class" translator="instance"/>
+                <attribute name="pageName"/>
+                <attribute name="componentName"/>
+                <attribute name="link-title"/>
+                <attribute name="finishing"/>
+                <attribute name="invisible">
+                    This activity represents a processing step that
+                    is invisible on the ui. This step represents most
+                    likely a preprocessing or post-processing step when starting
+                    or completing the Flow. Because it is invisible it should
+                    complete itself (the user will not be able to)
+                </attribute>
+                <attribute name="persistFlow">
+                    If true then active instances of the flow should be persisted
+                    after completing this activity.
+                    This allows the user to complete the flow in the future. (default:false)
+                </attribute>
+                <element name="property">
+                    <attribute name="name" required="true"/>
+                    <attribute name="translator" translator="instance"/>
+                    <attribute name="parameterName">
+                        If the component or page has a different parameter name
+                        than the name attribute, use this when assigning
+                        the component parameter.
+                    </attribute>
+                    <attribute name="usage">
+                        Set to PropertyUsage value if this should be forced to be a
+                        property specific to this FlowActivity.
+                    </attribute>
+                    <attribute name="data-class" translator="class">
+                        Data class
+                    </attribute>
+                    <attribute name="default">
+                    </attribute>
+                    <attribute name="initial">
+                        Or use the sub-element 'initial' if the initial
+                        value is long.
+                    </attribute>
+                    <attribute name="initialOptional">
+                        The initial value can be overridden by the initialValues used to start a flow.
+                        default is false for security reasons.
+                    </attribute>
+                    <element name="initial">
+                        <attribute name="optional" translator="boolean">
+                            The initial value can be overridden by the initialValues used to start a flow.
+                            default is false for security reasons.
+                        </attribute>
+                        <rules>
+                            <push-content/>
+                            <read-attribute attribute="optional" property="initialMode"/>
+                            <invoke-parent method="setInitial"/>
+                        </rules>
+                    </element>
+                    <element name="default">
+                        <rules>
+                            <push-content/>
+                            <invoke-parent method="setDefaultValue"/>
+                        </rules>
+                    </element>
+                    
+                    <rules>
+                        <create-object class="org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl"/>
+                        <read-attribute attribute="name" property="name"/>
+                        <read-attribute attribute="usage" property="propertyUsage"/>
+                        <read-attribute attribute="data-class" translator="class" property="dataClass"/>
+                        <read-attribute attribute="translator" property="translator"/>
+                        <read-attribute attribute="default" property="defaultValue"/>
+                        <read-attribute attribute="initial" property="initial"/>
+                        <read-attribute attribute="initialOptional" property="initialMode"/>
+                        <invoke-parent method="addPropertyDefinition"/>
+                    </rules>
+                </element>
+                <rules>
+                    <custom class="com.amplafi.flow.FlowActivityRule"/>
+                    <!-- push-attribute attribute="class"/-->
+                    <read-attribute attribute="name" property="activityName"/>
+                    <read-attribute attribute="pageName" property="pageName"/>
+                    <read-attribute attribute="componentName"
+                                    property="componentName"/>
+                    <read-attribute attribute="link-title" property="activityTitle"/>
+                    <read-attribute attribute="finishing"
+                                    property="finishingActivity"/>
+                    <read-attribute attribute="persistFlow" property="persistFlow"/>
+                    <read-attribute attribute="invisible" property="invisible"/>
+                    <read-attribute attribute="activatable" property="activatable"/>
+                    <invoke-parent method="addActivity"/>
+                </rules>
+            </element>
+            <element name="transition">
+                <attribute name="name" required="true"/>
+                <attribute name="finish-key">Transition is only triggered if the finish key matches this key</attribute>
+                <attribute name="transition-label"></attribute>
+                <attribute name="type">Transition type</attribute>
+                <attribute name="nextFlow">
+                    Start a new flow.
+                </attribute>
+                <attribute name="afterPage">
+                    .. or just transition to a new page (which may start a flow).
+                </attribute>
+                <attribute name="pageName">
+
+                </attribute>
+                <attribute name="componentName"/>
+                <attribute name="link-title"/>
+                <attribute name="finishing">
+                    This activity can complete (end) the Flow.
+                    Default: true
+                </attribute>
+                <attribute name="persistFlow">
+                    If true then active instances of the flow should be persisted
+                    after completing this activity.
+                    This allows the user to complete the flow in the future. (default:false)
+                </attribute>
+                <rules>
+                    <create-object
+                            class="org.amplafi.flow.impl.TransitionFlowActivity"/>
+                    <read-attribute attribute="name" property="activityName"/>
+                    <read-attribute attribute="type" property="type"/>
+                    <read-attribute attribute="finish-key" property="finishKey"/>
+                    
+                    <read-attribute attribute="transition-label" property="fsFlowTransitionLabel"/>
+                    <read-attribute attribute="persistFlow" property="persistFlow"/>
+                    <read-attribute attribute="pageName" property="pageName"/>
+                    <read-attribute attribute="componentName"
+                                    property="componentName"/>
+                    <read-attribute attribute="link-title" property="activityTitle"/>
+                    <read-attribute attribute="nextFlow"
+                                    property="nextFlowType"/>
+                    <read-attribute attribute="afterPage" property="afterPage"/>
+                    <invoke-parent method="addActivity"/>
+                </rules>
+            </element>
+            <element name="property">
+                Define the global visible properties with initial values.
+                <attribute name="name" required="true"/>
+                <attribute name="translator" translator="instance"/>
+                <attribute name="usage">
+                    Set to true if this should be forced to be a property
+                    specific to this FlowActivity.
+                </attribute>
+                <attribute name="data-class" translator="class">
+                    Data class
+                </attribute>
+                <attribute name="default"/>
+                <attribute name="initial">
+                    Or use the sub-element 'initial' if the initial value is
+                    long.
+                </attribute>
+                <attribute name="initialOptional">
+                    The initial value can be overridden by the initialValues used to start a flow.
+                    default is false for security reasons.
+                </attribute>
+                <element name="default">
+                    <rules>
+                        <push-content/>
+                        <invoke-parent method="setDefaultValue"/>
+                    </rules>
+                </element>
+                <element name="initial">
+                    <attribute name="optional" translator="boolean">
+                        The initial value can be overridden by the initialValues used to start a flow.
+                        default is false for security reasons.
+                    </attribute>
+                    <rules>
+                        <push-content/>
+                        <read-attribute attribute="optional" property="initialMode"/>
+                        <invoke-parent method="setInitial"/>
+                    </rules>
+                </element>
+                <rules>
+                    <create-object class="org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl"/>
+                    <read-attribute attribute="name" property="name"/>
+                    <read-attribute attribute="usage" property="propertyUsage"/>
+                    <read-attribute attribute="translator" property="translator"/>
+                    <read-attribute attribute="data-class" translator="class" property="dataClass"/>
+                    <read-attribute attribute="default" property="defaultValue"/>
+                    <read-attribute attribute="initial" property="initial"/>
+                    <read-attribute attribute="initialOptional" property="initialMode"/>
+                    <invoke-parent method="addPropertyDefinition"/>
+                </rules>
+            </element>
+            <element name="mouseOver">
+                <rules>
+                    <read-content property="mouseoverEntryPointText"/>
+                </rules>
+            </element>
+            <rules>
+                <create-object class="org.amplafi.flow.impl.FlowImpl"/>
+                <read-attribute attribute="name" property="flowTypeName"/>
+                <read-attribute attribute="pageName" property="pageName"/>
+                <read-attribute attribute="default-after-page" property="defaultAfterPage"/>
+                <read-attribute attribute="after-page" property="afterPage"/>
+                <read-attribute attribute="activatable" property="activatable"/>
+                <read-attribute attribute="flow-title" property="flowTitle"/>
+                <read-attribute attribute="link-title" property="linkTitle"/>
+                <read-attribute attribute="continue-link-title" property="continueLinkTitle"/>
+                <read-content property="flowDescriptionText"/>
+                <read-attribute attribute="not-current-allowed" property="notCurrentAllowed"/>
+                <invoke-parent method="addElement"/>
+            </rules>
+        </element>
+    </schema>
+
+    <service-point id="FlowTranslatorResolver" interface="org.amplafi.flow.FlowTranslatorResolver">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.BaseFlowTranslatorResolver">
+                <set-configuration property="flowTranslators" configuration-id="amplafi.flow.definitions.flowTranslators" />
+            </construct>
+        </invoke-factory>
+    </service-point>    
+    
+    <contribution configuration-id="flowTranslators">
+        <service id="UriTranslator"/>
+        <service id="CalendarFlowTranslator"/>
+        <service id="JsonSelfRendererFlowTranslator"/>
+        <service id="JSONObjectFlowTranslator"/>
+        <service id="LongFlowTranslator"/>
+        <service id="IntegerFlowTranslator"/>
+        <service id="BooleanFlowTranslator"/>
+        <service id="TimezoneFlowTranslator"/>
+        <service id="ListFlowTranslator"/>
+        <service id="SetFlowTranslator"/>
+        <service id="MapFlowTranslator"/>
+        <service id="NavigableMapFlowTranslator"/>
+    </contribution>
+    
+    <service-point id="UriTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.UriFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>  
+    <service-point id="CalendarFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.CalendarFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>  
+    <service-point id="JsonSelfRendererFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.JsonSelfRendererFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>
+    <service-point id="JSONObjectFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.JSONObjectFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>
+    <service-point id="LongFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.LongFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>         
+    <service-point id="IntegerFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.IntegerFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>     
+    <service-point id="BooleanFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.BooleanFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>          
+    <service-point id="TimezoneFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.TimezoneFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>   
+    <service-point id="ListFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.ListFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>      
+    <service-point id="SetFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.SetFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>   
+    <service-point id="MapFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.MapFlowTranslator">
+                <set-object property="translatedClass" value="class:java.util.Map"/>
+                <set-object property="defaultObjectClass" value="class:java.util.LinkedHashMap"/>
+            </construct>
+        </invoke-factory>
+    </service-point>        
+    <service-point id="NavigableMapFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.MapFlowTranslator">
+                <set-object property="translatedClass" value="class:java.util.NavigableMap"/>
+                <set-object property="defaultObjectClass" value="class:java.util.TreeMap"/>
+            </construct>
+        </invoke-factory>
+    </service-point>                                           
+    <service-point id="FlowDefinitionsManager" interface="org.amplafi.flow.FlowDefinitionsManager">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.impl.FlowDefinitionsManagerImpl">
+                <set-configuration property="flowDefinitions" configuration-id="amplafi.flow.definitions.flows" />
+            </construct>
+        </invoke-factory>
+    </service-point>
+</module>
