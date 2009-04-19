@@ -21,7 +21,6 @@ import org.amplafi.flow.impl.*;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.TransitionType;
-import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.easymock.classextension.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -63,20 +62,13 @@ public class TestTransitionFlowActivity extends Assert {
     @Test
     public void testTransitionFinishFlow() {
         String returnToFlowLookupKey = null;
-        FlowDefinitionsManagerImpl flowDefinitionsManager = new FlowDefinitionsManagerImpl();
-        flowDefinitionsManager.initializeService();
-        BaseFlowTranslatorResolver flowTranslatorResolver = new BaseFlowTranslatorResolver();
-        flowTranslatorResolver.addStandardFlowTranslators();
-        flowTranslatorResolver.initializeService();
-        flowDefinitionsManager.setFlowTranslatorResolver(flowTranslatorResolver);
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         TransitionFlowActivity obj = new TransitionFlowActivity();
         String flowTypeName = "foo";
-        flowDefinitionsManager.addDefinitions(new FlowImpl(flowTypeName, obj));
-        BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
-        baseFlowManagement.setFlowDefinitionsManager(flowDefinitionsManager);
-        baseFlowManagement.setFlowTranslatorResolver(flowTranslatorResolver);
+        flowTestingUtils.addFlowDefinition(flowTypeName, obj);
         Map<String, String> initialFlowState = null;
-        baseFlowManagement.startFlowState(flowTypeName, false, initialFlowState, returnToFlowLookupKey);
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState, returnToFlowLookupKey);
+        assertTrue(flowState.isCompleted());
     }
 
     @Test
@@ -88,7 +80,7 @@ public class TestTransitionFlowActivity extends Assert {
         transitionFlowActivity.setTransitionType(TransitionType.alternate);
         transitionFlowActivity.setNextFlowType(nextFlowType);
         String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity);
-        FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getFlowManagement();
+        FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
@@ -114,7 +106,7 @@ public class TestTransitionFlowActivity extends Assert {
         TransitionFlowActivity transitionFlowActivity = new TransitionFlowActivity();
         transitionFlowActivity.setNextFlowType(nextFlowType);
         String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity);
-        FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getFlowManagement();
+        FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
@@ -145,7 +137,7 @@ public class TestTransitionFlowActivity extends Assert {
         transitionFlowActivity2.setNextFlowType(nextFlowType2);
 
         String flowTypeName = flowTestingUtils.addDefinition(new FlowActivityImpl(), transitionFlowActivity0, transitionFlowActivity1, transitionFlowActivity2);
-        FlowManagement flowManagement = flowTestingUtils.getFlowDefinitionsManager().getFlowManagement();
+        FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();

@@ -214,9 +214,9 @@ public interface FlowManagement {
     public FlowPropertyDefinition getFlowPropertyDefinition(String key);
 
     /**
-     * similar to {@link FlowDefinitionsManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
+     * similar to {@link FlowManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
      * object the value returned by this method may be customized to the session settings and may not be
-     * {@link FlowDefinitionsManager#getDefaultHomePage()}.
+     * {@link FlowManager#getDefaultHomePage()}.
      * @return the default home to use when a flow ends and there is no other place to return.
      */
     public URI getDefaultHomePage();

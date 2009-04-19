@@ -27,6 +27,7 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
+import org.amplafi.flow.impl.FlowManagerImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -97,7 +98,9 @@ public class TestFlowTransitions {
         baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
         FlowDefinitionsManagerImpl flowDefinitionsManager = new FlowDefinitionsManagerImpl();
         flowDefinitionsManager.initializeService();
-        baseFlowManagement.setFlowDefinitionsManager(flowDefinitionsManager);
+        FlowManagerImpl flowManagerImpl = new FlowManagerImpl();
+        flowManagerImpl.setFlowDefinitionsManager(flowDefinitionsManager);
+        baseFlowManagement.setFlowManager(flowManagerImpl);
         flowDefinitionsManager.setFlowTranslatorResolver(getFlowTranslatorResolver());
         flowDefinitionsManager.addDefinitions(flow);
         return baseFlowManagement;

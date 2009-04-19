@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.impl;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -24,7 +23,6 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowManagement;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +36,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private boolean running;
     private ConcurrentMap<String, Flow> flowDefinitions;
     private Log log;
-    private URI defaultHomePage;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, Flow>();
     }
@@ -107,35 +104,12 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
             initFlowDefinitions();
         }
     }
-    /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#getInstanceFromDefinition(java.lang.String)
-     */
-    @Override
-    public Flow getInstanceFromDefinition(String flowTypeName) {
-        Flow definition = getFlowDefinition(flowTypeName);
-        if (definition == null) {
-            throw new IllegalArgumentException(flowTypeName + ": definition does not exist");
-        }
-        Flow inst = definition.createInstance();
-        return inst;
-    }
 
     public Log getLog() {
         if ( this.log == null ) {
             this.log = LogFactory.getLog(this.getClass());
         }
         return this.log;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#getFlowManagement()
-     */
-    @Override
-    public FlowManagement getFlowManagement() {
-        BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
-        baseFlowManagement.setFlowDefinitionsManager(this);
-        baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
-        return baseFlowManagement;
     }
 
     /**
@@ -151,19 +125,5 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         return flowTranslatorResolver;
-    }
-
-    /**
-     * @param defaultHomePage the defaultHomePage to set
-     */
-    public void setDefaultHomePage(URI defaultHomePage) {
-        this.defaultHomePage = defaultHomePage;
-    }
-
-    /**
-     * @return the defaultHomePage
-     */
-    public URI getDefaultHomePage() {
-        return defaultHomePage;
     }
 }

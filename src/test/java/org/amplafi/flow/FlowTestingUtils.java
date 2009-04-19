@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.BaseFlowManagement;
+import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
@@ -33,6 +34,7 @@ import org.easymock.classextension.EasyMock;
 public class FlowTestingUtils {
 
     private FlowDefinitionsManager flowDefinitionsManager;
+    private FlowManager flowManager;
 
     private FlowTranslatorResolver flowTranslatorResolver;
 
@@ -40,18 +42,22 @@ public class FlowTestingUtils {
 
     private AtomicInteger counter = new AtomicInteger();
     public FlowTestingUtils() {
-        this(new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
+        this(new FlowManagerImpl(), new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
     }
-    public FlowTestingUtils(FlowDefinitionsManager flowDefinitionsManager, FlowTranslatorResolver flowTranslatorResolver) {
+    public FlowTestingUtils(FlowManager flowManager, FlowDefinitionsManager flowDefinitionsManager, FlowTranslatorResolver flowTranslatorResolver) {
         this.flowDefinitionsManager = flowDefinitionsManager;
         this.flowTranslatorResolver = flowTranslatorResolver;
         this.flowManagement = new BaseFlowManagement();
+        this.flowManager = flowManager;
     }
 
-    public FlowTestingUtils(FlowDefinitionsManagerImpl flowDefinitionsManager, BaseFlowTranslatorResolver flowTranslatorResolver) {
+    public FlowTestingUtils(FlowManagerImpl flowManager, FlowDefinitionsManagerImpl flowDefinitionsManager, BaseFlowTranslatorResolver flowTranslatorResolver) {
         this.flowDefinitionsManager = flowDefinitionsManager;
         this.flowTranslatorResolver = flowTranslatorResolver;
         this.flowManagement = new BaseFlowManagement();
+        this.flowManager = flowManager;
+        flowManager.setFlowTranslatorResolver(flowTranslatorResolver);
+        flowManager.setFlowDefinitionsManager(flowDefinitionsManager);
         initializeService();
     }
 
@@ -65,9 +71,8 @@ public class FlowTestingUtils {
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new ShortFlowTranslator());
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new EnumFlowTranslator());
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).setFlowTranslatorResolver(flowTranslatorResolver);
-        ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowDefinitionsManager(flowDefinitionsManager);
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).initializeService();
-        this.flowManagement.setFlowDefinitionsManager(flowDefinitionsManager);
+        this.flowManagement.setFlowManager(flowManager);
         this.flowManagement.setFlowTranslatorResolver(flowTranslatorResolver);
 
     }
@@ -112,20 +117,23 @@ public class FlowTestingUtils {
     public <T extends FlowActivityImplementor> T initActivity(Class<T> clazz) {
         return initActivity(clazz, null);
     }
-    public FlowDefinitionsManager programFlowDefinitionManager(String flowTypeName, FlowActivityImplementor... activities) {
+    public void addFlowDefinition(String flowTypeName, FlowActivityImplementor... activities) {
+        final Flow def = new FlowImpl(flowTypeName, activities);
+        getFlowDefinitionsManager().addDefinitions(def);
+    }
+    public FlowManager programFlowManager(String flowTypeName, FlowActivityImplementor... activities) {
         final Flow def = new FlowImpl(flowTypeName, activities);
         getFlowTranslatorResolver().resolveFlow(def);
-        EasyMock.expect(getFlowDefinitionsManager().getFlowDefinition(flowTypeName)).andReturn(def).anyTimes();
-        EasyMock.expect(getFlowDefinitionsManager().isFlowDefined(flowTypeName)).andReturn(true).anyTimes();
-        EasyMock.expect(getFlowDefinitionsManager().getInstanceFromDefinition(flowTypeName)).andAnswer(new IAnswer<Flow>() {
+        EasyMock.expect(getFlowManager().getFlowDefinition(flowTypeName)).andReturn(def).anyTimes();
+        EasyMock.expect(getFlowManager().isFlowDefined(flowTypeName)).andReturn(true).anyTimes();
+        EasyMock.expect(getFlowManager().getInstanceFromDefinition(flowTypeName)).andAnswer(new IAnswer<Flow>() {
             @Override
             public Flow answer() {
                 return def.createInstance();
             }
         }).anyTimes();
-        return getFlowDefinitionsManager();
+        return getFlowManager();
     }
-
     /**
      * @return the flowDefinitionsManager
      */
@@ -157,6 +165,18 @@ public class FlowTestingUtils {
      */
     public FlowManagement getFlowManagement() {
         return flowManagement;
+    }
+    /**
+     * @param flowManager the flowManager to set
+     */
+    public void setFlowManager(FlowManager flowManager) {
+        this.flowManager = flowManager;
+    }
+    /**
+     * @return the flowManager
+     */
+    public FlowManager getFlowManager() {
+        return flowManager;
     }
 
 }

@@ -31,6 +31,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowLifecycleState;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -54,7 +55,7 @@ public class BaseFlowManagement implements FlowManagement {
 
     protected SessionFlows sessionFlows = new SessionFlows();
 
-    private FlowDefinitionsManager flowDefinitionsManager;
+    private FlowManager flowManager;
     private FlowTx flowTx;
 
     private FlowTranslatorResolver flowTranslatorResolver;
@@ -138,7 +139,7 @@ public class BaseFlowManagement implements FlowManagement {
         return null;
     }
     public Flow getFlowDefinition(String flowTypeName) {
-        return getFlowDefinitionsManager().getFlowDefinition(flowTypeName);
+        return getFlowManager().getFlowDefinition(flowTypeName);
     }
 
     /**
@@ -494,7 +495,7 @@ public class BaseFlowManagement implements FlowManagement {
      * @see org.amplafi.flow.FlowManagement#getInstanceFromDefinition(java.lang.String)
      */
     public Flow getInstanceFromDefinition(String flowTypeName) {
-        return getFlowDefinitionsManager().getInstanceFromDefinition(flowTypeName);
+        return getFlowManager().getInstanceFromDefinition(flowTypeName);
     }
     /**
      * @see org.amplafi.flow.FlowManagement#registerForCacheClearing()
@@ -514,12 +515,12 @@ public class BaseFlowManagement implements FlowManagement {
         return LogFactory.getLog(this.getClass());
     }
 
-    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
-        this.flowDefinitionsManager = flowDefinitionsManager;
+    public void setFlowManager(FlowManager flowManager) {
+        this.flowManager = flowManager;
     }
 
-    public FlowDefinitionsManager getFlowDefinitionsManager() {
-        return flowDefinitionsManager;
+    public FlowManager getFlowManager() {
+        return flowManager;
     }
 
     /**
@@ -551,9 +552,8 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @Override
     public URI getDefaultHomePage() {
-        return this.getFlowDefinitionsManager().getDefaultHomePage();
+        return this.getFlowManager().getDefaultHomePage();
     }
-
 
     protected class SessionFlows implements Iterable<FlowState>{
         private LinkedList<FlowState> activeFlows = new LinkedList<FlowState>();

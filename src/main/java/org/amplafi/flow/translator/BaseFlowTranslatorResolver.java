@@ -42,7 +42,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     private Map<Class<?>, FlowTranslator<?>> translators;
     private Map<Class<?>, JsonRenderer<?>> jsonRenderers;
     private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
-    private FlowDefinitionsManager flowDefinitionsManager;
     /**
      * These are {@link org.amplafi.flow.FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
      * These should not be altered.
@@ -257,18 +256,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     public List<FlowTranslator<?>> getFlowTranslators() {
         return flowTranslators;
     }
-    /**
-     * @param flowDefinitionsManager the flowDefinitionsManager to set
-     */
-    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
-        this.flowDefinitionsManager = flowDefinitionsManager;
-    }
-    /**
-     * @return the flowDefinitionsManager
-     */
-    public FlowDefinitionsManager getFlowDefinitionsManager() {
-        return flowDefinitionsManager;
-    }
+
     /**
      * @param commonFlowPropertyDefinitions the commonFlowPropertyDefinitions to set
      */

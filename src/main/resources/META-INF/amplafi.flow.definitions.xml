@@ -120,7 +120,7 @@
                     </rules>
                 </element>
                 <rules>
-                    <custom class="com.amplafi.flow.FlowActivityRule"/>
+                    <custom class="org.amplafi.flow.hivemind.FlowActivityRule"/>
                     <!-- push-attribute attribute="class"/-->
                     <read-attribute attribute="name" property="activityName"/>
                     <read-attribute attribute="pageName" property="pageName"/>
