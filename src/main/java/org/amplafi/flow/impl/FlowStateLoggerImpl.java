@@ -13,9 +13,13 @@
  */
 package org.amplafi.flow.impl;
 
+import java.util.List;
+
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.apache.commons.logging.Log;
+
+import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
  * Logs the state of the flows. Useful for dumping out the state when there is an error.
@@ -39,8 +43,15 @@ public class FlowStateLoggerImpl implements Log {
      */
     protected StringBuilder getFlowStatesString(Object message) {
         StringBuilder stringBuilder = new StringBuilder().append(message);
-        for(FlowState flowState: getFlowManagement().getFlowStates()) {
-            stringBuilder.append(flowState).append("\n");
+        if ( getFlowManagement() != null) {
+            List<FlowState> flowStates = getFlowManagement().getFlowStates();
+            if ( isNotEmpty(flowStates)) {
+                for(FlowState flowState: flowStates) {
+                    stringBuilder.append(flowState).append("\n");
+                }
+            } else {
+                stringBuilder.append("No active flows");
+            }
         }
         return stringBuilder;
     }

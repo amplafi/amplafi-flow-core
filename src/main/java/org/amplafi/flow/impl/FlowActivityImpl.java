@@ -218,10 +218,12 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
             throw new FlowValidationException(activationValidationResult);
         }
 
-        if (!isInvisible()) {
+        // auto complete only happens when advancing (otherwise can never get back to such FAs)
+        // additional work needed here -- FSAUTO_COMPLETE should be consumed.
+        if (!isInvisible() && flowStepDirection == FlowStepDirection.forward) {
             boolean autoComplete = isTrue(FSAUTO_COMPLETE);
             if (autoComplete) {
-                FlowValidationResult flowValidationResult = getFlowValidationResult();
+                FlowValidationResult flowValidationResult = getFlowValidationResult(PropertyRequired.advance, flowStepDirection);
                 return flowValidationResult.isValid();
             }
             return false;
@@ -235,7 +237,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         if (verifyValues) {
-            FlowValidationResult validationResult = getFlowValidationResult();
+            FlowValidationResult validationResult = getFlowValidationResult(PropertyRequired.advance, flowStepDirection);
             return validationResult;
         }
         return new ReportAllValidationResult();
@@ -327,9 +329,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return createdFlowState;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult()
-     */
+    @Deprecated
     public FlowValidationResult getFlowValidationResult() {
         return this.getFlowValidationResult(PropertyRequired.advance, FlowStepDirection.forward);
     }

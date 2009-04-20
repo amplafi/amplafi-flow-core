@@ -238,17 +238,31 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     public Long getLong(String key);
 
     /**
-     * can the current activity be completed.
+     * can the current activity be passivated.
      *
      * @return result returned by the currentActivity's
      *         {@link FlowActivity#getFlowValidationResult()}
      */
     public FlowValidationResult getCurrentActivityFlowValidationResult();
 
+    /**
+     * @param propertyRequired
+     * @return result returned by the currentActivity's
+     *         {@link FlowActivity#getFlowValidationResult(PropertyRequired, FlowStepDirection)}
+     */
+    public FlowValidationResult getCurrentActivityFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+
     public boolean isCurrentActivityCompletable();
 
-    public Map<String, FlowValidationResult> getFlowValidationResults();
+    public Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
 
+
+    /**
+     * @return the combination of {@link #getCurrentActivityFlowValidationResult()} and
+     *  {@link #getFullFlowValidationResult(PropertyRequired, FlowStepDirection)}({@link PropertyRequired#finish}, {@link FlowStepDirection#forward})
+     */
+    public FlowValidationResult getFinishFlowValidationResult();
+    public FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
     public void setAfterPage(String afterPage);
 
     public String getAfterPage();
@@ -350,5 +364,4 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return true if this flowState references possibleReferencedState
      */
     public boolean isReferencing(FlowState possibleReferencedState);
-
 }

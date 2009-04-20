@@ -45,6 +45,7 @@ import org.amplafi.flow.PropertyRequired;
 import org.amplafi.flow.PropertyUsage;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.validation.ReportAllValidationResult;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -521,15 +522,32 @@ public class FlowStateImpl implements FlowState {
         }
     }
 
-    protected FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+    public FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+        FlowValidationResult flowValidationResult = new ReportAllValidationResult();
         for(FlowActivity flowActivity: this.getActivities()) {
-            FlowValidationResult flowValidationResult = flowActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
+            flowValidationResult  = flowActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
             if ( !flowValidationResult.isValid()) {
-                return flowValidationResult;
+                break;
             }
         }
-        return null;
+        return flowValidationResult;
     }
+
+    /**
+     * @see org.amplafi.flow.FlowState#getFinishFlowValidationResult()
+     */
+    @Override
+    public FlowValidationResult getFinishFlowValidationResult() {
+        FlowValidationResult flowValidationResult = getCurrentActivityFlowValidationResult();
+        if ( flowValidationResult == null || flowValidationResult.isValid()) {
+            flowValidationResult = getFullFlowValidationResult(PropertyRequired.finish, FlowStepDirection.forward);
+            if ( flowValidationResult == null || flowValidationResult.isValid()) {
+                flowValidationResult = getFullFlowValidationResult(PropertyRequired.saveChanges, FlowStepDirection.forward);
+            }
+        }
+        return flowValidationResult;
+    }
+
     /**
      * @param possibleReferencedState
      * @return true if this flowState references possibleReferencedState
@@ -887,15 +905,11 @@ public class FlowStateImpl implements FlowState {
             // or last visible step, which must always be able to finish.
             return true;
         } else {
-            for(int i = this.getCurrentActivityIndex(); i < this.getActivities().size(); i++) {
-                FlowActivity flowActivity = this.getActivity(i);
-                if ( !flowActivity.getFlowValidationResult().isValid()) {
-                    return false;
-                }
-            }
             // all remaining activities claim they have valid data.
             // this enables a user to go back to a previous step and still finish the flow.
-            return true;
+            // FlowActivities that have content that is required to be viewed (Terms of Service )
+            // should have a state flag so that the flow can not be finished until the ToS is viewed.
+            return getFinishFlowValidationResult().isValid();
         }
     }
 
@@ -1181,14 +1195,25 @@ public class FlowStateImpl implements FlowState {
                                                + key + "=" + value);
         }
     }
-
+    public FlowValidationResult getCurrentActivityFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+        FlowActivity currentActivity = this.getCurrentActivity();
+        if (currentActivity == null) {
+            return null;
+        } else {
+            if (PropertyRequired.advance == propertyRequired && flowStepDirection == FlowStepDirection.forward) {
+                // TODO temp hack
+                return currentActivity.getFlowValidationResult();
+            } else {
+                return currentActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
+            }
+        }
+    }
     /**
      * @see org.amplafi.flow.FlowState#getCurrentActivityFlowValidationResult()
      */
     @Override
     public FlowValidationResult getCurrentActivityFlowValidationResult() {
-        FlowActivity currentActivity = this.getCurrentActivity();
-        return currentActivity == null ? null : currentActivity.getFlowValidationResult();
+        return this.getCurrentActivityFlowValidationResult(PropertyRequired.advance, FlowStepDirection.forward);
     }
 
     /**
@@ -1203,10 +1228,10 @@ public class FlowStateImpl implements FlowState {
      * @see org.amplafi.flow.FlowState#getFlowValidationResults()
      */
     @Override
-    public Map<String, FlowValidationResult> getFlowValidationResults() {
+    public Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         Map<String, FlowValidationResult> result = new LinkedHashMap<String, FlowValidationResult>();
         for (FlowActivity activity : this.getActivities()) {
-            FlowValidationResult flowValidationResult = activity.getFlowValidationResult();
+            FlowValidationResult flowValidationResult = activity.getFlowValidationResult(propertyRequired, flowStepDirection);
             if (!flowValidationResult.isValid()) {
                 result.put(activity.getActivityName(), flowValidationResult);
             }

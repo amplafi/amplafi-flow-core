@@ -101,6 +101,7 @@ public interface FlowActivity {
      *
      * @return result of validation
      */
+    @Deprecated
     public FlowValidationResult getFlowValidationResult();
 
     /**
