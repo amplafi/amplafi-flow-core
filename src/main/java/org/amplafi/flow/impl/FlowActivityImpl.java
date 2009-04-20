@@ -220,7 +220,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
         // auto complete only happens when advancing (otherwise can never get back to such FAs)
         // additional work needed here -- FSAUTO_COMPLETE should be consumed.
-        if (!isInvisible() && flowStepDirection == FlowStepDirection.forward) {
+        if (!isInvisible() && flowStepDirection != FlowStepDirection.backward) {
             boolean autoComplete = isTrue(FSAUTO_COMPLETE);
             if (autoComplete) {
                 FlowValidationResult flowValidationResult = getFlowValidationResult(PropertyRequired.advance, flowStepDirection);
