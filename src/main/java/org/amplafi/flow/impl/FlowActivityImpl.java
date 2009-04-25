@@ -237,7 +237,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         if (verifyValues) {
-            FlowValidationResult validationResult = getFlowValidationResult(PropertyRequired.advance, flowStepDirection);
+            // HACK that needs to be fixed.
+            FlowValidationResult validationResult = flowStepDirection == FlowStepDirection.backward?
+                getFlowValidationResult(PropertyRequired.advance, flowStepDirection):
+                    getFlowValidationResult();
             return validationResult;
         }
         return new ReportAllValidationResult();
@@ -329,6 +332,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return createdFlowState;
     }
 
+    /**
+     * HACK really need to make it easy for a FA to just be interested in inPlace, and PropertyRequired.saveChanges, advance or finish
+     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult()
+     */
     @Deprecated
     public FlowValidationResult getFlowValidationResult() {
         return this.getFlowValidationResult(PropertyRequired.advance, FlowStepDirection.forward);
