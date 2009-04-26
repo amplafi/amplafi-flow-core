@@ -14,11 +14,15 @@
 package org.amplafi.flow.validation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValidationTracking;
+
+import static com.sworddance.util.CUtilities.*;
 
 /**
  * A {@link org.amplafi.flow.FlowValidationResult} that considers
@@ -38,7 +42,7 @@ public class ReportAllValidationResult implements FlowValidationResult {
     }
     @Override
     public boolean isValid() {
-        return trackings==null || trackings.isEmpty();
+        return isEmpty(trackings);
     }
 
     /**
@@ -50,13 +54,19 @@ public class ReportAllValidationResult implements FlowValidationResult {
             if (trackings==null) {
                 trackings = new ArrayList<FlowValidationTracking>();
             }
-            for (FlowValidationTracking flowValidationTracking: flowValidationTrackings) {
-                if ( flowValidationTracking != null ) {
-                    trackings.add(flowValidationTracking);
-                }
-            }
+            addTracking(Arrays.asList(flowValidationTrackings));
         }
         return this;
+    }
+    /**
+     * @param flowValidationTrackings
+     */
+    public void addTracking(Collection<FlowValidationTracking> flowValidationTrackings) {
+        for (FlowValidationTracking flowValidationTracking: flowValidationTrackings) {
+            if ( flowValidationTracking != null ) {
+                trackings.add(flowValidationTracking);
+            }
+        }
     }
 
     /**
@@ -76,6 +86,12 @@ public class ReportAllValidationResult implements FlowValidationResult {
     @Override
     public List<FlowValidationTracking> getTrackings() {
         return trackings;
+    }
+
+    public void merge(FlowValidationResult addedFlowValidationResult) {
+        if ( !addedFlowValidationResult.isValid()) {
+            this.addTracking(addedFlowValidationResult.getTrackings());
+        }
     }
 
     @Override

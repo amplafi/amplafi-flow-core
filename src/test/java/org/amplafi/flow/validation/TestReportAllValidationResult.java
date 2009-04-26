@@ -53,4 +53,14 @@ public class TestReportAllValidationResult extends Assert {
         assertFalse(result.isValid());
         assertEquals(result.getTrackings().size(), 4);
     }
+
+    public void testMerge() {
+        FlowValidationResult result = new ReportAllValidationResult(
+            new MissingRequiredTracking("firstname"));
+
+        FlowValidationResult result1 = new ReportAllValidationResult();
+        result1.merge(result);
+        assertFalse(result1.isValid());
+
+    }
 }

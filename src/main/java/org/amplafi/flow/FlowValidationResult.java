@@ -47,4 +47,9 @@ public interface FlowValidationResult {
      * @return all trackings stored. Null is allowed.
      */
     List<FlowValidationTracking> getTrackings();
+
+    /**
+     * @param result
+     */
+    void merge(FlowValidationResult addedFlowValidationResult);
 }
