@@ -12,6 +12,9 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.apache.commons.collections.CollectionUtils;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
+import com.sworddance.util.ApplicationNullPointerException;
+
 /**
  * @author patmoore
  * @param <FA>
@@ -44,9 +47,28 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
     @SuppressWarnings("unchecked")
     protected <T> T getSafe(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
-            return null;
+            return null; // TODO throw exception?
         } else {
             return (T) flowActivity.getProperty(propertyName);
+        }
+    }
+    /**
+     *
+     * @param <T>
+     * @param flowActivity
+     * @param flowPropertyDefinition
+     * @param propertyName
+     * @return will not be null.
+     */
+    protected <T> T getRequired(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+        if ( flowPropertyDefinition.isNamed(propertyName)) {
+            throw new ApplicationIllegalArgumentException(propertyName);
+        } else {
+            T result = (T) flowActivity.getProperty(propertyName);
+            if ( result == null ) {
+                throw new ApplicationNullPointerException(propertyName);
+            }
+            return result;
         }
     }
 }
