@@ -23,16 +23,32 @@ import com.sworddance.beans.BeanWorker;
 /**
  * Uses reflection to trace to find the property value.
  * if at any point a null is returned then null is returned (no {@link NullPointerException} will be thrown)
+ *
+ * The root object can be either the flowActivity parameter in the {@link #get(FlowActivity, FlowPropertyDefinition)} call or another object
+ * supplied in the constructor.
+ *
  * @author patmoore
  *
  */
 public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowActivity> {
 
     private Object object;
+
+    /**
+     * Used when an object other than the flowActivity passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} should be used
+     * as the root for tracing out properties.
+     * @param object
+     */
     public ReflectionFlowPropertyValueProvider(Object object) {
         this.object = object;
     }
-    public ReflectionFlowPropertyValueProvider(String... propertyNames) {
+    /**
+     * Use the {@link FlowActivity} that is passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} as the starting object to trace for
+     * using propertyNames.
+     *
+     * @param propertyNames
+     */
+    public ReflectionFlowPropertyValueProvider(String propertyNames) {
         super(propertyNames);
     }
     public ReflectionFlowPropertyValueProvider(Object object, String... propertyNames) {
@@ -41,6 +57,7 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     }
 
     /**
+     * @param flowPropertyDefinition ignored
      * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")

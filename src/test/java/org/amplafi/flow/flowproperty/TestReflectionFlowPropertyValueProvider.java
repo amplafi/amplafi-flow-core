@@ -14,12 +14,15 @@
 package org.amplafi.flow.flowproperty;
 
 import org.testng.annotations.Test;
-import org.testng.Assert;
+import static org.testng.Assert.*;
 
 /**
  * Test {@link ReflectionFlowPropertyValueProvider}.
  */
-public class TestReflectionFlowPropertyValueProvider extends Assert {
+public class TestReflectionFlowPropertyValueProvider {
+    /**
+     * test {@link ReflectionFlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)} with a supplied object.
+     */
     @Test
     public void testGet() {
         User me = new User("me", 9);
