@@ -473,7 +473,15 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     public <V> V parse(String value) throws FlowException {
         return (V) this.dataClassDefinition.deserialize(this, value);
     }
-
+    /**
+     * @param propertyRequired the propertyRequired to set
+     * @return this
+     */
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initPropertyRequired(PropertyRequired propertyRequired) {
+        this.setPropertyRequired(propertyRequired);
+        return this;
+    }
     /**
      * @param propertyRequired the propertyRequired to set
      */
