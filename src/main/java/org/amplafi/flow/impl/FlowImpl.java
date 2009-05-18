@@ -208,6 +208,12 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
     public void addActivity(FlowActivityImplementor activity) {
         if ( activities == null ) {
             activities = new ArrayList<FlowActivityImplementor>();
+        } else {
+            for(FlowActivityImplementor existing: activities) {
+                if (existing.getActivityName().equalsIgnoreCase(activity.getActivityName())) {
+                    throw new IllegalArgumentException(this.getFlowTypeName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
+                }
+            }
         }
         activity.setFlow(this);
         activities.add(activity);

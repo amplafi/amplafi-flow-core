@@ -53,12 +53,18 @@ public interface Flow {
     public void setActivities(List<FlowActivityImplementor> activities);
 
     /**
+     * @param <T>
      * @return the activities.
      */
     public <T extends FlowActivity> List<T> getActivities();
 
     public <T extends FlowActivity> T getActivity(int activityIndex);
 
+    /**
+     * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getActivityName()} must
+     * not duplicate the name of any previously added FlowActivityImplementor. The check is case-insensitive.
+     * @param activity
+     */
     public void addActivity(FlowActivityImplementor activity);
 
     /**
