@@ -140,9 +140,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     public FlowActivityImpl() {
         if (this.getClass() != FlowActivityImpl.class) {
-            // set default activity name
-            activityName = this.getClass().getSimpleName();
-
             String name = this.getClass().getName();
             Matcher m = compNamePattern.matcher(name);
             if (m.find()) {
@@ -399,16 +396,24 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#setActivityName(java.lang.String)
      */
     public void setActivityName(String activityName) {
-        this.activityName = activityName;
+        if ( !StringUtils.equalsIgnoreCase(this.activityName, activityName)) {
+            if ( this.activityName != null && this.flow != null) {
+                throw new IllegalStateException(this+": cannot change activityName once it is part of a flow. Tried to change to ="+activityName);
+            }
+            this.activityName = activityName;
+        }
     }
 
     /**
      * @see org.amplafi.flow.FlowActivity#getActivityName()
      */
     public String getActivityName() {
-        return activityName;
+        return isActivityNameSet()?activityName:this.getClass().getSimpleName();
     }
 
+    public boolean isActivityNameSet() {
+        return this.activityName != null;
+    }
     /**
      * @see org.amplafi.flow.FlowActivity#setActivityTitle(java.lang.String)
      */
@@ -890,9 +895,9 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     public String toString() {
         Flow f = getFlow();
         if ( f != null ) {
-            return f.getFlowTypeName()+"."+activityName+ " " +getClass()+" id="+super.toString();
+            return f.getFlowTypeName()+"."+getActivityName()+ " " +getClass()+" id="+super.toString();
         } else {
-            return activityName+ " " +getClass()+" id="+super.toString();
+            return getActivityName()+ " " +getClass()+" id="+super.toString();
         }
     }
 

@@ -112,11 +112,11 @@ public interface FlowActivity {
      * @return result of validation
      */
     public FlowValidationResult getFlowValidationResult(PropertyRequired required, FlowStepDirection flowStepDirection);
-
     /**
-     * @param activityName The activityName to set.
+     *
+     * @return true if the activity name has been explicitly set.
      */
-    public void setActivityName(String activityName);
+    public boolean isActivityNameSet();
 
     /**
      * @return Returns the activityName.

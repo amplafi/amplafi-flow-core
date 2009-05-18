@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
@@ -54,7 +55,7 @@ import org.amplafi.flow.*;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public class FlowImpl implements Serializable, Cloneable, Flow {
+public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowActivityImplementor> {
 
     private static final long serialVersionUID = -985306244948511836L;
     /**
@@ -192,6 +193,14 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
     }
 
     /**
+     * @see java.lang.Iterable#iterator()
+     */
+    @Override
+    public ListIterator<FlowActivityImplementor> iterator() {
+        return this.activities.listIterator();
+    }
+
+    /**
      * @see org.amplafi.flow.Flow#getActivity(int)
      */
     @SuppressWarnings("unchecked")
@@ -210,7 +219,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow {
             activities = new ArrayList<FlowActivityImplementor>();
         } else {
             for(FlowActivityImplementor existing: activities) {
-                if (existing.getActivityName().equalsIgnoreCase(activity.getActivityName())) {
+                if (existing.isActivityNameSet() && activity.isActivityNameSet() && StringUtils.equalsIgnoreCase(existing.getActivityName(), activity.getActivityName())) {
                     throw new IllegalArgumentException(this.getFlowTypeName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
                 }
             }

@@ -69,6 +69,10 @@ public interface FlowActivityImplementor extends FlowActivity {
 
     public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> definitions);
 
+    /**
+     * @param activityName The activityName to set.
+     */
+    public void setActivityName(String activityName);
 
     public String getRawProperty(String key);
     /**
