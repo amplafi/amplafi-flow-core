@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowLifecycleState;
 import org.amplafi.flow.FlowManagement;
@@ -175,7 +174,7 @@ public class BaseFlowManagement implements FlowManagement {
         }
         return flowState;
     }
-    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, boolean makeNewStateCurrent) {
+    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent) {
         FlowState flowState = createFlowState(flowTypeName,
                 initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
         return flowState;

@@ -76,7 +76,7 @@ public interface FlowManagement {
      */
     public FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
 
-    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, boolean makeNewStateCurrent);
+    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
 
     /**
      * Starts a flow by name.
