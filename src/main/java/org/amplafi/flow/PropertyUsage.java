@@ -42,6 +42,10 @@ public enum PropertyUsage {
      */
     activityLocal(true),
     /**
+     * will create the property if needed.
+     */
+    creates(false),
+    /**
      * a temporary property usage.
      */
     other(false),

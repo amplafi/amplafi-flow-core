@@ -149,14 +149,18 @@ public class FlowStateImpl implements FlowState {
     @Override
     public String begin() {
         this.setFlowLifecycleState(initializing);
-        initializeFlow();
-        // TODO ... should we just be using next()... seems better.
+        FlowLifecycleState nextFlowLifecycleState = started;
         try {
+            initializeFlow();
+            // TODO ... should we just be using next()... seems better.
             selectActivity(0, true);
+        } catch(RuntimeException e) {
+            nextFlowLifecycleState = failed;
+            throw e;
         } finally {
             // because may throw flow validation exception
             if ( this.getFlowLifecycleState() == initializing) {
-                this.setFlowLifecycleState(started);
+                this.setFlowLifecycleState(nextFlowLifecycleState);
             }
         }
         return getCurrentPage();
@@ -525,10 +529,8 @@ public class FlowStateImpl implements FlowState {
     public FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         FlowValidationResult flowValidationResult = new ReportAllValidationResult();
         for(FlowActivity flowActivity: this.getActivities()) {
-            flowValidationResult  = flowActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
-            if ( !flowValidationResult.isValid()) {
-                break;
-            }
+            FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(propertyRequired, flowStepDirection);
+            flowValidationResult.merge(flowActivityValidationResult);
         }
         return flowValidationResult;
     }
@@ -899,17 +901,24 @@ public class FlowStateImpl implements FlowState {
      */
     @Override
     public boolean isFinishable() {
-        FlowActivity currentActivity = this.getCurrentActivity();
-        if (currentActivity.isFinishingActivity() || !hasVisibleNext()) {
-            // explicitly able to finish.
-            // or last visible step, which must always be able to finish.
-            return true;
+        if ( !isCompleted()) {
+            FlowActivity currentActivity = this.getCurrentActivity();
+            // may not have been started
+            if ((currentActivity != null && currentActivity.isFinishingActivity()) || !hasVisibleNext()) {
+                // explicitly able to finish.
+                // or last visible step, which must always be able to finish.
+                return true;
+            } else {
+                // all remaining activities claim they have valid data.
+                // this enables a user to go back to a previous step and still finish the flow.
+                // FlowActivities that have content that is required to be viewed (Terms of Service )
+                // should have a state flag so that the flow can not be finished until the ToS is viewed.
+                return getFinishFlowValidationResult().isValid();
+            }
         } else {
-            // all remaining activities claim they have valid data.
-            // this enables a user to go back to a previous step and still finish the flow.
-            // FlowActivities that have content that is required to be viewed (Terms of Service )
-            // should have a state flag so that the flow can not be finished until the ToS is viewed.
-            return getFinishFlowValidationResult().isValid();
+            // if it is already completed then the flow is not finishable (it already is finished)
+            // but may need to indicate that this is not an error as well.
+            return false;
         }
     }
 
@@ -1060,10 +1069,14 @@ public class FlowStateImpl implements FlowState {
         return this.flowManagement.makeCurrent(this);
     }
 
+    /**
+     *
+     * @see java.util.ListIterator#add(java.lang.Object)
+     */
     @Override
     @SuppressWarnings("unused")
     public void add(FlowActivity e) {
-        throw new UnsupportedOperationException("TODO: Auto generated");
+        throw new UnsupportedOperationException("cannot add FlowActivities");
     }
 
     /**
