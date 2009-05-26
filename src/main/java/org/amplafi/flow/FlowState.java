@@ -36,7 +36,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return the page to be displayed after this flow has completed its
      *         initialization.
      */
-    public String begin();
+    String begin();
 
     /**
      * If this flow is not completed then we resume this flow by calling the
@@ -46,9 +46,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @return pageName of page to be displayed.
      */
-    public String resume();
+    String resume();
 
-    public void initializeFlow(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
+    void initializeFlow(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
     /**
      * Morphs the flowState to the new flow. In Morphing the FlowState has a new {@link Flow} definition.
@@ -66,7 +66,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param initialFlowState
      * @return The name of the page that should be presented (or null).
      */
-    public String morphFlow(String flowTypeName, Map<String, String> initialFlowState);
+    String morphFlow(String flowTypeName, Map<String, String> initialFlowState);
 
     /**
      * Move to the specified activity.
@@ -83,7 +83,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @return the now current {@link FlowActivity}
      */
-    public <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues);
+    <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues);
 
     /**
      * Move to the specified visible activity.
@@ -92,9 +92,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param visibleIndex The index of the activity among the visible ones.
      * @return the now current FlowActivity
      */
-    public <T extends FlowActivity> T selectVisibleActivity(int visibleIndex);
+    <T extends FlowActivity> T selectVisibleActivity(int visibleIndex);
 
-    public void saveChanges();
+    void saveChanges();
 
     /**
      * Completes this flow successfully. Calls {@link #saveChanges()} and then
@@ -102,33 +102,33 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @return The name of the page that should be presented (or null).
      */
-    public String finishFlow();
+    String finishFlow();
 
     /**
      *
      * @return The name of the page that should be presented (or null).
      */
-    public String cancelFlow();
+    String cancelFlow();
 
     /**
      * return {@link #getAfterPage()} if the flow is complete.
      *
      * @return the page name that should be displayed at this point
      */
-    public String getCurrentPage();
+    String getCurrentPage();
 
-    public void setActiveFlowLabel(String activeFlowLabel);
+    void setActiveFlowLabel(String activeFlowLabel);
 
-    public String getActiveFlowLabel();
+    String getActiveFlowLabel();
 
-    public <T extends FlowActivity> T getActivity(int activityIndex);
+    <T extends FlowActivity> T getActivity(int activityIndex);
 
-    public <T extends FlowActivity> T getActivity(String activityName);
+    <T extends FlowActivity> T getActivity(String activityName);
 
     /**
      * @return Returns the flowId.
      */
-    public String getLookupKey();
+    String getLookupKey();
 
     /**
      *
@@ -136,27 +136,27 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return true if key when converted to a string matches
      *         {@link #getLookupKey()}.
      */
-    public boolean hasLookupKey(Object key);
+    boolean hasLookupKey(Object key);
 
-    public <T extends FlowActivity> T getCurrentActivity();
+    <T extends FlowActivity> T getCurrentActivity();
 
-    public void setCurrentActivityByName(String currentActivityByName);
+    void setCurrentActivityByName(String currentActivityByName);
 
     /**
      * @return the current activitiy's name.
      */
-    public String getCurrentActivityByName();
+    String getCurrentActivityByName();
 
-    public int size();
+    int size();
 
     /**
      * @return Returns the currentActivity.
      */
-    public int getCurrentActivityIndex();
+    int getCurrentActivityIndex();
 
-    public String getRawProperty(String key);
+    String getRawProperty(String key);
 
-    public String getProperty(String flowActivityName, String key);
+    String getProperty(String flowActivityName, String key);
 
     /**
      *
@@ -165,7 +165,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param value
      * @return true if the value has changed.
      */
-    public boolean setProperty(String flowActivityName, String key, String value);
+    boolean setProperty(String flowActivityName, String key, String value);
 
     /**
      *
@@ -174,7 +174,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param value
      * @return true if the value has changed.
      */
-    public boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, String value);
+    boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, String value);
 
     /**
      *
@@ -182,60 +182,60 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param value
      * @return true if the value has changed.
      */
-    public boolean setProperty(String key, String value);
+    boolean setProperty(String key, String value);
 
-    public boolean hasProperty(String key);
+    boolean hasProperty(String key);
 
-    public <T extends FlowActivity> List<T> getActivities();
+    <T extends FlowActivity> List<T> getActivities();
 
-    public <T extends FlowActivity> List<T> getVisibleActivities();
+    <T extends FlowActivity> List<T> getVisibleActivities();
 
     /**
      * can this flow be ended.
      *
      * @return true if the flow can end normally.
      */
-    public boolean isFinishable();
+    boolean isFinishable();
 
     /**
      * Called when this flowstate no longer represents the current flow. Assume
      * that this FlowState may be G.C.'ed
      */
-    public void clearCache();
+    void clearCache();
 
     /**
      *
      * @return the flow title or the flow link title.
      */
-    public String getFlowTitle();
+    String getFlowTitle();
 
-    public void setCached(String key, Object value);
+    void setCached(String key, Object value);
 
-    public <T> T getCached(String key);
+    <T> T getCached(String key);
 
     /**
      * @param flowManagement The flowManagement to set.
      */
-    public void setFlowManagement(FlowManagement flowManagement);
+    void setFlowManagement(FlowManagement flowManagement);
 
     /**
      * @return Returns the flowManagement.
      */
-    public FlowManagement getFlowManagement();
+    FlowManagement getFlowManagement();
 
-    public void setFlowTypeName(String flowTypeName);
+    void setFlowTypeName(String flowTypeName);
 
-    public String getFlowTypeName();
+    String getFlowTypeName();
 
-    public Flow getFlow();
+    Flow getFlow();
 
-    public String makeCurrent();
+    String makeCurrent();
 
-    public boolean isTrue(String key);
+    boolean isTrue(String key);
 
-    public Boolean getBoolean(String key);
+    Boolean getBoolean(String key);
 
-    public Long getLong(String key);
+    Long getLong(String key);
 
     /**
      * can the current activity be passivated.
@@ -243,43 +243,43 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return result returned by the currentActivity's
      *         {@link FlowActivity#getFlowValidationResult()}
      */
-    public FlowValidationResult getCurrentActivityFlowValidationResult();
+    FlowValidationResult getCurrentActivityFlowValidationResult();
 
     /**
      * @param propertyRequired
      * @return result returned by the currentActivity's
      *         {@link FlowActivity#getFlowValidationResult(PropertyRequired, FlowStepDirection)}
      */
-    public FlowValidationResult getCurrentActivityFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    FlowValidationResult getCurrentActivityFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
 
-    public boolean isCurrentActivityCompletable();
+    boolean isCurrentActivityCompletable();
 
-    public Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
 
 
     /**
      * @return the combination of {@link #getCurrentActivityFlowValidationResult()} and
      *  {@link #getFullFlowValidationResult(PropertyRequired, FlowStepDirection)}({@link PropertyRequired#finish}, {@link FlowStepDirection#forward})
      */
-    public FlowValidationResult getFinishFlowValidationResult();
-    public FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
-    public void setAfterPage(String afterPage);
+    FlowValidationResult getFinishFlowValidationResult();
+    FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    void setAfterPage(String afterPage);
 
-    public String getAfterPage();
+    String getAfterPage();
 
-    public boolean isUpdatePossible();
+    boolean isUpdatePossible();
 
-    public String getUpdateText();
+    String getUpdateText();
 
-    public boolean isCancelPossible();
+    boolean isCancelPossible();
 
-    public String getCancelText();
+    String getCancelText();
 
-    public void setCancelText(String cancelText);
+    void setCancelText(String cancelText);
 
-    public String getFinishText();
+    String getFinishText();
 
-    public void setFinishText(String finishText);
+    void setFinishText(String finishText);
 
     /**
      * Set this to a not-null value to indicate that an alternative button has
@@ -287,19 +287,19 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @param type
      */
-    public void setFinishType(String type);
+    void setFinishType(String type);
 
     /**
      * @return Null if this flow was finished by the normal button. Anything
      *         else means that an alternative button has triggered the finish.
      */
-    public String getFinishType();
+    String getFinishType();
 
-    public void setFlowLifecycleState(FlowLifecycleState flowLifecycleState);
+    void setFlowLifecycleState(FlowLifecycleState flowLifecycleState);
 
-    public FlowLifecycleState getFlowLifecycleState();
+    FlowLifecycleState getFlowLifecycleState();
 
-    public boolean isCompleted();
+    boolean isCompleted();
 
     /**
      *
@@ -308,39 +308,39 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param expected class maybe null if not known.
      * @return the property value
      */
-    public <T> T getPropertyAsObject(String key, Class<T> expected);
-    public String getPropertyAsObject(String key);
-    public <T> void setPropertyAsObject(String key, T value);
+    <T> T getPropertyAsObject(String key, Class<T> expected);
+    String getPropertyAsObject(String key);
+    <T> void setPropertyAsObject(String key, T value);
 
-    public boolean isActive();
+    boolean isActive();
 
-    public void setDefaultAfterPage(String pageName);
+    void setDefaultAfterPage(String pageName);
 
-    public String getDefaultAfterPage();
+    String getDefaultAfterPage();
 
-    public boolean isNotCurrentAllowed();
+    boolean isNotCurrentAllowed();
 
-    public FlowValuesMap getFlowValuesMap();
+    FlowValuesMap getFlowValuesMap();
 
-    public void setFlowValuesMap(FlowValuesMap flowValuesMap);
+    void setFlowValuesMap(FlowValuesMap flowValuesMap);
 
-    public Log getLog();
+    Log getLog();
 
-    public String getRawProperty(FlowActivity flowActivity, String key);
+    String getRawProperty(FlowActivity flowActivity, String key);
 
-    public <T> void setProperty(FlowActivity flowActivity,
+    <T> void setProperty(FlowActivity flowActivity,
             FlowPropertyDefinition propertyDefinition, T value);
 
-    public <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition);
+    <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition);
 
-    public Long getRawLong(FlowActivity flowActivity, String key);
+    Long getRawLong(FlowActivity flowActivity, String key);
 
-    public <T> FlowPropertyDefinition createFlowPropertyDefinition(String key,
+    <T> FlowPropertyDefinition createFlowPropertyDefinition(String key,
             Class<T> expected, T sampleValue);
 
-    public boolean hasVisibleNext();
+    boolean hasVisibleNext();
 
-    public boolean hasVisiblePrevious();
+    boolean hasVisiblePrevious();
 
     /**
      * Passivates the current flow activity.
@@ -350,18 +350,18 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param flowStepDirection TODO
      * @return result from {@link FlowActivity#passivate(boolean, FlowStepDirection)}
      */
-    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
+    FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
 
-    public <T> FlowPropertyDefinition getFlowPropertyDefinition(String key);
+    <T> FlowPropertyDefinition getFlowPropertyDefinition(String key);
 
     /**
      * @return a FlowValuesMap with all the flowLocal, activityLocal values cleared.
      */
-    public FlowValuesMap getClearFlowValuesMap();
+    FlowValuesMap getClearFlowValuesMap();
 
     /**
      * @param possibleReferencedState
      * @return true if this flowState references possibleReferencedState
      */
-    public boolean isReferencing(FlowState possibleReferencedState);
+    boolean isReferencing(FlowState possibleReferencedState);
 }

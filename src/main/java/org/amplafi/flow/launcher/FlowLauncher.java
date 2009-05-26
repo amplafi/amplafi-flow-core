@@ -47,25 +47,25 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      */
     public static final String COMPLETE_FLOW = "fsCompleteFlow";
     public static final String FLOW_STATE_JSON_KEY = "flowState";
-    public void setFlowManagement(FlowManagement sessionFlowManagement);
+    void setFlowManagement(FlowManagement sessionFlowManagement);
     /**
      * enter the flow.
      * @return flowState May be null if for some reason the FlowLauncher determined it
      * was no longer valid. Returning null should not be treated as an error.
      *
      */
-    public FlowState call();
-    public String getFlowLabel();
+    FlowState call();
+    String getFlowLabel();
     /**
      *
      * @return the flow type this {@link FlowLauncher} launches.
      */
-    public String getFlowTypeName();
+    String getFlowTypeName();
 
     /**
      * @return map of initial parameters that will be set to the {@link FlowState} of the {@link org.amplafi.flow.Flow} to launch.
      */
-    public Map<String,String> getInitialFlowState();
+    Map<String,String> getInitialFlowState();
 
     /**
      * add to the flow values Map if the key does not exist.
@@ -73,16 +73,16 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      * @param defaultValue
      * @return the previous value.
      */
-    public String putIfAbsent(String key, String defaultValue);
+    String putIfAbsent(String key, String defaultValue);
     /**
      * add to the flow values Map
      * @param key
      * @param value
      * @return the previous value
      */
-    public String put(String key, String value);
+    String put(String key, String value);
     /**
      * @param lookupKeyOrBoolean
      */
-    public void setReturnToFlow(Object lookupKeyOrBoolean);
+    void setReturnToFlow(Object lookupKeyOrBoolean);
 }

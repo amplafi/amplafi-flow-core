@@ -29,5 +29,5 @@ public interface ChainedFlowPropertyValueProvider<FA extends FlowActivity> exten
      * Set the previous {@link FlowPropertyValueProvider} for this chain.
      * @param previous the previous {@link FlowPropertyValueProvider}
      */
-    public void setPrevious(FlowPropertyValueProvider<FA> previous);
+    void setPrevious(FlowPropertyValueProvider<FA> previous);
 }

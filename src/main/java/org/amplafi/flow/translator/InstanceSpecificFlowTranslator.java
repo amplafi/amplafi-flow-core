@@ -22,5 +22,5 @@ import org.amplafi.flow.FlowTranslator;
  *
  */
 public interface InstanceSpecificFlowTranslator<T> extends FlowTranslator<T>{
-    public <V> FlowTranslator<V> resolveFlowTranslator(Class<V> clazz);
+    <V> FlowTranslator<V> resolveFlowTranslator(Class<V> clazz);
 }

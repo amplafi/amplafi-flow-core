@@ -44,115 +44,115 @@ public interface Flow {
      * The {@link FlowActivity} array is copied but not the {@link FlowActivity}s themselves.
      * @return flow instance.
      */
-    public Flow createInstance();
+    Flow createInstance();
 
     /**
      * @param activities
      *            The activities to set.
      */
-    public void setActivities(List<FlowActivityImplementor> activities);
+    void setActivities(List<FlowActivityImplementor> activities);
 
     /**
      * @param <T>
      * @return the activities.
      */
-    public <T extends FlowActivity> List<T> getActivities();
+    <T extends FlowActivity> List<T> getActivities();
 
-    public <T extends FlowActivity> T getActivity(int activityIndex);
+    <T extends FlowActivity> T getActivity(int activityIndex);
 
     /**
      * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getActivityName()} must
      * not duplicate the name of any previously added FlowActivityImplementor. The check is case-insensitive.
      * @param activity
      */
-    public void addActivity(FlowActivityImplementor activity);
+    void addActivity(FlowActivityImplementor activity);
 
     /**
      * @return Returns the definition.
      */
-    public boolean isInstance();
+    boolean isInstance();
 
-    public <T extends FlowActivity> List<T> getVisibleActivities();
+    <T extends FlowActivity> List<T> getVisibleActivities();
 
-    public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
+    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
 
-    public Map<String, FlowPropertyDefinition> getPropertyDefinitions();
+    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
 
-    public FlowPropertyDefinition getPropertyDefinition(String key);
+    FlowPropertyDefinition getPropertyDefinition(String key);
 
-    public void addPropertyDefinition(FlowPropertyDefinition definition);
+    void addPropertyDefinition(FlowPropertyDefinition definition);
 
-    public void setFlowTypeName(String flowTypeName);
+    void setFlowTypeName(String flowTypeName);
 
-    public String getFlowTypeName();
+    String getFlowTypeName();
 
     /**
      * @return get the flow name as it should appear in the flowentry and the
      *         titlebar.
      */
-    public String getFlowTitle();
+    String getFlowTitle();
 
-    public void setFlowTitle(String flowTitle);
+    void setFlowTitle(String flowTitle);
 
     /**
      * @return Used if this is a secondary flow that will be started as the next
      *         flow.
      */
-    public String getContinueFlowTitle();
+    String getContinueFlowTitle();
 
-    public void setContinueFlowTitle(String continueFlowTitle);
+    void setContinueFlowTitle(String continueFlowTitle);
 
-    public void setLinkTitle(String linkTitle);
+    void setLinkTitle(String linkTitle);
 
-    public String getLinkTitle();
+    String getLinkTitle();
 
     /**
      *
      * @return display this text on a mouseover hover on the entry point.
      */
-    public String getMouseoverEntryPointText();
+    String getMouseoverEntryPointText();
 
-    public void setMouseoverEntryPointText(String mouseoverEntryPointText);
+    void setMouseoverEntryPointText(String mouseoverEntryPointText);
 
     /**
      * @return Explanatory text about what the purpose of this flow is.
      */
-    public String getFlowDescriptionText();
+    String getFlowDescriptionText();
 
-    public void setFlowDescriptionText(String flowDescriptionText);
+    void setFlowDescriptionText(String flowDescriptionText);
 
-    public void setPageName(String pageName);
+    void setPageName(String pageName);
 
-    public String getPageName();
+    String getPageName();
 
-    public void setDefaultAfterPage(String defaultAfterPage);
+    void setDefaultAfterPage(String defaultAfterPage);
 
-    public String getDefaultAfterPage();
+    String getDefaultAfterPage();
 
     /**
      * retrieve the activity, and execute it's {@link FlowActivity#refresh()} method.
      */
-    public void refresh();
+    void refresh();
 
-    public void setFlowState(FlowState state);
+    void setFlowState(FlowState state);
 
-    public FlowState getFlowState();
+    FlowState getFlowState();
 
-    public int indexOf(FlowActivity activity);
+    int indexOf(FlowActivity activity);
 
-    public void setActivatable(boolean activatable);
+    void setActivatable(boolean activatable);
 
-    public boolean isActivatable();
+    boolean isActivatable();
 
-    public void setNotCurrentAllowed(boolean notCurrentAllowed);
+    void setNotCurrentAllowed(boolean notCurrentAllowed);
 
     /**
      * This flow doesn't have to be the current flow in order to be active.
      * @return false means this flowStates of this type should be dropped if they are
      * no longer the current flow.
      */
-    public boolean isNotCurrentAllowed();
+    boolean isNotCurrentAllowed();
 
-    public String toString();
+    String toString();
 
 }

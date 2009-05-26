@@ -21,16 +21,16 @@ package org.amplafi.flow;
  */
 public interface FlowTx {
 
-    public <T> boolean flushIfNeeded(T... entities);
+    <T> boolean flushIfNeeded(T... entities);
 
-    public <T, K> T load(Class<? extends T> clazz, K entityId, boolean nullIdReturnsNull);
+    <T, K> T load(Class<? extends T> clazz, K entityId, boolean nullIdReturnsNull);
 
-    public <T, K> T get(Class<? extends T> clazz, K entityId, boolean nullIdReturnsNull);
+    <T, K> T get(Class<? extends T> clazz, K entityId, boolean nullIdReturnsNull);
 
-    public void delete(Object entity);
+    void delete(Object entity);
 
     /**
      * @param entity
      */
-    public void saveOrUpdate(Object entity);
+    void saveOrUpdate(Object entity);
 }

@@ -22,7 +22,7 @@ public interface FlowValidationTracking {
      * @return the activity key of the FlowActivity that should be activated if the user is
      * expected to fix this validation. May be null.
      */
-    public String getActivityKey();
+    String getActivityKey();
     /**
      *
      * @return the message key which is used to look up the actual localized validation message.

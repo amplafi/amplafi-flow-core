@@ -41,7 +41,7 @@ public interface FlowValidationResult {
      * @param messageParams
      * @return this
      */
-    public FlowValidationResult addTracking(boolean valid, String messageKey, Object...messageParams);
+    FlowValidationResult addTracking(boolean valid, String messageKey, Object...messageParams);
     /**
      * Get all trackings.
      * @return all trackings stored. Null is allowed.

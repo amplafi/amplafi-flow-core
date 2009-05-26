@@ -37,7 +37,7 @@ public interface FlowManagement {
      * @param lookupKey
      * @return the flow named with this flowId.
      */
-    public FlowState getFlowState(String lookupKey);
+    FlowState getFlowState(String lookupKey);
 
     /**
      *  a user may have multiple concurrently active
@@ -46,7 +46,7 @@ public interface FlowManagement {
      * @param flowTypes
      * @return the first active {@link FlowState} having the given type.
      */
-    public FlowState getFirstFlowStateByType(String... flowTypes);
+    FlowState getFirstFlowStateByType(String... flowTypes);
     /**
      * synchronized because a user may have multiple concurrently active
      * requests.
@@ -54,7 +54,7 @@ public interface FlowManagement {
      * @param flowTypes
      * @return the first active {@link FlowState} having the given type.
      */
-    public FlowState getFirstFlowStateByType(Collection<String> flowTypes);
+    FlowState getFirstFlowStateByType(Collection<String> flowTypes);
     /**
      * a user may have multiple concurrently active
      * requests.
@@ -62,9 +62,9 @@ public interface FlowManagement {
      * @param flowType
      * @return the active {@link FlowState}s having the given type.
      */
-    public List<FlowState> getActiveFlowStatesByType(String... flowType);
+    List<FlowState> getActiveFlowStatesByType(String... flowType);
 
-    public FlowState getCurrentFlowState();
+    FlowState getCurrentFlowState();
 
     /**
      * creates a {@link FlowState}. The properties are set to the initialFlowState.
@@ -74,9 +74,9 @@ public interface FlowManagement {
      * @param makeNewStateCurrent
      * @return the newly-created FlowState
      */
-    public FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
+    FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
 
-    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
+    FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
 
     /**
      * Starts a flow by name.
@@ -86,7 +86,7 @@ public interface FlowManagement {
      * @param returnToFlow TODO
      * @return the newly-started FlowState
      */
-    public FlowState startFlowState(String flowTypeName, boolean currentFlow,
+    FlowState startFlowState(String flowTypeName, boolean currentFlow,
             Map<String, String> initialFlowState, Object returnToFlow);
 
     /**
@@ -102,7 +102,7 @@ public interface FlowManagement {
      * @param returnToFlow
      * @return the newly-started FlowState
      */
-    public FlowState startFlowState(String flowType, boolean currentFlow, Object propertyRoot,
+    FlowState startFlowState(String flowType, boolean currentFlow, Object propertyRoot,
             Iterable<String> initialValues, Object returnToFlow);
 
     /**
@@ -114,7 +114,7 @@ public interface FlowManagement {
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    public FlowState continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot,
+    FlowState continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot,
             Iterable<String> initialValues);
     /**
      * Continue the flow with the given lookup key.
@@ -124,14 +124,14 @@ public interface FlowManagement {
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    public FlowState continueFlowState(String lookupKey, boolean currentFlow,
+    FlowState continueFlowState(String lookupKey, boolean currentFlow,
             Map<String, String> initialFlowState);
     /**
      * the flows that the current session has active.
      *
      * @return list of active {@link FlowState}s referenced by this FlowManagement object.
      */
-    public List<FlowState> getFlowStates();
+    List<FlowState> getFlowStates();
 
     /**
      * drop the indicated flow. This is not a canceling of the flow
@@ -139,9 +139,9 @@ public interface FlowManagement {
      * @param flow
      * @return the page name to land on.
      */
-    public String dropFlowState(FlowState flow);
+    String dropFlowState(FlowState flow);
 
-    public FlowState transitionToFlowState(FlowState flowState);
+    FlowState transitionToFlowState(FlowState flowState);
 
     /**
      * drop the indicated flow. This is not canceling the flow.
@@ -151,41 +151,41 @@ public interface FlowManagement {
      * @param lookupKey
      * @return the page name to land on.
      */
-    public String dropFlowStateByLookupKey(String lookupKey);
+    String dropFlowStateByLookupKey(String lookupKey);
 
-    public FlowActivity getCurrentActivity();
+    FlowActivity getCurrentActivity();
 
-    public Flow getInstanceFromDefinition(String flowTypeName);
+    Flow getInstanceFromDefinition(String flowTypeName);
 
-    public void registerForCacheClearing();
+    void registerForCacheClearing();
 
-    public Log getLog();
+    Log getLog();
 
     /**
      * @param flowState
      * @param nextFlowState
      * @return true if the current flow changed ( nextFlowState was the current flow)
      */
-    public boolean makeAfter(FlowState flowState, FlowState nextFlowState);
+    boolean makeAfter(FlowState flowState, FlowState nextFlowState);
 
     /**
      * @param state the {@link FlowState} that should be made the current FlowState.
      * @return the {@link #getCurrentFlowState()}.{@link FlowState#getCurrentPage()}, null if no current flow.
      */
-    public String makeCurrent(FlowState state);
+    String makeCurrent(FlowState state);
 
-    public Flow getFlowDefinition(String flowTypeName);
+    Flow getFlowDefinition(String flowTypeName);
 
     /**
      * @return the current transaction.
      */
-    public FlowTx getFlowTx();
+    FlowTx getFlowTx();
 
     /**
      *
      * @return the {@link #getCurrentFlowState()}.{@link FlowState#getCurrentPage()}, null if no current flow.
      */
-    public String getCurrentPage();
+    String getCurrentPage();
 
     /**
      * flow has exited. Called by {@link FlowState#finishFlow()}
@@ -193,25 +193,25 @@ public interface FlowManagement {
      * @param newFlowActive
      * @return the page that should be rendered next.
      */
-    public String completeFlowState(FlowState flowState, boolean newFlowActive);
+    String completeFlowState(FlowState flowState, boolean newFlowActive);
 
     /**
      * @return the FlowTranslatorResolver
      */
-    public FlowTranslatorResolver getFlowTranslatorResolver();
+    FlowTranslatorResolver getFlowTranslatorResolver();
 
     /**
      * Do the Dependency Injection on this activity.
      * @param activity may be null.
      */
-    public void resolveFlowActivity(FlowActivity activity);
+    void resolveFlowActivity(FlowActivity activity);
 
     /**
      * look for a global {@link FlowPropertyDefinition} that is not specific to a {@link Flow} or {@link FlowActivity}.
      * @param key
      * @return the global {@link FlowPropertyDefinition}
      */
-    public FlowPropertyDefinition getFlowPropertyDefinition(String key);
+    FlowPropertyDefinition getFlowPropertyDefinition(String key);
 
     /**
      * similar to {@link FlowManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
@@ -219,5 +219,5 @@ public interface FlowManagement {
      * {@link FlowManager#getDefaultHomePage()}.
      * @return the default home to use when a flow ends and there is no other place to return.
      */
-    public URI getDefaultHomePage();
+    URI getDefaultHomePage();
 }

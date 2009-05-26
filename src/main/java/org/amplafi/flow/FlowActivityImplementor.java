@@ -31,24 +31,24 @@ public interface FlowActivityImplementor extends FlowActivity {
      * @return what the value should be. Usually just return the value
      *         parameter.
      */
-    public String propertyChange(String flowActivityName, String key, String value,
+    String propertyChange(String flowActivityName, String key, String value,
         String oldValue);
 
     /**
      * @return instance of this definition
      */
-    public FlowActivityImplementor createInstance();
+    FlowActivityImplementor createInstance();
 
     /**
      * @param nextFlow
      * @return the nextFlow after all property substitution has had a change to find the real name.
      */
-    public String resolve(String nextFlow);
+    String resolve(String nextFlow);
 
     /**
      *
      */
-    public void processDefinitions();
+    void processDefinitions();
     /**
      * If the property has no value stored in the flowState's keyvalueMap then
      * put the supplied value in it.
@@ -57,24 +57,24 @@ public interface FlowActivityImplementor extends FlowActivity {
      * @param value
      * @see #isPropertyNotSet(String)
      */
-    public void initPropertyIfNull(String key, Object value) ;
+    void initPropertyIfNull(String key, Object value) ;
 
-    public void initPropertyIfBlank(String key, Object value);
+    void initPropertyIfBlank(String key, Object value);
 
-    public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
+    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
 
-    public void addPropertyDefinition(FlowPropertyDefinition definition);
+    void addPropertyDefinition(FlowPropertyDefinition definition);
 
-    public void addPropertyDefinitions(FlowPropertyDefinition... definitions);
+    void addPropertyDefinitions(FlowPropertyDefinition... definitions);
 
-    public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> definitions);
+    void addPropertyDefinitions(Iterable<FlowPropertyDefinition> definitions);
 
     /**
      * @param activityName The activityName to set.
      */
-    public void setActivityName(String activityName);
+    void setActivityName(String activityName);
 
-    public String getRawProperty(String key);
+    String getRawProperty(String key);
     /**
      * set a value with key specified in either the flowActivity specific values
      * (if such a flowactivity specific value is set already) or the global flow
@@ -84,5 +84,5 @@ public interface FlowActivityImplementor extends FlowActivity {
      * @param value
      * @return {@link FlowState#setRawProperty(FlowActivity, FlowPropertyDefinition, String)}
      */
-    public boolean setRawProperty(String key, String value);
+    boolean setRawProperty(String key, String value);
 }

@@ -34,7 +34,7 @@ public interface FlowTranslator <T>{
      *
      * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
      */
-    public Class<?> getTranslatedClass();
+    Class<?> getTranslatedClass();
     /**
      * Do not return the actual string in many cases because this
      * FlowTranslator may not be the 'top-level' translator. (TODO:think about)
@@ -47,9 +47,9 @@ public interface FlowTranslator <T>{
      * @param object
      * @return the jsonWriter.
      */
-    public JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, T object);
+    JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, T object);
 
-    public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
+    T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
             throws FlowException;
 
     /**
@@ -61,7 +61,7 @@ public interface FlowTranslator <T>{
      * @return true if differentClass is a subclass of {@link #getTranslatedClass()}
      * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition , DataClassDefinition , JSONWriter, Object)}
      */
-    public boolean isAssignableFrom(Class<?> differentClass);
+    boolean isAssignableFrom(Class<?> differentClass);
 
     /**
      *
@@ -71,20 +71,20 @@ public interface FlowTranslator <T>{
      * @return true if this object can be translated by the FlowTranslator to
      * the class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
      */
-    public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object value);
+    boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object value);
     /**
      *
      * @param value
      * @return true if the class represents a class that this {@link FlowTranslator} could
      * return when deserializing.
      */
-    public boolean isDeserializedForm(Class<?> value);
+    boolean isDeserializedForm(Class<?> value);
 
-    public T getDefaultObject(FlowActivity flowActivity);
+    T getDefaultObject(FlowActivity flowActivity);
     /**
      * @return list of forms that this FlowTranslator can deserialize to.
      */
-    public List<Class<?>> getDeserializedFormClasses();
+    List<Class<?>> getDeserializedFormClasses();
 
-    public JsonRenderer<T> getJsonRenderer();
+    JsonRenderer<T> getJsonRenderer();
 }

@@ -27,19 +27,19 @@ public interface FlowTranslatorResolver {
      *
      * @param flowPropertyDefinition
      */
-    public void resolve(FlowPropertyDefinition flowPropertyDefinition);
+    void resolve(FlowPropertyDefinition flowPropertyDefinition);
     /**
     *
     * @param dataClassDefinition
     */
-   public void resolve(DataClassDefinition dataClassDefinition);
+    void resolve(DataClassDefinition dataClassDefinition);
     /**
      * all the other methods end up calling this method.
      * @param clazz
      * @return the FlowTranslator or null if none could be found.
      */
-    public FlowTranslator<?> resolve(Class<?> clazz);
-    public void resolveFlow(Flow flow);
+    FlowTranslator<?> resolve(Class<?> clazz);
+    void resolveFlow(Flow flow);
 
     JSONWriter getJsonWriter();
 
@@ -47,10 +47,10 @@ public interface FlowTranslatorResolver {
      * @param key
      * @return the {@link FlowPropertyDefinition} for this key.
      */
-    public FlowPropertyDefinition getFlowPropertyDefinition(String key);
-    public void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions);
+    FlowPropertyDefinition getFlowPropertyDefinition(String key);
+    void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions);
     /**
      * @param flowActivity
      */
-    public void resolve(FlowActivity flowActivity);
+    void resolve(FlowActivity flowActivity);
 }

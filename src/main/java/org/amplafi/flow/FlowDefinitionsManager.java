@@ -24,25 +24,25 @@ import java.util.Map;
  */
 public interface FlowDefinitionsManager {
 
-    public void addDefinitions(Flow... flows);
+    void addDefinitions(Flow... flows);
 
     /**
      * Returns the flow having the specified name.
      * @param flowTypeName
      * @return the Flow definition.
      */
-    public Flow getFlowDefinition(String flowTypeName);
-    public boolean isFlowDefined(String flowTypeName);
+    Flow getFlowDefinition(String flowTypeName);
+    boolean isFlowDefined(String flowTypeName);
 
     /**
      * Returns all defined flows, keyed by their name.
      * @return the map with all the currently defined flows indexed by (usually) the {@link Flow#getFlowTypeName()}.
      */
-    public Map<String, Flow> getFlowDefinitions();
+    Map<String, Flow> getFlowDefinitions();
 
     /**
      * @param key (usually) the {@link Flow#getFlowTypeName()}.
      * @param flow the flow definition to add.
      */
-    public void addDefinition(String key, Flow flow);
+    void addDefinition(String key, Flow flow);
 }

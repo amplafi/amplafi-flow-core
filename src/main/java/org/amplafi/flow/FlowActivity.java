@@ -26,7 +26,7 @@ public interface FlowActivity {
      *
      * @return true if this FlowActivity can be activated by the user.
      */
-    public boolean isActivatable();
+    boolean isActivatable();
     /**
      * called when a flow is started. Subclasses should override this method to
      * initialize the FlowState with default values if needed. <p/> The
@@ -34,7 +34,7 @@ public interface FlowActivity {
      * checked first to see if they have already been set. <p/> No database
      * modifications should occur in this method.
      */
-    public void initializeFlow();
+    void initializeFlow();
 
     /**
      * subclass should override this to perform some action when the
@@ -48,7 +48,7 @@ public interface FlowActivity {
      *
      * @return if true, immediately complete this FlowActivity.
      */
-    public boolean activate(FlowStepDirection flowStepDirection);
+    boolean activate(FlowStepDirection flowStepDirection);
 
     /**
      * Passivate this flow activity. This method is invoked whenever the flow
@@ -62,13 +62,13 @@ public interface FlowActivity {
      * @param flowStepDirection TODO
      * @return the {@link FlowValidationResult} if verifyValues is true otherwise an empty {@link FlowValidationResult} object.
      */
-    public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
+    FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
 
     /**
      * called when changes accumulated to flow properties should be saved
      * permanently. Override this method to perform database updates.
      */
-    public void saveChanges();
+    void saveChanges();
 
     /**
      * called when the FlowActivity is marked as a Flow's finishingActivity.
@@ -78,23 +78,23 @@ public interface FlowActivity {
      *
      * @return the next FlowState that is now the current FlowState.
      */
-    public FlowState finishFlow(FlowState currentNextFlowState);
+    FlowState finishFlow(FlowState currentNextFlowState);
 
-    public Flow getFlow();
+    Flow getFlow();
 
     /**
      * @param pageName The pageName to set.
      */
-    public void setPageName(String pageName);
+    void setPageName(String pageName);
 
     /**
      * @return the pageName.
      */
-    public String getPageName();
+    String getPageName();
 
-    public String getComponentName();
+    String getComponentName();
 
-    public void setComponentName(String componentName);
+    void setComponentName(String componentName);
 
     /**
      * can the current FlowActivity's completeActivity() method be called.
@@ -102,7 +102,7 @@ public interface FlowActivity {
      * @return result of validation
      */
     @Deprecated
-    public FlowValidationResult getFlowValidationResult();
+    FlowValidationResult getFlowValidationResult();
 
     /**
      * Determines if the flow passes validation for a specific level of required properties.
@@ -111,70 +111,70 @@ public interface FlowActivity {
      *
      * @return result of validation
      */
-    public FlowValidationResult getFlowValidationResult(PropertyRequired required, FlowStepDirection flowStepDirection);
+    FlowValidationResult getFlowValidationResult(PropertyRequired required, FlowStepDirection flowStepDirection);
     /**
      *
      * @return true if the activity name has been explicitly set.
      */
-    public boolean isActivityNameSet();
+    boolean isActivityNameSet();
 
     /**
      * @return Returns the activityName.
      */
-    public String getActivityName();
+    String getActivityName();
 
     /**
      * @param activityTitle The flowTitle to set.
      */
-    public void setActivityTitle(String activityTitle);
+    void setActivityTitle(String activityTitle);
 
     /**
      * @return Returns the flowTitle.
      */
-    public String getActivityTitle();
+    String getActivityTitle();
 
     /**
      * "flowName.activityName"
      *
      * @return full flow activity name.
      */
-    public String getFullActivityName();
+    String getFullActivityName();
 
     /**
      * @param activatable true if this flowActivity can be selected from the UI.
      */
-    public void setActivatable(boolean activatable);
+    void setActivatable(boolean activatable);
 
     /**
      * @param finishedActivity The user can finish the flow when this activity
      *        is current.
      */
-    public void setFinishingActivity(boolean finishedActivity);
+    void setFinishingActivity(boolean finishedActivity);
 
-    public FlowManagement getFlowManagement();
+    FlowManagement getFlowManagement();
 
-    public FlowState getFlowState();
+    FlowState getFlowState();
 
-    public Map<String, FlowPropertyDefinition> getPropertyDefinitions();
+    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
 
-    public boolean isInstance();
+    boolean isInstance();
 
-    public FlowActivity initInvisible();
+    FlowActivity initInvisible();
 
-    public void setInvisible(boolean invisible);
+    void setInvisible(boolean invisible);
 
-    public boolean isInvisible();
+    boolean isInvisible();
 
-    public void setPersistFlow(boolean persistFlow);
+    void setPersistFlow(boolean persistFlow);
 
-    public boolean isPersistFlow();
+    boolean isPersistFlow();
 
-    public FlowPropertyDefinition getPropertyDefinition(String key);
+    FlowPropertyDefinition getPropertyDefinition(String key);
 
-    public void setFlow(Flow flow);
+    void setFlow(Flow flow);
 
-    public int getIndex();
-    public String getString(String key);
+    int getIndex();
+    String getString(String key);
     /**
      * override to treat some properties as special. This method is called by
      * FlowPropertyBinding.
@@ -183,7 +183,7 @@ public interface FlowActivity {
      * @param <T> type of property.
      * @return property
      */
-    public <T> T getProperty(String key);
+    <T> T getProperty(String key);
 
     /**
      * Convert dataClass to a string using
@@ -194,7 +194,7 @@ public interface FlowActivity {
      * @param dataClass type of property
      * @return the value converted to dataClass.
      */
-    public <T> T getProperty(Class<T> dataClass);
+    <T> T getProperty(Class<T> dataClass);
 
     /**
      * override to treat some properties as special. This method is called by
@@ -205,7 +205,7 @@ public interface FlowActivity {
      * @param value
      * @param <T> value's type
      */
-    public <T> void setProperty(String key, T value);
+    <T> void setProperty(String key, T value);
 
     /**
      * Convert value.getClass() to string using
@@ -215,7 +215,7 @@ public interface FlowActivity {
      * @param <T>
      * @param value must not be null
      */
-    public <T> void setProperty(T value);
+    <T> void setProperty(T value);
 
     /**
      * Convert value.getClass() to string using
@@ -226,7 +226,7 @@ public interface FlowActivity {
      * @param value may be null
      * @param dataClass
      */
-    public <T> void setProperty(Class<? extends T> dataClass, T value);
+    <T> void setProperty(Class<? extends T> dataClass, T value);
 
     /**
      * Called before a flow is {@link #passivate(boolean, FlowStepDirection)} also called if the flow is not
@@ -235,14 +235,13 @@ public interface FlowActivity {
      * in-place updates. This can be used for the rare case when it is desireable
      * to immediately commit a change to the database.
      */
-    public void refresh();
-    public boolean isFinishingActivity();
-    public boolean isPropertyNotSet(String key);
+    void refresh();
+    boolean isFinishingActivity();
+    boolean isPropertyNotSet(String key);
 
-    public boolean isPropertySet(String key);
+    boolean isPropertySet(String key);
 
-    public boolean isPropertyNotBlank(String key);
+    boolean isPropertyNotBlank(String key);
 
-    public boolean isPropertyBlank(String key);
-
+    boolean isPropertyBlank(String key);
 }
