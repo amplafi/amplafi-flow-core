@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module id="amplafi.suppliedflows" version="0.8.0">
+    <contribution configuration-id="amplafi.flow.definitions.flows">
+        <definition name="ClearFlows" link-title="ClearFlows" default-after-page="Home">
+            Clear all active flows. This is a way to escape autostart flows.
+            <activity name="clearFlows" link-title="ClearFlows" invisible="true"
+                class="org.amplafi.flow.impl.ClearFlowsFlowActivity"
+                finishing="true" />
+        </definition>
+    </contribution>
+</module>
