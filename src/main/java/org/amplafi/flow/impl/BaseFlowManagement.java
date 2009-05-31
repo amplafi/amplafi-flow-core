@@ -38,6 +38,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
+import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -56,6 +57,8 @@ public class BaseFlowManagement implements FlowManagement {
 
     private FlowManager flowManager;
     private FlowTx flowTx;
+
+    private PageProvider pageProvider;
 
     private FlowTranslatorResolver flowTranslatorResolver;
 
@@ -552,6 +555,20 @@ public class BaseFlowManagement implements FlowManagement {
     @Override
     public URI getDefaultHomePage() {
         return this.getFlowManager().getDefaultHomePage();
+    }
+
+    /**
+     * @param pageProvider the pageProvider to set
+     */
+    public void setPageProvider(PageProvider pageProvider) {
+        this.pageProvider = pageProvider;
+    }
+
+    /**
+     * @return the pageProvider
+     */
+    public PageProvider getPageProvider() {
+        return pageProvider;
     }
 
     protected class SessionFlows implements Iterable<FlowState>{
