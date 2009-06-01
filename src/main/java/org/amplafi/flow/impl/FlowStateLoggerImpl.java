@@ -39,7 +39,7 @@ public class FlowStateLoggerImpl implements Log {
     }
     /**
      * @param message
-     * @return
+     * @return the state as a string (for logging)
      */
     protected StringBuilder getFlowStatesString(Object message) {
         StringBuilder stringBuilder = new StringBuilder().append(message);

@@ -49,7 +49,7 @@ public interface FlowValidationResult {
     List<FlowValidationTracking> getTrackings();
 
     /**
-     * @param result
+     * @param addedFlowValidationResult will be merged with 'this'.
      */
     void merge(FlowValidationResult addedFlowValidationResult);
 }

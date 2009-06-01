@@ -392,9 +392,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         }
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setActivityName(java.lang.String)
-     */
     public void setActivityName(String activityName) {
         if ( !StringUtils.equalsIgnoreCase(this.activityName, activityName)) {
             if ( this.activityName != null && this.flow != null) {

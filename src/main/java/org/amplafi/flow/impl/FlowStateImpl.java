@@ -1237,9 +1237,6 @@ public class FlowStateImpl implements FlowState {
         return getCurrentActivityFlowValidationResult().isValid();
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#getFlowValidationResults()
-     */
     @Override
     public Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         Map<String, FlowValidationResult> result = new LinkedHashMap<String, FlowValidationResult>();

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
@@ -104,9 +103,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
-            .initFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String, FlowTransition>(
-                    new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null))),
+            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
             // io -- for now because need to communicate the next page to be displayed
             new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
