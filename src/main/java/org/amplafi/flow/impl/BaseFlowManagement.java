@@ -107,6 +107,7 @@ public class BaseFlowManagement implements FlowManagement {
             return null;
         }
     }
+
     /**
      * @see org.amplafi.flow.FlowManagement#getActiveFlowStatesByType(java.lang.String...)
      */
@@ -171,7 +172,7 @@ public class BaseFlowManagement implements FlowManagement {
     public synchronized FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent) {
         FlowState flowState = makeFlowState(flowTypeName, initialFlowState);
         if (makeNewStateCurrent || this.sessionFlows.isEmpty()) {
-            this.makeCurrent(flowState);
+            makeCurrent(flowState);
         } else {
             makeLast(flowState);
         }
@@ -286,7 +287,7 @@ public class BaseFlowManagement implements FlowManagement {
                 if ( v.length < 2 ) {
                     lookup = key;
                 } else {
-                    lookup= v[1];
+                    lookup = v[1];
                 }
                 Object value = getValueFromBinding(propertyRoot, lookup);
                 initialMap.put(key, value == null?null:value.toString());
@@ -329,7 +330,7 @@ public class BaseFlowManagement implements FlowManagement {
         return root;
     }
     /**
-     * call flowState's {@link FlowState#begin()}. If flowState isnow completed then see if the flow has transitioned to a new flow.
+     * call flowState's {@link FlowState#begin()}. If flowState is now completed then see if the flow has transitioned to a new flow.
      *
      * @param flowState
      * @return flowState if flowState has not completed, otherwise the continue flow or the return flow.
