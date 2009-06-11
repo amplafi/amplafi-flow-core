@@ -14,6 +14,7 @@
 
 package org.amplafi.flow.impl;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -52,7 +53,8 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      *
      */
     private void initFlowDefinitions() {
-        for(Flow flow: flowDefinitions.values()) {
+        Collection<Flow> flowDefinitionCollection = flowDefinitions.values();
+        for(Flow flow: flowDefinitionCollection) {
             getFlowTranslatorResolver().resolveFlow(flow);
         }
     }
