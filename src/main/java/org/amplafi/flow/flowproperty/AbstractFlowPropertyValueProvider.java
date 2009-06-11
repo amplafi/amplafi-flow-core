@@ -60,6 +60,7 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
      * @param propertyName
      * @return will not be null.
      */
+    @SuppressWarnings("unchecked")
     protected <T> T getRequired(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             throw new ApplicationIllegalArgumentException(propertyName);

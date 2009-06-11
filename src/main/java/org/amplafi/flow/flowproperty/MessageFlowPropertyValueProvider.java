@@ -56,4 +56,8 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
         return (T) standardKey.toString();
     }
 
+    @Override
+    public String toString() {
+        return getClass()+" standardPrefix="+this.standardPrefix;
+    }
 }
