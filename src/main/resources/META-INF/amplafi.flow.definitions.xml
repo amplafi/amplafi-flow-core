@@ -103,7 +103,7 @@
                     <element name="default">
                         <rules>
                             <push-content/>
-                            <invoke-parent method="setDefaultValue"/>
+                            <invoke-parent method="setDefaultObject"/>
                         </rules>
                     </element>
                     
@@ -113,7 +113,7 @@
                         <read-attribute attribute="usage" property="propertyUsage"/>
                         <read-attribute attribute="data-class" translator="class" property="dataClass"/>
                         <read-attribute attribute="translator" property="translator"/>
-                        <read-attribute attribute="default" property="defaultValue"/>
+                        <read-attribute attribute="default" property="defaultObject"/>
                         <read-attribute attribute="initial" property="initial"/>
                         <read-attribute attribute="initialOptional" property="initialMode"/>
                         <invoke-parent method="addPropertyDefinition"/>
@@ -202,7 +202,7 @@
                 <element name="default">
                     <rules>
                         <push-content/>
-                        <invoke-parent method="setDefaultValue"/>
+                        <invoke-parent method="setDefaultObject"/>
                     </rules>
                 </element>
                 <element name="initial">
@@ -222,7 +222,7 @@
                     <read-attribute attribute="usage" property="propertyUsage"/>
                     <read-attribute attribute="translator" property="translator"/>
                     <read-attribute attribute="data-class" translator="class" property="dataClass"/>
-                    <read-attribute attribute="default" property="defaultValue"/>
+                    <read-attribute attribute="default" property="defaultObject"/>
                     <read-attribute attribute="initial" property="initial"/>
                     <read-attribute attribute="initialOptional" property="initialMode"/>
                     <invoke-parent method="addPropertyDefinition"/>

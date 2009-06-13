@@ -62,12 +62,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     private Boolean initialOptional;
 
     /**
-     * @see #getDefaultValue()
+     * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
+     * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
-    private String defaultValue;
-
-    private Object defaultObject;
-
+    private FlowPropertyValueProvider factoryFlowPropertyValueProvider;
     private FlowPropertyValueProvider flowPropertyValueProvider;
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
@@ -139,9 +137,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         }
         autoCreate = clone.autoCreate;
         cacheOnly = clone.cacheOnly;
-        defaultObject = clone.defaultObject;
+        this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
-        this.setDefaultValue(clone.defaultValue);
         this.setInitial(clone.initial);
         this.setUiComponentParameterName(clone.uiComponentParameterName);
         if (clone.sensitive != null) {
@@ -220,8 +217,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     public void setDefaultObject(Object defaultObject) {
-        this.defaultObject = defaultObject;
-        if (defaultObject != null && !(defaultObject instanceof FlowPropertyValueProvider)) {
+        if ( !(defaultObject instanceof FlowPropertyValueProvider)) {
+            FixedFlowPropertyValueProvider<FlowActivity> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowActivity>(defaultObject);
+            fixedFlowPropertyValueProvider.convertable(this);
             if (dataClassDefinition.isDataClassDefined()) {
                 if (!this.getDataClass().isPrimitive()) {
                     // really need to handle the autobox issue better.
@@ -230,6 +228,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             } else if (defaultObject.getClass() != String.class) {
                 setDataClass(defaultObject.getClass());
             }
+            this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
+        } else {
+            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider)defaultObject;
         }
     }
 
@@ -240,33 +241,33 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      *         {@link FlowPropertyDefinitionImpl} if it is mutable.
      */
     public Object getDefaultObject(FlowActivity flowActivity) {
-        if (defaultObject == null) {
-            Object value = null;
-            if (getDefaultValue() != null) {
-                try {
-                    value = parse(getDefaultValue());
-                } catch (FlowException e1) {
-                }
-            }
-            if (value == null) {
-                if ( flowPropertyValueProvider != null) {
-                    value = flowPropertyValueProvider.get(flowActivity, this);
-                } else {
-                    // TODO -- may still want to call this if flowPropertyValueProvider returns null.
-                    // for example the property type is a primitive.
-                    value = this.dataClassDefinition.getFlowTranslator().getDefaultObject(flowActivity);
-                }
-            }
-            // TODO -- do we want to set the default object? or recalculate it each time?
-            // might be important if the default object is to get modified or if a FPD is shared.
-            return value;
+        Object value;
+        FlowPropertyValueProvider provider = getFlowPropertyValueProviderToUse();
+        if ( provider != null) {
+            value = provider.get(flowActivity, this);
+        } else {
+            // TODO -- may still want to call this if flowPropertyValueProvider returns null.
+            // for example the property type is a primitive.
+            value = this.dataClassDefinition.getFlowTranslator().getDefaultObject(flowActivity);
         }
-        return defaultObject;
+        // TODO -- do we want to set the default object? or recalculate it each time?
+        // might be important if the default object is to get modified or if a FPD is shared.
+        return value;
     }
 
-    @SuppressWarnings("hiding")
+    /**
+     * @return
+     */
+    private FlowPropertyValueProvider getFlowPropertyValueProviderToUse() {
+        if ( this.flowPropertyValueProvider != null) {
+            return this.flowPropertyValueProvider;
+        } else {
+            return this.factoryFlowPropertyValueProvider;
+        }
+    }
+
     public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.defaultObject, defaultObject);
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, defaultObject);
         flowPropertyDefinition.setDefaultObject(defaultObject);
         return flowPropertyDefinition;
     }
@@ -324,22 +325,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return this;
     }
 
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-        checkInitial(this.defaultValue);
-    }
-
-    /**
-     * if asking to retrieve a property that has not been set then return this
-     * value. Use {@link FlowActivity#isPropertySet(String)} to determine if the
-     * property has been explicitly set.
-     *
-     * @return defaultValue
-     */
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
     public void setInitial(String initial) {
         this.initial = initial;
         checkInitial(this.initial);
@@ -380,7 +365,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return uiComponentParameterName;
     }
 
-    @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initParameterName(String parameterName) {
         setUiComponentParameterName(parameterName);
         return this;
@@ -440,7 +424,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return false;
     }
     public boolean isDefaultAvailable() {
-        if ( this.defaultObject != null || this.defaultValue != null || this.flowPropertyValueProvider != null ) {
+        if ( this.getFlowPropertyValueProviderToUse() != null ) {
             return true;
         } else {
             return false;
@@ -547,7 +531,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     // HACK -- to fix later...
     public FlowPropertyDefinition initialize() {
         checkInitial(this.getInitial());
-        checkInitial(this.getDefaultValue());
         return this;
     }
 
@@ -651,8 +634,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean result = dataClassDefinition.isMergable(source.dataClassDefinition);
-        result &= this.defaultObject == null || source.defaultObject == null || this.defaultObject.equals(source.defaultObject);
-        result &= this.defaultValue == null || source.defaultValue == null || this.defaultValue.equals(source.defaultValue);
         result &= this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
         return result;
     }
@@ -688,14 +669,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             }
         }
 
-        if (defaultValue == null && source.defaultValue != null) {
-            this.setDefaultValue(source.defaultValue);
-        }
-        if ( defaultObject == null && source.defaultObject != null) {
-            this.setDefaultObject(source.defaultObject);
-        }
         if ( flowPropertyValueProvider == null && source.flowPropertyValueProvider != null ) {
             this.setFlowPropertyValueProvider(source.flowPropertyValueProvider);
+        }
+        if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
+            this.setDefaultObject(source.factoryFlowPropertyValueProvider);
         }
         if (initial == null && source.initial != null) {
             this.setInitial(source.initial);
@@ -799,12 +777,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         }
         FlowPropertyDefinitionImpl flowPropertyDefinition = (FlowPropertyDefinitionImpl) o;
         EqualsBuilder equalsBuilder = new EqualsBuilder()
-            .append(this.defaultObject, flowPropertyDefinition.defaultObject)
             .append(this.alternates, flowPropertyDefinition.alternates)
             .append(this.autoCreate, flowPropertyDefinition.autoCreate)
             .append(this.cacheOnly, flowPropertyDefinition.cacheOnly)
             .append(this.dataClassDefinition, flowPropertyDefinition.dataClassDefinition)
-            .append(this.defaultValue, flowPropertyDefinition.defaultValue)
             .append(this.flowPropertyValueProvider, flowPropertyDefinition.flowPropertyValueProvider)
             .append(this.initial, flowPropertyDefinition.initial)
             .append(this.initialOptional, this.initialOptional)

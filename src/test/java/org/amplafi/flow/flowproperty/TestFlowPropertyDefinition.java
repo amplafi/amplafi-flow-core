@@ -61,7 +61,6 @@ public class TestFlowPropertyDefinition {
     public void testUriProperty() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("uri", URI.class, PropertyRequired.advance);
         new FlowTestingUtils().resolveAndInit(definition);
-        assertNull(definition.getDefaultValue());
         assertNull(definition.getDefaultObject(null));
     }
 
@@ -88,6 +87,8 @@ public class TestFlowPropertyDefinition {
         assertFalse(definition.isAutoCreate());
         definition.initDefaultObject(Boolean.TRUE);
         assertEquals(definition.getDataClass(), Boolean.class);
+
+        new FlowTestingUtils().resolveAndInit(definition);
         Boolean t = (Boolean) definition.parse(null);
         assertNull(t);
         t = (Boolean) definition.getDefaultObject(null);
@@ -97,7 +98,7 @@ public class TestFlowPropertyDefinition {
         // check behavior if everything is not defined in the Ctor call
         // (i.e. like the definition is being defined in the hivemind.xml)
         definition = new FlowPropertyDefinitionImpl("foo");
-        definition.setDefaultValue("true");
+        definition.setDefaultObject("true");
         definition.setDataClass(Boolean.class);
         new FlowTestingUtils().resolveAndInit(definition);
         t = (Boolean) definition.parse(null);
@@ -149,6 +150,7 @@ public class TestFlowPropertyDefinition {
         assertTrue( definition.isMergeable(definition1));
         assertTrue( definition1.isMergeable(definition));
         definition.merge(definition1);
+        new FlowTestingUtils().resolveAndInit(definition);
         assertTrue((Boolean)definition.getDefaultObject(null));
         assertEquals(definition.getDataClass(), definition1.getDataClass());
     }

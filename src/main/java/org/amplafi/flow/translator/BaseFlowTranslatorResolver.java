@@ -26,6 +26,7 @@ import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.logging.Log;
 
 import com.sworddance.beans.MapByClass;
 
@@ -41,6 +42,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 
     private Map<Class<?>, FlowTranslator<?>> translators;
     private Map<Class<?>, JsonRenderer<?>> jsonRenderers;
+    private Log log;
     private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
     /**
      * These are {@link org.amplafi.flow.FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
@@ -134,6 +136,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         getFlowTranslators().add(new CalendarFlowTranslator());
         getFlowTranslators().add(new JsonSelfRendererFlowTranslator());
         getFlowTranslators().add(new UriFlowTranslator());
+        getFlowTranslators().add(new EnumFlowTranslator());
         for(FlowTranslator<?> flowTranslator: this.flowTranslators) {
             if ( flowTranslator instanceof AbstractFlowTranslator) {
                 ((AbstractFlowTranslator<?>)flowTranslator).setFlowTranslatorResolver(this);
@@ -161,7 +164,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     /**
      * @see org.amplafi.flow.FlowTranslatorResolver#resolve(org.amplafi.flow.FlowPropertyDefinition)
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void resolve(FlowPropertyDefinition definition) {
         FlowPropertyDefinition standardFlowPropertyDefinition = getFlowPropertyDefinition(definition.getName());
@@ -175,7 +177,11 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         if (definition == null || definition.isFlowTranslatorSet()) {
             return;
         }
-        definition.setFlowTranslator(resolve(definition.getDataClass()));
+        FlowTranslator<?> flowTranslator = resolve(definition.getDataClass());
+        if ( flowTranslator == null) {
+            getLog().warn(definition+ " was not able to determine the correct FlowTranslator");
+        }
+        definition.setFlowTranslator(flowTranslator);
         resolve(definition.getElementDataClassDefinition());
         resolve(definition.getKeyDataClassDefinition());
     }
@@ -276,6 +282,18 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             flowPropertyDefinition = this.coreFlowPropertyDefinitions.get(key);
         }
         return flowPropertyDefinition;
+    }
+    /**
+     * @param log the log to set
+     */
+    public void setLog(Log log) {
+        this.log = log;
+    }
+    /**
+     * @return the log
+     */
+    public Log getLog() {
+        return log;
     }
 
 }

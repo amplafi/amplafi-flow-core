@@ -72,4 +72,12 @@ public interface DataClassDefinition {
      */
     boolean isCollection();
 
+    /**
+     * @param flowPropertyDefinition
+     * @param value
+     * @return true the string can be converted to the dataClass
+     * TODO: should really only need to be defined in the FlowTranslator.
+     */
+    boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value);
+
 }

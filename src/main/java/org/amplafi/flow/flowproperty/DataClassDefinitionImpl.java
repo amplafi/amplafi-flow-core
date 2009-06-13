@@ -109,6 +109,10 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
      */
     @SuppressWarnings("unchecked")
     public <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value) {
+        if ( !this.isFlowTranslatorSet() && this.getDataClass().isInstance(value)) {
+            // this is to handle case where no FlowTranslator is set but object is of the correct type (avoiding unnecessary errors )
+            return (T) value;
+        }
         return (T) this.getFlowTranslator().deserialize(flowPropertyDefinition, this, value);
     }
     public <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value) {
@@ -352,7 +356,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
      * @param value
      * @return true if value can be deserialized
      */
-    public boolean isDeserializable(FlowPropertyDefinitionImpl flowPropertyDefinition, Object value) {
+    public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value) {
         return value == null || this.getFlowTranslator().isDeserializable(flowPropertyDefinition, this, value);
     }
 
