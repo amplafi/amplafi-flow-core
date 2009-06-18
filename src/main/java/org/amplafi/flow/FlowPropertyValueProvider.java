@@ -16,7 +16,11 @@ package org.amplafi.flow;
 
 /**
  * Used to provide a smarter way generating a FlowProperty value than just deserializing.
- * This will be used to avoid having to override getProperty()/setProperty().
+ * This will be used to avoid having to override {@link FlowActivity#getProperty(String)}/ {@link FlowActivity#setProperty(String, Object)}.
+ *
+ * TODO: enable FlowPropertyValueProvider to be registered so they can be singletons with needed services injected vis the DI framework.
+ * TODO: enable the FPVP to provide a template {@link FlowPropertyDefinition} that can be then customized with a given flow's specific
+ * PropertyRequired values.
  *
  * TODO hook this in some how with the FlowPropertyBinding use of @Parameter(defaultValue="")
  * @author patmoore
