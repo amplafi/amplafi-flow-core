@@ -170,22 +170,32 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         if ( standardFlowPropertyDefinition != null) {
             definition.merge(standardFlowPropertyDefinition);
         }
-        resolve(definition.getDataClassDefinition());
+        if ( !resolve(definition.getDataClassDefinition())) {
+            if ( definition.isCacheOnly()) {
+                getLog().info(definition+
+                    " was not able to resolve the FlowProperty with a flowTranslator. But the flow definition is labeled as cacheOnly so this may not matter.");
+            } else {
+                getLog().warn(definition+" was not able to resolve the FlowProperty with a flowTranslator.");
+            }
+        }
         definition.initialize();
     }
-    public void resolve(DataClassDefinition definition) {
+    public boolean resolve(DataClassDefinition definition) {
         if (definition == null || definition.isFlowTranslatorSet()) {
-            return;
+            return true;
+        } else {
+            FlowTranslator<?> flowTranslator = resolve(definition.getDataClass());
+            if ( flowTranslator == null) {
+                getLog().warn(definition+ " was not able to determine the correct FlowTranslator");
+                return false;
+            } else {
+                definition.setFlowTranslator(flowTranslator);
+                boolean resolved = resolve(definition.getElementDataClassDefinition());
+                resolved &= resolve(definition.getKeyDataClassDefinition());
+                return resolved;
+            }
         }
-        FlowTranslator<?> flowTranslator = resolve(definition.getDataClass());
-        if ( flowTranslator == null) {
-            getLog().warn(definition+ " was not able to determine the correct FlowTranslator");
-        }
-        definition.setFlowTranslator(flowTranslator);
-        resolve(definition.getElementDataClassDefinition());
-        resolve(definition.getKeyDataClassDefinition());
     }
-
     /**
      * @see org.amplafi.flow.FlowTranslatorResolver#resolve(java.lang.Class)
      */

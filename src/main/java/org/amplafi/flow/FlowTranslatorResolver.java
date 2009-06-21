@@ -31,8 +31,9 @@ public interface FlowTranslatorResolver {
     /**
     *
     * @param dataClassDefinition
+     * @return true if resolve was successful in setting the FlowTranslator.
     */
-    void resolve(DataClassDefinition dataClassDefinition);
+    boolean resolve(DataClassDefinition dataClassDefinition);
     /**
      * all the other methods end up calling this method.
      * @param clazz
