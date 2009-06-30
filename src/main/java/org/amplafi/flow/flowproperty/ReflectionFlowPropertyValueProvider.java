@@ -27,6 +27,10 @@ import com.sworddance.beans.BeanWorker;
  * The root object can be either the flowActivity parameter in the {@link #get(FlowActivity, FlowPropertyDefinition)} call or another object
  * supplied in the constructor.
  *
+ * TODO need to be able to set base as a String and that is the property name that will act as the base.
+ * example: "messagePoint" means:
+ * 1) retrieve "messagePoint"
+ * 2) do reflection using the propertyNames to get the value.
  * @author patmoore
  *
  */
@@ -34,14 +38,6 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
 
     private Object object;
 
-    /**
-     * Used when an object other than the flowActivity passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} should be used
-     * as the root for tracing out properties.
-     * @param object
-     */
-    public ReflectionFlowPropertyValueProvider(Object object) {
-        this.object = object;
-    }
     /**
      * Use the {@link FlowActivity} that is passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} as the starting object to trace for
      * using propertyNames.
@@ -56,6 +52,20 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
         this.object = object;
     }
 
+    /**
+     * Used when an object other than the flowActivity passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} should be used
+     * as the root for tracing out properties.
+     * @param object
+     */
+    public void setObject(Object object) {
+        this.object = object;
+    }
+    /**
+     * @return the object
+     */
+    public Object getObject() {
+        return object;
+    }
     /**
      * @param flowPropertyDefinition ignored
      * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
