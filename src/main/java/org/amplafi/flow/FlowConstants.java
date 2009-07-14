@@ -38,8 +38,6 @@ public interface FlowConstants {
     public static final String FSFINISH_TEXT = "fsFinishText";
     public static final String DEFAULT_FSFINISH_TEXT = "message:flow.label-finish";
 
-    public static final String FSFLOW_TRANSITIONS = "fsFlowTransitions";
-
     /**
      * Used to submit the current FlowActivity data without advancing the flow.
      * Set on a per FlowActivity basis.
@@ -127,10 +125,11 @@ public interface FlowConstants {
     /**
      * The id of an existing flow that should be continued after this flow ends.
      * This represents a calling relationship ( without the requirement to the flow that is setting this
-     * value on another flow.)
+     * value on another flow -- tail-end recursion?)
      *
      * To start a new flow use {@link #FSNEXT_FLOW}.
      */
+    @Deprecated // why not FSRETURN_TO_FLOW?
     public static final String FSCONTINUE_WITH_FLOW = "fsContinueWithFlow";
     /**
      * If there is no {@link #FSCONTINUE_WITH_FLOW} flow, then the flow when it finishes should return to the
@@ -144,6 +143,17 @@ public interface FlowConstants {
      * to return to Flow #1.
      */
     public static final String FSRETURN_TO_FLOW = "fsReturnToFlow";
+
+    /**
+     * Map<String,FlowTransition> - map for transitions. Checked after {@link #FSFLOW_TRANSITIONS}, {@link #FSRETURN_TO_FLOW}
+     */
+    public static final String FSRETURN_TO_FLOW_TYPE = "fsReturnToFlowType";
+    /**
+     * Map<String,FlowTransition> - map for transitions. These transitions are looked at before any other
+     * transitions.
+     */
+    public static final String FSFLOW_TRANSITIONS = "fsFlowTransitions";
+
     /**
      * the new flow type that should be started.
      */

@@ -32,7 +32,8 @@ public enum PropertyUsage {
      */
     use(false),
     /**
-     * flowLocal to flow. Can not be set from outside flow.
+     * flowLocal to flow. Cannot be set from outside flow.
+     * Is not copied to flow states once this flow completes
      * TODO put in a flowState.lookupKey namespace
      */
     flowLocal(true),
