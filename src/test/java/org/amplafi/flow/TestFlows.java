@@ -146,7 +146,7 @@ public class TestFlows {
     }
 
     /**
-     * Test for hasVisibleNext and hasVisiblePrevious of FlowState when there are invisibles.
+     * Test for hasVisibleNext and hasVisiblePrevious of FlowState when there are invisible FlowActivities.
      *
      * Also test when invisible is turned on/off during the flow.
      */
