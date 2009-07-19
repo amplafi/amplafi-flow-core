@@ -172,10 +172,10 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         }
         if ( !resolve(definition.getDataClassDefinition())) {
             if ( definition.isCacheOnly()) {
-                getLog().info(definition+
-                    " was not able to resolve the FlowProperty with a flowTranslator. But the flow definition is labeled as cacheOnly so this may not matter.");
+                getLog().debug(definition+
+                    " was not able to determine the FlowProperty's flowTranslator. But the flow definition is labeled as cacheOnly so this may not matter.");
             } else {
-                getLog().warn(definition+" was not able to resolve the FlowProperty with a flowTranslator.");
+                getLog().warn(definition+" was not able to determine the FlowProperty's flowTranslator.");
             }
         }
         definition.initialize();
@@ -186,7 +186,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         } else {
             FlowTranslator<?> flowTranslator = resolve(definition.getDataClass());
             if ( flowTranslator == null) {
-                getLog().warn(definition+ " was not able to determine the correct FlowTranslator");
+                getLog().warn(definition+ " was not able to determine the correct FlowTranslator.");
                 return false;
             } else {
                 definition.setFlowTranslator(flowTranslator);
