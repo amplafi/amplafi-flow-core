@@ -19,7 +19,7 @@ import java.util.TimeZone;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 
@@ -41,7 +41,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
      * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.JSONWriter, java.lang.Object)
      */
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, TimeZone object) {
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, TimeZone object) {
         toJson(jsonWriter, object);
         return jsonWriter;
     }
@@ -52,7 +52,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
      * @return jsonWriter
      */
     @Override
-    public JSONWriter toJson(JSONWriter jsonWriter, TimeZone object) {
+    public IJsonWriter toJson(IJsonWriter jsonWriter, TimeZone object) {
         return jsonWriter.value(object.getID());
     }
 

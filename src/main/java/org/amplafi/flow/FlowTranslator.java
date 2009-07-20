@@ -15,7 +15,7 @@ package org.amplafi.flow;
 
 import java.util.List;
 
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 /**
@@ -47,7 +47,7 @@ public interface FlowTranslator <T>{
      * @param object
      * @return the jsonWriter.
      */
-    JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, T object);
+    IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object);
 
     T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
             throws FlowException;
@@ -59,7 +59,7 @@ public interface FlowTranslator <T>{
      * If so then the class used store serialized form must be accepted.
      * @param differentClass
      * @return true if differentClass is a subclass of {@link #getTranslatedClass()}
-     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition , DataClassDefinition , JSONWriter, Object)}
+     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition , DataClassDefinition , IJsonWriter, Object)}
      */
     boolean isAssignableFrom(Class<?> differentClass);
 

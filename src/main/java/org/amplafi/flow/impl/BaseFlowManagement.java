@@ -178,21 +178,21 @@ public class BaseFlowManagement implements FlowManagement {
         }
         return flowState;
     }
+    @SuppressWarnings({ "unused", "unchecked" })
     public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent) {
-        FlowState flowState = createFlowState(flowTypeName,
-                initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
+        FlowState flowState = createFlowState(flowTypeName, initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
         return flowState;
     }
 
 
     /**
-     * @see org.amplafi.flow.FlowManagement#transitionToFlowState(FlowState)
+     * @see org.amplafi.flow.FlowManagement#transitionToFlowState(FlowState, String)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public FlowState transitionToFlowState(FlowState flowState) {
+    public FlowState transitionToFlowState(FlowState flowState, String key) {
         FlowState nextFlowState = null;
-        Map<String, FlowTransition> transitions = flowState.getPropertyAsObject(FSFLOW_TRANSITIONS, Map.class);
+        Map<String, FlowTransition> transitions = flowState.getPropertyAsObject(key, Map.class);
         String finishKey = flowState.getFinishType();
         if ( MapUtils.isNotEmpty(transitions) && isNotBlank(finishKey)) {
             FlowTransition flowTransition = transitions.get(finishKey);

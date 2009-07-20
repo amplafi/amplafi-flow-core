@@ -23,7 +23,7 @@ import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.sworddance.beans.PropertyDefinition;
@@ -119,7 +119,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
         if ( value == null) {
             return null;
         } else {
-            JSONWriter jsonWriter = this.serialize(flowPropertyDefinition, null, value);
+            IJsonWriter jsonWriter = this.serialize(flowPropertyDefinition, null, value);
             String strV = jsonWriter.toString();
             // TODO: trimming quotes is probably not needed anymore - CharSequenceFlowTranslator uses unquote...
             if (strV != null && strV.startsWith("\"") && strV.endsWith("\"")) {
@@ -130,7 +130,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
         }
     }
     @SuppressWarnings("unchecked")
-    public <T> JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, JSONWriter jsonWriter, T value) {
+    public <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value) {
         return this.getFlowTranslator().serialize(flowPropertyDefinition, this, jsonWriter, value);
     }
 

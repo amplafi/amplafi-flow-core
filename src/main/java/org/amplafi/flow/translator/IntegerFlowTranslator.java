@@ -18,7 +18,7 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.renderers.NumberJsonRenderer;
 
 
@@ -46,7 +46,7 @@ public class IntegerFlowTranslator extends AbstractFlowTranslator<Integer> {
     }
 
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, Integer object) {
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Integer object) {
         return jsonWriter.value(object);
     }
 

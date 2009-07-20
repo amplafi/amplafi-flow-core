@@ -293,19 +293,24 @@ public class FlowStateImpl implements FlowState {
         }
         return true;
     }
+    /**
+     *
+     * @param verifyValues if true check the flow to validate the {@link PropertyRequired#finish} properties.
+     * @return the next flowState 'this' FlowActivities believe should be run.
+     */
     protected FlowState finishFlowActivities(boolean verifyValues) {
         FlowValidationResult flowValidationResult = null;
         if (verifyValues) {
             flowValidationResult = getFullFlowValidationResult(PropertyRequired.finish, FlowStepDirection.forward);
         }
         if (flowValidationResult == null || flowValidationResult.isValid()) {
-            FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this);
+            FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this, FSFLOW_TRANSITIONS);
             int size = this.getActivities().size();
             for (int i = 0; i < size; i++) {
                 FlowActivity activity = getActivity(i);
                 FlowState returned = activity.finishFlow(currentNextFlowState);
-                // avoids lose track of FlowState if another FA is later in the Flow
-                // definition.
+                // avoids lose track of FlowState if another FA later in the Flow
+                // definition returns a null. ( this means that a FA cannot override a previous decision ).
                 if (returned != null && currentNextFlowState != returned) {
                     currentNextFlowState = returned;
                 }
@@ -478,7 +483,7 @@ public class FlowStateImpl implements FlowState {
             if (continueWithFlow == null || continueWithFlow == this) {
                 pageName = getFlowManagement().completeFlowState(this, false);
             } else {
-                // pass on the return flow.
+                // pass on the return flow to the continuation flow.
                 String returnToFlow = this.getPropertyAsObject(FSRETURN_TO_FLOW);
                 if ( isNotBlank(returnToFlow)) {
                     continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
@@ -499,6 +504,7 @@ public class FlowStateImpl implements FlowState {
                 // save back to "this" so that if the current flowState is in turn part of a chain that the callers
                 // will find the correct continue flow state.
                 setProperty(FSCONTINUE_WITH_FLOW, continueWithFlowLookup);
+
             }
         }
         // if afterPage is already set then don't lose that information.

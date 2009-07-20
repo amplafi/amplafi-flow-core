@@ -141,7 +141,7 @@ public interface FlowManagement {
      */
     String dropFlowState(FlowState flow);
 
-    FlowState transitionToFlowState(FlowState flowState);
+    FlowState transitionToFlowState(FlowState flowState, String key);
 
     /**
      * drop the indicated flow. This is not canceling the flow.

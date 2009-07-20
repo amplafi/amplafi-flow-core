@@ -17,7 +17,7 @@ package org.amplafi.flow.translator;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
 
 
@@ -36,10 +36,10 @@ public class JsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
     }
 
     /**
-     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.JSONWriter, java.lang.Object)
+     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.IJsonWriter, java.lang.Object)
      */
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter,
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter,
         Object object) {
         return jsonWriter.value(object);
     }

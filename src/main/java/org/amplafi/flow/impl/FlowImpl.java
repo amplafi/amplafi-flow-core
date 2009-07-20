@@ -103,7 +103,6 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
             // io -- for now because need to communicate the next page to be displayed
             new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
@@ -120,7 +119,9 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
             new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSREFERING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
             new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );

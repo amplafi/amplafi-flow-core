@@ -20,8 +20,8 @@ import java.util.Map;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
-import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.MapJsonRenderer;
 import org.apache.commons.collections.MapUtils;
 
@@ -57,7 +57,7 @@ public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends
     }
 
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, Map<? extends K, ? extends V> map) {
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Map<? extends K, ? extends V> map) {
         jsonWriter.object();
         if ( MapUtils.isNotEmpty(map) ) {
             for(Map.Entry<? extends K, ? extends V> entry: map.entrySet()) {

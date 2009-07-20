@@ -19,7 +19,7 @@ import java.util.Set;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 
 
@@ -40,7 +40,7 @@ public class SetFlowTranslator<T> extends FlowCollectionTranslator<Set<? extends
     }
 
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, Set<? extends T> object) {
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Set<? extends T> object) {
         return super.doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
     }
 

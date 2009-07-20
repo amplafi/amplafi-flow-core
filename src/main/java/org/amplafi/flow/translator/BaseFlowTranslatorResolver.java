@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONStringer;
-import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -253,8 +253,8 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             resolve(definition);
         }
     }
-    public JSONWriter getJsonWriter() {
-        JSONWriter writer = new JSONStringer(new MapByClass<JsonRenderer<?>>(this.jsonRenderers));
+    public IJsonWriter getJsonWriter() {
+        IJsonWriter writer = new JSONStringer(new MapByClass<JsonRenderer<?>>(this.jsonRenderers));
         return writer;
     }
     /**

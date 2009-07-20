@@ -30,6 +30,8 @@ import org.amplafi.flow.impl.FlowManagerImpl;
 import org.testng.annotations.Test;
 
 /**
+ * Tests to see that transitioning between flows ( other than morphing ) happens correctly.
+ *
  * @author patmoore
  *
  */
@@ -55,6 +57,9 @@ public class TestFlowTransitions {
         assertTrue( propValue.keySet().contains("foo"));
     }
 
+    /**
+     * start one flow then a subflow, check to make sure the flow returns.
+     */
     @Test
     public void testReturnToFlow() {
         FlowImpl flow1 = new FlowImpl(FLOW_TYPE_1);

@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.validation;
 
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValidationTracking;
@@ -34,7 +34,7 @@ public class FlowValidationResultJsonRenderer implements JsonRenderer<FlowValida
     }
 
     @Override
-    public JSONWriter toJson(JSONWriter jsonWriter, FlowValidationResult flowValidationResult) {
+    public IJsonWriter toJson(IJsonWriter jsonWriter, FlowValidationResult flowValidationResult) {
         jsonWriter.object();
         if ( !flowValidationResult.isValid() ) {
             jsonWriter.key("flowValidationTracking");

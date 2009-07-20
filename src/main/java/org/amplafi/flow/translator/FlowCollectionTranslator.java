@@ -18,6 +18,7 @@ import java.util.Collection;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONArray;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
@@ -50,7 +51,7 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
         }
     }
     @Override
-    public JSONWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, JSONWriter jsonWriter, C object) {
+    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, C object) {
         jsonWriter.array();
         for(T element: object) {
             dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, element);

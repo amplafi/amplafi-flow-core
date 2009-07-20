@@ -19,9 +19,9 @@ import org.amplafi.flow.launcher.ContinueFlowLauncher;
 import org.amplafi.flow.launcher.FlowLauncher;
 import org.amplafi.flow.launcher.MorphFlowLauncher;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONStringer;
-import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonSelfRenderer;
 import org.amplafi.json.renderers.MapJsonRenderer;
 
@@ -130,7 +130,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     }
 
     @Override
-    public void toJson(JSONWriter jsonWriter) {
+    public void toJson(IJsonWriter jsonWriter) {
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());

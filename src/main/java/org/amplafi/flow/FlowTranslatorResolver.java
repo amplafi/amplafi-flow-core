@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 
 
 /**
@@ -42,7 +42,7 @@ public interface FlowTranslatorResolver {
     FlowTranslator<?> resolve(Class<?> clazz);
     void resolveFlow(Flow flow);
 
-    JSONWriter getJsonWriter();
+    IJsonWriter getJsonWriter();
 
     /**
      * @param key

@@ -13,7 +13,7 @@
  */
 package org.amplafi.flow;
 
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 
 /**
  * Handles the issues around data structure for the {@link FlowPropertyDefinition}.
@@ -32,7 +32,7 @@ public interface DataClassDefinition {
 
     <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value);
 
-    <T> JSONWriter serialize(FlowPropertyDefinition flowPropertyDefinition, JSONWriter jsonWriter, T value);
+    <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value);
 
     <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value);
 

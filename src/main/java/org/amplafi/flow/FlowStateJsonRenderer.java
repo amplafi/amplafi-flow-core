@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.json.JSONWriter;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 
@@ -36,7 +36,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     }
 
     @Override
-    public JSONWriter toJson(JSONWriter jsonWriter, FlowState flowState) {
+    public IJsonWriter toJson(IJsonWriter jsonWriter, FlowState flowState) {
         jsonWriter.object();
         jsonWriter.key(FS_COMPLETE).value(flowState.isCompleted());
         if (flowState.isActive()) {
