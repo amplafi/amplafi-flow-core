@@ -14,6 +14,7 @@
 
 package org.amplafi.flow;
 
+
 /**
  *  TODO Convert this to {@link FlowPropertyDefinition}s
  */
@@ -116,6 +117,11 @@ public interface FlowConstants {
     public static final String FSAUTO_COMPLETE = "fsAutoComplete";
 
     /**
+     * For flow activities that should immediately have saveChanges() called.
+     */
+    public static final String FSIMMEDIATE_SAVE = "fsImmediateSave";
+
+    /**
      * Used to indicate that the flow was finished with an
      * alternative way / button.
      *
@@ -123,16 +129,24 @@ public interface FlowConstants {
      */
     public static final String FSALT_FINISHED = "fsAltFinished";
     /**
-     * The id of an existing flow that should be continued after this flow ends.
+     * The id of an existing flow that should be continued after this flow ends. This takes precedence over
      * This represents a calling relationship ( without the requirement to the flow that is setting this
      * value on another flow -- tail-end recursion?)
      *
      * To start a new flow use {@link #FSNEXT_FLOW}.
      */
-    @Deprecated // why not FSRETURN_TO_FLOW?
+    @Deprecated // why not FSRETURN_TO_FLOW -- tail-end recursion?
     public static final String FSCONTINUE_WITH_FLOW = "fsContinueWithFlow";
     /**
-     * If there is no {@link #FSCONTINUE_WITH_FLOW} flow, then the flow when it finishes should return to the
+     * Map<String,FlowTransition> - map for transitions.
+     *
+     * The key is the value of {@link #FSALT_FINISHED}
+     * These transitions are looked at before any other
+     * transitions.
+     */
+    public static final String FSFLOW_TRANSITIONS = "fsFlowTransitions";
+    /**
+     * If there is no {@link #FSFLOW_TRANSITIONS} flow, then the flow when it finishes should return to the
      * FSRETURN_TO_FLOW flow.
      * FSRETURN_TO_FLOW value is passed to the FSCONTINUE_WITH_FLOW when the active flow finishes.
      *
@@ -147,22 +161,15 @@ public interface FlowConstants {
     /**
      * Map<String,FlowTransition> - map for transitions. Checked after {@link #FSFLOW_TRANSITIONS}, {@link #FSRETURN_TO_FLOW}
      */
-    public static final String FSRETURN_TO_FLOW_TYPE = "fsReturnToFlowType";
-    /**
-     * Map<String,FlowTransition> - map for transitions. These transitions are looked at before any other
-     * transitions.
-     */
-    public static final String FSFLOW_TRANSITIONS = "fsFlowTransitions";
+    public static final String FSSUGGESTED_NEXT_FLOW_TYPE = "fsSuggestedNextFlowType";
 
     /**
      * the new flow type that should be started.
+     * Used by {@link org.amplafi.flow.impl.TransitionFlowActivity}, seems like should be combined with {@link #FSFLOW_TRANSITIONS}
+     * But need to handle "default" specified via xml?
      */
+    @Deprecated
     public static final String FSNEXT_FLOW = "fsNextFlow";
-
-    /**
-     * For flow activities that should immediately have saveChanges() called.
-     */
-    public static final String FSIMMEDIATE_SAVE = "fsImmediateSave";
 
     /**
      * MUST NOT BE included as a FlowPropertyDefinition -- will result in the flow template not wired up correctly to the FullFlowComponent
