@@ -29,9 +29,6 @@ import org.amplafi.flow.SerializableCallable;
  */
 public interface FlowLauncher extends SerializableCallable<FlowState> {
     public static final String FLOW_ID = "fid";
-    // HACK needed until https://issues.apache.org/jira/browse/TAPESTRY-1876
-    // is addressed.
-    public static final String _KEY_LIST = "_key_List__";
     public static final String ADVANCE_TO_END = "advance";
     public static final String AS_FAR_AS_POSSIBLE = "afap";
     /**
@@ -58,7 +55,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
     String getFlowLabel();
     /**
      *
-     * @return the flow type this {@link FlowLauncher} launches.
+     * @return the flow type this {@link FlowLauncher launcher}.
      */
     String getFlowTypeName();
 
