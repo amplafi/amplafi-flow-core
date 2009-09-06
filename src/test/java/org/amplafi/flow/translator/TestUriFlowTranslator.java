@@ -13,12 +13,12 @@
  */
 package org.amplafi.flow.translator;
 
-import java.net.URI;
-
 import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.translator.UriFlowTranslator;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.sworddance.util.UriFactoryImpl;
 
 
 @Test
@@ -27,8 +27,8 @@ public class TestUriFlowTranslator extends AbstractTestFlowTranslators {
     @DataProvider(name="flowTranslatorExpectations")
     public Object[][] getFlowTranslatorExpectations() {
         return new Object[][] {
-            new Object[] { URI.create("www.amplafi.net"), "www.amplafi.net" },
-            new Object[] { URI.create("http://www.amplafi.net"), "http://www.amplafi.net" }
+            new Object[] { UriFactoryImpl.createUri("www.amplafi.net"), "www.amplafi.net" },
+            new Object[] { UriFactoryImpl.createUri("http://www.amplafi.net"), "http://www.amplafi.net" }
         };
     }
 
