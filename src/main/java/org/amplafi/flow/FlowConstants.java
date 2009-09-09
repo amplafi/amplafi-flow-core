@@ -160,6 +160,9 @@ public interface FlowConstants {
 
     /**
      * Map<String,FlowTransition> - map for transitions. Checked after {@link #FSFLOW_TRANSITIONS}, {@link #FSRETURN_TO_FLOW}
+     * intent is to suggest a flow transition that can be overridden by FSFLOW_TRANSITIONS
+     *
+     * TODO: FlowBorder does not display these choices. Is this a problem?
      */
     public static final String FSSUGGESTED_NEXT_FLOW_TYPE = "fsSuggestedNextFlowType";
 

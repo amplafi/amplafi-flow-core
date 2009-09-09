@@ -832,6 +832,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      *
      * @see org.amplafi.flow.FlowActivity#setProperty(java.lang.String, java.lang.Object)
      */
+    @SuppressWarnings("unchecked")
     public <T> void setProperty(String key, T value) {
         Class<T> expected = (Class<T>) (value == null?null:value.getClass());
         if ( getFlowState() != null) {
