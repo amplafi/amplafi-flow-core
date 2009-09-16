@@ -140,6 +140,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     public FlowActivityImpl() {
         if (this.getClass() != FlowActivityImpl.class) {
+            // a subclass -- therefore subclass name might be good for figuring out the ui component name.
             String name = this.getClass().getName();
             Matcher m = compNamePattern.matcher(name);
             if (m.find()) {

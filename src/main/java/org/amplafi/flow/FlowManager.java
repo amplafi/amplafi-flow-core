@@ -34,6 +34,11 @@ public interface FlowManager {
     Flow getFlowDefinition(String flowTypeName);
     boolean isFlowDefined(String flowTypeName);
 
+    /**
+     * TODO: Need to define if the FlowManagement object is saved by FlowManager implementations.
+     * if so how? per session? per thread?
+     * @return (possibly new) FlowManagement object.
+     */
     FlowManagement getFlowManagement();
 
     /**

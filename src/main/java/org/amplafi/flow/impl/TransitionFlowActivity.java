@@ -63,6 +63,11 @@ public class TransitionFlowActivity extends FlowActivityImpl {
 //        setTransitionType(TransitionType.normal); TODO finish text needs to be handled better.
 
     }
+    public TransitionFlowActivity(String finishKey, String nextFlowType, TransitionType transitionType) {
+        setFinishKey(finishKey);
+        setNextFlowType(nextFlowType);
+        setTransitionType(transitionType);
+    }
 
     @Override
     public void addStandardFlowPropertyDefinitions() {
@@ -149,8 +154,9 @@ public class TransitionFlowActivity extends FlowActivityImpl {
                 } else {
                     String flowType = resolve(getNextFlowType());
                     if (isBlank(flowType)) {
+                        // why clear the FSNEXT_FLOW ?
                         flowType = getResolvedProperty(FlowConstants.FSNEXT_FLOW);
-                        setProperty(FlowConstants.FSNEXT_FLOW, null); // TODO why?
+                        setProperty(FlowConstants.FSNEXT_FLOW, null);
                     }
                     if (isNotBlank(flowType)) {
                         nextFlowState = this.createNewFlow(flowType);
@@ -188,8 +194,8 @@ public class TransitionFlowActivity extends FlowActivityImpl {
         return nextFlowType;
     }
 
-    public void setFinishKey(String alternateKey) {
-        finishKey = alternateKey;
+    public void setFinishKey(String finishKey) {
+        this.finishKey = finishKey;
     }
 
     public String getFinishKey() {
