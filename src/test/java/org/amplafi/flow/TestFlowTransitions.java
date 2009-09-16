@@ -20,6 +20,7 @@ import static org.testng.Assert.*;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.ShortFlowTranslator;
 import org.amplafi.flow.impl.FlowImpl;
@@ -27,6 +28,7 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.impl.FlowManagerImpl;
+import org.amplafi.flow.impl.TransitionFlowActivity;
 import org.testng.annotations.Test;
 
 /**
@@ -92,6 +94,33 @@ public class TestFlowTransitions {
         flowState1_again.finishFlow();
         FlowState nothing = baseFlowManagement.getCurrentFlowState();
         assertNull(nothing);
+    }
+    /**
+     * 2 flows use the same name for a property definition.
+     * <ul>
+     * <li>make sure that {@link PropertyUsage#flowLocal} is respected.</li>
+     * <li>make sure that cache is cleared on flow completion.</li>
+     */
+    @Test
+    public void testAvoidConflictsOnFlowTransitions() {
+        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        flowActivity0.setProperty("prop0", "foo");
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        flowTestingUtils.addFlowDefinition("first", flowActivity0,
+            new TransitionFlowActivity(null, "second", TransitionType.normal));
+
+        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionImpl("prop0", boolean.class).initPropertyUsage(PropertyUsage.flowLocal));
+        flowTestingUtils.addFlowDefinition("second", flowActivity1);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+
+        FlowState flowState = flowManagement.startFlowState("first", true, FlowUtils.INSTANCE.createState("prop0", "false"), false);
+        flowTestingUtils.advanceToEnd(flowState);
+        FlowState nextFlowState = flowManagement.getCurrentFlowState();
+        assertNotNull(nextFlowState);
+        assertEquals(nextFlowState.getFlowTypeName(), "second");
+        assertNull(nextFlowState.getPropertyAsObject("prop0"));
+
     }
     /**
      * @param flow
