@@ -28,6 +28,7 @@ import org.amplafi.flow.FlowValidationTracking;
  */
 public class FlowValidationResultJsonRenderer implements JsonRenderer<FlowValidationResult> {
 
+    public static final FlowValidationResultJsonRenderer INSTANCE = new FlowValidationResultJsonRenderer();
     @Override
     public Class<FlowValidationResult> getClassToRender() {
         return FlowValidationResult.class;
