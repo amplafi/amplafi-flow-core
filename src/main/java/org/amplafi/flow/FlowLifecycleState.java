@@ -13,40 +13,48 @@
  */
 package org.amplafi.flow;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
  *
  */
 public enum FlowLifecycleState {
-    created,
-    started,
-    successful,
-    canceled,
-    failed, initializing;
+    /**
+     * FlowState created but nothing has happened to it.
+     */
+    created(false),
+    /**
+     * {@link FlowState#begin()} is in process.
+     */
+    initializing(false),
+    /**
+     * {@link FlowState#begin()} has successfully started the flow.
+     */
+    started(false),
+    successful(true),
+    canceled(true),
+    failed(true);
 
     static {
-        created.nextAllowed.add(canceled);
-        created.nextAllowed.add(failed);
-        created.nextAllowed.add(initializing);
-        initializing.nextAllowed.add(started);
-        initializing.nextAllowed.add(canceled);
-        initializing.nextAllowed.add(failed);
-        initializing.nextAllowed.add(successful);
-        initializing.nextAllowed.add(started);
-        started.nextAllowed.add(initializing);
-        started.nextAllowed.add(canceled);
-        started.nextAllowed.add(failed);
-        started.nextAllowed.add(successful);
+        created.nextAllowed = Arrays.asList(canceled,failed,initializing);
+        initializing.nextAllowed = Arrays.asList(started,canceled,failed,successful,started);
+        started.nextAllowed = Arrays.asList(initializing,canceled,failed,successful);
     }
 
-    private final List<FlowLifecycleState> nextAllowed = new ArrayList<FlowLifecycleState>();
+    private List<FlowLifecycleState> nextAllowed;
+    private final boolean completed;
+
+    private FlowLifecycleState(boolean completed) {
+        this.completed = completed;
+    }
     public static void checkAllowed(FlowLifecycleState previousFlowLifecycleState,
             FlowLifecycleState nextFlowLifecycleState) {
         if (previousFlowLifecycleState != null &&
                 previousFlowLifecycleState != nextFlowLifecycleState &&
-                !previousFlowLifecycleState.nextAllowed.contains(nextFlowLifecycleState)) {
+                (isEmpty(previousFlowLifecycleState.nextAllowed) || !previousFlowLifecycleState.nextAllowed.contains(nextFlowLifecycleState))) {
             throw new IllegalStateException("cannot go from "+
                                             previousFlowLifecycleState+" to "+nextFlowLifecycleState);
         }
@@ -55,6 +63,12 @@ public enum FlowLifecycleState {
      * @return true if cannot transition out of this {@link FlowLifecycleState}.
      */
     public boolean isTerminatorState() {
-        return this.nextAllowed.isEmpty();
+        return isEmpty(this.nextAllowed);
+    }
+    /**
+     * @return the completed
+     */
+    public boolean isCompleted() {
+        return completed;
     }
 }
