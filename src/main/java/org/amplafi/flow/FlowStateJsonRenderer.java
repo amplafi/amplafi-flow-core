@@ -30,6 +30,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
     public static final String FS_COMPLETE = "fsComplete";
 
+    public static final FlowStateJsonRenderer INSTANCE = new FlowStateJsonRenderer();
     @Override
     public Class<FlowState> getClassToRender() {
         return FlowState.class;
