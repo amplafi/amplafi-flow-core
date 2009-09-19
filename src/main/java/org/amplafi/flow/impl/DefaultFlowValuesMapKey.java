@@ -37,7 +37,7 @@ public class DefaultFlowValuesMapKey implements FlowValueMapKey, Serializable {
     }
 
     public DefaultFlowValuesMapKey(CharSequence key) {
-        String[] strings = key.toString().split(":::");
+        String[] strings = key.toString().split(NAMESPACE_SEPARATOR);
         if (strings.length == 1) {
             this.setNamespace(NO_NAMESPACE);
             this.key = strings[0];
@@ -94,7 +94,7 @@ public class DefaultFlowValuesMapKey implements FlowValueMapKey, Serializable {
     public String toString() {
         if ( stringValue == null ) {
             if ( isNotBlank(namespace)) {
-                stringValue = namespace +":::" + ObjectUtils.toString(key);
+                stringValue = namespace +NAMESPACE_SEPARATOR + ObjectUtils.toString(key);
             } else {
                 stringValue = ObjectUtils.toString(key);
             }

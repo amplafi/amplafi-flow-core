@@ -20,7 +20,11 @@ package org.amplafi.flow;
  */
 public interface FlowValueMapKey extends CharSequence {
     public static final String NO_NAMESPACE = "";
-    
+    /**
+     *
+     */
+    static final String NAMESPACE_SEPARATOR = ":::";
+
     String getNamespace();
     String getKey();
 }
