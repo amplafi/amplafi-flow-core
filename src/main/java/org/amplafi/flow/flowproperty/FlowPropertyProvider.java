@@ -21,4 +21,6 @@ public interface FlowPropertyProvider {
     FlowPropertyDefinition getPropertyDefinition(String key);
 
     void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
+
+    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinitions);
 }
