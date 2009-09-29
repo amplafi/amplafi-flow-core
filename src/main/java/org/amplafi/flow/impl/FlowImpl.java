@@ -22,6 +22,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowTransition;
+import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
@@ -29,8 +36,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.PropertyUsage.*;
-import org.amplafi.flow.*;
 
 
 /**
@@ -98,30 +105,32 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
     public FlowImpl() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE),
-            new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initPropertyUsage(flowLocal).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use),
+            new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE),
+            new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
+            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             // io -- for now because need to communicate the next page to be displayed
+            // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
+            // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionImpl(FSAFTER_PAGE).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_PAGE).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_CANCEL_PAGE).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_PAGE).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_CANCEL_PAGE).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyScope(flowLocal),
+            new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initAccess(flowLocal, internalState),
 
-            new FlowPropertyDefinitionImpl(FSAPI_CALL, boolean.class).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initPropertyUsage(flowLocal),
-            new FlowPropertyDefinitionImpl(FSALT_FINISHED).initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSAPI_CALL, boolean.class).initAccess(flowLocal, io),
+            new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionImpl(FSALT_FINISHED).initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSREFERING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal),
+            new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );
@@ -280,8 +289,10 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
             }
         }
     }
+
     /**
-     * @see org.amplafi.flow.Flow#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
+     * method used by hivemind to add in properties
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
      */
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
         if ( definition == null ) {

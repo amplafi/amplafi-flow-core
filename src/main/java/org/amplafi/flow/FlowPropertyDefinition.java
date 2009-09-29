@@ -13,7 +13,10 @@
  */
 package org.amplafi.flow;
 
+import java.util.List;
 import java.util.Set;
+
+import org.amplafi.flow.flowproperty.PropertyScope;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -72,16 +75,17 @@ public interface FlowPropertyDefinition {
 
     String getInitial();
 
-    /**
-     * @return if true, the initial value of the property can be overridden by a
-     * passed in value.
-     */
-    boolean isInitialMode();
+//    /**
+//     * @return if true, the initial value of the property can be overridden by a
+//     * passed in value.
+//     */
+//    boolean isInitialValueOptional();
 
     /**
      * @return all possible names for this FlowPropertyDefinition, including
      * {@link #getName()}.
      */
+    Set<String> getAllNames();
     Set<String> getAlternates();
 
     /**
@@ -90,6 +94,17 @@ public interface FlowPropertyDefinition {
     PropertyUsage getPropertyUsage();
 
     void setPropertyUsage(PropertyUsage propertyUsage);
+
+    String getNamespaceKey(FlowState flowState, FlowActivity flowActivity);
+
+    /**
+     * the list of namespaces used to find the property value in the FlowState map.
+     * This list is constructed by examining the PropertyUsage constraints.
+     * @param flowState (may be null )
+     * @param flowActivity (may be null )
+     * @return ordered collection used to find/set this property.
+     */
+    List<String> getNamespaceKeySearchList(FlowState flowState, FlowActivity flowActivity);
 
     String getValidators();
 
@@ -102,4 +117,20 @@ public interface FlowPropertyDefinition {
      * @return true if {@link #getName()} or {@link #getAlternates()} equals possiblePropertyName ( case sensitive check)
      */
     boolean isNamed(String possiblePropertyName);
+
+    /**
+     * @param activitylocal
+     */
+    void setPropertyScope(PropertyScope activitylocal);
+    PropertyScope getPropertyScope();
+
+    /**
+     * @return
+     */
+    boolean isPropertyScopeSet();
+
+    /**
+     * @return
+     */
+    boolean isPropertyUsageSet();
 }

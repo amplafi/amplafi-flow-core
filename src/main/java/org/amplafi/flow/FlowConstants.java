@@ -60,13 +60,6 @@ public interface FlowConstants {
      * Set on a per FlowActivity basis.
      */
     public static final String FAINVISIBLE = "faInvisible";
-    /**
-     * Flow state is readonly. The FlowActivities are not allowed to change the
-     * state of any object.
-     *
-     * TODO: check that this is enforced (by no calling saveChanges() )
-     */
-    public static final String FSREADONLY = "fsReadonly";
 
     /**
      * Used to override the default page name

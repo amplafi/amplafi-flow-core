@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.json.JSONStringer;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -37,6 +39,7 @@ public class FlowUtils {
      * @param keys if not supplied then the entire flowstate is copied.
      * @return the new state
      */
+    @Deprecated // PropertyUsage/PropertyScope should make this method of limited use.
     public Map<String, String> copyState(FlowState old, String...keys) {
         Map<String, String> ret;
         if (keys==null || keys.length == 0) {
@@ -44,7 +47,8 @@ public class FlowUtils {
         } else {
             ret = new LinkedHashMap<String, String>();
             for (String key: keys) {
-                ret.put(key, old.getRawProperty(key));
+                // HACK!!!
+                ret.put(key, ((FlowStateImplementor)old).getRawProperty(key));
             }
         }
         return ret;
@@ -61,7 +65,8 @@ public class FlowUtils {
                 }
             }
             for(Map.Entry<String, String> entry: ret.entrySet()) {
-                flowState.setProperty(entry.getKey(), entry.getValue());
+                // HACK!!!
+                ((FlowStateImplementor)flowState).setRawProperty(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -166,7 +171,7 @@ public class FlowUtils {
         int evenSize = (objects.length>>1)<<1;
         for (int i=0; i<evenSize; i+=2) {
             String key;
-            if ( objects[i] instanceof Class) {
+            if ( objects[i] instanceof Class<?>) {
                 key = toPropertyName((Class<?>) objects[i]);
             } else {
                 key = objects[i].toString();
@@ -178,5 +183,9 @@ public class FlowUtils {
             }
         }
         return ret;
+    }
+
+    public String toKey(String namespace, String key) {
+        return new DefaultFlowValuesMapKey(namespace, key).toString();
     }
 }

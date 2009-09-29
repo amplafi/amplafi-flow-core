@@ -14,8 +14,6 @@
 
 package org.amplafi.flow;
 
-import java.util.Map;
-
 /**
  * @author patmoore
  *
@@ -61,13 +59,7 @@ public interface FlowActivityImplementor extends FlowActivity {
 
     void initPropertyIfBlank(String key, Object value);
 
-    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
-
-    void addPropertyDefinition(FlowPropertyDefinition definition);
-
-    void addPropertyDefinitions(FlowPropertyDefinition... definitions);
-
-    void addPropertyDefinitions(Iterable<FlowPropertyDefinition> definitions);
+    void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
     /**
      * @param activityName The activityName to set.
@@ -75,14 +67,9 @@ public interface FlowActivityImplementor extends FlowActivity {
     void setActivityName(String activityName);
 
     String getRawProperty(String key);
-    /**
-     * set a value with key specified in either the flowActivity specific values
-     * (if such a flowactivity specific value is set already) or the global flow
-     * values otherwise.
-     *
-     * @param key
-     * @param value
-     * @return {@link FlowState#setRawProperty(FlowActivity, FlowPropertyDefinition, String)}
-     */
-    boolean setRawProperty(String key, String value);
+
+    boolean isPropertyNotBlank(String key);
+
+    boolean isPropertyBlank(String key);
+
 }

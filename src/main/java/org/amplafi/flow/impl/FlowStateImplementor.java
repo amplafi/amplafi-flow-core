@@ -28,15 +28,6 @@ public interface FlowStateImplementor extends FlowState {
 
     /**
      *
-     * @param namespace
-     * @param key
-     * @param value
-     * @return true if the value has changed.
-     */
-    boolean setRawProperty(String namespace, String key, String value);
-
-    /**
-     *
      * @param key
      * @param value
      * @return true if the value has changed.

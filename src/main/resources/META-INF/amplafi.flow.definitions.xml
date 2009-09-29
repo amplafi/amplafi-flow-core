@@ -85,21 +85,6 @@
                         Or use the sub-element 'initial' if the initial
                         value is long.
                     </attribute>
-                    <attribute name="initialOptional">
-                        The initial value can be overridden by the initialValues used to start a flow.
-                        default is false for security reasons.
-                    </attribute>
-                    <element name="initial">
-                        <attribute name="optional" translator="boolean">
-                            The initial value can be overridden by the initialValues used to start a flow.
-                            default is false for security reasons.
-                        </attribute>
-                        <rules>
-                            <push-content/>
-                            <read-attribute attribute="optional" property="initialMode"/>
-                            <invoke-parent method="setInitial"/>
-                        </rules>
-                    </element>
                     <element name="default">
                         <rules>
                             <push-content/>
@@ -115,7 +100,6 @@
                         <read-attribute attribute="translator" property="translator"/>
                         <read-attribute attribute="default" property="defaultObject"/>
                         <read-attribute attribute="initial" property="initial"/>
-                        <read-attribute attribute="initialOptional" property="initialMode"/>
                         <invoke-parent method="addPropertyDefinition"/>
                     </rules>
                 </element>
@@ -195,25 +179,10 @@
                     Or use the sub-element 'initial' if the initial value is
                     long.
                 </attribute>
-                <attribute name="initialOptional">
-                    The initial value can be overridden by the initialValues used to start a flow.
-                    default is false for security reasons.
-                </attribute>
                 <element name="default">
                     <rules>
                         <push-content/>
                         <invoke-parent method="setDefaultObject"/>
-                    </rules>
-                </element>
-                <element name="initial">
-                    <attribute name="optional" translator="boolean">
-                        The initial value can be overridden by the initialValues used to start a flow.
-                        default is false for security reasons.
-                    </attribute>
-                    <rules>
-                        <push-content/>
-                        <read-attribute attribute="optional" property="initialMode"/>
-                        <invoke-parent method="setInitial"/>
                     </rules>
                 </element>
                 <rules>
@@ -224,7 +193,6 @@
                     <read-attribute attribute="data-class" translator="class" property="dataClass"/>
                     <read-attribute attribute="default" property="defaultObject"/>
                     <read-attribute attribute="initial" property="initial"/>
-                    <read-attribute attribute="initialOptional" property="initialMode"/>
                     <invoke-parent method="addPropertyDefinition"/>
                 </rules>
             </element>

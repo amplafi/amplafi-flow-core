@@ -33,14 +33,47 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
 
     V get(Object namespace, Object key);
 
+    /**
+     *
+     * @param namespace
+     * @param key
+     * @param value
+     * @return the previous object at the (namespace,key) value.
+     */
     V put(Object namespace, Object key, Object value);
 
     V put(K key, V value);
+    /**
+     * Removes the key.
+     * @param namespace
+     * @param key
+     * @return the object formerly at the key.
+     */
+    public V remove(Object namespace, Object key) ;
 
+    /**
+     *
+     * @see java.util.Map#containsKey(java.lang.Object)
+     */
     boolean containsKey(Object key);
 
+    /**
+     * @param namespace
+     * @param key
+     * @return true if the FlowValuesMap contains a value with namespace and key.
+     */
+    boolean containsKey(Object namespace, Object key);
+
+    /**
+     *
+     * @see java.util.Map#isEmpty()
+     */
     boolean isEmpty();
 
+    /**
+     *
+     * @return a simple map. Namespace will be combined with the key to make the key.
+     */
     Map<String, String> getAsFlattenedStringMap();
 
     Map<String, String> getAsStringMap(boolean trimEmptyBlank, boolean preserveNamespace);

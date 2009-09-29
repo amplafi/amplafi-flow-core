@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.amplafi</groupId>
         <artifactId>amplafi-opensource-parent</artifactId>
-        <version>0.9.1-SNAPSHOT</version>
+        <version>0.9.2-SNAPSHOT</version>
         <relativePath>../amplafi-opensource-parent/pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>

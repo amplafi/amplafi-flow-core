@@ -38,6 +38,10 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
+import org.amplafi.flow.PropertyUsage;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -90,11 +94,12 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#getCurrentFlowState()
      */
-    public synchronized FlowState getCurrentFlowState() {
+    @SuppressWarnings("unchecked")
+    public synchronized <FS extends FlowState> FS getCurrentFlowState() {
         if (sessionFlows.isEmpty()) {
             return null;
         }
-        return sessionFlows.getFirst();
+        return (FS) sessionFlows.getFirst();
     }
     /**
      * @see org.amplafi.flow.FlowManagement#getCurrentActivity()
@@ -125,18 +130,20 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#getFirstFlowStateByType(java.lang.String...)
      */
-    public synchronized FlowState getFirstFlowStateByType(String... flowTypes) {
+    @SuppressWarnings("unchecked")
+    public synchronized <FS extends FlowState> FS getFirstFlowStateByType(String... flowTypes) {
         if(flowTypes == null){
             return null;
         }
         List<String> types=Arrays.asList(flowTypes);
-        return getFirstFlowStateByType(types);
+        return (FS) getFirstFlowStateByType(types);
     }
 
-    public FlowState getFirstFlowStateByType(Collection<String> types) {
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS getFirstFlowStateByType(Collection<String> types) {
         for (FlowState flowState: sessionFlows) {
             if (types.contains(flowState.getFlowTypeName())) {
-                return flowState;
+                return (FS)flowState;
             }
         }
         return null;
@@ -148,10 +155,11 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowState(java.lang.String)
      */
-    public FlowState getFlowState(String lookupKey) {
-        FlowState flowState;
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS getFlowState(String lookupKey) {
+        FS flowState;
         if ( isNotBlank(lookupKey)) {
-            flowState = sessionFlows.get(lookupKey);
+            flowState = (FS) sessionFlows.get(lookupKey);
         } else {
             flowState = null;
         }
@@ -163,14 +171,18 @@ public class BaseFlowManagement implements FlowManagement {
      * @param initialFlowState
      * @return the newly created FlowsState
      */
-    protected FlowState makeFlowState(String flowTypeName, Map<String, String> initialFlowState) {
-        return new FlowStateImpl(flowTypeName, this, initialFlowState);
+    @SuppressWarnings("unchecked")
+    protected <FS extends FlowState> FS makeFlowState(String flowTypeName, Map<String, String> initialFlowState) {
+        return (FS) new FlowStateImpl(flowTypeName, this, initialFlowState);
     }
     /**
      * @see org.amplafi.flow.FlowManagement#createFlowState(java.lang.String, java.util.Map, boolean)
+     * TODO : sees like method should be renamed.
      */
-    public synchronized FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent) {
-        FlowState flowState = makeFlowState(flowTypeName, initialFlowState);
+    @SuppressWarnings("unchecked")
+    public synchronized <FS extends FlowState> FS createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent) {
+        FS flowState = (FS) makeFlowState(flowTypeName, initialFlowState);
+        initializeFlowState(flowState);
         if (makeNewStateCurrent || this.sessionFlows.isEmpty()) {
             makeCurrent(flowState);
         } else {
@@ -179,9 +191,13 @@ public class BaseFlowManagement implements FlowManagement {
         return flowState;
     }
     @SuppressWarnings({ "unused", "unchecked" })
-    public FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent) {
-        FlowState flowState = createFlowState(flowTypeName, initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
+    public <FS extends FlowState> FS createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent) {
+        FS flowState = (FS) createFlowState(flowTypeName, initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
         return flowState;
+    }
+
+    protected <FS extends FlowState> void initializeFlowState(FS flowState) {
+        flowState.initializeFlow();
     }
 
 
@@ -200,7 +216,7 @@ public class BaseFlowManagement implements FlowManagement {
                 FlowActivityImplementor currentActivity = flowState.getCurrentActivity();
                 String flowType = currentActivity.resolve(flowTransition.getNextFlowType());
                 if (isNotBlank(flowType)) {
-                    nextFlowState = this.createFlowState(flowType, flowState.getClearFlowValuesMap(), false);
+                    nextFlowState = this.createFlowState(flowType, flowState.getExportedValuesMap(), false);
                 }
             }
         }
@@ -210,9 +226,10 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#startFlowState(java.lang.String, boolean, java.util.Map, Object)
      */
-    public FlowState startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState, Object returnToFlow) {
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState, Object returnToFlow) {
         initialFlowState = initReturnToFlow(initialFlowState, returnToFlow);
-        FlowState flowState = createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
+        FS flowState = (FS) createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
         /* If you want tapestry stuff injected here...
         // set default page to go to after flow if flow is successful
         if (flowState.getDefaultAfterPage() == null ) {
@@ -229,7 +246,7 @@ public class BaseFlowManagement implements FlowManagement {
             }
         }
         */
-        return beginFlowState(flowState);
+        return (FS) beginFlowState(flowState);
     }
 
     /**
@@ -264,16 +281,18 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#startFlowState(java.lang.String, boolean, java.lang.Object, java.lang.Iterable, Object)
      */
-    public FlowState startFlowState(String flowTypeName, boolean makeNewStateCurrent, Object propertyRoot, Iterable<String> initialValues, Object returnToFlow) {
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Object propertyRoot, Iterable<String> initialValues, Object returnToFlow) {
         Map<String, String> initialMap = convertToMap(propertyRoot, initialValues);
-        return startFlowState(flowTypeName, makeNewStateCurrent, initialMap, returnToFlow);
+        return (FS) startFlowState(flowTypeName, makeNewStateCurrent, initialMap, returnToFlow);
     }
     /**
      * @see org.amplafi.flow.FlowManagement#continueFlowState(java.lang.String, boolean, java.lang.Object, java.lang.Iterable)
      */
-    public FlowState continueFlowState(String lookupKey, boolean makeStateCurrent, Object propertyRoot, Iterable<String> initialValues) {
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Object propertyRoot, Iterable<String> initialValues) {
         Map<String, String> initialMap = convertToMap(propertyRoot, initialValues);
-        return continueFlowState(lookupKey, makeStateCurrent, initialMap);
+        return (FS) continueFlowState(lookupKey, makeStateCurrent, initialMap);
     }
 
     private Map<String, String> convertToMap(Object propertyRoot, Iterable<String> initialValues) {
@@ -298,14 +317,17 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#continueFlowState(java.lang.String, boolean, java.util.Map)
      */
-    public FlowState continueFlowState(String lookupKey, boolean makeStateCurrent, Map<String, String> initialFlowState) {
-        FlowState flowState = getFlowState(lookupKey);
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Map<String, String> initialFlowState) {
+        FS flowState = (FS) getFlowState(lookupKey);
         if ( flowState == null) {
             throw new IllegalArgumentException(lookupKey+": no flow with this lookupKey found");
         }
         if (MapUtils.isNotEmpty(initialFlowState)) {
             for(Map.Entry<String, String> entry: initialFlowState.entrySet()) {
-                flowState.setProperty(entry.getKey(), entry.getValue());
+                // HACK this looks bad. At the very least shouldn't FlowUtils.copyState be used
+                // more likely PropertyUsage/PropertyScope
+                ((FlowStateImplementor)flowState).setRawProperty(entry.getKey(), entry.getValue());
             }
         }
         if (makeStateCurrent) {
@@ -335,18 +357,19 @@ public class BaseFlowManagement implements FlowManagement {
      * @param flowState
      * @return flowState if flowState has not completed, otherwise the continue flow or the return flow.
      */
-    protected FlowState beginFlowState(FlowState flowState) {
+    @SuppressWarnings("unchecked")
+    protected <FS extends FlowState> FS beginFlowState(FlowState flowState) {
         boolean success = false;
         try {
             flowState.begin();
             success = true;
             if ( flowState.isCompleted()) {
-                FlowState state = getNextFlowState(flowState);
+                FS state = (FS) getNextFlowState(flowState);
                 if ( state != null) {
                     return state;
                 }
             }
-            return flowState;
+            return (FS) flowState;
         } finally {
             if ( !success ) {
                 this.dropFlowState(flowState);
@@ -358,16 +381,17 @@ public class BaseFlowManagement implements FlowManagement {
      * @param flowState
      * @return
      */
-    private FlowState getNextFlowState(FlowState flowState) {
+    @SuppressWarnings("unchecked")
+    private <FS extends FlowState> FS getNextFlowState(FlowState flowState) {
         String id = flowState.getPropertyAsObject(FSCONTINUE_WITH_FLOW);
-        FlowState next = null;
+        FS next = null;
         if ( isNotBlank(id)) {
-            next = this.getFlowState(id);
+            next = (FS) this.getFlowState(id);
         }
         if ( next == null ) {
             id = flowState.getPropertyAsObject(FSRETURN_TO_FLOW);
             if ( isNotBlank(id)) {
-                next = this.getFlowState(id);
+                next = (FS) this.getFlowState(id);
             }
         }
         return next;
@@ -378,23 +402,16 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @Override
     public void resolveFlowActivity(FlowActivity activity) {
-        if ( activity != null) {
-            Map<String, FlowPropertyDefinition> propertyDefinitions = activity.getPropertyDefinitions();
-            if ( MapUtils.isNotEmpty(propertyDefinitions)) {
-                for(FlowPropertyDefinition flowPropertyDefinition: propertyDefinitions.values()) {
-                    getFlowTranslatorResolver().resolve(flowPropertyDefinition);
-                }
-            }
-        }
+        getFlowTranslatorResolver().resolve(activity);
     }
     /**
      * @see org.amplafi.flow.FlowManagement#dropFlowStateByLookupKey(java.lang.String)
      */
     public synchronized String dropFlowStateByLookupKey(String lookupKey) {
         if ( !sessionFlows.isEmpty()) {
-            FlowState fs = sessionFlows.getFirst();
+            FlowStateImplementor fs = sessionFlows.getFirst();
             boolean first = fs.hasLookupKey(lookupKey);
-            fs = sessionFlows.removeByLookupKey(lookupKey);
+            fs = (FlowStateImplementor) sessionFlows.removeByLookupKey(lookupKey);
             if ( fs != null ) {
                 if ( !fs.getFlowLifecycleState().isTerminatorState()) {
                     fs.setFlowLifecycleState(FlowLifecycleState.canceled);
@@ -402,8 +419,8 @@ public class BaseFlowManagement implements FlowManagement {
 
                 // look for redirect before clearing the flow state
                 // why before cache clearing?
-                String redirect = readRedirect(fs);
-                String returnToFlowId = fs.getRawProperty(FSRETURN_TO_FLOW);
+                String redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
+                String returnToFlowId = fs.getPropertyAsObject(FSRETURN_TO_FLOW);
                 FlowState returnToFlow = getFlowState(returnToFlowId);
                 fs.clearCache();
 
@@ -415,7 +432,10 @@ public class BaseFlowManagement implements FlowManagement {
                     return redirect;
                 } else if ( returnToFlow != null) {
                     return makeCurrent(returnToFlow);
-                } else if ( !sessionFlows.isEmpty() ) {
+                } else if ( returnToFlowId != null ) {
+                    getLog().warn("FlowState ("+fs.getLookupKey()+ ") trying to return to a flowState ("+returnToFlowId+") that could not be found.");
+                }
+                if ( !sessionFlows.isEmpty() ) {
                     return makeCurrent(sessionFlows.getFirst());
                 } else {
                     // no other flows...
@@ -424,17 +444,6 @@ public class BaseFlowManagement implements FlowManagement {
             }
         }
         return null;
-    }
-
-    // TODO: how to handle ReturnToFlow situation as well.
-    private String readRedirect(FlowState fs) {
-        if (fs.hasProperty(FSREDIRECT_URL)) {
-            String redirect = fs.getRawProperty(FSREDIRECT_URL);
-            fs.setProperty(FSREDIRECT_URL, null);
-            return redirect;
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -449,14 +458,15 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#makeCurrent(org.amplafi.flow.FlowState)
      */
+    @Override
     public synchronized String makeCurrent(FlowState state) {
         if ( !this.sessionFlows.isEmpty()) {
-            FlowState oldFirst = this.sessionFlows.getFirst();
+            FlowStateImplementor oldFirst = this.sessionFlows.getFirst();
             if ( oldFirst == state) {
                 // state is already the first state.
                 return state.getCurrentPage();
             } else {
-                sessionFlows.remove(state);
+                sessionFlows.remove((FlowStateImplementor)state);
                 if ( !oldFirst.isNotCurrentAllowed()) {
                     // the formerly first state is only supposed to be active if it is the first state.
                     // see if it this state is referenced as a return state -- otherwise the oldFirst will need to be dropped.
@@ -477,22 +487,44 @@ public class BaseFlowManagement implements FlowManagement {
                 }
             }
         }
-        this.sessionFlows.makeFirst(state);
+        this.sessionFlows.makeFirst((FlowStateImplementor)state);
         return state.getCurrentPage();
     }
 
     protected void makeLast(FlowState flowState) {
-        this.sessionFlows.addLast(flowState);
+        this.sessionFlows.addLast((FlowStateImplementor)flowState);
     }
     /**
      * @see org.amplafi.flow.FlowManagement#makeAfter(org.amplafi.flow.FlowState, org.amplafi.flow.FlowState)
      */
+    @Override
     public boolean makeAfter(FlowState flowState, FlowState nextFlowState) {
-        boolean wasFirst = this.sessionFlows.makeAfter(flowState, nextFlowState) == 0;
+        boolean wasFirst = this.sessionFlows.makeAfter((FlowStateImplementor)flowState, (FlowStateImplementor)nextFlowState) == 0;
         if ( wasFirst) {
             makeCurrent(this.sessionFlows.getFirst());
         }
         return wasFirst;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
+        if ( expected == null && sampleValue != null) {
+            expected = (Class<T>) sampleValue.getClass();
+        }
+        FlowPropertyDefinitionImpl propertyDefinition = new FlowPropertyDefinitionImpl(key).initAccess(PropertyScope.global, PropertyUsage.io);
+        if (expected != null && !CharSequence.class.isAssignableFrom(expected) ) {
+            // auto define property
+            // TODO save the definition when the flowState is persisted.
+            propertyDefinition.setDataClass(expected);
+            if ( sampleValue != null) {
+                // actually going to be setting this property
+                flowPropertyProvider.addPropertyDefinitions(propertyDefinition);
+            }
+        }
+        getFlowTranslatorResolver().resolve(propertyDefinition);
+        getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+" might want to check situation. FlowState="+this );
+        return propertyDefinition;
     }
     /**
      * @see org.amplafi.flow.FlowManagement#getInstanceFromDefinition(java.lang.String)
@@ -572,10 +604,10 @@ public class BaseFlowManagement implements FlowManagement {
         return pageProvider;
     }
 
-    protected class SessionFlows implements Iterable<FlowState>{
-        private LinkedList<FlowState> activeFlows = new LinkedList<FlowState>();
-        private Map<String, FlowState> activeFlowsMap = new ConcurrentHashMap<String, FlowState>();
-        public synchronized boolean remove(FlowState flowState) {
+    protected static class SessionFlows implements Iterable<FlowStateImplementor>{
+        private LinkedList<FlowStateImplementor> activeFlows = new LinkedList<FlowStateImplementor>();
+        private Map<String, FlowStateImplementor> activeFlowsMap = new ConcurrentHashMap<String, FlowStateImplementor>();
+        public synchronized boolean remove(FlowStateImplementor flowState) {
             activeFlowsMap.values().remove(flowState);
             return activeFlows.remove(flowState);
         }
@@ -594,18 +626,18 @@ public class BaseFlowManagement implements FlowManagement {
         public synchronized boolean isEmpty() {
             return activeFlows.isEmpty();
         }
-        public boolean add(FlowState flowState) {
+        public boolean add(FlowStateImplementor flowState) {
             addLast(flowState);
             return true;
         }
-        public synchronized FlowState getFirst() {
+        public synchronized FlowStateImplementor getFirst() {
             return isEmpty()?null:activeFlows.getFirst();
         }
-        public synchronized void addLast(FlowState flowState) {
+        public synchronized void addLast(FlowStateImplementor flowState) {
             activeFlowsMap.put(flowState.getLookupKey(), flowState);
             activeFlows.add(flowState);
         }
-        public synchronized void makeFirst(FlowState flowState) {
+        public synchronized void makeFirst(FlowStateImplementor flowState) {
             if ( getFirst() == flowState) {
                 return;
             } else if ( activeFlowsMap.containsKey(flowState)) {
@@ -614,13 +646,13 @@ public class BaseFlowManagement implements FlowManagement {
             activeFlowsMap.put(flowState.getLookupKey(), flowState);
             activeFlows.addFirst(flowState);
         }
-        public synchronized int makeAfter(FlowState flowState, FlowState nextFlowState) {
+        public synchronized int makeAfter(FlowStateImplementor flowState, FlowStateImplementor nextFlowState) {
             if(!activeFlowsMap.containsKey(flowState.getLookupKey())) {
                 throw new IllegalStateException(flowState.getLookupKey()+ ": not a current flow");
             }
             int oldPosition = -1;
             for(int i = 0; i < this.activeFlows.size(); ) {
-                FlowState state = this.activeFlows.get(i);
+                FlowStateImplementor state = this.activeFlows.get(i);
                 if ( state == nextFlowState) {
                     oldPosition = i;
                     this.activeFlows.remove(i);
@@ -637,11 +669,11 @@ public class BaseFlowManagement implements FlowManagement {
          * @param i
          * @param nextFlowState
          */
-        public void add(int i, FlowState nextFlowState) {
+        public synchronized void add(int i, FlowStateImplementor nextFlowState) {
             this.activeFlows.add(i, nextFlowState);
             this.activeFlowsMap.put(nextFlowState.getLookupKey(), nextFlowState);
         }
-        public FlowState get(String lookupKey) {
+        public synchronized FlowState get(String lookupKey) {
             if (lookupKey == null ) {
                 throw new IllegalArgumentException("lookupKey for flow is null!");
             }
@@ -651,7 +683,7 @@ public class BaseFlowManagement implements FlowManagement {
          * @see java.lang.Iterable#iterator()
          */
         @Override
-        public Iterator<FlowState> iterator() {
+        public synchronized Iterator<FlowStateImplementor> iterator() {
             return this.activeFlows.iterator();
         }
 

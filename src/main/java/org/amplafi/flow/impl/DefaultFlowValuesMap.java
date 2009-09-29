@@ -50,7 +50,10 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     public boolean containsKey(Object key) {
         return map.containsKey(toKey(null, key));
     }
-
+    @Override
+    public boolean containsKey(Object namespace, Object key) {
+        return map.containsKey(toKey(namespace, key));
+    }
     @Override
     public String get(Object key) {
         String value = map.get(toKey(null, key));
@@ -68,6 +71,9 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     @Override
     public Map<String, String> getAsFlattenedStringMap() {
         return getAsStringMap(false, true);
+    }
+    public CharSequence remove(Object namespace, Object key) {
+        return map.remove(toKey(namespace, key));
     }
 
     @Override
@@ -87,8 +93,8 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     }
 
     @Override
-    public String put(Object flowActivityName, Object key, Object value) {
-        return this.map.put(toKey(flowActivityName, key), (String)value);
+    public String put(Object namespace, Object key, Object value) {
+        return this.map.put(toKey(namespace, key), (String)value);
     }
     /**
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
@@ -117,6 +123,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     /**
      * @see java.util.Map#entrySet()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Set<java.util.Map.Entry<CharSequence, String>> entrySet() {
         Set s = this.map.entrySet();
@@ -125,6 +132,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     /**
      * @see java.util.Map#keySet()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Set<CharSequence> keySet() {
         Set keySet = this.map.keySet();
@@ -134,6 +142,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     /**
      * @see java.util.Map#putAll(java.util.Map)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void putAll(Map m) {
         Set<Map.Entry<Object, Object>> entrySet = m.entrySet();

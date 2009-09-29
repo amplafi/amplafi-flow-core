@@ -14,7 +14,7 @@
 package org.amplafi.flow;
 
 import java.util.List;
-import java.util.Map;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
  * defines a definition of a flow or a specific flow.
@@ -37,7 +37,7 @@ import java.util.Map;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public interface Flow {
+public interface Flow extends FlowPropertyProvider {
 
     /**
      * Create an instance of a Flow from Flow definition.
@@ -73,14 +73,6 @@ public interface Flow {
     boolean isInstance();
 
     <T extends FlowActivity> List<T> getVisibleActivities();
-
-    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties);
-
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
-
-    FlowPropertyDefinition getPropertyDefinition(String key);
-
-    void addPropertyDefinition(FlowPropertyDefinition definition);
 
     void setFlowTypeName(String flowTypeName);
 
@@ -136,7 +128,7 @@ public interface Flow {
 
     void setFlowState(FlowState state);
 
-    FlowState getFlowState();
+    <FS extends FlowState> FS getFlowState();
 
     int indexOf(FlowActivity activity);
 

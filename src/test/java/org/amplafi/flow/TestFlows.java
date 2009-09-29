@@ -21,9 +21,11 @@ import java.util.Map;
 import org.amplafi.flow.impl.FlowStateImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
 
 /**
  * Tests around flows that don't require db.
@@ -36,12 +38,13 @@ public class TestFlows {
     private static final String PROPERTY1 = "property1";
     private static final String PROPERTY2 = "property2";
     private static final String FLOW_TYPE = "ftype1";
+    private static final boolean TEST_ENABLE = true;
 
     /**
      * Test simple flow definitions and instances.
      *
      */
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testFlowDefinition() {
         FlowImpl flow = new FlowImpl();
         FlowActivity[] fas = new FlowActivity[3];
@@ -88,38 +91,39 @@ public class TestFlows {
      */
     @Test
     public void testPropertyPriority() {
-        FlowImpl flow = new FlowImpl(FLOW_TYPE);
-        FlowActivityImpl flowActivity = new FlowActivityImpl();
-        flowActivity.setActivityName("fs0");
-        flow.addActivity(flowActivity);
-        flowActivity = new FlowActivityImpl();
-        flowActivity.setActivityName("fs1");
-        flow.addActivity(flowActivity);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        {
+            FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+            flowActivity0.setActivityName("fs0");
+            flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionImpl("key").initPropertyScope(activityLocal));
+            FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+            flowActivity1.setActivityName("fs1");
+            FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1);
+            flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
+            flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        }
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowState fs = new FlowStateImpl(FLOW_TYPE, flowManagement);
-        fs.begin();
-        fs.setProperty("key", "fs");
-        fs.setProperty("fs0", "key", "fs0");
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
+            "key", "fs",
+            FlowUtils.INSTANCE.toKey("fs0","key"), "fs0");
+        FlowStateImplementor fs = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, null);
 
         FlowActivityImplementor activity0 = fs.getActivity(0);
-        assertEquals(activity0.getRawProperty("key"), "fs0");
+        assertEquals(activity0.getProperty("key"), "fs0", "flowState="+fs);
         FlowActivityImplementor activity1 = fs.getActivity(1);
-        assertEquals(activity1.getRawProperty("key"), "fs");
+        assertEquals(activity1.getProperty("key"), "fs");
 
-        activity0.setRawProperty("key", "new-fs0");
-        activity1.setRawProperty("key", "new-fs");
+        activity0.setProperty("key", "new-fs0");
+        activity1.setProperty("key", "new-fs");
 
-        assertEquals("new-fs0", activity0.getRawProperty("key"));
-        assertEquals("new-fs", activity1.getRawProperty("key"));
+        assertEquals(activity0.getProperty("key"), "new-fs0", "flowState="+fs);
+        assertEquals(activity1.getProperty("key"), "new-fs", "flowState="+fs);
     }
 
     /**
      * Test for hasVisibleNext and hasVisiblePrevious of FlowState.
      */
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testVisiblePreviousNext() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE);
         flow.addActivity(new FlowActivityImpl());
@@ -150,7 +154,7 @@ public class TestFlows {
      *
      * Also test when invisible is turned on/off during the flow.
      */
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testVisiblePreviousNextWithHidden() {
         Flow flow = new FlowImpl(FLOW_TYPE);
         FlowActivityImpl fa1 = new FlowActivityImpl();
@@ -178,15 +182,15 @@ public class TestFlows {
         assertFalse(fs.hasVisiblePrevious());
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testInitialValuesOnFlow() {
         Flow flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl(PROPERTY1);
         globalDef.setInitial(INITIAL_VALUE);
-        flow.addPropertyDefinition(globalDef);
+        flow.addPropertyDefinitions(globalDef);
         FlowPropertyDefinitionImpl globalDef1 = new FlowPropertyDefinitionImpl(PROPERTY2);
         globalDef1.setInitial(INITIAL_VALUE);
-        flow.addPropertyDefinition(globalDef1);
+        flow.addPropertyDefinitions(globalDef1);
         // activity #0
         FlowActivityImpl activity = new FlowActivityImpl();
         flow.addActivity(activity);
@@ -196,7 +200,7 @@ public class TestFlows {
         // activity #2
         activity = new FlowActivityImpl();
         FlowPropertyDefinitionImpl localDef1 = new FlowPropertyDefinitionImpl(PROPERTY1);
-        activity.addPropertyDefinition(localDef1);
+        activity.addPropertyDefinitions(localDef1);
         flow.addActivity(activity);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
@@ -206,22 +210,22 @@ public class TestFlows {
         Map<String, String> initialFlowState = new HashMap<String, String>();
         initialFlowState.put(PROPERTY2, SET_BY_MAP);
         String returnToFlowLookupKey = null;
-        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
-        assertEquals(flowState.getActivity(0).getProperty(PROPERTY1), INITIAL_VALUE);
+        FlowStateImplementor flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
+        assertEquals(flowState.getActivity(0).getProperty(PROPERTY1), INITIAL_VALUE, "flowState="+flowState);
         flowState.clearCache();
-        assertEquals(flowState.getActivity(1).getProperty(PROPERTY2), SET_BY_MAP);
+        assertEquals(flowState.getActivity(1).getProperty(PROPERTY2), SET_BY_MAP, "flowState="+flowState);
         flowState.clearCache();
-        assertEquals(flowState.getActivity(2).getProperty(PROPERTY1), INITIAL_VALUE);
+        assertEquals(flowState.getActivity(2).getProperty(PROPERTY1), INITIAL_VALUE, "flowState="+flowState);
         flowState.clearCache();
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testConversion() {
         String returnToFlowLookupKey = null;
         Map<String, String> initialFlowState = new HashMap<String, String>();
         Flow flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Long.class);
-        flow.addPropertyDefinition(definition);
+        flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -239,16 +243,15 @@ public class TestFlows {
         assertTrue(flowPropertyDefinition.getDataClass() == Long.class);
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLE)
     public void testEnumHandling() {
-        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
-                "foo", SampleEnum.EXTERNAL);
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
         Flow flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
-        flow.addPropertyDefinition(definition);
+        flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
-        definition = new FlowPropertyDefinitionImpl("fa1", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
-        fa1.addPropertyDefinition(definition);
+        definition = new FlowPropertyDefinitionImpl("fa1fp", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
+        fa1.addPropertyDefinitions(definition);
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
@@ -257,8 +260,8 @@ public class TestFlows {
         String returnToFlowLookupKey = null;
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
         SampleEnum type =flowState.getCurrentActivity().getProperty("foo");
-        assertEquals(type, SampleEnum.EXTERNAL);
-        type =flowState.getPropertyAsObject("fa1", SampleEnum.class);
+        assertEquals(type, SampleEnum.EXTERNAL, "(looking for property 'foo') FlowState="+flowState);
+        type =flowState.getPropertyAsObject("fa1fp", SampleEnum.class);
         assertEquals(type, SampleEnum.EMAIL);
     }
 

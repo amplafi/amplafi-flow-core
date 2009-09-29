@@ -50,5 +50,6 @@ public enum PropertyRequired {
     /**
      * The FlowActivity will create it.
      */
+    @Deprecated
     creates
 }

@@ -17,8 +17,11 @@ package org.amplafi.flow.flowproperty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.*;
@@ -40,7 +43,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
+public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowPropertyDefinitionProvider {
     private static final String REQUIRED = "required";
 
     /**
@@ -55,18 +58,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     private String initial;
 
     /**
-     * when a flow starts the initial value can be overridden by a passed in
-     * value. A use case example is when a flow is used as an api. This prevents
-     * an external api call from messing with the internal guts of a flow.
-     */
-    private Boolean initialOptional;
-
-    /**
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
-    private FlowPropertyValueProvider factoryFlowPropertyValueProvider;
-    private FlowPropertyValueProvider flowPropertyValueProvider;
+    private FlowPropertyValueProvider<FlowActivity> factoryFlowPropertyValueProvider;
+    private FlowPropertyValueProvider<FlowActivity> flowPropertyValueProvider;
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
@@ -81,6 +77,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * useful caching values during this transaction. TODO maybe allow
      * non-entities that are Serializable to last beyond current transaction?
      */
+    @Deprecated // maybe -- we may want cacheOnly, neverCache (passwords ), normal
     private Boolean cacheOnly;
 
     /**
@@ -105,11 +102,12 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     /**
      * data that should not be outputted or saved. for example, passwords.
      */
-    private Boolean sensitive;
+    private PropertySecurity propertySecurity;
 
     private String validators;
     private PropertyRequired propertyRequired;
     private PropertyUsage propertyUsage;
+    private PropertyScope propertyScope;
     /**
      * once set no further changes to this {@link FlowPropertyDefinitionImpl} are permitted.
      * calling init* methods will return a new {@link FlowPropertyDefinitionImpl} that can be modified.
@@ -122,10 +120,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      */
     public FlowPropertyDefinitionImpl() {
         dataClassDefinition = new DataClassDefinitionImpl();
-        // Set the propertyUsage to 'use' so that properties created via xml are used and
-        // passed through to following flows.
-        // think this is
-        this.propertyUsage = PropertyUsage.use;
     }
 
     public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
@@ -141,14 +135,14 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.setInitial(clone.initial);
         this.setUiComponentParameterName(clone.uiComponentParameterName);
-        if (clone.sensitive != null) {
-            this.setSensitive(clone.sensitive);
+        if (clone.propertySecurity != null) {
+            this.setPropertySecurity(clone.propertySecurity);
         }
         validators = clone.validators;
         saveBack = clone.saveBack;
-        initialOptional = clone.initialOptional;
         this.propertyRequired = clone.propertyRequired;
         this.propertyUsage = clone.propertyUsage;
+        this.propertyScope = clone.propertyScope;
     }
 
     /**
@@ -216,8 +210,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         this.dataClassDefinition = dataClassDefinition;
     }
 
+    @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
-        if ( !(defaultObject instanceof FlowPropertyValueProvider)) {
+        if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
             FixedFlowPropertyValueProvider<FlowActivity> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowActivity>(defaultObject);
             fixedFlowPropertyValueProvider.convertable(this);
             if (dataClassDefinition.isDataClassDefined()) {
@@ -230,7 +225,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             }
             this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
         } else {
-            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider)defaultObject;
+            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowActivity>)defaultObject;
         }
     }
 
@@ -242,7 +237,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      */
     public Object getDefaultObject(FlowActivity flowActivity) {
         Object value;
-        FlowPropertyValueProvider provider = getFlowPropertyValueProviderToUse();
+        FlowPropertyValueProvider<FlowActivity> provider = getFlowPropertyValueProviderToUse();
         if ( provider != null) {
             value = provider.get(flowActivity, this);
         } else {
@@ -258,7 +253,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     /**
      * @return
      */
-    private FlowPropertyValueProvider getFlowPropertyValueProviderToUse() {
+    private FlowPropertyValueProvider<FlowActivity> getFlowPropertyValueProviderToUse() {
         if ( this.flowPropertyValueProvider != null) {
             return this.flowPropertyValueProvider;
         } else {
@@ -341,17 +336,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     public boolean isLocal() {
-        return PropertyUsage.activityLocal == this.propertyUsage;
-    }
-
-    /**
-     * also sets {@link PropertyUsage#flowLocal}
-     * @return this
-     */
-    public FlowPropertyDefinitionImpl initCacheOnly() {
-        setCacheOnly(true);
-        setPropertyUsage(PropertyUsage.flowLocal);
-        return this;
+        return this.getPropertyScope().isLocalToActivity();
     }
 
     public void setUiComponentParameterName(String parameterName) {
@@ -424,16 +409,12 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         return false;
     }
     public boolean isDefaultAvailable() {
-        if ( this.getFlowPropertyValueProviderToUse() != null ) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.getFlowPropertyValueProviderToUse() != null;
     }
 
     @Override
     public String toString() {
-        return toComponentDef() +":"+this.dataClassDefinition;
+        return toComponentDef() +"(scope="+getPropertyScope()+") (usage="+getPropertyUsage()+") :"+this.dataClassDefinition;
     }
 
     public String toComponentDef() {
@@ -491,12 +472,49 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * @return the propertyUsage (default {@link PropertyUsage#consume}
      */
     public PropertyUsage getPropertyUsage() {
-        return propertyUsage == null?PropertyUsage.consume:propertyUsage;
+        if ( isPropertyUsageSet() ) {
+            return propertyUsage;
+        } else {
+            return this.getPropertyScope().getDefaultPropertyUsage();
+        }
+    }
+
+    /**
+     * @return
+     */
+    public boolean isPropertyUsageSet() {
+        return this.propertyUsage != null;
     }
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initPropertyUsage(PropertyUsage propertyUsage) {
         setPropertyUsage(propertyUsage);
         return this;
+    }
+
+    /**
+     * @param propertyScope the propertyScope to set
+     */
+    public void setPropertyScope(PropertyScope propertyScope) {
+        this.propertyScope = setCheckTemplateState(this.propertyScope, propertyScope);
+    }
+
+    /**
+     * @return the propertyScope
+     */
+    public PropertyScope getPropertyScope() {
+        return isPropertyScopeSet()?propertyScope:PropertyScope.flowLocal;
+    }
+    public boolean isPropertyScopeSet() {
+        return propertyScope != null;
+    }
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initPropertyScope(PropertyScope propertyScope) {
+        setPropertyScope(propertyScope);
+        return this;
+    }
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
+        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage);
     }
 
     public void setCacheOnly(boolean cacheOnly) {
@@ -517,6 +535,18 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     /**
+     * also sets {@link PropertyScope#flowLocal}
+     * @return this
+     */
+    public FlowPropertyDefinitionImpl initCacheOnly() {
+        setCacheOnly(true);
+        if ( this.propertyScope == null ) {
+            setPropertyScope(PropertyScope.flowLocal);
+        }
+        // TODO : Maybe should set saveBack(false)
+        return this;
+    }
+    /**
      * affects isEntity()
      *
      * @param dataClass
@@ -535,7 +565,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
     }
 
     /**
-     * make sure the value can be
+     * make sure the initial value can be deserialized to the expected type.
      */
     private void checkInitial(String value) {
         if ( !this.dataClassDefinition.isDeserializable(this, value)) {
@@ -571,9 +601,15 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         }
         return alternates;
     }
+    public Set<String> getAllNames() {
+        Set<String> allNames = new LinkedHashSet<String>();
+        allNames.add(this.getName());
+        allNames.addAll(getAlternates());
+        return allNames;
+    }
 
-    public void setSensitive(boolean sensitive) {
-        this.sensitive = sensitive;
+    public void setPropertySecurity(PropertySecurity propertySecurity) {
+        this.propertySecurity = propertySecurity;
         // TODO: rethink on handling this (commented out in order to access
         // values)
         /*
@@ -581,25 +617,20 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
          */
     }
 
-    public boolean isSensitive() {
-        return getBoolean(sensitive);
+    public PropertySecurity getPropertySecurity() {
+        return propertySecurity != null?propertySecurity:getPropertyScope().getDefaultPropertySecurity();
     }
 
     public FlowPropertyDefinitionImpl initSensitive() {
-        setSensitive(true);
+        setPropertySecurity(PropertySecurity.noAccess);
         return this;
     }
 
-    public void setInitialMode(boolean initialOptional) {
-        this.initialOptional = initialOptional;
+    public boolean isSensitive() {
+        return !getPropertySecurity().isExternalReadAccessAllowed();
     }
-
-    public boolean isInitialMode() {
-        return getBoolean(initialOptional);
-    }
-
     /**
-     * not a reversable process.
+     * not a reversible process.
      */
     public void setTemplateFlowPropertyDefinition() {
         this.templateFlowPropertyDefinition = true;
@@ -634,7 +665,16 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean result = dataClassDefinition.isMergable(source.dataClassDefinition);
-        result &= this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
+        result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
+        if ( result ) {
+            result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
+            result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()
+                || getPropertyUsage().isChangeableTo(property.getPropertyUsage()) || property.getPropertyUsage().isChangeableTo(getPropertyUsage());
+            if ( !result) {
+                System.out.println("why?");
+            }
+        }
+
         return result;
     }
 
@@ -642,6 +682,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * For any fields that are not already set in this
      * {@link FlowPropertyDefinitionImpl}, this use previous to supply any missing
      * values.
+     *
+     * TODO: Need to check {@link PropertyScope}!! How to handle activityLocal/flowLocals???
      *
      * @param property
      * @return true if there is no conflict in the dataClass, true if
@@ -684,16 +726,20 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
         if (uiComponentParameterName == null && source.uiComponentParameterName != null) {
             uiComponentParameterName = source.uiComponentParameterName;
         }
-        if (sensitive == null && source.sensitive != null) {
-            this.setSensitive(source.sensitive);
+        if (propertySecurity == null && source.propertySecurity != null) {
+            this.setPropertySecurity(source.propertySecurity);
         }
         if (validators == null && source.validators != null) {
             validators = source.validators;
         }
-        if (initialOptional == null && source.initialOptional != null) {
-            this.setInitialMode(source.initialOptional);
+        if ( !isPropertyScopeSet() && source.isPropertyScopeSet()) {
+            setPropertyScope(source.propertyScope);
         }
-        // TODO : determine how to handle propertyRequired / PropertyUsage which vary between different FAs in the same Flow.
+        if ( source.isPropertyUsageSet()) {
+            setPropertyUsage(PropertyUsage.survivingPropertyUsage(propertyUsage, source.propertyUsage));
+        }
+
+        // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/PropertySecurity which vary between different FAs in the same Flow.
         return noMergeConflict;
     }
 
@@ -745,8 +791,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * @param <FA>
      * @param flowPropertyValueProvider the flowPropertyValueProvider to set
      */
+    @SuppressWarnings("unchecked")
     public <FA extends FlowActivity>void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider) {
-        this.flowPropertyValueProvider = flowPropertyValueProvider;
+        this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowActivity>) flowPropertyValueProvider;
     }
 
     /**
@@ -755,7 +802,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      */
     @SuppressWarnings("unchecked")
     public <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
-        return flowPropertyValueProvider;
+        return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
     }
 
     /**
@@ -763,7 +810,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider flowPropertyValueProvider) {
+    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowActivity> flowPropertyValueProvider) {
         setFlowPropertyValueProvider(flowPropertyValueProvider);
         return this;
     }
@@ -783,14 +830,14 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             .append(this.dataClassDefinition, flowPropertyDefinition.dataClassDefinition)
             .append(this.flowPropertyValueProvider, flowPropertyDefinition.flowPropertyValueProvider)
             .append(this.initial, flowPropertyDefinition.initial)
-            .append(this.initialOptional, this.initialOptional)
             .append(this.name, flowPropertyDefinition.name)
             .append(this.uiComponentParameterName, flowPropertyDefinition.uiComponentParameterName)
                 // use getter so that defaults can be calculated.
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
+            .append(this.getPropertyScope(), flowPropertyDefinition.getPropertyScope())
             .append(this.saveBack, flowPropertyDefinition.saveBack)
-            .append(this.sensitive, flowPropertyDefinition.sensitive)
+            .append(this.propertySecurity, flowPropertyDefinition.propertySecurity)
             .append(this.validators, flowPropertyDefinition.validators);
         return equalsBuilder.isEquals();
     }
@@ -806,6 +853,131 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition {
             return getName().equals(possiblePropertyName) ||
                 this.getAlternates().contains(possiblePropertyName);
         }
+    }
+
+    /**
+     * Ideally we have a hierarchy of namespaces that can be checked for values. This works o.k. for searching for a value.
+     * But problem is once the value is found, should the old value be replaced in whatever name space? should the found value be moved to the more exact namespace?
+     *
+     * Example, if a activityLocal can look at namespaces={flowstate.lookupKey+activity.activityName, flow.typename+activity.activityname, etc.} should any found value
+     * be moved to flowstate.lookupKey+activity.activityName?
+     *
+     * What about morphing which would change the flowtype and thus the flowtype+activity.activityName namespace value. Morphing would result in loosing activity local values.
+     *
+     * right now flow morph does loose flowLocal values.
+     *
+     * Maybe when a flow is created the name space gets set for all flowLocal and activityLocal based on the flowstate lookup key?
+     *
+     * More thought definitely needed.
+     *
+     * Seems like the namespace list should vary depending on if we are initializing a flow from external parameters. An external setting would not like
+     * to have to worry about using a flowState's lookupKey to set the namespace. Would prefer to just use the key with no namespace, or maybe a more generic
+     * namespace like FlowTypeName or ActivityName.
+     * @param flowActivity
+     * @return list of namespaces to search in order
+     */
+    private List<String> getNamespaceKeySearchList(FlowActivity flowActivity) {
+        //TODO have hierarchy of namespaces
+        List<String> list = new ArrayList<String>();
+        list.add(getNamespaceKey(flowActivity));
+        if ( this.getPropertyUsage().isExternallySettable()) {
+            switch(this.getPropertyScope()) {
+            case activityLocal:
+                // TODO should really be ? but what about morphing??
+    //            list.add(flowActivity.getFullActivityName());
+                list.add(flowActivity.getActivityName());
+            case flowLocal:
+            case requestFlowLocal:
+                list.add(flowActivity.getFlow().getFlowTypeName());
+                list.add(null);
+            case global:
+                break;
+            default:
+                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
+            }
+        }
+        return list;
+    }
+    private String getNamespaceKey(FlowActivity flowActivity) {
+        switch ( this.getPropertyScope()) {
+        case activityLocal:
+            // TODO should really be ? but what about morphing??
+//            list.add(flowActivity.getFullActivityName());
+            return flowActivity.getFullActivityInstanceNamespace();
+        case flowLocal:
+        case requestFlowLocal:
+            if ( flowActivity.getFlowState() != null) {
+                return getNamespaceKey(flowActivity.getFlowState());
+            } else {
+                return flowActivity.getFlow().getFlowTypeName();
+            }
+        case global:
+            return null;
+        default:
+            throw new IllegalStateException(flowActivity.getFullActivityInstanceNamespace()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
+        }
+    }
+
+    /**
+     * see notes on {@link #getNamespaceKeySearchList(FlowActivity)}
+     * @param flowState
+     * @return list of namespace to search in order
+     */
+    private List<String> getNamespaceKeySearchList(FlowState flowState) {
+        //TODO have hierarchy of namespaces
+        List<String> list = new ArrayList<String>();
+        list.add(getNamespaceKey(flowState));
+        switch (this.getPropertyScope()) {
+        case activityLocal:
+            throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
+        case flowLocal:
+        case requestFlowLocal:
+            list.add(flowState.getFlowTypeName());
+            if ( getPropertyUsage().isExternallySettable()) {
+                list.add(null);
+            }
+        case global:
+            break;
+        default:
+            throw new IllegalStateException(flowState.getLookupKey()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
+        }
+        return list;
+    }
+
+    private String getNamespaceKey(FlowState flowState) {
+        switch (this.getPropertyScope()) {
+        case activityLocal:
+            throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
+        case flowLocal:
+        case requestFlowLocal:
+            return flowState.getLookupKey();
+        case global:
+            return null;
+        default:
+            throw new IllegalStateException(this.getPropertyScope() + ": don't know namespace.");
+        }
+    }
+    public List<String> getNamespaceKeySearchList(FlowState flowState, FlowActivity flowActivity) {
+        if( flowActivity != null) {
+            return this.getNamespaceKeySearchList(flowActivity);
+        } else {
+            return this.getNamespaceKeySearchList(flowState);
+        }
+    }
+    public String getNamespaceKey(FlowState flowState, FlowActivity flowActivity) {
+        if( flowActivity != null) {
+            return this.getNamespaceKey(flowActivity);
+        } else {
+            return this.getNamespaceKey(flowState);
+        }
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProvider)
+     */
+    @Override
+    public void defineFlowPropertyDefinitions(FlowPropertyProvider flowPropertyProvider) {
+        flowPropertyProvider.addPropertyDefinition(this);
     }
 
 }

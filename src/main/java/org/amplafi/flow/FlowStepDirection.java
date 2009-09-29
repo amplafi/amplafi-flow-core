@@ -15,7 +15,7 @@
 package org.amplafi.flow;
 
 /**
- * the direction the user is going in the flow.
+ * the direction the flow is moving.
  * @author patmoore
  *
  */
@@ -24,10 +24,16 @@ public enum FlowStepDirection {
     backward,
     inPlace;
 
-    public static FlowStepDirection get(int current, int next) {
-        if ( current == next) {
+    /**
+     * Determine the FlowStepDirection based on the starting FlowActivity index and the next FlowActivity index.
+     * @param currentFlowActivityIndex
+     * @param endingFlowActivityIndex
+     * @return the FlowStepDirection
+     */
+    public static FlowStepDirection get(int currentFlowActivityIndex, int endingFlowActivityIndex) {
+        if ( currentFlowActivityIndex == endingFlowActivityIndex) {
             return inPlace;
-        } else if ( current > next) {
+        } else if ( currentFlowActivityIndex > endingFlowActivityIndex) {
             return backward;
         } else {
             return forward;

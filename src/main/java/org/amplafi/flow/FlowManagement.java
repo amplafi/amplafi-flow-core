@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.apache.commons.logging.Log;
 
 
@@ -33,28 +34,31 @@ public interface FlowManagement {
     /**
      *  a user may have multiple concurrently active
      * requests.
+     * @param <FS>
      *
      * @param lookupKey
      * @return the flow named with this flowId.
      */
-    FlowState getFlowState(String lookupKey);
+    <FS extends FlowState> FS getFlowState(String lookupKey);
 
     /**
      *  a user may have multiple concurrently active
      * requests.
+     * @param <FS>
      *
      * @param flowTypes
      * @return the first active {@link FlowState} having the given type.
      */
-    FlowState getFirstFlowStateByType(String... flowTypes);
+    <FS extends FlowState> FS getFirstFlowStateByType(String... flowTypes);
     /**
      * synchronized because a user may have multiple concurrently active
      * requests.
+     * @param <FS>
      *
      * @param flowTypes
      * @return the first active {@link FlowState} having the given type.
      */
-    FlowState getFirstFlowStateByType(Collection<String> flowTypes);
+    <FS extends FlowState> FS getFirstFlowStateByType(Collection<String> flowTypes);
     /**
      * a user may have multiple concurrently active
      * requests.
@@ -64,33 +68,36 @@ public interface FlowManagement {
      */
     List<FlowState> getActiveFlowStatesByType(String... flowType);
 
-    FlowState getCurrentFlowState();
+    <FS extends FlowState> FS getCurrentFlowState();
 
     /**
      * creates a {@link FlowState}. The properties are set to the initialFlowState.
+     * @param <FS>
      *
      * @param flowTypeName
      * @param initialFlowState
      * @param makeNewStateCurrent
      * @return the newly-created FlowState
      */
-    FlowState createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
+    <FS extends FlowState> FS createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
 
-    FlowState createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
+    <FS extends FlowState> FS createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
 
     /**
      * Starts a flow by name.
+     * @param <FS>
      * @param flowTypeName The name of the flow.
      * @param currentFlow Whether to make this the current active flow.
      * @param initialFlowState The initial state of the flow.
      * @param returnToFlow TODO
      * @return the newly-started FlowState
      */
-    FlowState startFlowState(String flowTypeName, boolean currentFlow,
+    <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow,
             Map<String, String> initialFlowState, Object returnToFlow);
 
     /**
      * Starts a flow by name.
+     * @param <FS>
      * @param flowType
      * @param currentFlow the new flow should be set the current flow.
      * @param propertyRoot
@@ -102,11 +109,12 @@ public interface FlowManagement {
      * @param returnToFlow
      * @return the newly-started FlowState
      */
-    FlowState startFlowState(String flowType, boolean currentFlow, Object propertyRoot,
+    <FS extends FlowState> FS startFlowState(String flowType, boolean currentFlow, Object propertyRoot,
             Iterable<String> initialValues, Object returnToFlow);
 
     /**
      * Continue the flow with the given lookup key.
+     * @param <FS>
      * @param lookupKey
      * @param currentFlow
      * @param propertyRoot
@@ -114,17 +122,18 @@ public interface FlowManagement {
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    FlowState continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot,
+    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot,
             Iterable<String> initialValues);
     /**
      * Continue the flow with the given lookup key.
+     * @param <FS>
      * @param lookupKey
      * @param currentFlow
      * @param initialFlowState
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    FlowState continueFlowState(String lookupKey, boolean currentFlow,
+    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow,
             Map<String, String> initialFlowState);
     /**
      * the flows that the current session has active.
@@ -141,7 +150,14 @@ public interface FlowManagement {
      */
     String dropFlowState(FlowState flow);
 
-    FlowState transitionToFlowState(FlowState flowState, String key);
+    /**
+     *
+     * @param <FS>
+     * @param flowState
+     * @param key that will return a Map<String, {@link FlowTransition} > the flowState getFinishType will be used as key into this map.
+     * @return
+     */
+    <FS extends FlowState> FS transitionToFlowState(FlowState flowState, String key);
 
     /**
      * drop the indicated flow. This is not canceling the flow.
@@ -220,4 +236,7 @@ public interface FlowManagement {
      * @return the default home to use when a flow ends and there is no other place to return.
      */
     URI getDefaultHomePage();
+
+    <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue);
+
 }

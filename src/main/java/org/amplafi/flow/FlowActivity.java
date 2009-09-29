@@ -14,12 +14,12 @@
 
 package org.amplafi.flow;
 
-import java.util.Map;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /*
  * @author patmoore
  */
-public interface FlowActivity {
+public interface FlowActivity extends FlowPropertyProvider {
     /**
      * Used to control which FlowActivities a user may select. This is used to
      * prevent the user from jumping ahead in a flow.
@@ -44,9 +44,10 @@ public interface FlowActivity {
      * {@link FlowConstants#FSAUTO_COMPLETE} = true and
      * {@link #getFlowValidationResult()} {@link FlowValidationResult#isValid()}
      * = true.
-     * @param flowStepDirection TODO
+     * @param flowStepDirection the direction the flow is be advanced ( forward, backward, or in place refresh )
      *
-     * @return if true, immediately complete this FlowActivity.
+     * @return if true, this FlowActivity indicates that the 'next' activity in the flowStepDirection
+     * should be activated. One example are invisible activities. false should only be returned for FlowActivities that have a UI component
      */
     boolean activate(FlowStepDirection flowStepDirection);
 
@@ -141,6 +142,12 @@ public interface FlowActivity {
     String getFullActivityName();
 
     /**
+     * Namespace used to store activityLocal properties when running a flow.
+     * Currently "flowState.lookupKey"."activityName"
+     * @return namespace for activity.
+     */
+    String getFullActivityInstanceNamespace();
+    /**
      * @param activatable true if this flowActivity can be selected from the UI.
      */
     void setActivatable(boolean activatable);
@@ -153,9 +160,7 @@ public interface FlowActivity {
 
     FlowManagement getFlowManagement();
 
-    FlowState getFlowState();
-
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
+    <FS extends FlowState> FS getFlowState();
 
     boolean isInstance();
 
@@ -168,8 +173,6 @@ public interface FlowActivity {
     void setPersistFlow(boolean persistFlow);
 
     boolean isPersistFlow();
-
-    FlowPropertyDefinition getPropertyDefinition(String key);
 
     void setFlow(Flow flow);
 
@@ -240,8 +243,10 @@ public interface FlowActivity {
     boolean isPropertyNotSet(String key);
 
     boolean isPropertySet(String key);
-
-    boolean isPropertyNotBlank(String key);
-
-    boolean isPropertyBlank(String key);
+    /**
+     * Handles all the various namespaces that FlowActivity may be referenced by.
+     * @param possibleName
+     * @return true if the activity can "go by" the supplied name
+     */
+    boolean isNamed(String possibleName);
 }

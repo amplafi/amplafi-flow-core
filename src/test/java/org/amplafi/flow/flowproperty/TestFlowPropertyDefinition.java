@@ -15,6 +15,7 @@ package org.amplafi.flow.flowproperty;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,17 +27,23 @@ import static org.testng.Assert.*;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowTestingUtils;
 import org.amplafi.flow.PropertyRequired;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
-
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.PropertyUsage.*;
 
 /**
  * Tests {@link FlowPropertyDefinitionImpl}.
  */
 public class TestFlowPropertyDefinition {
-    @Test
+    private static final boolean TEST_ENABLED = true;
+    @Test(enabled=TEST_ENABLED)
     public void testValidateWith_empty() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl();
         definition.validateWith("a", "b");
@@ -48,7 +55,7 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getValidators(), "flowField=a-b,required");
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testValidateWith_required() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
         definition.validateWith("pass");
@@ -57,14 +64,14 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getValidators(), "required,flowField=pass");
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("uri", URI.class, PropertyRequired.advance);
         new FlowTestingUtils().resolveAndInit(definition);
         assertNull(definition.getDefaultObject(null));
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testDefaultObjectForPrimitives() {
         assertDefaultObject(Boolean.class, false);
         assertDefaultObject(boolean.class, false);
@@ -80,7 +87,7 @@ public class TestFlowPropertyDefinition {
      * test default object with autoCreate set.
      * @throws Exception
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testDefaultHandlingWithAutoCreate() throws Exception {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo");
         new FlowTestingUtils().resolveAndInit(definition);
@@ -128,7 +135,7 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getDefaultObject(null), value);
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCtor() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
         new FlowTestingUtils().resolveAndInit(definition);
@@ -143,7 +150,7 @@ public class TestFlowPropertyDefinition {
     /**
      * Check merging with no collection types
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionSimpleMerging() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class);
         FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo", Boolean.class).initDefaultObject(true);
@@ -155,8 +162,8 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getDataClass(), definition1.getDataClass());
     }
 
-    @Test
-    public void testFlowPropertyDefinitionComplexMerging() {
+    @Test(enabled=TEST_ENABLED)
+    public void testFlowPropertyDefinitionComplexMergingBecauseOfDataClass() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, Set.class);
         FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo", Boolean.class).initDefaultObject(true);
         assertFalse( definition.isMergeable(definition1));
@@ -181,7 +188,7 @@ public class TestFlowPropertyDefinition {
         assertTrue(definition6.isMergeable(definition5));
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testDataClassDefinition() {
         DataClassDefinitionImpl dataClassDefinition =
             new DataClassDefinitionImpl(Boolean.class, Set.class);
@@ -189,7 +196,7 @@ public class TestFlowPropertyDefinition {
         assertEquals(dataClassDefinition.getDataClass(), Set.class);
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testDataClassDefinitionCollection() {
         DataClassDefinitionImpl dataClassDefinition =
             new DataClassDefinitionImpl(Boolean.class, Set.class);
@@ -210,14 +217,18 @@ public class TestFlowPropertyDefinition {
         assertFalse(dataClassDefinition.isMap());
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCloning() {
         FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance, Set.class, List.class);
         FlowPropertyDefinitionImpl cloned = new FlowPropertyDefinitionImpl(original);
         assertEquals(original, cloned, "cloning failed");
     }
 
-    @Test(dataProvider="serializationData")
+    /**
+     * Test some values to make sure that the serialization /parse operations end up with the original result.
+     * @param original
+     */
+    @Test(enabled=TEST_ENABLED, dataProvider="serializationData")
     public void testSerializeAndParse(String original) {
         FlowPropertyDefinitionImpl def = new FlowPropertyDefinitionImpl("test");
         String result = def.parse(def.serialize(original));
@@ -230,7 +241,7 @@ public class TestFlowPropertyDefinition {
      * Tests to make sure that {@link FlowPropertyDefinitionImpl} can handle collections.
      * @throws Exception
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testListCollectionHandling() throws Exception {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, List.class);
@@ -246,7 +257,7 @@ public class TestFlowPropertyDefinition {
      * test {@link Set} handling
      * @throws Exception
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Set.class);
@@ -259,7 +270,7 @@ public class TestFlowPropertyDefinition {
         assertTrue(set.containsAll(set));
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Map.class);
@@ -275,7 +286,7 @@ public class TestFlowPropertyDefinition {
     /**
      * test handling "required" which can be in the validator list or as a separate boolean.
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testRemoveRequire() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
         assertTrue(definition.isRequired());
@@ -299,6 +310,206 @@ public class TestFlowPropertyDefinition {
         assertTrue(definition.getValidators().contains("required"));
         definition.setRequired(false);
         assertEquals(definition.getValidators(), "peas,peanuts");
+    }
+
+    @Test(enabled=TEST_ENABLED)
+    public void testFlowPropertyInitialization() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String activityName = "activity";
+        String flowTypeName = "myflow";
+        Map<String, String> initialFlowState= new HashMap<String, String>();
+        {
+            FlowActivityImpl flowActivity = new FlowActivityImpl();
+            flowActivity.setActivityName(activityName);
+            for (PropertyScope propertyScope: PropertyScope.values()) {
+                for(PropertyUsage propertyUsage: PropertyUsage.values()) {
+                    String name= propertyScope+"_"+propertyUsage;
+                    String externalInitial = "ext_"+name;
+                    FlowPropertyDefinition flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initAccess(propertyScope, propertyUsage);
+                    flowActivity.addPropertyDefinitions(flowPropertyDefinition);
+                    initialFlowState.put(name, externalInitial);
+                }
+            }
+            flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
+        }
+
+
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState, null);
+
+        // now make sure that only the properties allowed to be set externally are set.
+        for (PropertyScope propertyScope: PropertyScope.values()) {
+            for(PropertyUsage propertyUsage: PropertyUsage.values()) {
+                String name= propertyScope+"_"+propertyUsage;
+                String externalInitial = "ext_"+name;
+                String actual = flowState.getPropertyAsObject(name);
+                if ( propertyUsage.isExternallySettable()) {
+                    assertEquals(actual, externalInitial, "PropertyUsage="+propertyUsage+" flowState="+flowState);
+                } else {
+                    assertNull(actual, "PropertyUsage="+propertyUsage+" flowState="+flowState);
+                }
+                String changed = "chg_"+name;
+                flowState.setPropertyAsObject(name, changed);
+            }
+        }
+        flowState.finishFlow();
+        Map<String, String> finalMap = flowState.getExportedValuesMap();
+        // now make sure that only the properties allowed to be set externally are set.
+        for (PropertyScope propertyScope: PropertyScope.values()) {
+            for(PropertyUsage propertyUsage: PropertyUsage.values()) {
+                String name= propertyScope+"_"+propertyUsage;
+                String externalInitial = "ext_"+name;
+                String changed = "chg_"+name;
+                String actual = finalMap.get(name);
+                if ( propertyUsage.isCopyBackOnFlowSuccess() || propertyScope == global) {
+                    assertEquals(actual, changed, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
+                } else if ( propertyUsage.isCleanOnInitialization()) {
+                    assertNull(actual, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
+                } else {
+                    assertEquals(actual, externalInitial, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
+                }
+            }
+        }
+
+    }
+
+    @Test(enabled=TEST_ENABLED)
+    public void testFlowPropertyDefinitionNamespace() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String activityName = "activity";
+        String namespace;
+        String flowTypeName = "myflow";
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl("foo", Boolean.class).initPropertyScope(flowLocal);
+        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl("foo", Boolean.class).initPropertyScope(activityLocal);
+        List<String> namespaces;
+        {
+            FlowActivityImpl flowActivity = new FlowActivityImpl();
+            flowActivity.setActivityName(activityName);
+
+            flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
+            namespace = flowLocalProperty.getNamespaceKey(null, flowActivity);
+            assertEquals(namespace, flowTypeName);
+            namespace = activityLocalProperty.getNamespaceKey(null, flowActivity);
+            assertEquals(namespace, flowTypeName+"."+activityName);
+            namespaces = flowLocalProperty.getNamespaceKeySearchList(null, flowActivity);
+            assertEquals(namespaces.get(0), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(1), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
+            assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
+            namespaces = activityLocalProperty.getNamespaceKeySearchList(null, flowActivity);
+            assertEquals(namespaces.get(0), flowActivity.getFullActivityName(), "namespaces="+namespaces);
+            assertEquals(namespaces.get(1), flowActivity.getActivityName(), "namespaces="+namespaces);
+            assertEquals(namespaces.get(2), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(3), null, "namespaces="+namespaces);
+            assertEquals(namespaces.size(), 4, "namespaces="+namespaces);
+        }
+
+        // now as part of a running flow
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        FlowStateImpl flowStateImpl = flowManagement.startFlowState(flowTypeName, true, null, null);
+        FlowActivityImpl flowActivity = flowStateImpl.getCurrentActivity();
+        namespace = flowLocalProperty.getNamespaceKey(flowStateImpl, flowActivity);
+        assertEquals(namespace, flowStateImpl.getLookupKey());
+
+        namespaces = flowLocalProperty.getNamespaceKeySearchList(flowStateImpl, flowActivity);
+        assertEquals(namespaces.get(0), namespace, "namespaces="+namespaces);
+        assertEquals(namespaces.get(1), flowTypeName, "namespaces="+namespaces);
+        assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
+        assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
+
+        namespace = activityLocalProperty.getNamespaceKey(flowStateImpl, flowActivity);
+        assertTrue(namespace.contains(flowStateImpl.getLookupKey()), "namespace="+namespace);
+        assertTrue(namespace.contains(activityName), "namespace="+namespace);
+        namespaces = activityLocalProperty.getNamespaceKeySearchList(flowStateImpl, flowActivity);
+        assertEquals(namespaces.get(0), namespace, "namespaces="+namespaces);
+        assertEquals(namespaces.get(1), activityName, "namespaces="+namespaces);
+        assertEquals(namespaces.get(2), flowTypeName, "namespaces="+namespaces);
+        assertEquals(namespaces.get(3), null, "namespaces="+namespaces);
+        assertEquals(namespaces.size(), 4, "namespaces="+namespaces);
+    }
+
+    /**
+     * There are tests around FlowTransitions in {@link TestFlowTransitions#testAvoidConflictsOnFlowTransitions()}
+     *
+     * Demonstrates problem with {@link #initialize} and a null initialization value. This allows the definition in flowActivity2 to decide to initialize from the
+     * external environment.
+     *
+     * TODO merging of properties so that the initialize is the surviving PropertyUsage in the merged property.
+     */
+    @Test(enabled=false)
+    public void testFlowPropertyUsageWithNullInitialization() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String propertyName = "propertyName";
+
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
+        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        flowActivity0.setActivityName("activity0");
+        flowActivity0.addPropertyDefinitions(flowLocalProperty);
+
+        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        flowActivity1.setActivityName("activity1");
+        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(activityLocal,internalState);
+        flowActivity1.addPropertyDefinitions(activityLocalProperty);
+
+        FlowActivityImpl flowActivity2 = new FlowActivityImpl();
+        flowActivity2.setActivityName("activity2");
+        FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,io);
+        flowActivity2.addPropertyDefinitions(globalProperty);
+
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "true");
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        assertNotNull(flowState);
+        // expect null because
+        Boolean propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        flowState.next();
+        propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        flowState.next();
+        propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        assertTrue(propertyValue.booleanValue(), "flowState="+flowState+" propertyValue="+propertyValue);
+    }
+    /**
+     * There are tests around FlowTransitions in {@link TestFlowTransitions#testAvoidConflictsOnFlowTransitions()}
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testFlowPropertyUsage() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String propertyName = "propertyName";
+
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(flowLocal,initialize).initInitial("true");
+        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        flowActivity0.setActivityName("activity0");
+        flowActivity0.addPropertyDefinitions(flowLocalProperty);
+
+        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        flowActivity1.setActivityName("activity1");
+        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(activityLocal,internalState);
+        flowActivity1.addPropertyDefinitions(activityLocalProperty);
+
+        FlowActivityImpl flowActivity2 = new FlowActivityImpl();
+        flowActivity2.setActivityName("activity2");
+        FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(flowLocal,io);
+        flowActivity2.addPropertyDefinitions(globalProperty);
+
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        assertNotNull(flowState);
+        // expect null because
+        String propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        assertEquals("true",propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        flowState.next();
+        propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        flowState.next();
+        propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+        assertEquals("true", propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
     }
     @DataProvider(name = "serializationData")
     protected Object[][] getDataForSerialization() {

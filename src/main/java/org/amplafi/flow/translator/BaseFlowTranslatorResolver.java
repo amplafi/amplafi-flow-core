@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JsonRenderer;
@@ -73,7 +74,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         initCoreFlowActivityFlowPropertyDefinitions();
     }
     /**
-     *
+     * TODO -- move to a {@link FlowPropertyProvider} implementation
      */
     protected void initCoreFlowPropertyDefinitions() {
         // too many problems at this point #2192 #2179
@@ -85,7 +86,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 //            new FlowPropertyDefinition(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
 //            .initFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String, FlowTransition>(
 //                    new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null))),
-//            new FlowPropertyDefinition(FSREADONLY, boolean.class).initPropertyUsage(flowLocal),
 //            // io -- for now because need to communicate the next page to be displayed
 //            new FlowPropertyDefinition(FSPAGE_NAME).initPropertyUsage(io),
 //            new FlowPropertyDefinition(FSAFTER_PAGE).initPropertyUsage(io),
@@ -101,6 +101,9 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 //            new FlowPropertyDefinition(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal)
 //            );
     }
+    /**
+     * TODO -- move to a {@link FlowPropertyProvider} implementation
+     */
     protected void initCoreFlowActivityFlowPropertyDefinitions() {
         // too many problems at this point #2192 #2179
 //        this.putCoreFlowPropertyDefinitions(
@@ -110,6 +113,9 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 //            new FlowPropertyDefinition(FAPREV_TEXT).initPropertyUsage(activityLocal)
 //        );
     }
+    /**
+     * TODO -- move to a {@link FlowPropertyProvider} implementation
+     */
     public void putCoreFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
         for (FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
             this.resolve(flowPropertyDefinition);
@@ -237,15 +243,17 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             }
         }
     }
+
     /**
      * @param flowActivity
      */
     public void resolve(FlowActivity flowActivity) {
-        Map<String, FlowPropertyDefinition> propertyDefinitions;
-        propertyDefinitions = flowActivity.getPropertyDefinitions();
-        if ( MapUtils.isNotEmpty(propertyDefinitions)) {
-            Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-            initAndResolveCollection(values);
+        if ( flowActivity != null) {
+            Map<String, FlowPropertyDefinition> propertyDefinitions = flowActivity.getPropertyDefinitions();
+            if ( MapUtils.isNotEmpty(propertyDefinitions)) {
+                Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
+                initAndResolveCollection(values);
+            }
         }
     }
     private void initAndResolveCollection(Collection<FlowPropertyDefinition> values) {

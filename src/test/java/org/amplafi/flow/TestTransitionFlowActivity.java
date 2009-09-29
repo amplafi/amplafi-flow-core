@@ -17,12 +17,13 @@ import java.util.Map;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.*;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.TransitionType;
 import org.easymock.classextension.EasyMock;
-import org.testng.Assert;
+import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 
@@ -30,8 +31,10 @@ import static org.easymock.classextension.EasyMock.*;
 /**
  *
  */
-public class TestTransitionFlowActivity extends Assert {
-    @Test
+public class TestTransitionFlowActivity {
+
+    private static final boolean TEST_ENABLED=true;
+    @Test(enabled=TEST_ENABLED)
     public void testDup() {
         TransitionFlowActivity obj = new TransitionFlowActivity();
         assertTrue(obj.getClass().isInstance(obj.dup()));
@@ -41,13 +44,14 @@ public class TestTransitionFlowActivity extends Assert {
      * Test to make sure that a {@link TransitionFlowActivity} returns true in {@link TransitionFlowActivity#activate(FlowStepDirection)} if there
      * is no page or component name.
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testTransitionActivate() {
         TransitionFlowActivity obj = new TransitionFlowActivity();
         Flow flow = EasyMock.createMock(Flow.class);
-        FlowState flowState = EasyMock.createNiceMock(FlowState.class);
+        FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
-        expect(flow.getPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(null).anyTimes();
+        expect(flow.getPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
+        expect(flow.getPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class)).anyTimes();
         obj.setFlow(flow);
         EasyMock.replay(flow, flowState);
         assertTrue(obj.activate(FlowStepDirection.inPlace));
@@ -59,7 +63,7 @@ public class TestTransitionFlowActivity extends Assert {
         assertFalse(obj.activate(FlowStepDirection.inPlace));
     }
 
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testTransitionFinishFlow() {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -71,6 +75,9 @@ public class TestTransitionFlowActivity extends Assert {
         assertTrue(flowState.isCompleted());
     }
 
+    /**
+     * Test to make sure that the alternate flow is correctly used.
+     */
     @Test
     public void testTransitionFlowActivityWithFlowTransitions() {
         String returnToFlowLookupKey = null;
@@ -81,7 +88,7 @@ public class TestTransitionFlowActivity extends Assert {
         transitionFlowActivity.setNextFlowType(nextFlowType);
         String flowTypeName = flowTestingUtils.addFlowDefinition(new FlowActivityImpl(), transitionFlowActivity);
         FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
         // the alternate condition was not met.
@@ -89,16 +96,18 @@ public class TestTransitionFlowActivity extends Assert {
 
         flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
         flowState.setFinishType(TransitionType.alternate.toString());
+        // make sure cache can't help 'cheat'
+        flowState.clearCache();
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType);
-
+        assertNull(nextFlowState.getFinishType(), "nextFlowState="+nextFlowState);
     }
     /**
      * test a {@link TransitionFlowActivity} that transitions on a normal finish
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testTransitionFlowActivityWithNormalFinish() {
         String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();

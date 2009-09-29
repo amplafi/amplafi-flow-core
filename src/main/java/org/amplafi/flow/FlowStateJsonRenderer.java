@@ -45,10 +45,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         }
         jsonWriter.keyValueIfNotBlankValue(FS_LOOKUP_KEY, flowState.getLookupKey());
 
-        FlowValuesMap flowValuesMap = flowState.getFlowValuesMap();
-        if ( flowValuesMap != null && !flowValuesMap.isEmpty() ) {
-            jsonWriter.key(FS_PARAMETERS).value(flowValuesMap.getAsFlattenedStringMap());
-        }
+        jsonWriter.key(FS_PARAMETERS).value(flowState.getExportedValuesMap());
         return jsonWriter.endObject();
     }
 

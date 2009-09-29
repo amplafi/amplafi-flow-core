@@ -15,12 +15,9 @@
 package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.apache.commons.lang.StringUtils.*;
 import static org.amplafi.flow.PropertyUsage.*;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.isNumeric;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -135,8 +132,9 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     private Map<String, FlowPropertyDefinition> propertyDefinitions;
 
-    private static final Pattern compNamePattern = Pattern
-            .compile("([\\w]+)\\.flows\\.([\\w]+)FlowActivity$");
+    private String fullActivityInstanceNamespace;
+
+    private static final Pattern compNamePattern = Pattern.compile("([\\w]+)\\.flows\\.([\\w]+)FlowActivity$");
 
     public FlowActivityImpl() {
         if (this.getClass() != FlowActivityImpl.class) {
@@ -155,11 +153,11 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     protected void addStandardFlowPropertyDefinitions() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initPropertyUsage(activityLocal),
-            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initPropertyUsage(activityLocal)
+            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use),
+            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use),
+            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use),
+            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use),
+            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, internalState)
         );
     }
 
@@ -167,42 +165,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#initializeFlow()
      */
     public void initializeFlow() {
+        //TODO: this needs to be the same as FlowImpl's initializeFlow() code
         Map<String, FlowPropertyDefinition> props = this.getPropertyDefinitions();
         if (props != null) {
-            for (FlowPropertyDefinition propertyDefinition : props.values()) {
-                // move values from alternateNames to the true name.
-                // or just clear out the alternate names of their values.
-                for (String alternateName : propertyDefinition.getAlternates()) {
-                    String altProperty = getRawProperty(alternateName);
-                    setRawProperty(alternateName, null);
-                    if (isNotBlank(altProperty)) {
-                        initPropertyIfNull(propertyDefinition.getName(), altProperty);
-                    }
-                }
-                // if the property is not allowed to be overridden then we force
-                // initialize it.
-                String initial = propertyDefinition.getInitial();
-                if (initial != null) {
-                    if (!propertyDefinition.isInitialMode()) {
-                        String currentValue = getRawProperty(propertyDefinition.getName());
-                        if (!StringUtils.equals(initial, currentValue)) {
-                            if (currentValue != null) {
-                                throw new IllegalArgumentException(
-                                        this.getFullActivityName()
-                                                + '.'
-                                                + propertyDefinition.getName()
-                                                + " cannot be set to '"
-                                                + currentValue
-                                                + "' external to the flow. It is being force to the initial value of '"
-                                                + initial + "'");
-                            }
-                            setProperty(propertyDefinition.getName(), initial);
-                        }
-                    } else {
-                        initPropertyIfNull(propertyDefinition.getName(), initial);
-                    }
-                }
-            }
+            getFlowStateImplementor().initializeFlowProperties(this, props.values());
         }
     }
 
@@ -256,7 +222,8 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
         if ( MapUtils.isNotEmpty(definitions)) {
             for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
-                if (!entry.getValue().isCacheOnly() && entry.getValue().isSaveBack()) {
+                FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
+                if (!flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.isSaveBack()) {
                     Object cached = getCached(entry.getKey());
                     if (cached != null) {
                         // this means that we miss case when the value has been
@@ -327,9 +294,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      *        flow instance.
      * @return created {@link FlowState}
      */
-    protected FlowState createNewFlow(String spawnFlowTypeName) {
+    @SuppressWarnings("unchecked")
+    protected <FS extends FlowState> FS createNewFlow(String spawnFlowTypeName) {
         FlowManagement fm = getFlowManagement();
-        FlowState createdFlowState = fm.createFlowState(spawnFlowTypeName, getFlowState().getClearFlowValuesMap(), false);
+        FS createdFlowState = (FS) fm.createFlowState(spawnFlowTypeName, getFlowState().getExportedValuesMap(), false);
         return createdFlowState;
     }
 
@@ -346,6 +314,8 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired, FlowStepDirection)
      */
     public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+        // TODO : Don't validate if user is going backwards.
+        // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
         FlowValidationResult result = new ReportAllValidationResult();
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
         if (MapUtils.isNotEmpty(propDefs)) {
@@ -441,6 +411,31 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
+     * @see org.amplafi.flow.FlowActivity#getFullActivityInstanceNamespace()
+     */
+    @Override
+    public String getFullActivityInstanceNamespace() {
+        if ( this.fullActivityInstanceNamespace == null) {
+            if ( this.getFlowState() != null ) {
+                this.fullActivityInstanceNamespace = getFlowState().getLookupKey()+"."+getActivityName();
+            } else {
+                // we don't want to save this value because then if this method is called before a flowState is attached, then this flowActivity will never see the
+                // namespace that should be used after the flow is active.
+                return getFullActivityName();
+            }
+        }
+        return this.fullActivityInstanceNamespace;
+    }
+
+    public boolean isNamed(String possibleName) {
+        if ( isNotBlank(possibleName) ) {
+            return possibleName.equals(getActivityName()) || possibleName.equals(getFullActivityInstanceNamespace()) || possibleName.equals(getFullActivityName());
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @see org.amplafi.flow.FlowActivity#setActivatable(boolean)
      */
     public void setActivatable(boolean activatable) {
@@ -480,12 +475,22 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
+     *
      * @see org.amplafi.flow.FlowActivity#getFlowState()
      */
-    public FlowState getFlowState() {
-        return flow == null? null:flow.getFlowState();
+    @SuppressWarnings("unchecked")
+    @Override
+    public <FS extends FlowState> FS getFlowState() {
+        return flow == null? null:(FS)flow.getFlowState();
     }
 
+    /**
+     * @see org.amplafi.flow.FlowActivity#getFlowState()
+     */
+    @SuppressWarnings("unchecked")
+    protected <FS extends FlowStateImplementor> FS getFlowStateImplementor() {
+        return flow == null? null:(FS)flow.getFlowState();
+    }
     @SuppressWarnings("unchecked")
     public <T> T dup() {
         FlowActivityImpl clone;
@@ -591,12 +596,12 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     public FlowPropertyDefinition getPropertyDefinition(String key) {
         FlowPropertyDefinition propertyDefinition = getLocalPropertyDefinition(key);
         if (propertyDefinition == null) {
-            propertyDefinition = getFlowPropertyDefinition(key);
+            propertyDefinition = getFlowPropertyDefinitionDefinedInFlow(key);
         }
         return propertyDefinition;
     }
 
-    private FlowPropertyDefinition getFlowPropertyDefinition(String key) {
+    private FlowPropertyDefinition getFlowPropertyDefinitionDefinedInFlow(String key) {
         FlowPropertyDefinition flowPropertyDefinition = null;
         if ( this.getFlowState() != null) {
             flowPropertyDefinition = getFlowState().getFlowPropertyDefinition(key);
@@ -608,6 +613,11 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return flowPropertyDefinition;
     }
 
+    /**
+     * Look for the {@link FlowPropertyDefinition} in just this FlowActivity's local property definitions.
+     * @param key
+     * @return
+     */
     private FlowPropertyDefinition getLocalPropertyDefinition(String key) {
         Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
         FlowPropertyDefinition def = null;
@@ -617,9 +627,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return def;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
-     */
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
         FlowPropertyDefinition currentLocal;
         if (propertyDefinitions == null) {
@@ -640,7 +647,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         }
         if (!definition.isLocal()) {
             // this property may be from the Flow definition itself.
-            FlowPropertyDefinition current = this.getFlowPropertyDefinition(definition.getName());
+            FlowPropertyDefinition current = this.getFlowPropertyDefinitionDefinedInFlow(definition.getName());
             if (!definition.merge(current)) {
                 getLog().warn(this.getFlow().getFlowTypeName()
                                         + "."
@@ -648,7 +655,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
                                         + " has a FlowPropertyDefinition '"
                                         + definition.getName()
                                         + "' that conflicts with flow's definition. The FlowActivity's definition will be marked as local only.");
-                definition.setPropertyUsage(activityLocal);
+                definition.setPropertyScope(activityLocal);
             } else {
                 pushPropertyDefinitionToFlow(definition);
             }
@@ -658,14 +665,13 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinition definition) {
         if (getFlow() != null && !definition.isLocal()) {
-            FlowPropertyDefinition flowProp = this.getFlow().getPropertyDefinition(
-                    definition.getName());
+            FlowPropertyDefinition flowProp = this.getFlow().getPropertyDefinition( definition.getName());
             if (flowProp == null ) {
                 // push up to flow so that other can see it.
                 FlowPropertyDefinition cloned = definition.clone();
                 // a FPD may be pushed so for an earlier FA may not require the property be set.
                 cloned.setRequired(false);
-                this.getFlow().addPropertyDefinition(cloned);
+                this.getFlow().addPropertyDefinitions(cloned);
             } else if ( flowProp.isMergeable(definition)) {
                 flowProp.merge(definition);
                 flowProp.setRequired(false);
@@ -684,8 +690,8 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     /**
      * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(org.amplafi.flow.FlowPropertyDefinition[])
      */
-    public void addPropertyDefinitions(FlowPropertyDefinition... definitions) {
-        for (FlowPropertyDefinition definition : definitions) {
+    public void addPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
+        for (FlowPropertyDefinition definition : flowPropertyDefinitions) {
             this.addPropertyDefinition(definition);
         }
     }
@@ -693,8 +699,8 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     /**
      * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(java.lang.Iterable)
      */
-    public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> definitions) {
-        for (FlowPropertyDefinition def : definitions) {
+    public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
+        for (FlowPropertyDefinition def : flowPropertyDefinitions) {
             addPropertyDefinition(def);
         }
     }
@@ -746,20 +752,16 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @return raw string property.
      */
     public String getRawProperty(String key) {
-        return getFlowState().getRawProperty(this, key);
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        return getRawProperty(flowPropertyDefinition);
     }
 
     /**
-     *
-     * @see org.amplafi.flow.FlowActivityImplementor#setRawProperty(java.lang.String, java.lang.String)
+     * @param flowPropertyDefinition
+     * @return
      */
-    public boolean setRawProperty(String key, String value) {
-        String oldValue = getFlowState().getProperty(this.getActivityName(), key);
-        if (oldValue == null) {
-            return getFlowState().setProperty(key, value);
-        } else {
-            return getFlowState().setProperty(this.getActivityName(), key, value);
-        }
+    protected String getRawProperty(FlowPropertyDefinition flowPropertyDefinition) {
+        return getFlowStateImplementor().getRawProperty(this, flowPropertyDefinition);
     }
 
     public Boolean getRawBoolean(String key) {
@@ -768,11 +770,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     public Long getRawLong(String key) {
-        return getFlowState().getRawLong(this, key);
-    }
-
-    public void setRawLong(String key, Long value) {
-        this.setRawProperty(key, value != null ? value.toString() : null);
+        return getFlowStateImplementor().getRawLong(this, key);
     }
 
     // TODO .. injected
@@ -793,15 +791,21 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      */
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String key) {
-        T result = (T) getCached(key);
-        if (result == null) {
-            FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
-            if (flowPropertyDefinition == null) {
-                flowPropertyDefinition = getFlowState().createFlowPropertyDefinition(key, null, null);
-            }
-            result = (T) getFlowState().getProperty(this, flowPropertyDefinition);
-        }
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        T result = (T) getFlowStateImplementor().getProperty(this, flowPropertyDefinition);
         return result;
+    }
+
+    /**
+     * @param key
+     * @return
+     */
+    protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
+        FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
+        if (flowPropertyDefinition == null) {
+            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, sampleValue);
+        }
+        return flowPropertyDefinition;
     }
 
     /**
@@ -836,13 +840,19 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     @SuppressWarnings("unchecked")
     public <T> void setProperty(String key, T value) {
         Class<T> expected = (Class<T>) (value == null?null:value.getClass());
-        if ( getFlowState() != null) {
-            FlowPropertyDefinition propertyDefinition = getPropertyDefinition(key);
-            if (propertyDefinition == null ) {
-                propertyDefinition = getFlowState().createFlowPropertyDefinition(key, expected, value);
-            }
-            getFlowState().setProperty(this, propertyDefinition, value);
+        if ( getFlowState() != null) { // TODO: why are we ignoring (probably a test that should be fixed )
+            FlowPropertyDefinition propertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
+            setProperty(propertyDefinition, value);
         }
+    }
+
+    /**
+     * @param <T>
+     * @param propertyDefinition
+     * @param value
+     */
+    protected <T> void setProperty(FlowPropertyDefinition propertyDefinition, T value) {
+        getFlowStateImplementor().setProperty(this, propertyDefinition, value);
     }
 
     /**
@@ -879,15 +889,17 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @param key
      * @param value
      */
+    @Deprecated // should look at initCacheOnly()
     protected <T> T cache(String key, T value) {
-        getFlowState().setCached(key, value);
+        getFlowStateImplementor().setCached(getPropertyDefinition(key), this, value);
         return value;
     }
 
+    @Deprecated // should look at initCacheOnly()
     @SuppressWarnings("unchecked")
     protected <T> T getCached(String key) {
-        FlowState flowState = getFlowState();
-        return flowState == null ? null : (T) flowState.getCached(key);
+        FlowStateImplementor flowState = getFlowStateImplementor();
+        return flowState == null ? null : (T) flowState.getCached(getPropertyDefinition(key), this);
     }
 
     @Override
@@ -969,6 +981,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * other wise will affect the definitions.
      * see #2179 / #2192
      */
+    @SuppressWarnings("unchecked")
     protected void handleFlowPropertyValueProvider(String key, FlowPropertyValueProvider flowPropertyValueProvider) {
         FlowPropertyDefinition flowPropertyDefinition = this.getLocalPropertyDefinition(key);
         if ( flowPropertyDefinition != null) {
@@ -977,7 +990,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
             }
             flowPropertyDefinition.setFlowPropertyValueProvider(flowPropertyValueProvider);
         }
-        flowPropertyDefinition = this.getFlowPropertyDefinition(key);
+        flowPropertyDefinition = this.getFlowPropertyDefinitionDefinedInFlow(key);
         if ( flowPropertyDefinition != null) {
             if ( flowPropertyValueProvider instanceof ChainedFlowPropertyValueProvider) {
                 ((ChainedFlowPropertyValueProvider)flowPropertyValueProvider).setPrevious(flowPropertyDefinition.getFlowPropertyValueProvider());

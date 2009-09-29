@@ -19,7 +19,6 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import org.amplafi.flow.FlowStepDirection;
-import org.amplafi.flow.PropertyUsage;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowLifecycleState;
 import org.amplafi.flow.FlowManagement;
@@ -29,7 +28,7 @@ import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.apache.commons.lang.ObjectUtils;
-
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
 
 /**
  * A FlowActivity used to launch a new flow.
@@ -72,7 +71,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
     @Override
     public void addStandardFlowPropertyDefinitions() {
         super.addStandardFlowPropertyDefinitions();
-        this.addPropertyDefinitions(new FlowPropertyDefinitionImpl(FS_FLOW_TRANSITION_LABEL).initPropertyUsage(PropertyUsage.activityLocal));
+        this.addPropertyDefinitions(new FlowPropertyDefinitionImpl(FS_FLOW_TRANSITION_LABEL).initPropertyScope(activityLocal));
         initTransition();
     }
     @Override

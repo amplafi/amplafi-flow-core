@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-
 
 /**
  * Implementations hold the state of an active Flow. Implementers should expect
@@ -27,6 +25,16 @@ import org.apache.commons.logging.Log;
  */
 public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity> {
 
+    /**
+     * Copy all Flow-level {@link org.amplafi.flow.FlowPropertyDefinition}'s initial values to the flowState's key value map.
+     * Call each {@link FlowActivity#initializeFlow()}.
+     *
+     * used when the keys of the map may need to have a namespace assigned.
+     * For example, a key is supplied that represents a flowLocal property as defined by the FlowPropertyDefinition.
+     *
+     * TODO the equivalent for activityLocal properties.
+     */
+    public void initializeFlow();
     /**
      * Start the FlowState. Call each FlowActivity's initializeFlow(). Then
      * starting with the first FlowActivity, activate the FlowActivity by
@@ -47,8 +55,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return pageName of page to be displayed.
      */
     String resume();
-
-    void initializeFlow(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
     /**
      * Morphs the flowState to the new flow. In Morphing the FlowState has a new {@link Flow} definition.
@@ -121,8 +127,12 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getActiveFlowLabel();
 
-    <T extends FlowActivity> T getActivity(int activityIndex);
-
+    /**
+     * get FlowActivity by the {@link FlowActivity#getActivityName()}
+     * @param <T>
+     * @param activityName
+     * @return flowActivity
+     */
     <T extends FlowActivity> T getActivity(String activityName);
 
     /**
@@ -154,36 +164,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     int getCurrentActivityIndex();
 
-    String getRawProperty(String key);
-
-    String getProperty(String flowActivityName, String key);
-
-    /**
-     *
-     * @param flowActivityName
-     * @param key
-     * @param value
-     * @return true if the value has changed.
-     */
-    boolean setProperty(String flowActivityName, String key, String value);
-
-    /**
-     *
-     * @param flowActivity
-     * @param propertyDefinition
-     * @param value
-     * @return true if the value has changed.
-     */
-    boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, String value);
-
-    /**
-     *
-     * @param key
-     * @param value
-     * @return true if the value has changed.
-     */
-    boolean setProperty(String key, String value);
-
     boolean hasProperty(String key);
 
     <T extends FlowActivity> List<T> getActivities();
@@ -198,25 +178,10 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     boolean isFinishable();
 
     /**
-     * Called when this flowstate no longer represents the current flow. Assume
-     * that this FlowState may be G.C.'ed
-     */
-    void clearCache();
-
-    /**
      *
      * @return the flow title or the flow link title.
      */
     String getFlowTitle();
-
-    void setCached(String key, Object value);
-
-    <T> T getCached(String key);
-
-    /**
-     * @param flowManagement The flowManagement to set.
-     */
-    void setFlowManagement(FlowManagement flowManagement);
 
     /**
      * @return Returns the flowManagement.
@@ -228,8 +193,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     String getFlowTypeName();
 
     Flow getFlow();
-
-    String makeCurrent();
 
     boolean isTrue(String key);
 
@@ -295,8 +258,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     String getFinishType();
 
-    void setFlowLifecycleState(FlowLifecycleState flowLifecycleState);
-
     FlowLifecycleState getFlowLifecycleState();
 
     boolean isCompleted();
@@ -309,7 +270,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return the property value
      */
     <T> T getPropertyAsObject(String key, Class<T> expected);
-    String getPropertyAsObject(String key);
+    <T> T getPropertyAsObject(String key);
     <T> void setPropertyAsObject(String key, T value);
 
     boolean isActive();
@@ -323,20 +284,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     FlowValuesMap getFlowValuesMap();
 
     void setFlowValuesMap(FlowValuesMap flowValuesMap);
-
-    Log getLog();
-
-    String getRawProperty(FlowActivity flowActivity, String key);
-
-    <T> void setProperty(FlowActivity flowActivity,
-            FlowPropertyDefinition propertyDefinition, T value);
-
-    <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition);
-
-    Long getRawLong(FlowActivity flowActivity, String key);
-
-    <T> FlowPropertyDefinition createFlowPropertyDefinition(String key,
-            Class<T> expected, T sampleValue);
 
     boolean hasVisibleNext();
 
@@ -357,7 +304,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     /**
      * @return a FlowValuesMap with all the flowLocal, activityLocal values cleared.
      */
-    FlowValuesMap getClearFlowValuesMap();
+    FlowValuesMap getExportedValuesMap();
 
     /**
      * @param possibleReferencedState
