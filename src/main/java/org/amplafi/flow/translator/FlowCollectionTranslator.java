@@ -20,12 +20,15 @@ import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONArray;
-import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
 import org.apache.commons.lang.ObjectUtils;
 
 
-
+/**
+ * Base class to handle collections.
+ * @param <C>
+ * @param <T>
+ */
 public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, T> extends AbstractFlowTranslator<C> {
     public FlowCollectionTranslator() {
         this.addSerializedFormClasses(JSONArray.class);
