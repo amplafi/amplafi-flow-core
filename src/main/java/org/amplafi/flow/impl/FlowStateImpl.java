@@ -248,7 +248,8 @@ public class FlowStateImpl implements FlowStateImplementor {
             // TODO set valueSet if flowPropertyDefinition.isInitialSet() -- can't check for null because null may be initial value ( see note about PropertyUsage#initialize )
             value = flowPropertyDefinition.getInitial();
             // TODO: what about flowPropertyValueProviders -- but need to handle lazy initialization + and better handling of initializing to null.
-            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null) {
+            // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
+            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowActivity != null) {
                 value = flowPropertyDefinition.getFlowPropertyValueProvider().get(flowActivity, flowPropertyDefinition);
             }
         }
