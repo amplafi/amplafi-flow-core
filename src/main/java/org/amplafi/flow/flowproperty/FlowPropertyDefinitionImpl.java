@@ -414,7 +414,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
 
     @Override
     public String toString() {
-        return toComponentDef() +"(scope="+getPropertyScope()+") (usage="+getPropertyUsage()+") :"+this.dataClassDefinition;
+        return toComponentDef() +"(scope="+getPropertyScope()+", usage="+getPropertyUsage()+") :"+this.dataClassDefinition;
     }
 
     public String toComponentDef() {
@@ -480,7 +480,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     /**
-     * @return
+     * @return true if the propertyUsage is explicitly set.
      */
     public boolean isPropertyUsageSet() {
         return this.propertyUsage != null;
