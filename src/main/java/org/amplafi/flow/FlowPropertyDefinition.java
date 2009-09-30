@@ -22,6 +22,8 @@ import org.amplafi.flow.flowproperty.PropertyScope;
  * Defines a property that will be assigned as part of a {@link Flow} or
  * {@link FlowActivity}. This allows the value to be available to the component
  * or page referenced by a {@link FlowActivity}.
+ *
+ * TODO: split into 2 interfaces so that there can be immutable FlowPropertyDefinition
  */
 public interface FlowPropertyDefinition {
     String getName();
@@ -32,6 +34,11 @@ public interface FlowPropertyDefinition {
 
     DataClassDefinition getDataClassDefinition();
 
+    /**
+     * merge the information from source into this FlowPropertyDefinition.
+     * @param source
+     * @return true if merge was successful.
+     */
     boolean merge(FlowPropertyDefinition source);
 
     /**
@@ -74,12 +81,6 @@ public interface FlowPropertyDefinition {
     boolean isSaveBack();
 
     String getInitial();
-
-//    /**
-//     * @return if true, the initial value of the property can be overridden by a
-//     * passed in value.
-//     */
-//    boolean isInitialValueOptional();
 
     /**
      * @return all possible names for this FlowPropertyDefinition, including

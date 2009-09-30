@@ -19,7 +19,6 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowUtils;
-import org.amplafi.flow.PropertyUsage;
 
 /**
  * used to return standard message keys.
