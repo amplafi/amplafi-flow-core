@@ -29,7 +29,9 @@ import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowTestingUtils;
 import org.amplafi.flow.PropertyRequired;
@@ -500,7 +502,6 @@ public class TestFlowPropertyDefinition {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
         assertNotNull(flowState);
-        // expect null because
         String propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
         assertEquals("true",propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         flowState.next();
@@ -510,6 +511,35 @@ public class TestFlowPropertyDefinition {
         propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
         assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         assertEquals("true", propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+    }
+
+    /**
+     * Test to make sure property initialization is forced and that the initialization code does not expect a String.
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testForcedInitializationWithFlowPropertyValueProvider() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String propertyName = "propertyName";
+
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
+        flowLocalProperty.initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowActivity>() {
+
+            @Override
+            public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+                // return a non-String value to make sure initialization does not expect a string.
+                return (T) Boolean.TRUE;
+            }
+        });
+        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        flowActivity0.setActivityName("activity0");
+        flowActivity0.addPropertyDefinitions(flowLocalProperty);
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        assertNotNull(flowState);
+        Boolean propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        assertEquals(Boolean.TRUE,propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
     }
     @DataProvider(name = "serializationData")
     protected Object[][] getDataForSerialization() {
