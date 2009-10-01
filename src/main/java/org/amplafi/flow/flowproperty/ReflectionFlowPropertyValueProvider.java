@@ -31,6 +31,10 @@ import com.sworddance.beans.BeanWorker;
  * example: "messagePoint" means:
  * 1) retrieve "messagePoint"
  * 2) do reflection using the propertyNames to get the value.
+ *
+ * TODO: Create ability to define the {@link FlowPropertyDefinitionImpl} Default property name would be the last property in the list. So "httpManager.cachedUris" would define
+ * the "cachedUris" property (default)
+ *
  * @author patmoore
  *
  */
