@@ -27,7 +27,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.FlowValueMapKey;
 
-public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
+public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, String>, Serializable {
 
     private Map<DefaultFlowValuesMapKey, String> map;
 
@@ -72,7 +72,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
     public Map<String, String> getAsFlattenedStringMap() {
         return getAsStringMap(false, true);
     }
-    public CharSequence remove(Object namespace, Object key) {
+    public String remove(Object namespace, Object key) {
         return map.remove(toKey(namespace, key));
     }
 
@@ -100,7 +100,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     @Override
-    public String put(FlowValueMapKey key, CharSequence value) {
+    public String put(FlowValueMapKey key, String value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
     public String put(Object key, Object value) {
@@ -125,7 +125,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Set<java.util.Map.Entry<CharSequence, String>> entrySet() {
+    public Set<java.util.Map.Entry<FlowValueMapKey, String>> entrySet() {
         Set s = this.map.entrySet();
         return s;
     }
@@ -134,7 +134,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap, Serializable {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Set<CharSequence> keySet() {
+    public Set<FlowValueMapKey> keySet() {
         Set keySet = this.map.keySet();
         return keySet;
     }
