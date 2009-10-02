@@ -958,7 +958,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     protected boolean setRawProperty(FlowActivity flowActivity, String namespace, String key, String value) {
         String oldValue = getRawProperty(namespace, key);
-        if (!equalsIgnoreCase(value, oldValue)) {
+        if (!StringUtils.equals(value, oldValue)) {
             FlowActivity activity = getActivity(namespace);
             if ( activity == null) {
                 activity = flowActivity!=null?flowActivity:getCurrentFlowActivityImplementor();
