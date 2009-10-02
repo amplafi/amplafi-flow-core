@@ -20,17 +20,16 @@ package org.amplafi.flow;
  */
 public interface FlowActivityImplementor extends FlowActivity {
     /**
-     * Only called if value != oldValue.
+     * Called when a property changes value.
      *
      * @param flowActivityName
      * @param key
-     * @param value
-     * @param oldValue
+     * @param newValue the new raw property value
+     * @param oldValue the old raw property value.
      * @return what the value should be. Usually just return the value
-     *         parameter.
+     *         parameter. By default should be 'value'.
      */
-    String propertyChange(String flowActivityName, String key, String value,
-        String oldValue);
+    String propertyChange(String flowActivityName, String key, String newValue, String oldValue);
 
     /**
      * @return instance of this definition

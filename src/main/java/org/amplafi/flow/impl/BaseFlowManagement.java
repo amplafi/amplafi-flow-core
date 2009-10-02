@@ -419,7 +419,7 @@ public class BaseFlowManagement implements FlowManagement {
 
                 // look for redirect before clearing the flow state
                 // why before cache clearing?
-                String redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
+                URI redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
                 String returnToFlowId = fs.getPropertyAsObject(FSRETURN_TO_FLOW);
                 FlowState returnToFlow = getFlowState(returnToFlowId);
                 fs.clearCache();
@@ -429,7 +429,7 @@ public class BaseFlowManagement implements FlowManagement {
                     // so we return the current flow's page.
                     return sessionFlows.getFirst().getCurrentPage();
                 } else if (redirect!=null) {
-                    return redirect;
+                    return redirect.toString();
                 } else if ( returnToFlow != null) {
                     return makeCurrent(returnToFlow);
                 } else if ( returnToFlowId != null ) {

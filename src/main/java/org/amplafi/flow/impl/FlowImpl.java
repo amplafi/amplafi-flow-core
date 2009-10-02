@@ -125,7 +125,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
             new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
             new FlowPropertyDefinitionImpl(FSALT_FINISHED).initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSREFERING_URL, URI.class).initPropertyUsage(use),
+            new FlowPropertyDefinitionImpl(FSREFERRING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),

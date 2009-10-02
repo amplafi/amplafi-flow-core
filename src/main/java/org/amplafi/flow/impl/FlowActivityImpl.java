@@ -19,6 +19,7 @@ import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.apache.commons.lang.StringUtils.*;
 import static org.amplafi.flow.PropertyUsage.*;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -816,6 +817,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return (T) getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass));
     }
 
+    @Deprecated // should just use getProperty(String)
     public String getString(String key) {
         return getProperty(key);
     }
@@ -874,9 +876,12 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
 
+    /**
+     *
+     * @see org.amplafi.flow.FlowActivityImplementor#propertyChange(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+     */
     @SuppressWarnings("unused")
-    public String propertyChange(String flowActivityName, String key, String value,
-            String oldValue) {
+    public String propertyChange(String flowActivityName, String key, String value,String oldValue) {
         return value;
     }
 
@@ -970,7 +975,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         saveBack();
     }
 
-    protected void redirectTo(String uri) {
+    protected void redirectTo(URI uri) {
         setProperty(FlowConstants.FSREDIRECT_URL, uri);
     }
 
