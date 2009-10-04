@@ -251,6 +251,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
             if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowActivity != null) {
                 // trigger property
+                @SuppressWarnings("unused")
                 Object v = getProperty(flowActivity, flowPropertyDefinition);
                 // HACK we should? flow through?
                 return;
@@ -278,11 +279,13 @@ public class FlowStateImpl implements FlowStateImplementor {
     /**
      * @see org.amplafi.flow.FlowState#getExportedValuesMap()
      */
+    @SuppressWarnings("unchecked")
     @Override
     public FlowValuesMap getExportedValuesMap() {
         FlowValuesMap valuesMap =exportProperties(false);
         return valuesMap;
     }
+    @SuppressWarnings("unchecked")
     protected FlowValuesMap createFlowValuesMapCopy() {
         return new DefaultFlowValuesMap(getFlowValuesMap());
     }
@@ -290,8 +293,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     /**
      * When exporting we start from all the values in the flowValuesMap. This is because the current flow may not be aware of/understand
      * all the properties. This flow is just passing the values on unaltered.
+     *
+     * TODO: if flow is still in progress then flowLocal/activityLocal values should be in the export map -- so that callees can get values.
      * @param clearFrom
-     * @return
+     * @return the exported values
      */
     @SuppressWarnings("unchecked")
     protected FlowValuesMap<FlowValueMapKey, CharSequence> exportProperties(boolean clearFrom) {
@@ -310,6 +315,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         // TODO should we clear all non-global namespace values? We have slight leak through when undefined properties are set on a flow.
         return exportValueMap;
     }
+    @SuppressWarnings("unchecked")
     public void exportProperties(FlowValuesMap exportValueMap, Iterable<FlowPropertyDefinition> flowPropertyDefinitions, FlowActivityImplementor flowActivity, boolean clearFrom) {
         for (FlowPropertyDefinition flowPropertyDefinition : flowPropertyDefinitions) {
             exportFlowProperty(exportValueMap, flowPropertyDefinition, flowActivity, clearFrom);
@@ -321,6 +327,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @param flowActivity
      * @param flowCompletingExport The FlowState is completing so all clean up actions on the FlowState can be performed as part of this export.
      */
+    @SuppressWarnings("unchecked")
     public void exportFlowProperty(FlowValuesMap exportValueMap, FlowPropertyDefinition flowPropertyDefinition, FlowActivityImplementor flowActivity, boolean flowCompletingExport) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.

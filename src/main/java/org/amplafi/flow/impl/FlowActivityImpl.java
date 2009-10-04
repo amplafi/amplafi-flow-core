@@ -314,6 +314,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     /**
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.flowproperty.PropertyRequired, FlowStepDirection)
      */
+    @SuppressWarnings("unused")
     public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         // TODO : Don't validate if user is going backwards.
         // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
@@ -759,7 +760,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     /**
      * @param flowPropertyDefinition
-     * @return
+     * @return the property as a string not converted to the object.
      */
     protected String getRawProperty(FlowPropertyDefinition flowPropertyDefinition) {
         return getFlowStateImplementor().getRawProperty(this, flowPropertyDefinition);
@@ -799,7 +800,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
 
     /**
      * @param key
-     * @return
+     * @return a flow property definition, if none then the definition is created
      */
     protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
         FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
