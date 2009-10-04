@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.PropertyRequired;
 
 /*
  * @author patmoore

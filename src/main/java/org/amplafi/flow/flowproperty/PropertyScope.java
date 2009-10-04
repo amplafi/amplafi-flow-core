@@ -13,9 +13,8 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.PropertyUsage;
-import static org.amplafi.flow.PropertyUsage.*;
 import static org.amplafi.flow.flowproperty.PropertySecurity.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 
 /**
  *

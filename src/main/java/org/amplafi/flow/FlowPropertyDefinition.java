@@ -16,7 +16,9 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.PropertyRequired;
 import org.amplafi.flow.flowproperty.PropertyScope;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -65,7 +67,7 @@ public interface FlowPropertyDefinition {
 
     /**
      * @return if property is local to the flow activity
-     * @see org.amplafi.flow.PropertyUsage#activityLocal
+     * @see org.amplafi.flow.flowproperty.PropertyUsage#activityLocal
      */
     boolean isLocal();
 

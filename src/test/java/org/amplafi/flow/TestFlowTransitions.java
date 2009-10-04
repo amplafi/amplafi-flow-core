@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.ShortFlowTranslator;
 import org.amplafi.flow.impl.FlowImpl;

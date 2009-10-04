@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.amplafi.flow.flowproperty.PropertyRequired;
+
 
 /**
  * Implementations hold the state of an active Flow. Implementers should expect

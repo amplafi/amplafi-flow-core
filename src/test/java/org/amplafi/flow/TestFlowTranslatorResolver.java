@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.PropertyRequired;
+import org.amplafi.flow.flowproperty.PropertyRequired;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;

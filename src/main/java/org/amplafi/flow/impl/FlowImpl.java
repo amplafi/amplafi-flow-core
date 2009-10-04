@@ -37,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.PropertyUsage.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 
 
 /**

@@ -34,11 +34,10 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowTestingUtils;
-import org.amplafi.flow.PropertyRequired;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.PropertyUsage.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 
 /**
  * Tests {@link FlowPropertyDefinitionImpl}.

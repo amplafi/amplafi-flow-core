@@ -21,11 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -38,10 +35,10 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
-import org.amplafi.flow.PropertyUsage;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -95,10 +92,7 @@ public class BaseFlowManagement implements FlowManagement {
      * @see org.amplafi.flow.FlowManagement#getCurrentFlowState()
      */
     @SuppressWarnings("unchecked")
-    public synchronized <FS extends FlowState> FS getCurrentFlowState() {
-        if (sessionFlows.isEmpty()) {
-            return null;
-        }
+    public <FS extends FlowState> FS getCurrentFlowState() {
         return (FS) sessionFlows.getFirst();
     }
     /**
@@ -602,94 +596,5 @@ public class BaseFlowManagement implements FlowManagement {
      */
     public PageProvider getPageProvider() {
         return pageProvider;
-    }
-
-    protected static class SessionFlows implements Iterable<FlowStateImplementor>{
-        private LinkedList<FlowStateImplementor> activeFlows = new LinkedList<FlowStateImplementor>();
-        private Map<String, FlowStateImplementor> activeFlowsMap = new ConcurrentHashMap<String, FlowStateImplementor>();
-        public synchronized boolean remove(FlowStateImplementor flowState) {
-            activeFlowsMap.values().remove(flowState);
-            return activeFlows.remove(flowState);
-        }
-        /**
-         * @param lookupKey
-         * @return the removed {@link FlowState} with the supplied lookupKey.
-         */
-        public synchronized FlowState removeByLookupKey(String lookupKey) {
-            FlowState flowState = activeFlowsMap.remove(lookupKey);
-            activeFlows.remove(flowState);
-            return flowState;
-        }
-        /**
-         * @return true if no active flows.
-         */
-        public synchronized boolean isEmpty() {
-            return activeFlows.isEmpty();
-        }
-        public boolean add(FlowStateImplementor flowState) {
-            addLast(flowState);
-            return true;
-        }
-        public synchronized FlowStateImplementor getFirst() {
-            return isEmpty()?null:activeFlows.getFirst();
-        }
-        public synchronized void addLast(FlowStateImplementor flowState) {
-            activeFlowsMap.put(flowState.getLookupKey(), flowState);
-            activeFlows.add(flowState);
-        }
-        public synchronized void makeFirst(FlowStateImplementor flowState) {
-            if ( getFirst() == flowState) {
-                return;
-            } else if ( activeFlowsMap.containsKey(flowState)) {
-                activeFlows.remove(flowState);
-            }
-            activeFlowsMap.put(flowState.getLookupKey(), flowState);
-            activeFlows.addFirst(flowState);
-        }
-        public synchronized int makeAfter(FlowStateImplementor flowState, FlowStateImplementor nextFlowState) {
-            if(!activeFlowsMap.containsKey(flowState.getLookupKey())) {
-                throw new IllegalStateException(flowState.getLookupKey()+ ": not a current flow");
-            }
-            int oldPosition = -1;
-            for(int i = 0; i < this.activeFlows.size(); ) {
-                FlowStateImplementor state = this.activeFlows.get(i);
-                if ( state == nextFlowState) {
-                    oldPosition = i;
-                    this.activeFlows.remove(i);
-                } else {
-                    if ( state == flowState) {
-                        this.add(++i, nextFlowState);
-                    }
-                    i++;
-                }
-            }
-            return oldPosition;
-        }
-        /**
-         * @param i
-         * @param nextFlowState
-         */
-        public synchronized void add(int i, FlowStateImplementor nextFlowState) {
-            this.activeFlows.add(i, nextFlowState);
-            this.activeFlowsMap.put(nextFlowState.getLookupKey(), nextFlowState);
-        }
-        public synchronized FlowState get(String lookupKey) {
-            if (lookupKey == null ) {
-                throw new IllegalArgumentException("lookupKey for flow is null!");
-            }
-            return this.activeFlowsMap.get(lookupKey);
-        }
-        /**
-         * @see java.lang.Iterable#iterator()
-         */
-        @Override
-        public synchronized Iterator<FlowStateImplementor> iterator() {
-            return this.activeFlows.iterator();
-        }
-
-        @Override
-        public String toString() {
-            return "Session Flows : " + join(this.activeFlows, ", ");
-        }
     }
 }

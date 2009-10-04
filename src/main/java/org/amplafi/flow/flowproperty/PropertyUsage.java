@@ -12,7 +12,7 @@
  * License.
  */
 
-package org.amplafi.flow;
+package org.amplafi.flow.flowproperty;
 
 import java.util.Arrays;
 import java.util.List;

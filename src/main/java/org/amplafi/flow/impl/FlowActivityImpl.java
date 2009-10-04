@@ -16,8 +16,8 @@ package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 import static org.apache.commons.lang.StringUtils.*;
-import static org.amplafi.flow.PropertyUsage.*;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -312,7 +312,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.PropertyRequired, FlowStepDirection)
+     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.flowproperty.PropertyRequired, FlowStepDirection)
      */
     public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
         // TODO : Don't validate if user is going backwards.
