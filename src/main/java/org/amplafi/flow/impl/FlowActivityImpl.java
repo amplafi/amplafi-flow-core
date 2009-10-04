@@ -818,7 +818,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return (T) getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass));
     }
 
-    @Deprecated // should just use getProperty(String)
     public String getString(String key) {
         return getProperty(key);
     }
