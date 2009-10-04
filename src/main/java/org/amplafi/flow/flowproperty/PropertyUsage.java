@@ -55,7 +55,7 @@ public enum PropertyUsage {
 
     /**
      * Like {@link #creates} except that any previous value will be ignored.
-     * If the property has a FlowPropertyValueProvider, the FlowPropertyValueProvider will be called on {@link FlowState#initializeFlow()}.
+     * If the property has a FlowPropertyValueProvider, the FlowPropertyValueProvider will be called on {@link org.amplafi.flow.impl.FlowStateImplementor#initializeFlow()}.
      *
      * TODO: does this mean eager initialization ( to allow for triggering of activities that take a while to initialize? ) OR do is a new propertyUsage better?
      */

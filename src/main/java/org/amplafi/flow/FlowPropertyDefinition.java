@@ -67,7 +67,7 @@ public interface FlowPropertyDefinition {
 
     /**
      * @return if property is local to the flow activity
-     * @see org.amplafi.flow.flowproperty.PropertyUsage#activityLocal
+     * @see org.amplafi.flow.flowproperty.PropertyScope#activityLocal
      */
     boolean isLocal();
 
@@ -128,12 +128,12 @@ public interface FlowPropertyDefinition {
     PropertyScope getPropertyScope();
 
     /**
-     * @return
+     * @return true if propertyScope has been explicitly set.
      */
     boolean isPropertyScopeSet();
 
     /**
-     * @return
+     * @return true if propertyUsage has been explicitly set.
      */
     boolean isPropertyUsageSet();
 }

@@ -22,6 +22,8 @@ import org.apache.commons.lang.ObjectUtils;
 
 /**
  * {@link org.amplafi.flow.FlowPropertyValueProvider} that handles statically provided values.
+ *
+ * Exploring as alternative to {@link FlowPropertyDefinitionImpl#getInitial()}
  * @param <FA>
  *
  */
@@ -76,7 +78,7 @@ public class FixedFlowPropertyValueProvider<FA extends FlowActivity> extends Abs
         return (T) this.getDefaultValue(flowPropertyDefinition);
     }
     /**
-     * @return
+     * @return the value as a string.
      */
     public String getDefaultString() {
         return ObjectUtils.toString(defaultObject);
@@ -93,8 +95,8 @@ public class FixedFlowPropertyValueProvider<FA extends FlowActivity> extends Abs
 
     @Override
     public boolean equals(Object o) {
-        if ( o instanceof FixedFlowPropertyValueProvider) {
-            return ObjectUtils.equals(this.defaultObject, ((FixedFlowPropertyValueProvider)o).defaultObject);
+        if ( o instanceof FixedFlowPropertyValueProvider<?>) {
+            return ObjectUtils.equals(this.defaultObject, ((FixedFlowPropertyValueProvider<?>)o).defaultObject);
         } else {
             return ObjectUtils.equals(this.defaultObject, o);
         }

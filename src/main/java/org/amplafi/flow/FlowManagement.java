@@ -155,7 +155,7 @@ public interface FlowManagement {
      * @param <FS>
      * @param flowState
      * @param key that will return a Map<String, {@link FlowTransition} > the flowState getFinishType will be used as key into this map.
-     * @return
+     * @return the flow transitioning to.
      */
     <FS extends FlowState> FS transitionToFlowState(FlowState flowState, String key);
 
