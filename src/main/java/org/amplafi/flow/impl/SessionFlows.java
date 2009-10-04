@@ -22,7 +22,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.FlowState;
 
-class SessionFlows implements Iterable<FlowStateImplementor>{
+public class SessionFlows implements Iterable<FlowStateImplementor>{
     private LinkedList<FlowStateImplementor> activeFlows = new LinkedList<FlowStateImplementor>();
     private Map<String, FlowStateImplementor> activeFlowsMap = new ConcurrentHashMap<String, FlowStateImplementor>();
     public synchronized boolean remove(FlowStateImplementor flowState) {
