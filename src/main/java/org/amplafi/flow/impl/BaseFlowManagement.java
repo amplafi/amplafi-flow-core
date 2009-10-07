@@ -402,42 +402,51 @@ public class BaseFlowManagement implements FlowManagement {
      * @see org.amplafi.flow.FlowManagement#dropFlowStateByLookupKey(java.lang.String)
      */
     public synchronized String dropFlowStateByLookupKey(String lookupKey) {
-        if ( !sessionFlows.isEmpty()) {
-            FlowStateImplementor fs = sessionFlows.getFirst();
-            boolean first = fs.hasLookupKey(lookupKey);
-            fs = (FlowStateImplementor) sessionFlows.removeByLookupKey(lookupKey);
-            if ( fs != null ) {
-                if ( !fs.getFlowLifecycleState().isTerminatorState()) {
-                    fs.setFlowLifecycleState(FlowLifecycleState.canceled);
-                }
+        getLog().debug("Dropping flow "+lookupKey);
+        boolean successful = false;
+        try {
+            if ( !sessionFlows.isEmpty()) {
+                FlowStateImplementor fs = sessionFlows.getFirst();
+                boolean first = fs.hasLookupKey(lookupKey);
+                fs = (FlowStateImplementor) sessionFlows.removeByLookupKey(lookupKey);
+                if ( fs != null ) {
+                    successful = true;
+                    if ( !fs.getFlowLifecycleState().isTerminatorState()) {
+                        fs.setFlowLifecycleState(FlowLifecycleState.canceled);
+                    }
 
-                // look for redirect before clearing the flow state
-                // why before cache clearing?
-                URI redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
-                String returnToFlowId = fs.getPropertyAsObject(FSRETURN_TO_FLOW);
-                FlowState returnToFlow = getFlowState(returnToFlowId);
-                fs.clearCache();
+                    // look for redirect before clearing the flow state
+                    // why before cache clearing?
+                    URI redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
+                    String returnToFlowId = fs.getPropertyAsObject(FSRETURN_TO_FLOW);
+                    FlowState returnToFlow = getFlowState(returnToFlowId);
+                    fs.clearCache();
 
-                if ( !first ) {
-                    // dropped flow was not the current flow
-                    // so we return the current flow's page.
-                    return sessionFlows.getFirst().getCurrentPage();
-                } else if (redirect!=null) {
-                    return redirect.toString();
-                } else if ( returnToFlow != null) {
-                    return makeCurrent(returnToFlow);
-                } else if ( returnToFlowId != null ) {
-                    getLog().warn("FlowState ("+fs.getLookupKey()+ ") trying to return to a flowState ("+returnToFlowId+") that could not be found.");
-                }
-                if ( !sessionFlows.isEmpty() ) {
-                    return makeCurrent(sessionFlows.getFirst());
-                } else {
-                    // no other flows...
-                    return fs.getAfterPage();
+                    if ( !first ) {
+                        // dropped flow was not the current flow
+                        // so we return the current flow's page.
+                        return sessionFlows.getFirst().getCurrentPage();
+                    } else if (redirect!=null) {
+                        return redirect.toString();
+                    } else if ( returnToFlow != null) {
+                        return makeCurrent(returnToFlow);
+                    } else if ( returnToFlowId != null ) {
+                        getLog().warn("FlowState ("+fs.getLookupKey()+ ") trying to return to a flowState ("+returnToFlowId+") that could not be found.");
+                    }
+                    if ( !sessionFlows.isEmpty() ) {
+                        return makeCurrent(sessionFlows.getFirst());
+                    } else {
+                        // no other flows...
+                        return fs.getAfterPage();
+                    }
                 }
             }
+            return null;
+        } finally {
+            if ( !successful) {
+                getLog().info("Did not find flow to drop. key="+lookupKey);
+            }
         }
-        return null;
     }
 
     /**
