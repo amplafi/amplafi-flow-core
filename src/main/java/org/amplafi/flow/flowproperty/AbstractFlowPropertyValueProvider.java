@@ -13,6 +13,7 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -80,5 +81,9 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
             }
             return result;
         }
+    }
+
+    public Collection<String> getPropertiesHandled() {
+        return this.propertiesHandled;
     }
 }
