@@ -919,6 +919,12 @@ public class FlowStateImpl implements FlowStateImplementor {
             result = (T) propertyDefinition.parse(value);
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowActivity);
+                // TODO: Maybe should be checking !isCacheOnly() ?
+                if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
+                    // so the flowState has the generated value.
+                    // this will make visible to json exporting.
+                    setProperty(flowActivity, propertyDefinition, result);
+                }
             }
             setCached(propertyDefinition, flowActivity, result);
         }
