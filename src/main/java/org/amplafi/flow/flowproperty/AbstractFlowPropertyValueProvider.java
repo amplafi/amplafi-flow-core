@@ -39,12 +39,9 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
     }
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
-        for(String propertyName: propertiesHandled) {
-            if (flowPropertyDefinition.isNamed(propertyName)) {
-                return;
-            }
+        if ( !isHandling(flowPropertyDefinition)) {
+            throw new IllegalArgumentException(flowPropertyDefinition+": is not handled by "+this.getClass().getCanonicalName()+" only "+propertiesHandled);
         }
-        throw new IllegalArgumentException(flowPropertyDefinition+": is not handled by "+this.getClass().getCanonicalName()+" only "+propertiesHandled);
     }
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
@@ -85,5 +82,19 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
 
     public Collection<String> getPropertiesHandled() {
         return this.propertiesHandled;
+    }
+
+    /**
+     *
+     * @param flowPropertyDefinition
+     * @return true if this {@link FlowPropertyDefinitionProvider} handles the {@link FlowPropertyDefinition}.
+     */
+    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        for(String propertyName: propertiesHandled) {
+            if (flowPropertyDefinition.isNamed(propertyName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
