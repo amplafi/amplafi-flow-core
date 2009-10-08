@@ -313,6 +313,11 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getValidators(), "peas,peanuts");
     }
 
+    /**
+     * test all combinations of PropertyUsage and PropertyScope.
+     * Only the correct combinations will result in external values initializing the flow
+     * Test to make sure only exposed values will be copied back to the global namespace.
+     */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyInitialization() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -344,7 +349,7 @@ public class TestFlowPropertyDefinition {
                 String name= propertyScope+"_"+propertyUsage;
                 String externalInitial = "ext_"+name;
                 String actual = flowState.getPropertyAsObject(name);
-                if ( propertyUsage.isExternallySettable()) {
+                if ( !propertyScope.isCacheOnly() && propertyUsage.isExternallySettable()) {
                     assertEquals(actual, externalInitial, "PropertyUsage="+propertyUsage+" flowState="+flowState);
                 } else {
                     assertNull(actual, "PropertyUsage="+propertyUsage+" flowState="+flowState);
@@ -362,9 +367,9 @@ public class TestFlowPropertyDefinition {
                 String externalInitial = "ext_"+name;
                 String changed = "chg_"+name;
                 String actual = finalMap.get(name);
-                if ( propertyUsage.isCopyBackOnFlowSuccess() || propertyScope == global) {
+                if ( !propertyScope.isCacheOnly() && propertyUsage.isCopyBackOnFlowSuccess() || propertyScope == global) {
                     assertEquals(actual, changed, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
-                } else if ( propertyUsage.isCleanOnInitialization()) {
+                } else if ( !propertyScope.isCacheOnly() && propertyUsage.isCleanOnInitialization()) {
                     assertNull(actual, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
                 } else {
                     assertEquals(actual, externalInitial, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);

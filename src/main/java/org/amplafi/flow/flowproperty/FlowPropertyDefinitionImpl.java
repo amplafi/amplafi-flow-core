@@ -73,14 +73,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     private String uiComponentParameterName;
 
     /**
-     * Property should not be persisted as string in the FlowState map. This is
-     * useful caching values during this transaction. TODO maybe allow
-     * non-entities that are Serializable to last beyond current transaction?
-     */
-    @Deprecated // maybe -- we may want cacheOnly, neverCache (passwords ), normal
-    private Boolean cacheOnly;
-
-    /**
      * on {@link FlowActivity#passivate(boolean, FlowStepDirection)} the object should be saved
      * back. This allows complex object to have their string representation
      * saved. Necessary for cases when setProperty() is not used to save value
@@ -130,7 +122,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
             alternates.addAll(clone.alternates);
         }
         autoCreate = clone.autoCreate;
-        cacheOnly = clone.cacheOnly;
         this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.setInitial(clone.initial);
@@ -465,7 +456,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      * @param propertyUsage the propertyUsage to set
      */
     public void setPropertyUsage(PropertyUsage propertyUsage) {
-        this.propertyUsage = setCheckTemplateState(this.propertyUsage, propertyUsage);
+        if ( this.getPropertyScope().isAllowedPropertyUsage(propertyUsage)) {
+            this.propertyUsage = setCheckTemplateState(this.propertyUsage, propertyUsage);
+        } else {
+            // throw exception?
+        }
     }
 
     /**
@@ -517,35 +512,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage);
     }
 
-    public void setCacheOnly(boolean cacheOnly) {
-        // if its sensitive we have already forced this to cache only.
-        // this prevents passwords from being saved into the flowstate db table.
-        if (!isSensitive()) {
-            this.cacheOnly = cacheOnly;
-        }
-    }
-
-    /**
-     * modifications to this property are not persisted, but are cached.
-     *
-     * @return true if modifications are not persisted.
-     */
-    public boolean isCacheOnly() {
-        return getBoolean(cacheOnly);
-    }
-
-    /**
-     * also sets {@link PropertyScope#flowLocal}
-     * @return this
-     */
-    public FlowPropertyDefinitionImpl initCacheOnly() {
-        setCacheOnly(true);
-        if ( this.propertyScope == null ) {
-            setPropertyScope(PropertyScope.flowLocal);
-        }
-        // TODO : Maybe should set saveBack(false)
-        return this;
-    }
     /**
      * affects isEntity()
      *
@@ -700,9 +666,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
             this.setAutoCreate(source.autoCreate);
         }
         this.dataClassDefinition.merge(source.dataClassDefinition);
-        if (cacheOnly == null && source.cacheOnly != null) {
-            this.setCacheOnly(source.cacheOnly);
-        }
+
         if ( isNotEmpty(source.alternates)) {
             if (alternates == null ) {
                 alternates = new HashSet<String>(source.alternates);
@@ -775,6 +739,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         return this;
     }
 
+    public boolean isCacheOnly() {
+        return getPropertyScope().isCacheOnly();
+    }
+
     /**
      * Sets autoCreate to true - meaning that if the property does not exist in
      * the cache, a new instance is created. <p/> Uses
@@ -826,7 +794,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         EqualsBuilder equalsBuilder = new EqualsBuilder()
             .append(this.alternates, flowPropertyDefinition.alternates)
             .append(this.autoCreate, flowPropertyDefinition.autoCreate)
-            .append(this.cacheOnly, flowPropertyDefinition.cacheOnly)
             .append(this.dataClassDefinition, flowPropertyDefinition.dataClassDefinition)
             .append(this.flowPropertyValueProvider, flowPropertyDefinition.flowPropertyValueProvider)
             .append(this.initial, flowPropertyDefinition.initial)

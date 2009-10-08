@@ -178,7 +178,7 @@ public interface FlowConstants {
      * json ( FlowState is rendered as json output )
      * handled (the calling code will handle this issue)
      */
-    public static final String RENDER_RESULT = "fsRenderResult";
+    public static final String FSRENDER_RESULT = "fsRenderResult";
     public static final String HTML = "html";
     public static final String JSON = "json";
     public static final String HANDLED = "handled";
