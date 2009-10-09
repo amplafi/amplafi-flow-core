@@ -31,5 +31,5 @@ public interface FlowPropertyProvider {
 
     void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
 
-    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinitions);
+    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
 }
