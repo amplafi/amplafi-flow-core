@@ -58,6 +58,7 @@ public enum PropertyUsage {
      * If the property has a FlowPropertyValueProvider, the FlowPropertyValueProvider will be called on {@link org.amplafi.flow.impl.FlowStateImplementor#initializeFlow()}.
      *
      * TODO: does this mean eager initialization ( to allow for triggering of activities that take a while to initialize? ) OR do is a new propertyUsage better?
+     * TODO: PropertyRequired setting will be used to determine when the initialization will be forced to happen. ( if it hasn't happened already )
      */
     initialize(false, true, false);
 
