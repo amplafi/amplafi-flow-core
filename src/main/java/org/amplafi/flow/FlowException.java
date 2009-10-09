@@ -13,12 +13,31 @@
  */
 package org.amplafi.flow;
 
+/**
+ * Base Exception for all flow issues.
+ * @author patmoore
+ *
+ */
 public class FlowException extends RuntimeException {
 
+    private final FlowState flowState;
+
     public FlowException() {
+        flowState = null;
     }
 
     public FlowException(String message) {
         super(message);
+        flowState = null;
+    }
+    public FlowException(FlowState flowState) {
+        this.flowState = flowState;
+    }
+
+    /**
+     * @return the flowState
+     */
+    public FlowState getFlowState() {
+        return flowState;
     }
 }
