@@ -1468,18 +1468,18 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#setFinishType(java.lang.String)
+     * @see org.amplafi.flow.FlowState#setFinishKey(java.lang.String)
      */
     @Override
-    public void setFinishType(String type) {
+    public void setFinishKey(String type) {
         this.setPropertyAsObject(FSALT_FINISHED, type);
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#getFinishType()
+     * @see org.amplafi.flow.FlowState#getFinishKey()
      */
     @Override
-    public String getFinishType() {
+    public String getFinishKey() {
         return this.getPropertyAsObject(FSALT_FINISHED, String.class);
     }
 

@@ -19,12 +19,6 @@ import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 /**
- *
- * Copyright 2008 by Amplafi. All right reserved.
- *
- */
-
-/**
  * Translate object to/from the flow state.
  * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
  * @param <T> the type to translate.

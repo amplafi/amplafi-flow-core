@@ -22,13 +22,8 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.PropertyUsage;
-import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
-import org.amplafi.flow.translator.ShortFlowTranslator;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
-import org.amplafi.flow.impl.BaseFlowManagement;
-import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
-import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.impl.TransitionFlowActivity;
 import org.testng.annotations.Test;
@@ -56,7 +51,7 @@ public class TestFlowTransitions {
         assertNotNull(definition);
         String returnToFlowLookupKey = null;
         definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
-        BaseFlowManagement baseFlowManagement = getFlowManagement(flow);
+        FlowManagement baseFlowManagement = getFlowManagement(flow);
         FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null, returnToFlowLookupKey);
 
         Map<String, FlowTransition> propValue = flowState.getCurrentActivity().getProperty(FSFLOW_TRANSITIONS);
@@ -84,7 +79,7 @@ public class TestFlowTransitions {
         FlowActivityImpl fa2_1 = new FlowActivityImpl();
         flow2.addActivity(fa2_1);
         Object returnToFlowLookupKey = true;
-        BaseFlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);
+        FlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);
         FlowState flowState1 = baseFlowManagement.startFlowState(FLOW_TYPE_1, true, null, returnToFlowLookupKey);
         assertEquals(flowState1.getCurrentPage(), defaultPage1);
         FlowState flowState2 = baseFlowManagement.startFlowState(FLOW_TYPE_2, true, null, true);
@@ -159,23 +154,9 @@ public class TestFlowTransitions {
      * @param flow
      * @return
      */
-    private BaseFlowManagement getFlowManagement(Flow... flow) {
-        BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
-        baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
-        FlowDefinitionsManagerImpl flowDefinitionsManager = new FlowDefinitionsManagerImpl();
-        flowDefinitionsManager.initializeService();
-        FlowManagerImpl flowManagerImpl = new FlowManagerImpl();
-        flowManagerImpl.setFlowDefinitionsManager(flowDefinitionsManager);
-        baseFlowManagement.setFlowManager(flowManagerImpl);
-        flowDefinitionsManager.setFlowTranslatorResolver(getFlowTranslatorResolver());
-        flowDefinitionsManager.addDefinitions(flow);
-        return baseFlowManagement;
-    }
-    private BaseFlowTranslatorResolver getFlowTranslatorResolver() {
-        BaseFlowTranslatorResolver flowTranslatorResolver = new BaseFlowTranslatorResolver();
-        flowTranslatorResolver.addStandardFlowTranslators();
-        flowTranslatorResolver.initializeService();
-        flowTranslatorResolver.addFlowTranslator(new ShortFlowTranslator());
-        return flowTranslatorResolver;
+    private FlowManagement getFlowManagement(Flow... flow) {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        flowTestingUtils.getFlowDefinitionsManager().addDefinitions(flow);
+        return flowTestingUtils.getFlowManagement();
     }
 }

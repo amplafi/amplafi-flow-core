@@ -140,7 +140,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
         FlowState nextFlowState = super.finishFlow(currentNextFlowState);
         // maybe check to see if a new flow already exists?
         if (this.getFlowState().getFlowLifecycleState() == FlowLifecycleState.successful) {
-            String finishType = getFlowState().getFinishType();
+            String finishType = getFlowState().getFinishKey();
             if (getTransitionType() == TransitionType.normal && finishType == null
                     || getFinishKey().equalsIgnoreCase(finishType)) {
                 FlowManagement fm = getFlowManagement();

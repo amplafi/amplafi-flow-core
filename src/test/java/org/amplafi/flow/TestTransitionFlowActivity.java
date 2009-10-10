@@ -95,14 +95,14 @@ public class TestTransitionFlowActivity {
         assertNull(nextFlowState);
 
         flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
-        flowState.setFinishType(TransitionType.alternate.toString());
+        flowState.setFinishKey(TransitionType.alternate.toString());
         // make sure cache can't help 'cheat'
         flowState.clearCache();
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType);
-        assertNull(nextFlowState.getFinishType(), "nextFlowState="+nextFlowState);
+        assertNull(nextFlowState.getFinishKey(), "nextFlowState="+nextFlowState);
     }
     /**
      * test a {@link TransitionFlowActivity} that transitions on a normal finish
@@ -155,14 +155,14 @@ public class TestTransitionFlowActivity {
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType2);
 
         flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
-        flowState.setFinishType(TransitionType.alternate.toString());
+        flowState.setFinishKey(TransitionType.alternate.toString());
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType0);
 
         flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
-        flowState.setFinishType("foo1");
+        flowState.setFinishKey("foo1");
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);

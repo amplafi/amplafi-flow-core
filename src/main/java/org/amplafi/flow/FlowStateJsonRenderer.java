@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import org.amplafi.json.IJsonWriter;
+import org.amplafi.json.JSONObject;
 import org.amplafi.json.JsonRenderer;
 
 
@@ -30,7 +31,11 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
     public static final String FS_COMPLETE = "fsComplete";
 
-    public static final FlowStateJsonRenderer INSTANCE = new FlowStateJsonRenderer();
+    private boolean complete;
+    private FlowManagement flowManagement;
+    public FlowStateJsonRenderer(boolean complete) {
+        this.complete =complete;
+    }
     @Override
     public Class<FlowState> getClassToRender() {
         return FlowState.class;
@@ -52,9 +57,32 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     /**
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
-        throw new UnsupportedOperationException();
+        JSONObject jsonObject = (JSONObject) value;
+        String lookupKey = jsonObject.getString(FS_LOOKUP_KEY);
+        // TODO apply any changes back to the flowState?
+        FlowState flowState = getFlowManagement().getFlowState(lookupKey);
+        return (K) flowState;
+    }
+    /**
+     * @return if true, then complete state is rendered. false then the
+     */
+    public boolean isComplete() {
+        return complete;
+    }
+    /**
+     * @param flowManagement the flowManagement to set
+     */
+    public void setFlowManagement(FlowManagement flowManagement) {
+        this.flowManagement = flowManagement;
+    }
+    /**
+     * @return the flowManagement
+     */
+    public FlowManagement getFlowManagement() {
+        return flowManagement;
     }
 
 }

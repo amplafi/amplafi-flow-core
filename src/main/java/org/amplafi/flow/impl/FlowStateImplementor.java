@@ -24,11 +24,11 @@ import org.amplafi.flow.FlowState;
  * @author patmoore
  */
 public interface FlowStateImplementor extends FlowState {
-    <T> void setProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, T value);
+    <T> void setProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, T value);
 
-    <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition);
+    <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 
-    String getRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition);
+    String getRawProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 
     Long getRawLong(FlowActivity flowActivity, String key);
     @Deprecated
@@ -47,9 +47,9 @@ public interface FlowStateImplementor extends FlowState {
 
     /**
      * @param flowActivityImplementor
-     * @param propertyDefinition
+     * @param flowPropertyDefinition
      */
-    void initializeFlowProperty(FlowActivityImplementor flowActivityImplementor, FlowPropertyDefinition propertyDefinition);
+    void initializeFlowProperty(FlowActivityImplementor flowActivityImplementor, FlowPropertyDefinition flowPropertyDefinition);
 
     void initializeFlowProperties(FlowActivityImplementor flowActivity, Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
@@ -72,7 +72,7 @@ public interface FlowStateImplementor extends FlowState {
     void clearCache();
 
     void setCached(String namespace, String key, Object value);
-    void setCached(FlowPropertyDefinition propertyDefinition, FlowActivity flowActivity, Object value);
+    void setCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity, Object value);
 
     <T> T getCached(String namespace, String key);
 
@@ -83,9 +83,9 @@ public interface FlowStateImplementor extends FlowState {
 
 
     /**
-     * @param propertyDefinition
+     * @param flowPropertyDefinition
      * @param flowActivity
      * @return
      */
-    <T> T getCached(FlowPropertyDefinition propertyDefinition, FlowActivity flowActivity);
+    <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity);
 }

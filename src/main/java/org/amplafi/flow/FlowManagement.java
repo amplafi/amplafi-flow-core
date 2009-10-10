@@ -239,4 +239,6 @@ public interface FlowManagement {
 
     <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
+    void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener);
+
 }

@@ -23,6 +23,8 @@ import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.IAnswer;
 import org.easymock.classextension.EasyMock;
 
@@ -41,6 +43,8 @@ public class FlowTestingUtils {
     private BaseFlowManagement flowManagement;
 
     private AtomicInteger counter = new AtomicInteger();
+
+    private Log log = LogFactory.getLog(FlowTestingUtils.class);
     public FlowTestingUtils() {
         this(new FlowManagerImpl(), new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
     }
@@ -53,7 +57,11 @@ public class FlowTestingUtils {
 
     public FlowTestingUtils(FlowManagerImpl flowManager, FlowDefinitionsManagerImpl flowDefinitionsManager, BaseFlowTranslatorResolver flowTranslatorResolver) {
         this.flowDefinitionsManager = flowDefinitionsManager;
+
         this.flowTranslatorResolver = flowTranslatorResolver;
+        if(flowTranslatorResolver.getLog() == null) {
+            flowTranslatorResolver.setLog(log);
+        }
         this.flowManagement = new BaseFlowManagement();
         this.flowManager = flowManager;
         flowManager.setFlowTranslatorResolver(flowTranslatorResolver);

@@ -31,6 +31,8 @@ import com.sworddance.util.MapKeyed;
 import static org.apache.commons.lang.StringUtils.*;
 /**
  * describes how to transition from one flow to another.
+ *
+ * TODO: undo transition ability
  * @author patmoore
  *
  */
@@ -45,10 +47,12 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
 
     private static final String LABEL = "label";
     private static final String KEY = "key";
+    private static final String TRANSITION_COMPLETION_MESSAGE = "transitionCompletionMessage";
 
     private String key;
 
     private String label;
+    private String transitionCompletionMessage;
 
     private String nextFlow;
     private String nextFlowType;
@@ -73,8 +77,8 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     public FlowTransition(String nextFlowType, String label, TransitionType transitionType, Map<String, String> initialValues) {
         this(nextFlowType, nextFlowType, label, transitionType, initialValues);
     }
-    public FlowTransition(String transitionKey, String nextFlowType, String label, TransitionType transitionType, Map<String, String> initialValues) {
-        this.key = isBlank(transitionKey)?transitionType.toString():transitionKey;
+    public FlowTransition(String key, String nextFlowType, String label, TransitionType transitionType, Map<String, String> initialValues) {
+        this.key = isBlank(key)?transitionType.toString():key;
         this.label = label;
         this.nextFlowType = nextFlowType;
         this.setTransitionType(transitionType);
@@ -100,6 +104,10 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     public void setNextFlowType(String nextFlowType) {
         this.nextFlowType = nextFlowType;
     }
+    /**
+     *
+     * @return the label key to attach to a link or button that will trigger this transition.
+     */
     public String getLabel() {
         return label;
     }
@@ -125,6 +133,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         this.nextFlow = json.optString(NEXT_FLOW);
         this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
         this.transitionType = json.opt(TRANSITION_TYPE);
+        this.transitionCompletionMessage = json.optString(TRANSITION_COMPLETION_MESSAGE);
         this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
         return (T) this;
     }
@@ -138,6 +147,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         jsonWriter.keyValueIfNotNullValue(NEXT_FLOW_TYPE, getNextFlowType());
         jsonWriter.keyValue(TRANSITION_TYPE, transitionType);
         jsonWriter.keyValue(INITIAL_VALUES, getInitialValues());
+        jsonWriter.keyValue(TRANSITION_COMPLETION_MESSAGE, this.getTransitionCompletionMessage());
         jsonWriter.endObject();
 
     }
@@ -184,6 +194,19 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     }
     public boolean isCompletingFlow() {
         return this.transitionType != null && this.transitionType.isCompletesFlow();
+    }
+
+    /**
+     * @param transitionCompletionMessage the transitionCompletionMessage to set
+     */
+    public void setTransitionCompletionMessage(String transitionCompletionMessage) {
+        this.transitionCompletionMessage = transitionCompletionMessage;
+    }
+    /**
+     * @return message used to announce a successful completion of the transition.
+     */
+    public String getTransitionCompletionMessage() {
+        return transitionCompletionMessage;
     }
 
     @Override

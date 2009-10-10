@@ -44,17 +44,26 @@ public enum TransitionType {
     cancel(false),
     /**
      * do a call and return to the current flow
-     * ? Before / After the current flow exists???
+     * ? Before / After the current flow exits???
      */
-    call_and_return(false);
+    call_and_return(false, true);
 
     /**
-     * The flow saveChanges() should be called and the flow exits normally.
+     * the current flow being transitioned from completes.
+     * if true then {@link #saveChangesTriggered} is also true
      */
     private final boolean completesFlow;
-
+    /**
+     *
+     * The flow saveChanges() should be called and the flow exits normally.
+     */
+    private final boolean saveChangesTriggered;
     private TransitionType(boolean completesFlow)  {
+        this(completesFlow, completesFlow);
+    }
+    private TransitionType(boolean completesFlow, boolean saveChangesTriggered)  {
         this.completesFlow = completesFlow;
+        this.saveChangesTriggered = saveChangesTriggered;
     }
 
     /**
@@ -62,5 +71,12 @@ public enum TransitionType {
      */
     public boolean isCompletesFlow() {
         return completesFlow;
+    }
+
+    /**
+     * @return the saveChangesTriggered
+     */
+    public boolean isSaveChangesTriggered() {
+        return saveChangesTriggered;
     }
 }

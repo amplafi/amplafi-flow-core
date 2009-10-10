@@ -252,13 +252,13 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @param type
      */
-    void setFinishType(String type);
+    void setFinishKey(String type);
 
     /**
      * @return Null if this flow was finished by the normal button. Anything
      *         else means that an alternative button has triggered the finish.
      */
-    String getFinishType();
+    String getFinishKey();
 
     FlowLifecycleState getFlowLifecycleState();
 

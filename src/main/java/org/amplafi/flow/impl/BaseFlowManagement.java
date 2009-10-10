@@ -20,13 +20,17 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowLifecycleStateListener;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowLifecycleState;
 import org.amplafi.flow.FlowManagement;
@@ -56,12 +60,13 @@ public class BaseFlowManagement implements FlowManagement {
 
     protected SessionFlows sessionFlows = new SessionFlows();
 
-    private FlowManager flowManager;
-    private FlowTx flowTx;
+    private transient FlowManager flowManager;
+    private transient FlowTx flowTx;
 
-    private PageProvider pageProvider;
+    private transient PageProvider pageProvider;
 
-    private FlowTranslatorResolver flowTranslatorResolver;
+    private transient FlowTranslatorResolver flowTranslatorResolver;
+    private transient Set<FlowLifecycleStateListener> flowLifecycleStateListeners = Collections.synchronizedSet(new LinkedHashSet<FlowLifecycleStateListener>());
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
@@ -203,7 +208,7 @@ public class BaseFlowManagement implements FlowManagement {
     public FlowState transitionToFlowState(FlowState flowState, String key) {
         FlowState nextFlowState = null;
         Map<String, FlowTransition> transitions = flowState.getPropertyAsObject(key, Map.class);
-        String finishKey = flowState.getFinishType();
+        String finishKey = flowState.getFinishKey();
         if ( MapUtils.isNotEmpty(transitions) && isNotBlank(finishKey)) {
             FlowTransition flowTransition = transitions.get(finishKey);
             if ( flowTransition != null ) {
@@ -591,6 +596,28 @@ public class BaseFlowManagement implements FlowManagement {
     @Override
     public URI getDefaultHomePage() {
         return this.getFlowManager().getDefaultHomePage();
+    }
+
+    /**
+     * @return the flowLifecycleStateListeners
+     */
+    protected Set<FlowLifecycleStateListener> getFlowLifecycleStateListeners() {
+        return flowLifecycleStateListeners;
+    }
+
+    /**
+     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowLifecycleStateListener)
+     */
+    @Override
+    public void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener) {
+        this.getFlowLifecycleStateListeners().add(flowLifecycleStateListener);
+    }
+
+    protected void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState) {
+        //TODO synchronization issues if new listeners being added.
+        for(FlowLifecycleStateListener flowLifecycleStateListener: this.flowLifecycleStateListeners) {
+            flowLifecycleStateListener.lifecycleChange(flowState, previousFlowLifecycleState);
+        }
     }
 
     /**

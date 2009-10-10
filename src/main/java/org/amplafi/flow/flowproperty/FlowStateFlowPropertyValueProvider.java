@@ -33,8 +33,9 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
     @Override
     public void defineFlowPropertyDefinitions(FlowPropertyProvider flowPropertyProvider) {
         flowPropertyProvider.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
+                .initFlowPropertyValueProvider(this),
+            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io).initFlowPropertyValueProvider(this)
             );
     }
 

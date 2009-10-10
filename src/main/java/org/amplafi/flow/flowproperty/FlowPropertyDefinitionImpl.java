@@ -206,7 +206,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
             FixedFlowPropertyValueProvider<FlowActivity> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowActivity>(defaultObject);
             fixedFlowPropertyValueProvider.convertable(this);
-            if (dataClassDefinition.isDataClassDefined()) {
+            if (getDataClassDefinition().isDataClassDefined()) {
                 if (!this.getDataClass().isPrimitive()) {
                     // really need to handle the autobox issue better.
                     this.getDataClass().cast(defaultObject);
@@ -234,7 +234,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
             // for example the property type is a primitive.
-            value = this.dataClassDefinition.getFlowTranslator().getDefaultObject(flowActivity);
+            value = this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowActivity);
         }
         // TODO -- do we want to set the default object? or recalculate it each time?
         // might be important if the default object is to get modified or if a FPD is shared.
@@ -296,7 +296,15 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     public FlowTranslator<?> getTranslator() {
-        return this.dataClassDefinition.getFlowTranslator();
+        return this.getDataClassDefinition().getFlowTranslator();
+    }
+    public void setTranslator(FlowTranslator<?> flowTranslator) {
+        this.getDataClassDefinition().setFlowTranslator(flowTranslator);
+    }
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initTranslator(FlowTranslator<?> flowTranslator) {
+        setTranslator(flowTranslator);
+        return this;
     }
 
     /**
@@ -389,8 +397,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         if ( autoCreate != null) {
             return getBoolean(autoCreate);
         }
-        if (!dataClassDefinition.isCollection() ) {
-            Class<?> dataClass = dataClassDefinition.getDataClass();
+        if (!getDataClassDefinition().isCollection() ) {
+            Class<?> dataClass = getDataClassDefinition().getDataClass();
             if (dataClass.isPrimitive() ) {
                 return true;
             } else if (dataClass.isInterface() || dataClass.isEnum()) {
@@ -417,17 +425,17 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     public <T> String serialize(T object) {
-        if ( this.dataClassDefinition.getFlowTranslator() == null) {
+        if ( this.getDataClassDefinition().getFlowTranslator() == null) {
             return null;
         } else {
-            Object serialized = this.dataClassDefinition.serialize(this, object);
+            Object serialized = this.getDataClassDefinition().serialize(this, object);
             return ObjectUtils.toString(serialized, null);
         }
     }
 
     @SuppressWarnings("unchecked")
     public <V> V parse(String value) throws FlowException {
-        return (V) this.dataClassDefinition.deserialize(this, value);
+        return (V) this.getDataClassDefinition().deserialize(this, value);
     }
     /**
      * @param propertyRequired the propertyRequired to set
@@ -521,7 +529,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         if (dataClass == String.class) {
             dataClass = null;
         }
-        this.dataClassDefinition.setDataClass(dataClass);
+        this.getDataClassDefinition().setDataClass(dataClass);
     }
 
     // HACK -- to fix later...
@@ -534,7 +542,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      * make sure the initial value can be deserialized to the expected type.
      */
     private void checkInitial(String value) {
-        if ( !this.dataClassDefinition.isDeserializable(this, value)) {
+        if ( !this.getDataClassDefinition().isDeserializable(this, value)) {
             throw new IllegalStateException(this + " while checking initial value="+ value);
         }
     }
@@ -554,11 +562,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     public Class<? extends Object> getDataClass() {
-        return dataClassDefinition.getDataClass();
+        return getDataClassDefinition().getDataClass();
     }
 
     public Class<? extends Object> getCollectionClass() {
-        return this.dataClassDefinition.getCollection();
+        return this.getDataClassDefinition().getCollection();
     }
 
     public Set<String> getAlternates() {
@@ -622,7 +630,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     public boolean isAssignableFrom(Class<?> clazz) {
-        return this.dataClassDefinition.isAssignableFrom(clazz);
+        return this.getDataClassDefinition().isAssignableFrom(clazz);
     }
 
     public boolean isMergeable(FlowPropertyDefinition property) {
@@ -630,7 +638,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
             return false;
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
-        boolean result = dataClassDefinition.isMergable(source.dataClassDefinition);
+        boolean result = getDataClassDefinition().isMergable(source.dataClassDefinition);
         result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
         if ( result ) {
             result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
@@ -665,7 +673,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         if (autoCreate == null && source.autoCreate != null) {
             this.setAutoCreate(source.autoCreate);
         }
-        this.dataClassDefinition.merge(source.dataClassDefinition);
+        this.getDataClassDefinition().merge(source.dataClassDefinition);
 
         if ( isNotEmpty(source.alternates)) {
             if (alternates == null ) {

@@ -21,6 +21,9 @@ import org.amplafi.json.IJsonWriter;
  * Implementations determine which {@link FlowTranslator} should be used
  * for a given {@link FlowPropertyDefinition}.
  *
+ * FlowTranslatorResolvers set the default {@link FlowTranslator} for {@link DataClassDefinition}s ( used by {@link FlowPropertyDefinition}s ).
+ * The resolution happens when the flow that the {@link FlowPropertyDefinition} is part of is assigned added to a {@link FlowDefinitionsManager}.
+ * FlowTranslatorResolvers usually only set the FlowTranslator when there is no FlowTranslator. However, a FlowTranslatorResolver is permitted disregard this suggestion.
  */
 public interface FlowTranslatorResolver {
     /**
@@ -45,8 +48,9 @@ public interface FlowTranslatorResolver {
     IJsonWriter getJsonWriter();
 
     /**
+     * TODO: probably should be a copy so the definition could be altered.
      * @param key
-     * @return the {@link FlowPropertyDefinition} for this key.
+     * @return the standard {@link FlowPropertyDefinition} for this key.
      */
     FlowPropertyDefinition getFlowPropertyDefinition(String key);
     void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions);
