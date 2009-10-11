@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.apache.commons.logging.Log;
 
 
@@ -240,5 +241,7 @@ public interface FlowManagement {
     <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
     void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener);
+
+    void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState);
 
 }

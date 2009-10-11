@@ -14,14 +14,17 @@
 package org.amplafi.flow;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
+import com.sworddance.core.FiniteState;
 
 import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
  *
  */
-public enum FlowLifecycleState {
+public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
     /**
      * FlowState created but nothing has happened to it.
      */
@@ -56,10 +59,36 @@ public enum FlowLifecycleState {
 
     private List<FlowLifecycleState> nextAllowed;
     private final boolean verifyValues;
+    private static final FiniteStateChecker<FlowLifecycleState> STATE_CHECKER = new FiniteStateChecker<FlowLifecycleState>();
 
     private FlowLifecycleState(boolean verifyValues) {
         this.verifyValues = verifyValues;
     }
+
+    /**
+     * @see com.sworddance.core.FiniteState#checkToChange(com.sworddance.core.FiniteState)
+     */
+    @Override
+    public FlowLifecycleState checkToChange(FlowLifecycleState newFiniteState) {
+        return STATE_CHECKER.checkToChange(this, newFiniteState);
+    }
+
+    /**
+     * @see com.sworddance.core.FiniteState#isAllowedTransition(com.sworddance.core.FiniteState)
+     */
+    @Override
+    public boolean isAllowedTransition(FlowLifecycleState nextFlowLifecycleState) {
+        return this == nextFlowLifecycleState || nextAllowed.contains(nextFlowLifecycleState);
+    }
+
+    /**
+     * @see com.sworddance.core.FiniteState#getAllowedTransitions()
+     */
+    @Override
+    public Collection<FlowLifecycleState> getAllowedTransitions() {
+        return nextAllowed;
+    }
+
     public static void checkAllowed(FlowLifecycleState previousFlowLifecycleState,
             FlowLifecycleState nextFlowLifecycleState) {
         if (previousFlowLifecycleState != null &&
@@ -72,7 +101,7 @@ public enum FlowLifecycleState {
     /**
      * @return true if cannot transition out of this {@link FlowLifecycleState}.
      */
-    public boolean isTerminatorState() {
+    public boolean isTerminalState() {
         return isEmpty(this.nextAllowed);
     }
     /**

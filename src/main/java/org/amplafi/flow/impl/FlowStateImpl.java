@@ -1502,7 +1502,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public boolean isCompleted() {
-        return this.flowLifecycleState != null && this.flowLifecycleState.isTerminatorState();
+        return this.flowLifecycleState != null && this.flowLifecycleState.isTerminalState();
     }
 
     @SuppressWarnings("unchecked")

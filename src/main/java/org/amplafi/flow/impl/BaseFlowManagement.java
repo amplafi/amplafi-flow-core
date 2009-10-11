@@ -416,7 +416,7 @@ public class BaseFlowManagement implements FlowManagement {
                 fs = (FlowStateImplementor) sessionFlows.removeByLookupKey(lookupKey);
                 if ( fs != null ) {
                     successful = true;
-                    if ( !fs.getFlowLifecycleState().isTerminatorState()) {
+                    if ( !fs.getFlowLifecycleState().isTerminalState()) {
                         fs.setFlowLifecycleState(FlowLifecycleState.canceled);
                     }
 
@@ -613,7 +613,7 @@ public class BaseFlowManagement implements FlowManagement {
         this.getFlowLifecycleStateListeners().add(flowLifecycleStateListener);
     }
 
-    protected void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState) {
+    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState) {
         //TODO synchronization issues if new listeners being added.
         for(FlowLifecycleStateListener flowLifecycleStateListener: this.flowLifecycleStateListeners) {
             flowLifecycleStateListener.lifecycleChange(flowState, previousFlowLifecycleState);
