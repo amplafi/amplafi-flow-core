@@ -15,14 +15,14 @@ package org.amplafi.flow;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.sworddance.core.FiniteState;
 
-import static org.apache.commons.collections.CollectionUtils.*;
-
 /**
- *
+ * The lifecycle states that a {@link FlowState} can transition through.
+ * @see FlowLifecycleStateListener for monitoring changes.
  */
 public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
     /**
@@ -55,11 +55,14 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
         initialized.nextAllowed = Arrays.asList(canceled,failed,successful,starting);
         starting.nextAllowed = Arrays.asList(started,canceled,failed,successful,initializing,initialized);
         started.nextAllowed = Arrays.asList(canceled,failed,successful,initializing,initialized);
+        successful.nextAllowed = Collections.emptyList();
+        canceled.nextAllowed = Collections.emptyList();
+        failed.nextAllowed = Collections.emptyList();
     }
 
     private List<FlowLifecycleState> nextAllowed;
     private final boolean verifyValues;
-    private static final FiniteStateChecker<FlowLifecycleState> STATE_CHECKER = new FiniteStateChecker<FlowLifecycleState>();
+    public static final FiniteStateChecker<FlowLifecycleState> STATE_CHECKER = new FiniteStateChecker<FlowLifecycleState>();
 
     private FlowLifecycleState(boolean verifyValues) {
         this.verifyValues = verifyValues;
@@ -78,7 +81,7 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
      */
     @Override
     public boolean isAllowedTransition(FlowLifecycleState nextFlowLifecycleState) {
-        return this == nextFlowLifecycleState || nextAllowed.contains(nextFlowLifecycleState);
+        return this == nextFlowLifecycleState || (nextAllowed != null && nextAllowed.contains(nextFlowLifecycleState));
     }
 
     /**
@@ -89,20 +92,11 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
         return nextAllowed;
     }
 
-    public static void checkAllowed(FlowLifecycleState previousFlowLifecycleState,
-            FlowLifecycleState nextFlowLifecycleState) {
-        if (previousFlowLifecycleState != null &&
-                previousFlowLifecycleState != nextFlowLifecycleState &&
-                (isEmpty(previousFlowLifecycleState.nextAllowed) || !previousFlowLifecycleState.nextAllowed.contains(nextFlowLifecycleState))) {
-            throw new IllegalStateException("cannot go from "+
-                                            previousFlowLifecycleState+" to "+nextFlowLifecycleState);
-        }
-    }
     /**
      * @return true if cannot transition out of this {@link FlowLifecycleState}.
      */
     public boolean isTerminalState() {
-        return isEmpty(this.nextAllowed);
+        return getAllowedTransitions().isEmpty();
     }
     /**
      * @return true if this FlowLifecycleState permits verifying values.

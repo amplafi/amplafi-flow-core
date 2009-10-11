@@ -242,6 +242,11 @@ public interface FlowManagement {
 
     void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener);
 
+    /**
+     *
+     * @param flowState
+     * @param previousFlowLifecycleState
+     */
     void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState);
 
 }

@@ -124,10 +124,10 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     public FlowStateImpl(String flowTypeName, FlowManagement sessionFlowManagement) {
         this();
-        this.flowLifecycleState = created;
         this.flowTypeName = flowTypeName;
         this.flowManagement = sessionFlowManagement;
         this.lookupKey = createLookupKey();
+        this.setFlowLifecycleState(created);
     }
 
     // HACK : TODO lookupKey injection
@@ -1485,8 +1485,11 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @Override
     public void setFlowLifecycleState(FlowLifecycleState flowLifecycleState) {
-        checkAllowed(this.flowLifecycleState, flowLifecycleState);
-        this.flowLifecycleState = flowLifecycleState;
+        if ( this.flowLifecycleState != flowLifecycleState) {
+            FlowLifecycleState previousFlowLifecycleState = this.flowLifecycleState;
+            this.flowLifecycleState = STATE_CHECKER.checkAllowed(this.flowLifecycleState, flowLifecycleState);;
+            this.getFlowManagement().notifyFlowLifecycleListeners(this, previousFlowLifecycleState);
+        }
     }
 
     /**
