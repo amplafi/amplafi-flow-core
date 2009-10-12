@@ -14,21 +14,15 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
-import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationResultJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationTrackingJsonRenderer;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.MapJsonRenderer;
-import org.apache.commons.logging.LogFactory;
-import org.easymock.IAnswer;
-import org.easymock.classextension.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,18 +36,16 @@ public class TestFlowStateJsonRenderer extends Assert {
         flowState.clearLookupKey();
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();
-        assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":false,\"" +
+        assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\"" +
                 FlowStateJsonRenderer.FS_PARAMETERS+"\":{}" +
         		"}}");
 
     }
-    @Test(enabled=false)
+    @Test
     public void testCompleteFlowState() {
         FlowStateImpl flowState = newFlowState();
         flowState.setRawProperty("property1", "value1");
         flowState.setRawProperty("property2", "value2");
-        flowState.setFlowLifecycleState(FlowStateLifecycle.initializing);
-        flowState.setFlowLifecycleState(FlowStateLifecycle.successful);
         flowState.clearLookupKey();
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();
@@ -62,30 +54,11 @@ public class TestFlowStateJsonRenderer extends Assert {
     }
 
     private FlowStateImpl newFlowState() {
-        FlowManagement flowManagement = EasyMock.createMock(FlowManagement.class);
-        EasyMock.expect(flowManagement.getFlowPropertyDefinition(EasyMock.isA(String.class))).andAnswer(new IAnswer<FlowPropertyDefinition>(){
-
-            @Override
-            public FlowPropertyDefinition answer() throws Throwable {
-                return new FlowPropertyDefinitionImpl((String)EasyMock.getCurrentArguments()[0]);
-            }
-
-        }).anyTimes();
-        EasyMock.expect(flowManagement.getInstanceFromDefinition(EasyMock.isA(String.class))).andAnswer(new IAnswer<Flow>(){
-
-            @Override
-            public Flow answer() throws Throwable {
-                return new FlowImpl((String)EasyMock.getCurrentArguments()[0]);
-            }
-
-        }).anyTimes();
-        EasyMock.expect(flowManagement.getLog()).andReturn(LogFactory.getLog(this.getClass())).anyTimes();
-        flowManagement.notifyFlowLifecycleListeners(EasyMock.isA(FlowStateImplementor.class), EasyMock.isA(FlowStateLifecycle.class));
-        EasyMock.expectLastCall().anyTimes();
-        flowManagement.registerForCacheClearing();
-        EasyMock.expectLastCall().anyTimes();
-        EasyMock.replay(flowManagement);
-        FlowStateImpl flowState = new FlowStateImpl(this.getClass().getName(), flowManagement);
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String flowTypeName = flowTestingUtils.addFlowDefinition(new FlowActivityImpl());
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        FlowStateImpl flowState = flowManagement.startFlowState(flowTypeName, true, null, null);
+        flowState.finishFlow();
         return flowState;
     }
     private JSONWriter getJsonWriter() {
