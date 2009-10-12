@@ -165,7 +165,7 @@ public class FlowTestingUtils {
         }
     }
     public void resolveAndInit(FlowPropertyDefinition definition) {
-        flowTranslatorResolver.resolve(definition);
+        flowTranslatorResolver.resolve("", definition);
     }
 
     /**

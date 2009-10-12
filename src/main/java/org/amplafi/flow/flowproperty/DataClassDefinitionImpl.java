@@ -31,6 +31,7 @@ import com.sworddance.beans.PropertyDefinition;
 public class DataClassDefinitionImpl extends PropertyDefinition implements DataClassDefinition {
     @SuppressWarnings("unchecked")
     private FlowTranslator flowTranslator;
+    // TODO should be immutable some how or a copy made when used ( otherwise could this end up getting changed?? )
     public static final DataClassDefinitionImpl DEFAULT;
     static {
         DEFAULT = new DataClassDefinitionImpl(String.class);
@@ -202,6 +203,11 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
 
     public Class<?> getElementClass() {
         return this.isCollection()?this.getElementDataClassDefinition().getElementClass():this.getDataClass();
+    }
+
+    // TODO: should there be indexed collection concept? List: index is integer, map index is object ( therefore List is just special case of map?? )
+    public Class<?> getKeyClass() {
+        return this.isCollection() && this.getKeyDataClassDefinition() != null?this.getKeyDataClassDefinition().getDataClass():null;
     }
     /**
      * @param dataClass the dataClass to set

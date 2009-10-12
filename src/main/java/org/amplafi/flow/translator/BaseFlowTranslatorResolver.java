@@ -118,13 +118,13 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     public void putCoreFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
         for (FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
-            this.resolve(flowPropertyDefinition);
+            this.resolve("", flowPropertyDefinition);
             this.coreFlowPropertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
         }
     }
     public void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
         for (FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
-            this.resolve(flowPropertyDefinition);
+            this.resolve("", flowPropertyDefinition);
             this.commonFlowPropertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
         }
     }
@@ -168,37 +168,35 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         return translators.put(clazz, flowTranslator);
     }
     /**
-     * @see org.amplafi.flow.FlowTranslatorResolver#resolve(org.amplafi.flow.FlowPropertyDefinition)
+     * @see org.amplafi.flow.FlowTranslatorResolver#resolve(String, org.amplafi.flow.FlowPropertyDefinition)
      */
     @Override
-    public void resolve(FlowPropertyDefinition definition) {
+    public void resolve(String context, FlowPropertyDefinition definition) {
         FlowPropertyDefinition standardFlowPropertyDefinition = getFlowPropertyDefinition(definition.getName());
         if ( standardFlowPropertyDefinition != null) {
             definition.merge(standardFlowPropertyDefinition);
         }
-        if ( !resolve(definition.getDataClassDefinition())) {
-            if ( definition.isCacheOnly()) {
-                getLog().debug(definition+
-                    " was not able to determine the FlowProperty's flowTranslator. But the flow definition is labeled as cacheOnly so this may not matter.");
-            } else {
-                getLog().warn(definition+" was not able to determine the FlowProperty's flowTranslator.");
-            }
+        if ( !resolve(context+definition.getName()+":", definition.getDataClassDefinition(), !definition.isCacheOnly())) {
+            // TODO: anything special?
         }
         definition.initialize();
     }
-    public boolean resolve(DataClassDefinition definition) {
+    public boolean resolve(String context, DataClassDefinition definition, boolean resolvedRequired) {
         if (definition == null || definition.isFlowTranslatorSet()) {
             return true;
         } else {
             FlowTranslator<?> flowTranslator = resolve(definition.getDataClass());
-            if ( flowTranslator == null) {
-                getLog().warn(definition+ " was not able to determine the correct FlowTranslator.");
+            if ( flowTranslator != null) {
+                definition.setFlowTranslator(flowTranslator);
+                boolean resolved = resolve(context+definition.getDataClass()+"(element):", definition.getElementDataClassDefinition(), resolvedRequired);
+                resolved &= resolve(context+definition.getKeyClass()+"(key):", definition.getKeyDataClassDefinition(), resolvedRequired);
+                return resolved;
+            } else if (resolvedRequired) {
+                getLog().warn(context+definition+ " was not able to determine the correct FlowTranslator.");
                 return false;
             } else {
-                definition.setFlowTranslator(flowTranslator);
-                boolean resolved = resolve(definition.getElementDataClassDefinition());
-                resolved &= resolve(definition.getKeyDataClassDefinition());
-                return resolved;
+                getLog().debug(context+definition+ " was not able to determine the correct FlowTranslator. But resolving class was not required, so it may not matter. ( usually this means FlowProperty is cache only)");
+                return false;
             }
         }
     }
@@ -230,7 +228,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
         if ( MapUtils.isNotEmpty(propertyDefinitions) ) {
             Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-            initAndResolveCollection(values);
+            initAndResolveCollection(flow.getFlowTypeName()+".", values);
         }
         List<FlowActivityImplementor> activities = flow.getActivities();
         if ( activities != null ) {
@@ -252,13 +250,13 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             Map<String, FlowPropertyDefinition> propertyDefinitions = flowActivity.getPropertyDefinitions();
             if ( MapUtils.isNotEmpty(propertyDefinitions)) {
                 Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-                initAndResolveCollection(values);
+                initAndResolveCollection(flowActivity.getFullActivityName()+"("+flowActivity.getClass().getName()+").", values);
             }
         }
     }
-    private void initAndResolveCollection(Collection<FlowPropertyDefinition> values) {
+    private void initAndResolveCollection(String context, Collection<FlowPropertyDefinition> values) {
         for(FlowPropertyDefinition definition: values) {
-            resolve(definition);
+            resolve(context, definition);
         }
     }
     public IJsonWriter getJsonWriter() {

@@ -80,4 +80,9 @@ public interface DataClassDefinition {
      */
     boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value);
 
+    /**
+     * @return keyClass if this is a mapped collection.
+     */
+    Class<?> getKeyClass();
+
 }

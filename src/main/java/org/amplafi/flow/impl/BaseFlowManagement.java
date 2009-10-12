@@ -531,7 +531,7 @@ public class BaseFlowManagement implements FlowManagement {
             }
         }
         getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+" might want to check situation. FlowState="+flowPropertyProvider );
-        getFlowTranslatorResolver().resolve(propertyDefinition);
+        getFlowTranslatorResolver().resolve(flowPropertyProvider.toString(), propertyDefinition);
         return propertyDefinition;
     }
     /**

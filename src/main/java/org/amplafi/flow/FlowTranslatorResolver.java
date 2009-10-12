@@ -28,15 +28,18 @@ import org.amplafi.json.IJsonWriter;
 public interface FlowTranslatorResolver {
     /**
      *
+     * @param context TODO
      * @param flowPropertyDefinition
      */
-    void resolve(FlowPropertyDefinition flowPropertyDefinition);
+    void resolve(String context, FlowPropertyDefinition flowPropertyDefinition);
     /**
     *
-    * @param dataClassDefinition
+    * @param context TODO
+     * @param dataClassDefinition
+     * @param resolvedRequired TODO
      * @return true if resolve was successful in setting the FlowTranslator.
     */
-    boolean resolve(DataClassDefinition dataClassDefinition);
+    boolean resolve(String context, DataClassDefinition dataClassDefinition, boolean resolvedRequired);
     /**
      * all the other methods end up calling this method.
      * @param clazz
