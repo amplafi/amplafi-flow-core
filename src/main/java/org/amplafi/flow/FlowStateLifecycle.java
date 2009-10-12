@@ -22,9 +22,9 @@ import com.sworddance.core.FiniteState;
 
 /**
  * The lifecycle states that a {@link FlowState} can transition through.
- * @see FlowLifecycleStateListener for monitoring changes.
+ * @see FlowStateLifecycleListener for monitoring changes.
  */
-public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
+public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
     /**
      * FlowState created but nothing has happened to it.
      */
@@ -60,11 +60,11 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
         failed.nextAllowed = Collections.emptyList();
     }
 
-    private List<FlowLifecycleState> nextAllowed;
+    private List<FlowStateLifecycle> nextAllowed;
     private final boolean verifyValues;
-    public static final FiniteStateChecker<FlowLifecycleState> STATE_CHECKER = new FiniteStateChecker<FlowLifecycleState>();
+    public static final FiniteStateChecker<FlowStateLifecycle> STATE_CHECKER = new FiniteStateChecker<FlowStateLifecycle>();
 
-    private FlowLifecycleState(boolean verifyValues) {
+    private FlowStateLifecycle(boolean verifyValues) {
         this.verifyValues = verifyValues;
     }
 
@@ -72,7 +72,7 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
      * @see com.sworddance.core.FiniteState#checkToChange(com.sworddance.core.FiniteState)
      */
     @Override
-    public FlowLifecycleState checkToChange(FlowLifecycleState newFiniteState) {
+    public FlowStateLifecycle checkToChange(FlowStateLifecycle newFiniteState) {
         return STATE_CHECKER.checkToChange(this, newFiniteState);
     }
 
@@ -80,7 +80,7 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
      * @see com.sworddance.core.FiniteState#isAllowedTransition(com.sworddance.core.FiniteState)
      */
     @Override
-    public boolean isAllowedTransition(FlowLifecycleState nextFlowLifecycleState) {
+    public boolean isAllowedTransition(FlowStateLifecycle nextFlowLifecycleState) {
         return this == nextFlowLifecycleState || (nextAllowed != null && nextAllowed.contains(nextFlowLifecycleState));
     }
 
@@ -88,12 +88,12 @@ public enum FlowLifecycleState implements FiniteState<FlowLifecycleState> {
      * @see com.sworddance.core.FiniteState#getAllowedTransitions()
      */
     @Override
-    public Collection<FlowLifecycleState> getAllowedTransitions() {
+    public Collection<FlowStateLifecycle> getAllowedTransitions() {
         return nextAllowed;
     }
 
     /**
-     * @return true if cannot transition out of this {@link FlowLifecycleState}.
+     * @return true if cannot transition out of this {@link FlowStateLifecycle}.
      */
     public boolean isTerminalState() {
         return getAllowedTransitions().isEmpty();

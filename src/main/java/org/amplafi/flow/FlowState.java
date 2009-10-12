@@ -260,7 +260,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     String getFinishKey();
 
-    FlowLifecycleState getFlowLifecycleState();
+    FlowStateLifecycle getFlowLifecycleState();
 
     boolean isCompleted();
 

@@ -240,13 +240,13 @@ public interface FlowManagement {
 
     <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
-    void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener);
+    void addFlowLifecycleListener(FlowStateLifecycleListener flowStateLifecycleListener);
 
     /**
      *
      * @param flowState
      * @param previousFlowLifecycleState
      */
-    void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState);
+    void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState);
 
 }

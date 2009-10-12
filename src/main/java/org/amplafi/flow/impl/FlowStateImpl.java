@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
@@ -46,7 +46,7 @@ import com.sworddance.util.perf.LapTimer;
 
 import static com.sworddance.util.CUtilities.*;
 import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.FlowLifecycleState.*;
+import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.amplafi.flow.FlowUtils.*;
 import static org.apache.commons.lang.StringUtils.*;
 
@@ -111,7 +111,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     private transient MultiKeyMap cachedValues;
 
-    private FlowLifecycleState flowLifecycleState;
+    private FlowStateLifecycle flowStateLifecycle;
 
     public FlowStateImpl() {
     }
@@ -149,7 +149,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             this.initializeFlow();
         }
         this.setFlowLifecycleState(starting);
-        FlowLifecycleState nextFlowLifecycleState = started;
+        FlowStateLifecycle nextFlowLifecycleState = started;
         try {
             // TODO ... should we just be using next()... seems better.
             selectActivity(0, true);
@@ -186,7 +186,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     public void initializeFlow() {
         this.setFlowLifecycleState(initializing);
-        FlowLifecycleState nextFlowLifecycleState = initialized;
+        FlowStateLifecycle nextFlowLifecycleState = initialized;
         try {
             Map<String, FlowPropertyDefinition> propertyDefinitions = this.getFlow().getPropertyDefinitions();
             if (propertyDefinitions != null) {
@@ -587,7 +587,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String finishFlow() {
-        return completeFlow(FlowLifecycleState.successful);
+        return completeFlow(FlowStateLifecycle.successful);
     }
 
     /**
@@ -595,10 +595,10 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String cancelFlow() {
-        return completeFlow(FlowLifecycleState.canceled);
+        return completeFlow(FlowStateLifecycle.canceled);
     }
 
-    protected String completeFlow(FlowLifecycleState nextFlowLifecycleState) {
+    protected String completeFlow(FlowStateLifecycle nextFlowLifecycleState) {
         String pageName = null;
         if (!isCompleted()) {
             FlowState continueWithFlow = null;
@@ -1484,10 +1484,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
-    public void setFlowLifecycleState(FlowLifecycleState flowLifecycleState) {
-        if ( this.flowLifecycleState != flowLifecycleState) {
-            FlowLifecycleState previousFlowLifecycleState = this.flowLifecycleState;
-            this.flowLifecycleState = STATE_CHECKER.checkAllowed(this.flowLifecycleState, flowLifecycleState);;
+    public void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle) {
+        if ( this.flowStateLifecycle != flowStateLifecycle) {
+            FlowStateLifecycle previousFlowLifecycleState = this.flowStateLifecycle;
+            this.flowStateLifecycle = STATE_CHECKER.checkAllowed(this.flowStateLifecycle, flowStateLifecycle);;
             this.getFlowManagement().notifyFlowLifecycleListeners(this, previousFlowLifecycleState);
         }
     }
@@ -1496,8 +1496,8 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @see org.amplafi.flow.FlowState#getFlowLifecycleState()
      */
     @Override
-    public FlowLifecycleState getFlowLifecycleState() {
-        return this.flowLifecycleState;
+    public FlowStateLifecycle getFlowLifecycleState() {
+        return this.flowStateLifecycle;
     }
 
     /**
@@ -1505,7 +1505,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public boolean isCompleted() {
-        return this.flowLifecycleState != null && this.flowLifecycleState.isTerminalState();
+        return this.flowStateLifecycle != null && this.flowStateLifecycle.isTerminalState();
     }
 
     @SuppressWarnings("unchecked")

@@ -16,13 +16,13 @@ package org.amplafi.flow;
 import org.amplafi.flow.impl.FlowStateImplementor;
 
 /**
- * Listener implementations will get notified as a FlowState moves through the {@link FlowLifecycleState}.
+ * Listener implementations will get notified as a FlowState moves through the {@link FlowStateLifecycle}.
  *
  * Listeners are good for monitoring / reporting visibility.
  * @author patmoore
  *
  */
-public interface FlowLifecycleStateListener {
+public interface FlowStateLifecycleListener {
     /**
      * Note that listeners are not given veto permission.
      * TODO: Maybe should be ( FlowValidation ? ) - maybe new interface for vetoing?
@@ -30,5 +30,5 @@ public interface FlowLifecycleStateListener {
      * @param flowState
      * @param previousFlowLifecycleState may be null if not known or there was no previous state.
      */
-    void lifecycleChange(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState);
+    void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState);
 }

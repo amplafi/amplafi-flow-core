@@ -20,7 +20,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
@@ -139,7 +139,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
     public FlowState finishFlow(FlowState currentNextFlowState) {
         FlowState nextFlowState = super.finishFlow(currentNextFlowState);
         // maybe check to see if a new flow already exists?
-        if (this.getFlowState().getFlowLifecycleState() == FlowLifecycleState.successful) {
+        if (this.getFlowState().getFlowLifecycleState() == FlowStateLifecycle.successful) {
             String finishType = getFlowState().getFinishKey();
             if (getTransitionType() == TransitionType.normal && finishType == null
                     || getFinishKey().equalsIgnoreCase(finishType)) {

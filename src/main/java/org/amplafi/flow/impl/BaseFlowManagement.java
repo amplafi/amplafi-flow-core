@@ -30,9 +30,9 @@ import java.util.Set;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowLifecycleStateListener;
+import org.amplafi.flow.FlowStateLifecycleListener;
 import org.amplafi.flow.FlowManager;
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
@@ -66,7 +66,7 @@ public class BaseFlowManagement implements FlowManagement {
     private transient PageProvider pageProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
-    private transient Set<FlowLifecycleStateListener> flowLifecycleStateListeners = Collections.synchronizedSet(new LinkedHashSet<FlowLifecycleStateListener>());
+    private transient Set<FlowStateLifecycleListener> flowStateLifecycleListeners = Collections.synchronizedSet(new LinkedHashSet<FlowStateLifecycleListener>());
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
@@ -417,7 +417,7 @@ public class BaseFlowManagement implements FlowManagement {
                 if ( fs != null ) {
                     successful = true;
                     if ( !fs.getFlowLifecycleState().isTerminalState()) {
-                        fs.setFlowLifecycleState(FlowLifecycleState.canceled);
+                        fs.setFlowLifecycleState(FlowStateLifecycle.canceled);
                     }
 
                     // look for redirect before clearing the flow state
@@ -601,22 +601,22 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @return the flowLifecycleStateListeners
      */
-    protected Set<FlowLifecycleStateListener> getFlowLifecycleStateListeners() {
-        return flowLifecycleStateListeners;
+    protected Set<FlowStateLifecycleListener> getFlowLifecycleStateListeners() {
+        return flowStateLifecycleListeners;
     }
 
     /**
-     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowLifecycleStateListener)
+     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowStateLifecycleListener)
      */
     @Override
-    public void addFlowLifecycleListener(FlowLifecycleStateListener flowLifecycleStateListener) {
-        this.getFlowLifecycleStateListeners().add(flowLifecycleStateListener);
+    public void addFlowLifecycleListener(FlowStateLifecycleListener flowStateLifecycleListener) {
+        this.getFlowLifecycleStateListeners().add(flowStateLifecycleListener);
     }
 
-    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowLifecycleState previousFlowLifecycleState) {
+    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState) {
         //TODO synchronization issues if new listeners being added.
-        for(FlowLifecycleStateListener flowLifecycleStateListener: this.flowLifecycleStateListeners) {
-            flowLifecycleStateListener.lifecycleChange(flowState, previousFlowLifecycleState);
+        for(FlowStateLifecycleListener flowStateLifecycleListener: this.flowStateLifecycleListeners) {
+            flowStateLifecycleListener.lifecycleChange(flowState, previousFlowLifecycleState);
         }
     }
 

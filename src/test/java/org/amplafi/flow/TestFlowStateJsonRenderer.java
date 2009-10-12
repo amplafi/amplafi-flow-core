@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowImpl;
@@ -51,8 +51,8 @@ public class TestFlowStateJsonRenderer extends Assert {
         FlowStateImpl flowState = newFlowState();
         flowState.setRawProperty("property1", "value1");
         flowState.setRawProperty("property2", "value2");
-        flowState.setFlowLifecycleState(FlowLifecycleState.initializing);
-        flowState.setFlowLifecycleState(FlowLifecycleState.successful);
+        flowState.setFlowLifecycleState(FlowStateLifecycle.initializing);
+        flowState.setFlowLifecycleState(FlowStateLifecycle.successful);
         flowState.clearLookupKey();
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();

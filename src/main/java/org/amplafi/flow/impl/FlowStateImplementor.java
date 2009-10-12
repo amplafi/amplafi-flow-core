@@ -15,7 +15,7 @@ package org.amplafi.flow.impl;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowLifecycleState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
@@ -63,7 +63,7 @@ public interface FlowStateImplementor extends FlowState {
     <T extends FlowActivity> T getActivity(int activityIndex);
 
 
-    void setFlowLifecycleState(FlowLifecycleState flowLifecycleState);
+    void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle);
 
     /**
      * Called when this flowstate no longer represents the current flow. Assume
