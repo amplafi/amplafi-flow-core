@@ -613,10 +613,10 @@ public class BaseFlowManagement implements FlowManagement {
         this.getFlowLifecycleStateListeners().add(flowStateLifecycleListener);
     }
 
-    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState) {
+    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle) {
         //TODO synchronization issues if new listeners being added.
         for(FlowStateLifecycleListener flowStateLifecycleListener: this.flowStateLifecycleListeners) {
-            flowStateLifecycleListener.lifecycleChange(flowState, previousFlowLifecycleState);
+            flowStateLifecycleListener.lifecycleChange(flowState, previousFlowStateLifecycle);
         }
     }
 

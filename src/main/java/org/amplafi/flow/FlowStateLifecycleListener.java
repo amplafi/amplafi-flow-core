@@ -28,7 +28,7 @@ public interface FlowStateLifecycleListener {
      * TODO: Maybe should be ( FlowValidation ? ) - maybe new interface for vetoing?
      *
      * @param flowState
-     * @param previousFlowLifecycleState may be null if not known or there was no previous state.
+     * @param previousFlowStateLifecycle may be null if not known or there was no previous state.
      */
-    void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState);
+    void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle);
 }

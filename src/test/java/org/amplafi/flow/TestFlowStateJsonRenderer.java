@@ -19,6 +19,7 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationResultJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationTrackingJsonRenderer;
@@ -79,6 +80,8 @@ public class TestFlowStateJsonRenderer extends Assert {
 
         }).anyTimes();
         EasyMock.expect(flowManagement.getLog()).andReturn(LogFactory.getLog(this.getClass())).anyTimes();
+        flowManagement.notifyFlowLifecycleListeners(EasyMock.isA(FlowStateImplementor.class), EasyMock.isA(FlowStateLifecycle.class));
+        EasyMock.expectLastCall().anyTimes();
         flowManagement.registerForCacheClearing();
         EasyMock.expectLastCall().anyTimes();
         EasyMock.replay(flowManagement);
