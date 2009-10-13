@@ -35,11 +35,11 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
     /**
      * TODO: in future should define the property requirements?
      */
-    private Set<String> propertiesRequires;
+    private Set<String> requiredProperties;
 
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
         this.propertiesHandled = new HashSet<String>();
-        this.propertiesRequires = new HashSet<String>();
+        this.requiredProperties = new HashSet<String>();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
     }
 
@@ -103,6 +103,23 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
         return false;
     }
     protected void addRequires(String...requiredProperties) {
-        CollectionUtils.addAll(this.propertiesRequires, requiredProperties);
+        CollectionUtils.addAll(this.requiredProperties, requiredProperties);
+    }
+    public Collection<String> getRequiredProperties() {
+        return this.requiredProperties;
+    }
+    /**
+     * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.
+     * @param flowPropertyProvider
+     * @param flowPropertyValueProvider
+     * @param flowPropertyDefinitions
+     */
+    protected void addPropertyDefinitions(FlowPropertyProvider flowPropertyProvider, FlowPropertyValueProvider<FA> flowPropertyValueProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
+        for(FlowPropertyDefinitionImpl flowPropertyDefinition: flowPropertyDefinitions) {
+            if ( !flowPropertyDefinition.isDefaultAvailable()) {
+                flowPropertyDefinition.initFlowPropertyValueProvider(flowPropertyValueProvider);
+            }
+        }
+        flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
     }
 }
