@@ -32,9 +32,14 @@ import com.sworddance.util.ApplicationNullPointerException;
  */
 public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity> implements FlowPropertyValueProvider<FA> {
     private Set<String> propertiesHandled;
+    /**
+     * TODO: in future should define the property requirements?
+     */
+    private Set<String> propertiesRequires;
 
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
         this.propertiesHandled = new HashSet<String>();
+        this.propertiesRequires = new HashSet<String>();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
     }
 
@@ -96,5 +101,8 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
             }
         }
         return false;
+    }
+    protected void addRequires(String...requiredProperties) {
+        CollectionUtils.addAll(this.propertiesRequires, requiredProperties);
     }
 }

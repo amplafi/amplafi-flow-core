@@ -74,6 +74,7 @@ public interface FlowPropertyDefinition {
     void setRequired(boolean required);
 
     boolean isMergeable(FlowPropertyDefinition source);
+    boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition);
 
     String getUiComponentParameterName();
 

@@ -634,31 +634,43 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         if (propertyDefinitions == null) {
             propertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinition>();
             currentLocal = null;
-        } else {
-            currentLocal = getLocalPropertyDefinition(definition.getName());
-        }
-        // check against the FlowPropertyDefinition
-        if (!definition.merge(currentLocal)) {
-            getLog().warn(this.getFlow().getFlowTypeName()
-                                    + "."
-                                    + this.getActivityName()
-                                    + " has a FlowPropertyDefinition '"
-                                    + definition.getName()
-                                    + "' that conflicts with previous definition. Previous definition discarded.");
-            propertyDefinitions.remove(definition.getName());
+        } else if ( (currentLocal = getLocalPropertyDefinition(definition.getName())) != null) {
+            // check against the FlowPropertyDefinition
+            if ( !definition.isDataClassMergeable(currentLocal)) {
+                getLog().warn(this.getFullActivityName()+": has new (overriding) definition '"+definition+
+                    "' with different data type than the previous definition '"+currentLocal+"'. The overriding definition will be used.");
+            } else if (!definition.merge(currentLocal)) {
+                getLog().debug(this.getFullActivityName()
+                                        + " has a new FlowPropertyDefinition '"
+                                        + definition
+                                        + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +
+                                        		". Previous definition discarded.");
+            }
+            propertyDefinitions.remove(currentLocal.getName());
         }
         if (!definition.isLocal()) {
             // this property may be from the Flow definition itself.
             FlowPropertyDefinition current = this.getFlowPropertyDefinitionDefinedInFlow(definition.getName());
-            if (!definition.merge(current)) {
-                getLog().warn(this.getFlow().getFlowTypeName()
-                                        + "."
-                                        + this.getActivityName()
+            if ( current != null && !definition.merge(current)) {
+                if ( definition.isDataClassMergeable(current)) {
+                    getLog().debug(this.getFullActivityName()
                                         + " has a FlowPropertyDefinition '"
                                         + definition.getName()
-                                        + "' that conflicts with flow's definition. The FlowActivity's definition will be marked as local only.");
+                                        + "' that conflicts with flow's property definition. The data classes are mergeable. So this probably is o.k. The FlowActivity's definition will be marked as 'activityLocal'.");
+                } else {
+                    getLog().warn(this.getFullActivityName()
+                        + " has a FlowPropertyDefinition '"
+                        + definition.getName()
+                        + "' that conflicts with flow's property definition. The data classes are NOT mergeable. This might cause problems so the FlowActivity's definition will be marked as 'activityLocal' and 'internalState'.");
+                    definition.setPropertyUsage(PropertyUsage.internalState);
+                }
                 definition.setPropertyScope(activityLocal);
             } else {
+                // no flow version of this property.
+                // NOTE that this means the first FlowActivity to define this property sets the meaning for the whole flow.
+                // TODO we may want to see if we can merge up to the flow property as well . but this could cause problems with previous flowactivities that have already checked against the
+                // property ( the property might become more precise in a way that causes a conflict.)
+                // TODO: maybe in such cases if no FlowPropertyValueProvider the provider gets merged up?
                 pushPropertyDefinitionToFlow(definition);
             }
         }

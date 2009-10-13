@@ -633,22 +633,31 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         return this.getDataClassDefinition().isAssignableFrom(clazz);
     }
 
+    public boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition) {
+        return getDataClassDefinition().isMergable(((FlowPropertyDefinitionImpl)flowPropertyDefinition).dataClassDefinition);
+    }
+
     public boolean isMergeable(FlowPropertyDefinition property) {
         if (!(property instanceof FlowPropertyDefinitionImpl)) {
             return false;
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
-        boolean result = getDataClassDefinition().isMergable(source.dataClassDefinition);
-        result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
+        boolean result = isDataClassMergeable(source);
         if ( result ) {
-            result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
-            result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()
-                || getPropertyUsage().isChangeableTo(property.getPropertyUsage()) || property.getPropertyUsage().isChangeableTo(getPropertyUsage());
-            if ( !result) {
-                System.out.println("why?");
+            result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
+            if ( result ) {
+                result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
+                result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()
+                    || getPropertyUsage().isChangeableTo(property.getPropertyUsage()) || property.getPropertyUsage().isChangeableTo(getPropertyUsage());
+                if ( !result) {
+//                    System.out.println("scope clash");
+                }
+            } else {
+//                System.out.println("provider clash");
             }
+        } else {
+//            System.out.println("dataclass clash");
         }
-
         return result;
     }
 
@@ -665,8 +674,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      *         instances.
      */
     public boolean merge(FlowPropertyDefinition property) {
-        if (! (property instanceof FlowPropertyDefinitionImpl)) {
+        if ( property == null) {
             return true;
+        } else if ( !isDataClassMergeable(property)) {
+            return false;
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean noMergeConflict = isMergeable(source);
