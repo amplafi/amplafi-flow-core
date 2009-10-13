@@ -14,9 +14,22 @@
 
 package org.amplafi.flow;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+
 /**
- * Used to provide a smarter way generating a FlowProperty value than just deserializing.
- * This will be used to avoid having to override {@link FlowActivity#getProperty(String)}/ {@link FlowActivity#setProperty(String, Object)}.
+ * FlowPropertyValueProviders are used to supply property values to a Flow from the external environment that is decoupled from a given FlowActivity implementation.
+ *
+ * This avoids having to override {@link FlowActivity#getProperty(String)}/ {@link FlowActivity#setProperty(String, Object)}.
+ *
+ * The advantages of using FlowPropertyValueProvider:
+ * <ul>
+ * <li>dependencies of one property to another property can be documented.</li>
+ * <li>DRY principle</li>
+ * <li>enables a property's value to be generated only when needed.</li>
+ * <li>FlowActivities can just focus on what will be done with the properties, not how the properties are initialized.</li>
+ * <li>Details about when the properties are initialized and how are encapsulated.</li>
+ * </ul>
+ * {@link FlowPropertyDefinitionProvider} is also usually implemented by FlowPropertyValueProvider.
  *
  * TODO: enable FlowPropertyValueProvider to be registered so they can be singletons with needed services injected vis the DI framework.
  * TODO: enable the FPVP to provide a template {@link FlowPropertyDefinition} that can be then customized with a given flow's specific
