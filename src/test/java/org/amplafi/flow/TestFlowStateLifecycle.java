@@ -68,5 +68,12 @@ public class TestFlowStateLifecycle {
             last = previousFlowLifecycleState;
             current = flowState.getFlowLifecycleState();
         }
-    };
+        /**
+         * @see org.amplafi.flow.FlowStateLifecycleListener#activityChange(org.amplafi.flow.impl.FlowStateImplementor, org.amplafi.flow.FlowActivity)
+         */
+        @Override
+        public void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity) {
+
+        }
+    }
 }

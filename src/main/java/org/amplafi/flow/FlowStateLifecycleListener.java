@@ -31,4 +31,6 @@ public interface FlowStateLifecycleListener {
      * @param previousFlowStateLifecycle may be null if not known or there was no previous state.
      */
     void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle);
+
+    void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity);
 }
