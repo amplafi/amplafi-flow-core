@@ -233,7 +233,7 @@ public class TestFlows {
         flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
-        flowState.setPropertyAsObject("fee", true);
+        flowState.setProperty("fee", true);
         Flow inst = flowState.getFlow();
         FlowPropertyDefinition flowPropertyDefinition = inst.getPropertyDefinition("fee");
         assertTrue(flowPropertyDefinition.getDataClass() == Boolean.class || flowPropertyDefinition.getDataClass() == boolean.class);
@@ -261,7 +261,7 @@ public class TestFlows {
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
         SampleEnum type =flowState.getCurrentActivity().getProperty("foo");
         assertEquals(type, SampleEnum.EXTERNAL, "(looking for property 'foo') FlowState="+flowState);
-        type =flowState.getPropertyAsObject("fa1fp", SampleEnum.class);
+        type =flowState.getProperty("fa1fp", SampleEnum.class);
         assertEquals(type, SampleEnum.EMAIL);
     }
 

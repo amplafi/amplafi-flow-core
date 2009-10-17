@@ -76,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
  * fuzzy.flows.FooBarFlowActivity would have a default component of
  * 'fuzzy/FooBar'. <p/> TODO handle return to previous flow issues.
  */
-public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
+public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> implements Serializable, FlowActivityImplementor {
 
     private static final long serialVersionUID = 5578715117421910908L;
 
@@ -121,17 +121,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * if this is an instance, this is the {@link org.amplafi.flow.Flow} instance.
      */
     private Flow flow;
-
-    /**
-     * if this is an instance {@link org.amplafi.flow.FlowActivity}, then this is the definition
-     * {@link org.amplafi.flow.FlowActivity}.
-     */
-    private FlowActivity definitionFlowActivity;
-
-    /**
-     * null if this is an instance.
-     */
-    private Map<String, FlowPropertyDefinition> propertyDefinitions;
 
     private String fullActivityInstanceNamespace;
 
@@ -508,7 +497,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     public FlowActivityImpl createInstance() {
         FlowActivityImpl instance = dup();
         copyTo(instance);
-        instance.definitionFlowActivity = this;
+        instance.setDefinition(this);
         return instance;
     }
 
@@ -521,31 +510,6 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         instance.finishingActivity = finishingActivity;
         instance.invisible = invisible;
         instance.persistFlow = persistFlow;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivityImplementor#setPropertyDefinitions(java.util.Map)
-     */
-    public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties) {
-        propertyDefinitions = properties;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivity#getPropertyDefinitions()
-     */
-    public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
-        if (propertyDefinitions == null && isInstance()) {
-            // as is usually the case for instance flow activities.
-            return definitionFlowActivity.getPropertyDefinitions();
-        }
-        return propertyDefinitions;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivity#isInstance()
-     */
-    public boolean isInstance() {
-        return definitionFlowActivity != null;
     }
 
     /**
@@ -629,10 +593,11 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
         return def;
     }
 
+    @Override
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
         FlowPropertyDefinition currentLocal;
-        if (propertyDefinitions == null) {
-            propertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinition>();
+        if (getPropertyDefinitions() == null) {
+            setPropertyDefinitions(new LinkedHashMap<String, FlowPropertyDefinition>());
             currentLocal = null;
         } else if ( (currentLocal = getLocalPropertyDefinition(definition.getName())) != null) {
             // check against the FlowPropertyDefinition
@@ -646,7 +611,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
                                         + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +
                                         		". Previous definition discarded.");
             }
-            propertyDefinitions.remove(currentLocal.getName());
+            getPropertyDefinitions().remove(currentLocal.getName());
         }
         if (!definition.isLocal()) {
             // this property may be from the Flow definition itself.
@@ -674,7 +639,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
                 pushPropertyDefinitionToFlow(definition);
             }
         }
-        propertyDefinitions.put(definition.getName(), definition);
+        getPropertyDefinitions().put(definition.getName(), definition);
     }
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinition definition) {
@@ -694,28 +659,10 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     }
 
     protected void pushPropertyDefinitionsToFlow() {
-        if (MapUtils.isNotEmpty(propertyDefinitions) && getFlow() != null) {
-            for (FlowPropertyDefinition definition : propertyDefinitions.values()) {
+        if (MapUtils.isNotEmpty(getPropertyDefinitions()) && getFlow() != null) {
+            for (FlowPropertyDefinition definition : getPropertyDefinitions().values()) {
                 pushPropertyDefinitionToFlow(definition);
             }
-        }
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(org.amplafi.flow.FlowPropertyDefinition[])
-     */
-    public void addPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
-        for (FlowPropertyDefinition definition : flowPropertyDefinitions) {
-            this.addPropertyDefinition(definition);
-        }
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivityImplementor#addPropertyDefinitions(java.lang.Iterable)
-     */
-    public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
-        for (FlowPropertyDefinition def : flowPropertyDefinitions) {
-            addPropertyDefinition(def);
         }
     }
 
@@ -806,7 +753,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String key) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
-        T result = (T) getFlowStateImplementor().getProperty(this, flowPropertyDefinition);
+        T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
         return result;
     }
 
@@ -866,7 +813,7 @@ public class FlowActivityImpl implements Serializable, FlowActivityImplementor {
      * @param value
      */
     protected <T> void setProperty(FlowPropertyDefinition propertyDefinition, T value) {
-        getFlowStateImplementor().setProperty(this, propertyDefinition, value);
+        getFlowStateImplementor().setPropertyWithDefinition(this, propertyDefinition, value);
     }
 
     /**

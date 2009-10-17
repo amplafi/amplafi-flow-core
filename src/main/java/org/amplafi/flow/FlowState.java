@@ -271,9 +271,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param expected class maybe null if not known.
      * @return the property value
      */
-    <T> T getPropertyAsObject(String key, Class<T> expected);
-    <T> T getPropertyAsObject(String key);
-    <T> void setPropertyAsObject(String key, T value);
+    <T> T getProperty(String key, Class<T> expected);
+    <T> T getProperty(String key);
+    <T> void setProperty(String key, T value);
 
     boolean isActive();
 

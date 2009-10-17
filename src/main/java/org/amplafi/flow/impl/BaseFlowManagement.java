@@ -207,7 +207,7 @@ public class BaseFlowManagement implements FlowManagement {
     @Override
     public FlowState transitionToFlowState(FlowState flowState, String key) {
         FlowState nextFlowState = null;
-        Map<String, FlowTransition> transitions = flowState.getPropertyAsObject(key, Map.class);
+        Map<String, FlowTransition> transitions = flowState.getProperty(key, Map.class);
         String finishKey = flowState.getFinishKey();
         if ( MapUtils.isNotEmpty(transitions) && isNotBlank(finishKey)) {
             FlowTransition flowTransition = transitions.get(finishKey);
@@ -382,13 +382,13 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @SuppressWarnings("unchecked")
     private <FS extends FlowState> FS getNextFlowState(FlowState flowState) {
-        String id = flowState.getPropertyAsObject(FSCONTINUE_WITH_FLOW);
+        String id = flowState.getProperty(FSCONTINUE_WITH_FLOW);
         FS next = null;
         if ( isNotBlank(id)) {
             next = (FS) this.getFlowState(id);
         }
         if ( next == null ) {
-            id = flowState.getPropertyAsObject(FSRETURN_TO_FLOW);
+            id = flowState.getProperty(FSRETURN_TO_FLOW);
             if ( isNotBlank(id)) {
                 next = (FS) this.getFlowState(id);
             }
@@ -422,8 +422,8 @@ public class BaseFlowManagement implements FlowManagement {
 
                     // look for redirect before clearing the flow state
                     // why before cache clearing?
-                    URI redirect = fs.getPropertyAsObject(FSREDIRECT_URL);
-                    String returnToFlowId = fs.getPropertyAsObject(FSRETURN_TO_FLOW);
+                    URI redirect = fs.getProperty(FSREDIRECT_URL);
+                    String returnToFlowId = fs.getProperty(FSRETURN_TO_FLOW);
                     FlowState returnToFlow = getFlowState(returnToFlowId);
                     fs.clearCache();
 

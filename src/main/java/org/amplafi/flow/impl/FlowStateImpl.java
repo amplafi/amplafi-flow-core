@@ -252,7 +252,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowActivity != null) {
                 // trigger property
                 @SuppressWarnings("unused")
-                Object v = getProperty(flowActivity, flowPropertyDefinition);
+                Object v = getPropertyWithDefinition(flowActivity, flowPropertyDefinition);
                 // HACK we should? flow through?
                 return;
             }
@@ -645,9 +645,9 @@ public class FlowStateImpl implements FlowStateImplementor {
                 // pass on the return flow to the continuation flow.
                 // need to set before starting continuation flow because continuation flow may run to completion.
                 // HACK : seems like the continueFlow should have picked this up automatically
-                String returnToFlow = this.getPropertyAsObject(FSRETURN_TO_FLOW);
+                String returnToFlow = this.getProperty(FSRETURN_TO_FLOW);
                 if ( isNotBlank(returnToFlow)) {
-                    continueWithFlow.setPropertyAsObject(FSRETURN_TO_FLOW, returnToFlow);
+                    continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
                 }
                 this.setRawProperty(FSRETURN_TO_FLOW, null);
                 pageName = getFlowManagement().completeFlowState(this, true);
@@ -661,7 +661,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                     // the flow that was continued with immediately finished.
                     // find out what the next continue flow is ... shouldn't this be in a while loop???
                     // or passed over to the FlowManagement code for handling??
-                    continueWithFlowLookup = continueWithFlow.getPropertyAsObject(FSCONTINUE_WITH_FLOW);
+                    continueWithFlowLookup = continueWithFlow.getProperty(FSCONTINUE_WITH_FLOW);
                 } else {
                     continueWithFlowLookup = continueWithFlow.getLookupKey();
                 }
@@ -712,8 +712,8 @@ public class FlowStateImpl implements FlowStateImplementor {
             return false;
         } else {
             String possibleReferencedLookupKey = possibleReferencedState.getLookupKey();
-            return possibleReferencedLookupKey.equals(this.getPropertyAsObject(FSCONTINUE_WITH_FLOW))
-                || possibleReferencedLookupKey.equals(this.getPropertyAsObject(FSRETURN_TO_FLOW));
+            return possibleReferencedLookupKey.equals(this.getProperty(FSCONTINUE_WITH_FLOW))
+                || possibleReferencedLookupKey.equals(this.getProperty(FSRETURN_TO_FLOW));
         }
     }
 
@@ -734,7 +734,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (isCompleted()) {
             return this.getAfterPage();
         }
-        String pageName = getPropertyAsObject(FSPAGE_NAME);
+        String pageName = getProperty(FSPAGE_NAME);
         if (isBlank(pageName)) {
             if (isActive()) {
                 FlowActivity flowActivity = getCurrentActivity();
@@ -912,7 +912,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition) {
+    public <T> T getPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition) {
         T result = (T) getCached(propertyDefinition, flowActivity);
         if ( result == null ) {
             String value = getRawProperty(flowActivity, propertyDefinition);
@@ -923,7 +923,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
-                    setProperty(flowActivity, propertyDefinition, result);
+                    setPropertyWithDefinition(flowActivity, propertyDefinition, result);
                 }
             }
             setCached(propertyDefinition, flowActivity, result);
@@ -932,7 +932,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
-    public <T> void setProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, T value) {
+    public <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, T value) {
         Object actual;
         String stringValue = null;
 
@@ -1087,7 +1087,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getFlowTitle() {
-        String flowTitle = getPropertyAsObject(FSTITLE_TEXT);
+        String flowTitle = getProperty(FSTITLE_TEXT);
         if (isBlank(flowTitle)) {
             flowTitle = this.getFlow().getFlowTitle();
         }
@@ -1325,7 +1325,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public Boolean getBoolean(String key) {
-        Boolean value = getPropertyAsObject(key, Boolean.class);
+        Boolean value = getProperty(key, Boolean.class);
         if (value == null) {
             return null;
         } else {
@@ -1387,7 +1387,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setAfterPage(String afterPage) {
-        this.setPropertyAsObject(FSAFTER_PAGE, afterPage);
+        this.setProperty(FSAFTER_PAGE, afterPage);
     }
 
     /**
@@ -1398,11 +1398,11 @@ public class FlowStateImpl implements FlowStateImplementor {
         // if (this.flowLifecycleState == canceled) {
         // return null;
         // }
-        String page = getPropertyAsObject(FSAFTER_PAGE, String.class);
+        String page = getProperty(FSAFTER_PAGE, String.class);
         if (isNotBlank(page)) {
             return page;
         }
-        page = getPropertyAsObject(FSDEFAULT_AFTER_PAGE, String.class);
+        page = getProperty(FSDEFAULT_AFTER_PAGE, String.class);
         if (isNotBlank(page)) {
             return page;
         } else {
@@ -1423,7 +1423,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getUpdateText() {
-        return this.getPropertyAsObject(FAUPDATE_TEXT, String.class);
+        return this.getProperty(FAUPDATE_TEXT, String.class);
     }
 
     /**
@@ -1440,7 +1440,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getCancelText() {
-        return this.getPropertyAsObject(FSCANCEL_TEXT, String.class);
+        return this.getProperty(FSCANCEL_TEXT, String.class);
     }
 
     /**
@@ -1448,7 +1448,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setCancelText(String cancelText) {
-        this.setPropertyAsObject(FSCANCEL_TEXT, cancelText);
+        this.setProperty(FSCANCEL_TEXT, cancelText);
     }
 
     /**
@@ -1456,7 +1456,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getFinishText() {
-        return this.getPropertyAsObject(FSFINISH_TEXT, String.class);
+        return this.getProperty(FSFINISH_TEXT, String.class);
     }
 
     /**
@@ -1464,7 +1464,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setFinishText(String finishText) {
-        this.setPropertyAsObject(FSFINISH_TEXT, finishText);
+        this.setProperty(FSFINISH_TEXT, finishText);
     }
 
     /**
@@ -1472,7 +1472,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setFinishKey(String type) {
-        this.setPropertyAsObject(FSALT_FINISHED, type);
+        this.setProperty(FSALT_FINISHED, type);
     }
 
     /**
@@ -1480,7 +1480,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getFinishKey() {
-        return this.getPropertyAsObject(FSALT_FINISHED, String.class);
+        return this.getProperty(FSALT_FINISHED, String.class);
     }
 
     @Override
@@ -1510,18 +1510,18 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getPropertyAsObject(String key) {
-        return (T) getPropertyAsObject(key, null);
+    public <T> T getProperty(String key) {
+        return (T) getProperty(key, null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getPropertyAsObject(String key, Class<T> expected) {
+    public <T> T getProperty(String key, Class<T> expected) {
         if (isActive()) {
             return (T) getCurrentActivity().getProperty(key);
         } else {
             FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
-            return (T) getProperty(null, flowPropertyDefinition);
+            return (T) getPropertyWithDefinition(null, flowPropertyDefinition);
         }
     }
 
@@ -1548,18 +1548,18 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#setPropertyAsObject(java.lang.String,
+     * @see org.amplafi.flow.FlowState#setProperty(java.lang.String,
      *      java.lang.Object)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> void setPropertyAsObject(String key, T value) {
+    public <T> void setProperty(String key, T value) {
         if (isActive()) {
             getCurrentActivity().setProperty(key, value);
         } else {
             Class<T> expected = (Class<T>) (value == null?null:value.getClass());
             FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
-            setProperty(null, flowPropertyDefinition, value);
+            setPropertyWithDefinition(null, flowPropertyDefinition, value);
         }
     }
 
@@ -1583,7 +1583,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setDefaultAfterPage(String pageName) {
-        this.setPropertyAsObject(FSDEFAULT_AFTER_PAGE, pageName);
+        this.setProperty(FSDEFAULT_AFTER_PAGE, pageName);
     }
 
     /**
@@ -1591,7 +1591,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public String getDefaultAfterPage() {
-        String property = this.getPropertyAsObject(FSDEFAULT_AFTER_PAGE);
+        String property = this.getProperty(FSDEFAULT_AFTER_PAGE);
         return property == null ? this.getFlow().getDefaultAfterPage() : property;
     }
 

@@ -17,7 +17,6 @@ package org.amplafi.flow.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -61,14 +60,10 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.*;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowActivityImplementor> {
+public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializable, Cloneable, Flow, Iterable<FlowActivityImplementor> {
 
     private static final long serialVersionUID = -985306244948511836L;
-    /**
-     * if false, this flow is a definition. It should be copied if it is to become an
-     * instance.
-     */
-    private Flow definitionFlow;
+
     /**
      * the definition's lookup key -- will be referenced in database.
      */
@@ -96,8 +91,6 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      * is dropped.
      */
     private boolean notCurrentAllowed;
-
-    private Map<String, FlowPropertyDefinition> propertyDefinitions;
 
     /**
      * Used to restore an existing definition or create an new definitions from XML
@@ -141,8 +134,8 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      * @param definition
      */
     public FlowImpl(Flow definition) {
+        super(definition);
         this.flowTypeName = definition.getFlowTypeName();
-        this.definitionFlow = definition;
     }
     /**
      * Used to create a definition for testing.
@@ -154,8 +147,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
         this.flowTypeName = flowTypeName;
     }
 
-    public FlowImpl(String flowTypeName,
-            FlowActivityImplementor... flowActivities) {
+    public FlowImpl(String flowTypeName, FlowActivityImplementor... flowActivities) {
         this(flowTypeName);
         for(FlowActivityImplementor flowActivity : flowActivities) {
             addActivity(flowActivity);
@@ -238,14 +230,6 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#isInstance()
-     */
-    public boolean isInstance() {
-        return this.definitionFlow != null;
-    }
-
-
     @SuppressWarnings("unchecked")
     @Override
     public <T extends FlowActivity> List<T> getVisibleActivities() {
@@ -258,22 +242,6 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
         return list;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setPropertyDefinitions(java.util.Map)
-     */
-    public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties) {
-        this.propertyDefinitions = properties;
-    }
-    /**
-     * @see org.amplafi.flow.Flow#getPropertyDefinitions()
-     */
-    public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
-        if ( propertyDefinitions == null && this.isInstance() ) {
-            // as is usually the case for instance flow activities.
-            return this.definitionFlow.getPropertyDefinitions();
-        }
-        return propertyDefinitions;
-    }
 
     /**
      * @see org.amplafi.flow.Flow#getPropertyDefinition(java.lang.String)
@@ -282,41 +250,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
         Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
         return propDefs == null? null : propDefs.get(key);
     }
-    public void addPropertyDefinitions(FlowPropertyDefinition... definitions) {
-        if ( definitions != null && definitions.length > 0) {
-            for(FlowPropertyDefinition definition: definitions) {
-                this.addPropertyDefinition(definition);
-            }
-        }
-    }
 
-    /**
-     * method used by hivemind to add in properties
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
-     */
-    public void addPropertyDefinition(FlowPropertyDefinition definition) {
-        if ( definition == null ) {
-            return;
-        }
-        if ( this.propertyDefinitions == null ) {
-            if ( isInstance()) {
-                this.propertyDefinitions =
-                    new LinkedHashMap<String, FlowPropertyDefinition>();
-                if ( this.definitionFlow.getPropertyDefinitions() != null) {
-                    this.propertyDefinitions.putAll(this.definitionFlow.getPropertyDefinitions());
-                }
-            } else {
-                this.propertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinition>();
-            }
-        }
-        FlowPropertyDefinition current = this.propertyDefinitions.get(definition.getName());
-        if ( current != null ) {
-            if ( !definition.merge(current) ) {
-                throw new IllegalArgumentException(definition+": cannot be merged with "+current);
-            }
-        }
-        this.propertyDefinitions.put(definition.getName(), definition);
-    }
 
     /**
      * @see org.amplafi.flow.Flow#setFlowTypeName(java.lang.String)
@@ -330,7 +264,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      */
     public String getFlowTypeName() {
         if ( flowTypeName == null && isInstance()) {
-            return definitionFlow.getFlowTypeName();
+            return getDefinition().getFlowTypeName();
         } else {
             return flowTypeName;
         }
@@ -341,7 +275,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      */
     public String getFlowTitle() {
         if ( flowTitle == null && isInstance()) {
-            return definitionFlow.getFlowTitle();
+            return getDefinition().getFlowTitle();
         } else {
             return this.flowTitle;
         }
@@ -359,7 +293,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      */
     public String getContinueFlowTitle() {
         if ( continueFlowTitle == null && isInstance()) {
-            return definitionFlow.getContinueFlowTitle();
+            return getDefinition().getContinueFlowTitle();
         } else {
             return this.continueFlowTitle;
         }
@@ -386,7 +320,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
         if ( linkTitle != null ) {
             return this.linkTitle;
         } else if ( isInstance()) {
-            return definitionFlow.getLinkTitle();
+            return getDefinition().getLinkTitle();
         } else {
             return "message:" + "flow." + FlowUtils.INSTANCE.toLowerCase(this.getFlowTypeName())+".link-title";
         }
@@ -397,7 +331,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      */
     public String getMouseoverEntryPointText() {
         if ( mouseoverEntryPointText == null && isInstance()) {
-            return definitionFlow.getMouseoverEntryPointText();
+            return getDefinition().getMouseoverEntryPointText();
         } else {
             return this.mouseoverEntryPointText;
         }
@@ -414,7 +348,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      */
     public String getFlowDescriptionText() {
         if ( flowDescriptionText == null && isInstance()) {
-            return definitionFlow.getFlowDescriptionText();
+            return getDefinition().getFlowDescriptionText();
         } else {
             return this.flowDescriptionText;
         }
@@ -437,7 +371,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      * @see org.amplafi.flow.Flow#getPageName()
      */
     public String getPageName() {
-        return isInstance()&& pageName == null? definitionFlow.getPageName() : pageName;
+        return isInstance()&& pageName == null? getDefinition().getPageName() : pageName;
     }
 
     /**
@@ -451,7 +385,7 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
      * @see org.amplafi.flow.Flow#getDefaultAfterPage()
      */
     public String getDefaultAfterPage() {
-        return isInstance() && defaultAfterPage ==null?definitionFlow.getDefaultAfterPage():defaultAfterPage;
+        return isInstance() && defaultAfterPage ==null? getDefinition().getDefaultAfterPage():defaultAfterPage;
     }
 
     /**
@@ -475,8 +409,9 @@ public class FlowImpl implements Serializable, Cloneable, Flow, Iterable<FlowAct
     /**
      * @see org.amplafi.flow.Flow#getFlowState()
      */
-    public FlowState getFlowState() {
-        return this.flowState;
+    @SuppressWarnings("unchecked")
+    public <FS extends FlowState> FS getFlowState() {
+        return (FS) this.flowState;
     }
 
     /**

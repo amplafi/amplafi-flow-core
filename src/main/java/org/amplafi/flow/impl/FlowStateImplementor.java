@@ -24,9 +24,9 @@ import org.amplafi.flow.FlowState;
  * @author patmoore
  */
 public interface FlowStateImplementor extends FlowState {
-    <T> void setProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, T value);
+    <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, T value);
 
-    <T> T getProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
+    <T> T getPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 
     String getRawProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 

@@ -348,14 +348,14 @@ public class TestFlowPropertyDefinition {
             for(PropertyUsage propertyUsage: PropertyUsage.values()) {
                 String name= propertyScope+"_"+propertyUsage;
                 String externalInitial = "ext_"+name;
-                String actual = flowState.getPropertyAsObject(name);
+                String actual = flowState.getProperty(name);
                 if ( !propertyScope.isCacheOnly() && propertyUsage.isExternallySettable()) {
                     assertEquals(actual, externalInitial, "PropertyUsage="+propertyUsage+" flowState="+flowState);
                 } else {
                     assertNull(actual, "PropertyUsage="+propertyUsage+" flowState="+flowState);
                 }
                 String changed = "chg_"+name;
-                flowState.setPropertyAsObject(name, changed);
+                flowState.setProperty(name, changed);
             }
         }
         flowState.finishFlow();
@@ -468,13 +468,13 @@ public class TestFlowPropertyDefinition {
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
         assertNotNull(flowState);
         // expect null because
-        Boolean propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         flowState.next();
-        propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         flowState.next();
-        propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         assertTrue(propertyValue.booleanValue(), "flowState="+flowState+" propertyValue="+propertyValue);
     }
@@ -506,13 +506,13 @@ public class TestFlowPropertyDefinition {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
         assertNotNull(flowState);
-        String propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        String propertyValue = flowState.getProperty(propertyName, String.class);
         assertEquals("true",propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         flowState.next();
-        propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        propertyValue = flowState.getProperty(propertyName, String.class);
         assertNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         flowState.next();
-        propertyValue = flowState.getPropertyAsObject(propertyName, String.class);
+        propertyValue = flowState.getProperty(propertyName, String.class);
         assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         assertEquals("true", propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
     }
@@ -542,7 +542,7 @@ public class TestFlowPropertyDefinition {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
         assertNotNull(flowState);
-        Boolean propertyValue = flowState.getPropertyAsObject(propertyName, Boolean.class);
+        Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertEquals(Boolean.TRUE,propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
     }
     @DataProvider(name = "serializationData")

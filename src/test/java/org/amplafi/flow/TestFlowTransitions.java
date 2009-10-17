@@ -83,7 +83,7 @@ public class TestFlowTransitions {
         FlowState flowState1 = baseFlowManagement.startFlowState(FLOW_TYPE_1, true, null, returnToFlowLookupKey);
         assertEquals(flowState1.getCurrentPage(), defaultPage1);
         FlowState flowState2 = baseFlowManagement.startFlowState(FLOW_TYPE_2, true, null, true);
-        String lookupKey1 = flowState2.getPropertyAsObject(FSRETURN_TO_FLOW);
+        String lookupKey1 = flowState2.getProperty(FSRETURN_TO_FLOW);
         assertEquals(flowState2.getCurrentPage(), defaultPage2);
         assertEquals(flowState1.getLookupKey(), lookupKey1, "the child flow does not have the parent flow as the return-to-flow ");
         String pageName = flowState2.finishFlow();
@@ -131,21 +131,21 @@ public class TestFlowTransitions {
             initializedByFirst, "ShouldBeIgnored"), false);
         String opaqueValuePassedFromFirstToSecond = "opaque";
         flowState.setRawProperty(opaqueSecondFlowProperty, opaqueValuePassedFromFirstToSecond);
-        assertEquals(flowState.getPropertyAsObject(initializedByFirst, String.class), null, "flowState="+flowState);
+        assertEquals(flowState.getProperty(initializedByFirst, String.class), null, "flowState="+flowState);
         String propertyValueInitializedByFirst = "realvalue";
-        flowState.setPropertyAsObject(initializedByFirst, propertyValueInitializedByFirst);
+        flowState.setProperty(initializedByFirst, propertyValueInitializedByFirst);
         flowTestingUtils.advanceToEnd(flowState);
         FlowStateImplementor nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         // flowLocal namespace ignored the passed setting
-        assertNull(nextFlowState.getPropertyAsObject(privatePropertyForSecondFlow, Boolean.class), "nextFlowState="+nextFlowState);
+        assertNull(nextFlowState.getProperty(privatePropertyForSecondFlow, Boolean.class), "nextFlowState="+nextFlowState);
         String privatePropertyValueInSecondFlow = "true";
-        nextFlowState.setPropertyAsObject(privatePropertyForSecondFlow, privatePropertyValueInSecondFlow);
+        nextFlowState.setProperty(privatePropertyForSecondFlow, privatePropertyValueInSecondFlow);
         assertEquals(nextFlowState.getFlowTypeName(), "second");
         // but it is still there for others.
         assertEquals(nextFlowState.getRawProperty((String)null, privatePropertyForSecondFlow), globalSettingForSecondFlowPrivateProperty, "nextFlowState="+nextFlowState);
-        assertEquals(nextFlowState.getPropertyAsObject(opaqueSecondFlowProperty, String.class), opaqueValuePassedFromFirstToSecond, "looking at="+opaqueSecondFlowProperty+"  nextFlowState="+nextFlowState);
-        assertEquals(nextFlowState.getPropertyAsObject(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="+privatePropertyForSecondFlow+ "  nextFlowState="+nextFlowState);
+        assertEquals(nextFlowState.getProperty(opaqueSecondFlowProperty, String.class), opaqueValuePassedFromFirstToSecond, "looking at="+opaqueSecondFlowProperty+"  nextFlowState="+nextFlowState);
+        assertEquals(nextFlowState.getProperty(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="+privatePropertyForSecondFlow+ "  nextFlowState="+nextFlowState);
         assertEquals(nextFlowState.getRawProperty((String)null, initializedByFirst), propertyValueInitializedByFirst, "nextFlowState="+nextFlowState);
         flowTestingUtils.advanceToEnd(flowState);
 

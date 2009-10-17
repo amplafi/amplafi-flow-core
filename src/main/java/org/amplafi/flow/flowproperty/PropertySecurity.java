@@ -55,7 +55,7 @@ public enum PropertySecurity {
         this.externalWriteAccessAllowed = externalWriteAccess;
     }
     /**
-     * @return if false, {@link FlowState#getPropertyAsObject(String)} method should return null rather than return a result.
+     * @return if false, {@link FlowState#getProperty(String)} method should return null rather than return a result.
      *
      */
     public boolean isExternalReadAccessAllowed() {
@@ -63,7 +63,7 @@ public enum PropertySecurity {
     }
     /**
      * Should security check happen at different point?
-     * @return if false, {@link FlowState#setPropertyAsObject(String, Object)} will be ignored. If true and {@link #isExternalReadAccessAllowed()} is false then
+     * @return if false, {@link FlowState#setProperty(String, Object)} will be ignored. If true and {@link #isExternalReadAccessAllowed()} is false then
      * care must be taken to not accidently
      */
     public boolean isExternalWriteAccessAllowed() {

@@ -87,7 +87,7 @@ public class TestFlowStateMorphing {
         assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-1");
         flowState.next();
         assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-2");
-        flowState.setProperty(fa1,morphFlowFPD,false);
+        flowState.setPropertyWithDefinition(fa1,morphFlowFPD,false);
         flowState.next();
         assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-3");
         flowState.finishFlow();
