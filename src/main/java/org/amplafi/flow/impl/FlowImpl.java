@@ -124,7 +124,8 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionImpl(COMPLETION_MESSAGE).initAccess(flowLocal, io)
 
         );
     }

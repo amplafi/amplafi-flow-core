@@ -168,6 +168,11 @@ public interface FlowConstants {
     public static final String FSNEXT_FLOW = "fsNextFlow";
 
     /**
+     * The message displayed when this flow completes. If no value then this flow's completion should not be announced to the user.
+     */
+    public static final String COMPLETION_MESSAGE = "completionMessage";
+
+    /**
      * MUST NOT BE included as a FlowPropertyDefinition -- will result in the flow template not wired up correctly to the FullFlowComponent
      */
     public static final String ATTACHED_FLOW = "attachedFlowState";
