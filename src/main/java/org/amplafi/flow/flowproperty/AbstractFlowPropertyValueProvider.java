@@ -34,6 +34,7 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
     private Set<String> propertiesHandled;
     /**
      * TODO: in future should define the property requirements?
+     * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
      */
     private Set<String> requiredProperties;
 
