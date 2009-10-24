@@ -89,6 +89,7 @@ public interface FlowConstants {
     /**
      * Used to store the external referring url as reported in the http request.
      * TODO -- 3 Jan 2009 most usages of this are bad -- need to indicate which flow will redirect to refering uri once completed.
+     * TODO: Use "Referer" as string so it matches what the HttpRequest sends.
      */
     public static final String FSREFERRING_URL = "fsReferringUrl";
 
