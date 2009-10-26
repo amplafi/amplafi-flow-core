@@ -37,11 +37,12 @@ public interface FlowValidationResult {
     /**
      * add a {@link org.amplafi.flow.validation.SimpleValidationTracking} if valid is false.
      * @param valid add if false
+     * @param activityKey TODO
      * @param messageKey
      * @param messageParams
      * @return this
      */
-    FlowValidationResult addTracking(boolean valid, String messageKey, Object...messageParams);
+    FlowValidationResult addTracking(boolean valid, String activityKey, String messageKey, Object...messageParams);
     /**
      * Get all trackings.
      * @return all trackings stored. Null is allowed.

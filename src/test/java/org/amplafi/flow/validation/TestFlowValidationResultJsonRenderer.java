@@ -37,7 +37,7 @@ public class TestFlowValidationResultJsonRenderer extends Assert {
         jsonWriter.object().key("validation").value(reportAll).endObject();
         assertEquals(jsonWriter.toString(),"{\"validation\":{}}");
 
-        ReportAllValidationResult single = new ReportAllValidationResult(true, "foo");
+        ReportAllValidationResult single = new ReportAllValidationResult().addTracking(true, "activityKey", "foo");
         jsonWriter = getJsonWriter();
         jsonWriter.object().key("validation").value(single).endObject();
         assertEquals(jsonWriter.toString(),"{\"validation\":{}}");
@@ -67,7 +67,7 @@ public class TestFlowValidationResultJsonRenderer extends Assert {
         assertEquals(jsonWriter.toString(),
                 "{\"validation\":{\"flowValidationTracking\":[{\"key\":\"0\",\"parameters\":[\"0 error-1\",\"0 error-2\"]},{\"key\":\"1\",\"parameters\":[\"1 error-1\",\"1 error-2\"]}]}}");
 
-        ReportAllValidationResult single = new ReportAllValidationResult(false, "foo");
+        ReportAllValidationResult single = new ReportAllValidationResult().addTracking(false, "activityKey", "foo", "foo");
         jsonWriter = getJsonWriter();
         jsonWriter.object().key("validation").value(single).endObject();
         assertEquals(jsonWriter.toString(),

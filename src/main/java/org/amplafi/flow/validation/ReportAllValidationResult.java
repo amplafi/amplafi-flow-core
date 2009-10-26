@@ -34,12 +34,7 @@ public class ReportAllValidationResult implements FlowValidationResult {
     public ReportAllValidationResult(FlowValidationTracking...flowValidationTrackings) {
         addTracking(flowValidationTrackings);
     }
-    public ReportAllValidationResult(boolean valid, String key) {
-        addTracking(valid, key, key);
-    }
-    public ReportAllValidationResult(boolean valid, String key, String value) {
-        addTracking(valid, key, value);
-    }
+
     @Override
     public boolean isValid() {
         return isEmpty(trackings);
@@ -76,7 +71,7 @@ public class ReportAllValidationResult implements FlowValidationResult {
      * @param messageParams
      */
     @Override
-    public FlowValidationResult addTracking(boolean valid, String messageKey, Object...messageParams) {
+    public ReportAllValidationResult addTracking(boolean valid, String activityKey, String messageKey, Object...messageParams) {
         if (!valid) {
             addTracking(new SimpleValidationTracking(messageKey, messageParams));
         }

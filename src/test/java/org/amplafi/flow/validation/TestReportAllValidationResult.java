@@ -29,16 +29,16 @@ import org.testng.annotations.Test;
 @Test
 public class TestReportAllValidationResult extends Assert {
     public void testNothingAdded() {
-        ReportAllValidationResult result = new ReportAllValidationResult(true, "key");
+        ReportAllValidationResult result = new ReportAllValidationResult().addTracking(true, "activityKey", "key");
         assertTrue(result.isValid());
 
-        ReportAllValidationResult result2 = new ReportAllValidationResult(true, "key", "val");
+        ReportAllValidationResult result2 = new ReportAllValidationResult().addTracking(true, "activityKey", "key", "val");
         assertTrue(result2.isValid());
     }
 
     public void testOneError() {
         FlowValidationResult result =
-                new ReportAllValidationResult(false, "key", "val").addTracking(false, "key2");
+                new ReportAllValidationResult().addTracking(false, "activityKey", "key", "val").addTracking(false, "activityKey", "key2");
         assertFalse(result.isValid());
     }
 
