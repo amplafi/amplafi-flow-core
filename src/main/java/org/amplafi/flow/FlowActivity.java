@@ -118,12 +118,8 @@ public interface FlowActivity extends FlowPropertyProvider {
      *
      * @return true if the activity name has been explicitly set.
      */
-    boolean isActivityNameSet();
+    boolean isFlowPropertyProviderNameSet();
 
-    /**
-     * @return Returns the activityName.
-     */
-    String getActivityName();
 
     /**
      * @param activityTitle The flowTitle to set.
@@ -134,13 +130,6 @@ public interface FlowActivity extends FlowPropertyProvider {
      * @return Returns the flowTitle.
      */
     String getActivityTitle();
-
-    /**
-     * "flowName.activityName"
-     *
-     * @return full flow activity name.
-     */
-    String getFullActivityName();
 
     /**
      * Namespace used to store activityLocal properties when running a flow.
@@ -174,8 +163,6 @@ public interface FlowActivity extends FlowPropertyProvider {
     void setPersistFlow(boolean persistFlow);
 
     boolean isPersistFlow();
-
-    void setFlow(Flow flow);
 
     int getIndex();
     String getString(String key);

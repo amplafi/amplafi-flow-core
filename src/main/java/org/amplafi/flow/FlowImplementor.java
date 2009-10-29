@@ -11,34 +11,28 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow.flowproperty;
+package org.amplafi.flow;
 
-import java.util.Map;
+import java.util.List;
 
-import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 
 /**
- * Implementers manage a map of {@link FlowPropertyDefinition}s
  * @author patmoore
  *
  */
-public interface FlowPropertyProvider {
-    /**
-     *
-     * @return unique portion of the namespace.
-     */
-    String getFlowPropertyProviderName();
+public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor {
 
     /**
-     * "flowName.activityName"
-     *
-     * @return full flow activity name.
+     * Create an instance of a Flow from Flow definition.
+     * The {@link FlowActivity} array is copied but not the {@link FlowActivity}s themselves.
+     * @return flow instance.
      */
-    String getFlowPropertyProviderFullName();
+    FlowImplementor createInstance();
 
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
-
-    FlowPropertyDefinition getPropertyDefinition(String key);
-
-
+    /**
+     * @param activities
+     *            The activities to set.
+     */
+    void setActivities(List<FlowActivityImplementor> activities);
 }

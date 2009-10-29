@@ -24,6 +24,7 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowImplementor;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,10 +36,10 @@ import org.apache.commons.logging.LogFactory;
 public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private FlowTranslatorResolver flowTranslatorResolver;
     private boolean running;
-    private ConcurrentMap<String, Flow> flowDefinitions;
+    private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private Log log;
     public FlowDefinitionsManagerImpl() {
-        flowDefinitions = new ConcurrentHashMap<String, Flow>();
+        flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
     }
 
     /**
@@ -53,8 +54,8 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      *
      */
     private void initFlowDefinitions() {
-        Collection<Flow> flowDefinitionCollection = flowDefinitions.values();
-        for(Flow flow: flowDefinitionCollection) {
+        Collection<FlowImplementor> flowDefinitionCollection = flowDefinitions.values();
+        for(FlowImplementor flow: flowDefinitionCollection) {
             getFlowTranslatorResolver().resolveFlow(flow);
         }
     }
@@ -62,12 +63,12 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitions(Flow...)
      */
     @Override
-    public void addDefinitions(Flow... flows) {
-        for(Flow flow: flows) {
-            addDefinition(flow.getFlowTypeName(), flow);
+    public void addDefinitions(FlowImplementor... flows) {
+        for(FlowImplementor flow: flows) {
+            addDefinition(flow.getFlowPropertyProviderName(), flow);
         }
     }
-    public void addDefinition(String key, Flow flow) {
+    public void addDefinition(String key, FlowImplementor flow) {
         if (flow.isInstance()) {
             throw new IllegalStateException( flow+ " not a definition");
         }
@@ -78,11 +79,11 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      * @see org.amplafi.flow.FlowDefinitionsManager#getFlowDefinition(java.lang.String)
      */
     @Override
-    public Flow getFlowDefinition(String flowTypeName) {
+    public FlowImplementor getFlowDefinition(String flowTypeName) {
         if ( flowTypeName == null) {
             throw new IllegalArgumentException("null flowTypeName");
         }
-        Flow flow = this.getFlowDefinitions().get(flowTypeName);
+        FlowImplementor flow = this.getFlowDefinitions().get(flowTypeName);
         if (flow==null) {
             throw new FlowValidationException("flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
         }
@@ -93,11 +94,11 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      * @see org.amplafi.flow.FlowDefinitionsManager#getFlowDefinitions()
      */
     @Override
-    public Map<String, Flow> getFlowDefinitions() {
+    public Map<String, FlowImplementor> getFlowDefinitions() {
         return this.flowDefinitions;
     }
 
-    public void setFlowDefinitions(Map<String, Flow> flowDefinitions) {
+    public void setFlowDefinitions(Map<String, FlowImplementor> flowDefinitions) {
         this.flowDefinitions.clear();
         if ( MapUtils.isNotEmpty(flowDefinitions) ) {
             this.flowDefinitions.putAll(flowDefinitions);

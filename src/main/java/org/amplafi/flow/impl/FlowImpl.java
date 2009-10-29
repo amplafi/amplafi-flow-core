@@ -21,9 +21,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
@@ -60,14 +61,9 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.*;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializable, Cloneable, Flow, Iterable<FlowActivityImplementor> {
+public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implements Serializable, Cloneable, FlowImplementor, Iterable<FlowActivityImplementor> {
 
     private static final long serialVersionUID = -985306244948511836L;
-
-    /**
-     * the definition's lookup key -- will be referenced in database.
-     */
-    private String flowTypeName;
 
     private List<FlowActivityImplementor> activities;
 
@@ -121,11 +117,12 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
             new FlowPropertyDefinitionImpl(FSREFERRING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize),
+
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(COMPLETION_MESSAGE).initAccess(flowLocal, io)
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );
     }
@@ -134,9 +131,9 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
      * creates a instance Flow from a definition.
      * @param definition
      */
-    public FlowImpl(Flow definition) {
+    public FlowImpl(FlowImplementor definition) {
         super(definition);
-        this.flowTypeName = definition.getFlowTypeName();
+        this.flowPropertyProviderName = definition.getFlowPropertyProviderName();
     }
     /**
      * Used to create a definition for testing.
@@ -145,7 +142,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
      */
     public FlowImpl(String flowTypeName) {
         this();
-        this.flowTypeName = flowTypeName;
+        this.flowPropertyProviderName = flowTypeName;
     }
 
     public FlowImpl(String flowTypeName, FlowActivityImplementor... flowActivities) {
@@ -159,7 +156,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
      * @see org.amplafi.flow.Flow#createInstance()
      */
 
-    public Flow createInstance() {
+    public FlowImplementor createInstance() {
         FlowImpl inst = new FlowImpl(this);
         inst.activities = new ArrayList<FlowActivityImplementor>();
 
@@ -219,8 +216,8 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
             activities = new ArrayList<FlowActivityImplementor>();
         } else {
             for(FlowActivityImplementor existing: activities) {
-                if (existing.isActivityNameSet() && activity.isActivityNameSet() && StringUtils.equalsIgnoreCase(existing.getActivityName(), activity.getActivityName())) {
-                    throw new IllegalArgumentException(this.getFlowTypeName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
+                if (existing.isFlowPropertyProviderNameSet() && activity.isFlowPropertyProviderNameSet() && StringUtils.equalsIgnoreCase(existing.getFlowPropertyProviderName(), activity.getFlowPropertyProviderName())) {
+                    throw new IllegalArgumentException(this.getFlowPropertyProviderName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
                 }
             }
         }
@@ -252,22 +249,52 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
         return propDefs == null? null : propDefs.get(key);
     }
 
+    /**
+     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
+     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
+     */
+    public FlowManagement getFlowManagement() {
+        return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
+    }
 
+    /**
+     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
+     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getProperty(String key) {
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        FlowStateImplementor flowStateImplementor =  getFlowState();
+        T result = null;//(T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
+        return result;
+    }
+
+    /**
+     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
+     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
+     */
+    protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
+        FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
+        if (flowPropertyDefinition == null) {
+            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(this, key, expected, sampleValue);
+        }
+        return flowPropertyDefinition;
+    }
     /**
      * @see org.amplafi.flow.Flow#setFlowTypeName(java.lang.String)
      */
-    public void setFlowTypeName(String flowTypeName) {
-        this.flowTypeName = flowTypeName;
+    public void setFlowPropertyProviderName(String flowTypeName) {
+        this.flowPropertyProviderName = flowTypeName;
     }
 
     /**
      * @see org.amplafi.flow.Flow#getFlowTypeName()
      */
-    public String getFlowTypeName() {
-        if ( flowTypeName == null && isInstance()) {
-            return getDefinition().getFlowTypeName();
+    public String getFlowPropertyProviderName() {
+        if ( flowPropertyProviderName == null && isInstance()) {
+            return getDefinition().getFlowPropertyProviderName();
         } else {
-            return flowTypeName;
+            return flowPropertyProviderName;
         }
     }
 
@@ -323,7 +350,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
         } else if ( isInstance()) {
             return getDefinition().getLinkTitle();
         } else {
-            return "message:" + "flow." + FlowUtils.INSTANCE.toLowerCase(this.getFlowTypeName())+".link-title";
+            return "message:" + "flow." + FlowUtils.INSTANCE.toLowerCase(this.getFlowPropertyProviderName())+".link-title";
         }
     }
 
@@ -400,6 +427,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
         }
     }
 
+    public String getFlowPropertyProviderFullName() {
+        return getFlowPropertyProviderName();
+    }
+
     /**
      * @see org.amplafi.flow.Flow#setFlowState(org.amplafi.flow.FlowState)
      */
@@ -455,6 +486,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<Flow> implements Serializ
      */
     @Override
     public String toString() {
-        return getFlowTypeName()+ (isInstance()?"(instance)":"");
+        return getFlowPropertyProviderName()+ (isInstance()?"(instance)":"");
     }
 }

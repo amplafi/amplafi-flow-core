@@ -94,10 +94,10 @@ public class TestFlows {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         {
             FlowActivityImpl flowActivity0 = new FlowActivityImpl();
-            flowActivity0.setActivityName("fs0");
+            flowActivity0.setFlowPropertyProviderName("fs0");
             flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionImpl("key").initPropertyScope(activityLocal));
             FlowActivityImpl flowActivity1 = new FlowActivityImpl();
-            flowActivity1.setActivityName("fs1");
+            flowActivity1.setFlowPropertyProviderName("fs1");
             FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1);
             flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
             flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
@@ -156,7 +156,7 @@ public class TestFlows {
      */
     @Test(enabled=TEST_ENABLE)
     public void testVisiblePreviousNextWithHidden() {
-        Flow flow = new FlowImpl(FLOW_TYPE);
+        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowActivityImpl fa1 = new FlowActivityImpl();
         FlowActivityImpl fa2 = new FlowActivityImpl();
         FlowActivityImpl fa3 = new FlowActivityImpl();
@@ -184,7 +184,7 @@ public class TestFlows {
 
     @Test(enabled=TEST_ENABLE)
     public void testInitialValuesOnFlow() {
-        Flow flow = new FlowImpl(FLOW_TYPE);
+        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl(PROPERTY1);
         globalDef.setInitial(INITIAL_VALUE);
         flow.addPropertyDefinitions(globalDef);
@@ -223,7 +223,7 @@ public class TestFlows {
     public void testConversion() {
         String returnToFlowLookupKey = null;
         Map<String, String> initialFlowState = new HashMap<String, String>();
-        Flow flow = new FlowImpl(FLOW_TYPE);
+        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Long.class);
         flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
@@ -246,7 +246,7 @@ public class TestFlows {
     @Test(enabled=TEST_ENABLE)
     public void testEnumHandling() {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
-        Flow flow = new FlowImpl(FLOW_TYPE);
+        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
         flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();

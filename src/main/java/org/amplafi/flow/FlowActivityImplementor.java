@@ -14,11 +14,13 @@
 
 package org.amplafi.flow;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+
 /**
  * @author patmoore
  *
  */
-public interface FlowActivityImplementor extends FlowActivity {
+public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor {
     /**
      * Called when a property changes value.
      *
@@ -60,15 +62,11 @@ public interface FlowActivityImplementor extends FlowActivity {
 
     void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
-    /**
-     * @param activityName The activityName to set.
-     */
-    void setActivityName(String activityName);
-
     String getRawProperty(String key);
 
     boolean isPropertyNotBlank(String key);
 
     boolean isPropertyBlank(String key);
 
+    void setFlow(FlowImplementor flow);
 }

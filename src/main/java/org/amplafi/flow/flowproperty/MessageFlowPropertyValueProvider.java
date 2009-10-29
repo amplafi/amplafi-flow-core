@@ -43,9 +43,9 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
     public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
         StringBuilder standardKey = new StringBuilder(standardPrefix);
         Flow flow = flowActivity.getFlow();
-        standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flow.getFlowTypeName())).append(".");
+        standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flow.getFlowPropertyProviderName())).append(".");
         if (flowPropertyDefinition.getPropertyScope() == PropertyScope.activityLocal) {
-            standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowActivity.getActivityName())).append(".");
+            standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowActivity.getFlowPropertyProviderName())).append(".");
         }
         if (flowPropertyDefinition.getName().startsWith("fs") || flowPropertyDefinition.getName().startsWith("fa")) {
             standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowPropertyDefinition.getName().substring(2)));

@@ -40,19 +40,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 public interface Flow extends FlowPropertyProvider {
 
     /**
-     * Create an instance of a Flow from Flow definition.
-     * The {@link FlowActivity} array is copied but not the {@link FlowActivity}s themselves.
-     * @return flow instance.
-     */
-    Flow createInstance();
-
-    /**
-     * @param activities
-     *            The activities to set.
-     */
-    void setActivities(List<FlowActivityImplementor> activities);
-
-    /**
      * @param <T>
      * @return the activities.
      */
@@ -61,7 +48,7 @@ public interface Flow extends FlowPropertyProvider {
     <T extends FlowActivity> T getActivity(int activityIndex);
 
     /**
-     * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getActivityName()} must
+     * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getFlowPropertyProviderName()} must
      * not duplicate the name of any previously added FlowActivityImplementor. The check is case-insensitive.
      * @param activity
      */
@@ -73,10 +60,6 @@ public interface Flow extends FlowPropertyProvider {
     boolean isInstance();
 
     <T extends FlowActivity> List<T> getVisibleActivities();
-
-    void setFlowTypeName(String flowTypeName);
-
-    String getFlowTypeName();
 
     /**
      * @return get the flow name as it should appear in the flowentry and the

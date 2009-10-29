@@ -31,7 +31,7 @@ public interface FlowPropertyDefinitionProvider {
      * Add to the flowPropertyProvider the definitions needed by the
      * @param flowPropertyProvider
      */
-    void defineFlowPropertyDefinitions(FlowPropertyProvider flowPropertyProvider);
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider);
 
 
 }

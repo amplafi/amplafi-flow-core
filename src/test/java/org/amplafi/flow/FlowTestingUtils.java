@@ -125,18 +125,18 @@ public class FlowTestingUtils {
         return initActivity(clazz, null);
     }
     public String addFlowDefinition(String flowTypeName, FlowActivityImplementor... activities) {
-        final Flow def = new FlowImpl(flowTypeName, activities);
+        final FlowImplementor def = new FlowImpl(flowTypeName, activities);
         getFlowDefinitionsManager().addDefinitions(def);
         return flowTypeName;
     }
     public FlowManager programFlowManager(String flowTypeName, FlowActivityImplementor... activities) {
-        final Flow def = new FlowImpl(flowTypeName, activities);
+        final FlowImplementor def = new FlowImpl(flowTypeName, activities);
         getFlowTranslatorResolver().resolveFlow(def);
         EasyMock.expect(getFlowManager().getFlowDefinition(flowTypeName)).andReturn(def).anyTimes();
         EasyMock.expect(getFlowManager().isFlowDefined(flowTypeName)).andReturn(true).anyTimes();
-        EasyMock.expect(getFlowManager().getInstanceFromDefinition(flowTypeName)).andAnswer(new IAnswer<Flow>() {
+        EasyMock.expect(getFlowManager().getInstanceFromDefinition(flowTypeName)).andAnswer(new IAnswer<FlowImplementor>() {
             @Override
-            public Flow answer() {
+            public FlowImplementor answer() {
                 return def.createInstance();
             }
         }).anyTimes();

@@ -45,6 +45,9 @@ public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
      * {@link FlowState#begin()} has successfully started the flow.
      */
     started(true),
+    /**
+     * The flow has completed successfully.
+     */
     successful(true),
     canceled(false),
     failed(false);

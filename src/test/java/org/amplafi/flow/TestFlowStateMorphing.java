@@ -52,13 +52,13 @@ public class TestFlowStateMorphing {
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowState flowState = flowManagement.startFlowState(FIRST_FLOW, true, null, false);
-        assertEquals(flowState.getFlow().getFlowTypeName(), FIRST_FLOW);
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), FIRST_FLOW);
         assertEquals(flowState.getCurrentActivityByName(), "FA-1");
         flowState.next();
         assertEquals(flowState.getCurrentActivityByName(), "FA-2");
 
         flowState.morphFlow(MORPHED_FLOW, null);
-        assertEquals(flowState.getFlow().getFlowTypeName(), MORPHED_FLOW);
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), MORPHED_FLOW);
         assertEquals(flowState.getCurrentActivityByName(), "FA-2");
         flowState.next();
         assertEquals(flowState.getCurrentActivityByName(), "FA-4");
@@ -83,13 +83,13 @@ public class TestFlowStateMorphing {
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowStateImplementor flowState = flowManagement.startFlowState(FIRST_FLOW, true, null, false);
-        assertEquals(flowState.getFlow().getFlowTypeName(), FIRST_FLOW);
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-1");
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), FIRST_FLOW);
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-1");
         flowState.next();
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-2");
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-2");
         flowState.setPropertyWithDefinition(fa1,morphFlowFPD,false);
         flowState.next();
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-3");
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-3");
         flowState.finishFlow();
         assertNull(flowManagement.getCurrentFlowState(), "there shouldn't be a flow running");
     }
@@ -115,14 +115,14 @@ public class TestFlowStateMorphing {
 
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(FIRST_FLOW, true, null, false);
-        assertEquals(flowState.getFlow().getFlowTypeName(), FIRST_FLOW);
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-1");
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), FIRST_FLOW);
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-1");
         flowState.next();
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-2");
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-2");
 
         flowState.morphFlow(MORPHED_FLOW, new HashMap<String,String>());
-        assertEquals(flowState.getFlow().getFlowTypeName(), MORPHED_FLOW);
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-4");
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), MORPHED_FLOW);
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-4");
     }
 
     /**
@@ -145,17 +145,17 @@ public class TestFlowStateMorphing {
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowState flowState = flowManagement.startFlowState(FIRST_FLOW, true, null, false);
-        assertEquals(flowState.getFlow().getFlowTypeName(), FIRST_FLOW);
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-1");
+        assertEquals(flowState.getFlow().getFlowPropertyProviderName(), FIRST_FLOW);
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-1");
         flowState.next();
-        assertEquals(flowState.getCurrentActivity().getActivityName(), "FA-2");
+        assertEquals(flowState.getCurrentActivity().getFlowPropertyProviderName(), "FA-2");
         flowState.morphFlow(MORPHED_FLOW, new HashMap<String,String>());
         fail();
     }
 
     private FlowActivityImpl createFA(String name) {
         FlowActivityImpl activity = new FlowActivityImpl();
-        activity.setActivityName(name);
+        activity.setFlowPropertyProviderName(name);
         return activity;
     }
 }

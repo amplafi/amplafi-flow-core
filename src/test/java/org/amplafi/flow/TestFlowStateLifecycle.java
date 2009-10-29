@@ -63,10 +63,10 @@ public class TestFlowStateLifecycle {
         FlowStateLifecycle current;
         @Override
         public void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState) {
-            assertNotSame(flowState.getFlowLifecycleState(), previousFlowLifecycleState);
+            assertNotSame(flowState.getFlowStateLifecycle(), previousFlowLifecycleState);
             assertSame(current, previousFlowLifecycleState);
             last = previousFlowLifecycleState;
-            current = flowState.getFlowLifecycleState();
+            current = flowState.getFlowStateLifecycle();
         }
         /**
          * @see org.amplafi.flow.FlowStateLifecycleListener#activityChange(org.amplafi.flow.impl.FlowStateImplementor, org.amplafi.flow.FlowActivity)

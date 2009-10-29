@@ -14,10 +14,6 @@
 
 package org.amplafi.flow.impl;
 
-import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.flowproperty.PropertyUsage.*;
-import static org.apache.commons.lang.StringUtils.*;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -25,9 +21,29 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.amplafi.flow.flowproperty.*;
+import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
+import static org.apache.commons.lang.StringUtils.*;
+
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStepDirection;
+import org.amplafi.flow.FlowTx;
+import org.amplafi.flow.FlowUtils;
+import org.amplafi.flow.FlowValidationResult;
+import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.PropertyRequired;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.*;
 import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -91,11 +107,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     private String componentName;
 
     /**
-     * This is the activity name (id) of this FlowActivity.
-     */
-    private String activityName;
-
-    /**
      * The flow title that the appears in the flow picture.
      */
     private String activityTitle;
@@ -120,7 +131,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * if this is an instance, this is the {@link org.amplafi.flow.Flow} instance.
      */
-    private Flow flow;
+    private FlowImplementor flow;
 
     private String fullActivityInstanceNamespace;
 
@@ -244,7 +255,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * @see org.amplafi.flow.FlowActivity#getFlow()
      */
-    public Flow getFlow() {
+    public FlowImplementor getFlow() {
         return flow;
     }
 
@@ -354,25 +365,19 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
-    public void setActivityName(String activityName) {
-        if ( !StringUtils.equalsIgnoreCase(this.activityName, activityName)) {
-            if ( this.activityName != null && this.flow != null) {
+    public void setFlowPropertyProviderName(String activityName) {
+        if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, activityName)) {
+            if ( this.flowPropertyProviderName != null && this.flow != null) {
                 throw new IllegalStateException(this+": cannot change activityName once it is part of a flow. Tried to change to ="+activityName);
             }
-            this.activityName = activityName;
+            this.flowPropertyProviderName = activityName;
         }
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getActivityName()
-     */
-    public String getActivityName() {
-        return isActivityNameSet()?activityName:this.getClass().getSimpleName();
+    public String getFlowPropertyProviderName() {
+        return isFlowPropertyProviderNameSet()?flowPropertyProviderName:this.getClass().getSimpleName();
     }
 
-    public boolean isActivityNameSet() {
-        return this.activityName != null;
-    }
     /**
      * @see org.amplafi.flow.FlowActivity#setActivityTitle(java.lang.String)
      */
@@ -390,15 +395,19 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         } else if (isNotBlank(activityTitle)){
             return activityTitle;
         } else {
-            return "message:"+ "flow.activity." + FlowUtils.INSTANCE.toLowerCase(this.getActivityName() ) +".title";
+            return "message:"+ "flow.activity." + FlowUtils.INSTANCE.toLowerCase(this.getFlowPropertyProviderName() ) +".title";
         }
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFullActivityName()
+     * @see org.amplafi.flow.FlowActivity#getFlowPropertyProviderFullName()
      */
-    public String getFullActivityName() {
-        return this.getFlow().getFlowTypeName() + "." + getActivityName();
+    public String getFlowPropertyProviderFullName() {
+        if ( this.getFlow() != null) {
+            return this.getFlow().getFlowPropertyProviderName() + "." + getFlowPropertyProviderName();
+        } else {
+            return getFlowPropertyProviderName();
+        }
     }
 
     /**
@@ -408,11 +417,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     public String getFullActivityInstanceNamespace() {
         if ( this.fullActivityInstanceNamespace == null) {
             if ( this.getFlowState() != null ) {
-                this.fullActivityInstanceNamespace = getFlowState().getLookupKey()+"."+getActivityName();
+                this.fullActivityInstanceNamespace = getFlowState().getLookupKey()+"."+getFlowPropertyProviderName();
             } else {
                 // we don't want to save this value because then if this method is called before a flowState is attached, then this flowActivity will never see the
                 // namespace that should be used after the flow is active.
-                return getFullActivityName();
+                return getFlowPropertyProviderFullName();
             }
         }
         return this.fullActivityInstanceNamespace;
@@ -420,7 +429,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     public boolean isNamed(String possibleName) {
         if ( isNotBlank(possibleName) ) {
-            return possibleName.equals(getActivityName()) || possibleName.equals(getFullActivityInstanceNamespace()) || possibleName.equals(getFullActivityName());
+            return possibleName.equals(getFlowPropertyProviderName()) || possibleName.equals(getFullActivityInstanceNamespace()) || possibleName.equals(getFlowPropertyProviderFullName());
         } else {
             return false;
         }
@@ -503,7 +512,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     protected <T extends FlowActivityImpl>void copyTo(T instance) {
         instance.activatable = activatable;
-        instance.activityName = activityName;
+        instance.flowPropertyProviderName = flowPropertyProviderName;
         instance.activityTitle = activityTitle;
         instance.componentName = componentName;
         instance.pageName = pageName;
@@ -602,10 +611,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         } else if ( (currentLocal = getLocalPropertyDefinition(definition.getName())) != null) {
             // check against the FlowPropertyDefinition
             if ( !definition.isDataClassMergeable(currentLocal)) {
-                getLog().warn(this.getFullActivityName()+": has new (overriding) definition '"+definition+
+                getLog().warn(this.getFlowPropertyProviderFullName()+": has new (overriding) definition '"+definition+
                     "' with different data type than the previous definition '"+currentLocal+"'. The overriding definition will be used.");
             } else if (!definition.merge(currentLocal)) {
-                getLog().debug(this.getFullActivityName()
+                getLog().debug(this.getFlowPropertyProviderFullName()
                                         + " has a new FlowPropertyDefinition '"
                                         + definition
                                         + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +
@@ -618,12 +627,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             FlowPropertyDefinition current = this.getFlowPropertyDefinitionDefinedInFlow(definition.getName());
             if ( current != null && !definition.merge(current)) {
                 if ( definition.isDataClassMergeable(current)) {
-                    getLog().debug(this.getFullActivityName()
+                    getLog().debug(this.getFlowPropertyProviderFullName()
                                         + " has a FlowPropertyDefinition '"
                                         + definition.getName()
                                         + "' that conflicts with flow's property definition. The data classes are mergeable. So this probably is o.k. The FlowActivity's definition will be marked as 'activityLocal'.");
                 } else {
-                    getLog().warn(this.getFullActivityName()
+                    getLog().warn(this.getFlowPropertyProviderFullName()
                         + " has a FlowPropertyDefinition '"
                         + definition.getName()
                         + "' that conflicts with flow's property definition. The data classes are NOT mergeable. This might cause problems so the FlowActivity's definition will be marked as 'activityLocal' and 'internalState'.");
@@ -667,9 +676,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivityImplementor#setFlow(org.amplafi.flow.Flow)
+     * @see org.amplafi.flow.FlowActivityImplementor#setFlow(FlowImplementor)
      */
-    public void setFlow(Flow flow) {
+    public void setFlow(FlowImplementor flow) {
         this.flow = flow;
     }
 
@@ -870,9 +879,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     public String toString() {
         Flow f = getFlow();
         if ( f != null ) {
-            return f.getFlowTypeName()+"."+getActivityName()+ " " +getClass()+" id="+super.toString();
+            return f.getFlowPropertyProviderName()+"."+getFlowPropertyProviderName()+ " " +getClass()+" id="+super.toString();
         } else {
-            return getActivityName()+ " " +getClass()+" id="+super.toString();
+            return getFlowPropertyProviderName()+ " " +getClass()+" id="+super.toString();
         }
     }
 

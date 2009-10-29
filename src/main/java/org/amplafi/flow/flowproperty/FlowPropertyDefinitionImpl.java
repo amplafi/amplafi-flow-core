@@ -871,10 +871,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
             case activityLocal:
                 // TODO should really be ? but what about morphing??
     //            list.add(flowActivity.getFullActivityName());
-                list.add(flowActivity.getActivityName());
+                list.add(flowActivity.getFlowPropertyProviderName());
             case flowLocal:
             case requestFlowLocal:
-                list.add(flowActivity.getFlow().getFlowTypeName());
+                list.add(flowActivity.getFlow().getFlowPropertyProviderName());
                 list.add(null);
             case global:
                 break;
@@ -895,12 +895,12 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
             if ( flowActivity.getFlowState() != null) {
                 return getNamespaceKey(flowActivity.getFlowState());
             } else {
-                return flowActivity.getFlow().getFlowTypeName();
+                return flowActivity.getFlow().getFlowPropertyProviderName();
             }
         case global:
             return null;
         default:
-            throw new IllegalStateException(flowActivity.getFullActivityInstanceNamespace()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
+            throw new IllegalStateException(flowActivity.getFlowPropertyProviderFullName()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
         }
     }
 
@@ -959,10 +959,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     }
 
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProvider)
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(FlowPropertyProviderImplementor)
      */
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProvider flowPropertyProvider) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         flowPropertyProvider.addPropertyDefinition(this);
     }
 

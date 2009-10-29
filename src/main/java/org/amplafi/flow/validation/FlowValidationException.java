@@ -54,7 +54,7 @@ public class FlowValidationException extends FlowException {
      * @param flowValidationResult
      */
     public FlowValidationException(FlowActivity currentActivity, FlowValidationResult flowValidationResult) {
-        super(currentActivity.getFullActivityName());
+        super(currentActivity.getFlowPropertyProviderFullName());
         this.validationResult = flowValidationResult;
     }
 

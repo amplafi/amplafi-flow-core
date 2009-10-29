@@ -15,6 +15,8 @@
 package org.amplafi.flow.impl;
 
 import java.net.URI;
+
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowDefinitionsManager;
@@ -37,12 +39,12 @@ public class FlowManagerImpl implements FlowManager {
      * @see org.amplafi.flow.FlowManager#getInstanceFromDefinition(java.lang.String)
      */
     @Override
-    public Flow getInstanceFromDefinition(String flowTypeName) {
-        Flow definition = flowDefinitionsManager.getFlowDefinition(flowTypeName);
+    public FlowImplementor getInstanceFromDefinition(String flowTypeName) {
+        FlowImplementor definition = flowDefinitionsManager.getFlowDefinition(flowTypeName);
         if (definition == null) {
             throw new IllegalArgumentException(flowTypeName + ": definition does not exist");
         }
-        Flow inst = definition.createInstance();
+        FlowImplementor inst = definition.createInstance();
         return inst;
     }
 

@@ -13,32 +13,25 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import java.util.Map;
-
+import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
-
+import static org.amplafi.flow.FlowConstants.*;
 /**
- * Implementers manage a map of {@link FlowPropertyDefinition}s
  * @author patmoore
  *
  */
-public interface FlowPropertyProvider {
+public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivity> {
+
+    public FlowTransitionFlowPropertyValueProvider() {
+        super(FSFLOW_TRANSITION);
+        addRequires(FSFLOW_TRANSITIONS, FSALT_FINISHED);
+    }
     /**
-     *
-     * @return unique portion of the namespace.
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
      */
-    String getFlowPropertyProviderName();
-
-    /**
-     * "flowName.activityName"
-     *
-     * @return full flow activity name.
-     */
-    String getFlowPropertyProviderFullName();
-
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
-
-    FlowPropertyDefinition getPropertyDefinition(String key);
-
+    @Override
+    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+        throw new UnsupportedOperationException();
+    }
 
 }

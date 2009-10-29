@@ -120,6 +120,7 @@ public interface FlowConstants {
      * alternative way / button.
      *
      * This property's value will be set to the FlowTransition key.
+     * See {@link #FSFLOW_TRANSITIONS} and {@link #FSFLOW_TRANSITION}
      */
     public static final String FSALT_FINISHED = "fsAltFinished";
     /**
@@ -139,6 +140,10 @@ public interface FlowConstants {
      * transitions.
      */
     public static final String FSFLOW_TRANSITIONS = "fsFlowTransitions";
+    /**
+     * The selected FlowTransition. Selected from {@link #FSFLOW_TRANSITIONS} using {@link #FSALT_FINISHED}.
+     */
+    public static final String FSFLOW_TRANSITION = "fsFlowTransition";
     /**
      * If there is no {@link #FSFLOW_TRANSITIONS} flow, then the flow when it finishes should return to the
      * FSRETURN_TO_FLOW flow.
@@ -167,11 +172,6 @@ public interface FlowConstants {
      */
     @Deprecated
     public static final String FSNEXT_FLOW = "fsNextFlow";
-
-    /**
-     * The message displayed when this flow completes. If no value then this flow's completion should not be announced to the user.
-     */
-    public static final String COMPLETION_MESSAGE = "completionMessage";
 
     /**
      * MUST NOT BE included as a FlowPropertyDefinition -- will result in the flow template not wired up correctly to the FullFlowComponent

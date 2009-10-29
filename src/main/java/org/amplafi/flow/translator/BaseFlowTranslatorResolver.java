@@ -228,7 +228,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
         if ( MapUtils.isNotEmpty(propertyDefinitions) ) {
             Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-            initAndResolveCollection(flow.getFlowTypeName()+".", values);
+            initAndResolveCollection(flow.getFlowPropertyProviderName()+".", values);
         }
         List<FlowActivityImplementor> activities = flow.getActivities();
         if ( activities != null ) {
@@ -250,7 +250,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             Map<String, FlowPropertyDefinition> propertyDefinitions = flowActivity.getPropertyDefinitions();
             if ( MapUtils.isNotEmpty(propertyDefinitions)) {
                 Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-                initAndResolveCollection(flowActivity.getFullActivityName()+"("+flowActivity.getClass().getName()+").", values);
+                initAndResolveCollection(flowActivity.getFlowPropertyProviderFullName()+"("+flowActivity.getClass().getName()+").", values);
             }
         }
     }

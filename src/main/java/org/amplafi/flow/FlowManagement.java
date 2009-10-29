@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.apache.commons.logging.Log;
 
@@ -172,7 +172,7 @@ public interface FlowManagement {
 
     FlowActivity getCurrentActivity();
 
-    Flow getInstanceFromDefinition(String flowTypeName);
+    FlowImplementor getInstanceFromDefinition(String flowTypeName);
 
     void registerForCacheClearing();
 
@@ -238,7 +238,7 @@ public interface FlowManagement {
      */
     URI getDefaultHomePage();
 
-    <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue);
+    <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
     void addFlowLifecycleListener(FlowStateLifecycleListener flowStateLifecycleListener);
 

@@ -18,27 +18,17 @@ import java.util.Map;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
- * Implementers manage a map of {@link FlowPropertyDefinition}s
  * @author patmoore
  *
  */
-public interface FlowPropertyProvider {
+public interface FlowPropertyProviderImplementor extends FlowPropertyProvider {
     /**
-     *
-     * @return unique portion of the namespace.
+     * @param flowPropertyProviderName The flowPropertyProviderName to set.
      */
-    String getFlowPropertyProviderName();
+    void setFlowPropertyProviderName(String flowPropertyProviderName);
+    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> flowPropertyDefinitions);
 
-    /**
-     * "flowName.activityName"
-     *
-     * @return full flow activity name.
-     */
-    String getFlowPropertyProviderFullName();
+    void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
 
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
-
-    FlowPropertyDefinition getPropertyDefinition(String key);
-
-
+    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
 }

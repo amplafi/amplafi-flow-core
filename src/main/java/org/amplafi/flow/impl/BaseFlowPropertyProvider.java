@@ -27,8 +27,12 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
 
     private T definition;
 
-
     private Map<String, FlowPropertyDefinition> propertyDefinitions;
+
+    /**
+     * This is the activity name (id) of this FlowActivity.
+     */
+    protected String flowPropertyProviderName;
 
     public BaseFlowPropertyProvider() {
     }
@@ -102,5 +106,8 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
                 this.addPropertyDefinition(flowPropertyDefinition);
             }
         }
+    }
+    public boolean isFlowPropertyProviderNameSet() {
+        return this.flowPropertyProviderName != null;
     }
 }

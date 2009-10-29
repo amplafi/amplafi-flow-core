@@ -106,7 +106,7 @@
                 <rules>
                     <custom class="org.amplafi.flow.hivemind.FlowActivityRule"/>
                     <!-- push-attribute attribute="class"/-->
-                    <read-attribute attribute="name" property="activityName"/>
+                    <read-attribute attribute="name" property="flowPropertyProviderName"/>
                     <read-attribute attribute="pageName" property="pageName"/>
                     <read-attribute attribute="componentName"
                                     property="componentName"/>
@@ -147,7 +147,7 @@
                 <rules>
                     <create-object
                             class="org.amplafi.flow.impl.TransitionFlowActivity"/>
-                    <read-attribute attribute="name" property="activityName"/>
+                    <read-attribute attribute="name" property="flowPropertyProviderName"/>
                     <read-attribute attribute="type" property="type"/>
                     <read-attribute attribute="finish-key" property="finishKey"/>
                     
@@ -203,7 +203,7 @@
             </element>
             <rules>
                 <create-object class="org.amplafi.flow.impl.FlowImpl"/>
-                <read-attribute attribute="name" property="flowTypeName"/>
+                <read-attribute attribute="name" property="flowPropertyProviderName"/>
                 <read-attribute attribute="pageName" property="pageName"/>
                 <read-attribute attribute="default-after-page" property="defaultAfterPage"/>
                 <read-attribute attribute="after-page" property="afterPage"/>

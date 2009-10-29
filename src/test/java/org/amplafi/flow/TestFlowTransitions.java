@@ -154,7 +154,7 @@ public class TestFlowTransitions {
      * @param flow
      * @return
      */
-    private FlowManagement getFlowManagement(Flow... flow) {
+    private FlowManagement getFlowManagement(FlowImplementor... flow) {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowDefinitionsManager().addDefinitions(flow);
         return flowTestingUtils.getFlowManagement();

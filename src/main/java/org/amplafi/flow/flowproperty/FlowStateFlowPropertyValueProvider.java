@@ -28,10 +28,10 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProvider)
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(FlowPropertyProviderImplementor)
      */
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProvider flowPropertyProvider) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         flowPropertyProvider.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
                 .initFlowPropertyValueProvider(this),

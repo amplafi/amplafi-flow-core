@@ -130,7 +130,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     String getActiveFlowLabel();
 
     /**
-     * get FlowActivity by the {@link FlowActivity#getActivityName()}
+     * get FlowActivity by the {@link FlowActivity#getFlowPropertyProviderName()}
      * @param <T>
      * @param activityName
      * @return flowActivity
@@ -260,7 +260,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     String getFinishKey();
 
-    FlowStateLifecycle getFlowLifecycleState();
+    FlowStateLifecycle getFlowStateLifecycle();
 
     boolean isCompleted();
 

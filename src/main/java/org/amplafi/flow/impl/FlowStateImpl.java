@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -85,7 +86,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     private String flowTypeName;
 
-    protected transient Flow flow;
+    protected transient FlowImplementor flow;
 
     /**
      * index into flow.activities.
@@ -145,7 +146,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public String begin() {
         // HACK feels hacky ... making assumptions about the value.. NOTE: we do have to reinitialize after a flow has been morphed to another flow. ( new activities/properties )
-        if ( !this.isCompleted() && this.getFlowLifecycleState() != initialized ) {
+        if ( !this.isCompleted() && this.getFlowStateLifecycle() != initialized ) {
             this.initializeFlow();
         }
         this.setFlowLifecycleState(starting);
@@ -158,7 +159,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             throw e;
         } finally {
             // because may throw flow validation exception
-            if ( this.getFlowLifecycleState() == starting) {
+            if ( this.getFlowStateLifecycle() == starting) {
                 this.setFlowLifecycleState(nextFlowLifecycleState);
             }
         }
@@ -204,7 +205,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             throw e;
         } finally {
             // because may throw flow validation exception
-            if ( this.getFlowLifecycleState() == initializing) {
+            if ( this.getFlowStateLifecycle() == initializing) {
                 this.setFlowLifecycleState(nextFlowLifecycleState);
             }
         }
@@ -263,7 +264,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (!propertyUsage.isExternallySettable() && currentValue != null) {
                 // property cannot be overridden.
                 getLog().info(
-                    (flowActivity==null?getFlow().getFlowTypeName():flowActivity.getFullActivityName())
+                    (flowActivity==null?getFlow().getFlowPropertyProviderName():flowActivity.getFlowPropertyProviderFullName())
                                 + '.'
                                 + flowPropertyDefinition.getName()
                                 + " cannot be set to '"
@@ -416,7 +417,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     private FlowActivityImplementor getTargetFAInNextFlow(FlowActivityImplementor currentFAInOriginalFlow,
             List<FlowActivityImplementor> originalFAs, List<FlowActivityImplementor> nextFAs) {
-        FlowActivity flowActivity = this.getActivity(currentFAInOriginalFlow.getActivityName());
+        FlowActivity flowActivity = this.getActivity(currentFAInOriginalFlow.getFlowPropertyProviderName());
         if ( flowActivity != null ) {
             // cool .. exact match on the names.
             return (FlowActivityImplementor) flowActivity;
@@ -440,7 +441,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     private boolean isEqualTo(FlowActivity fa1, FlowActivity fa2) {
-        return fa1 != null && fa2 != null && fa1.getActivityName().equals(fa2.getActivityName());
+        return fa1 != null && fa2 != null && fa1.getFlowPropertyProviderName().equals(fa2.getFlowPropertyProviderName());
     }
 
     private boolean areFlowActivitiesInOrder(List<FlowActivityImplementor> prevFAs, List<FlowActivityImplementor> nextFAs) {
@@ -577,7 +578,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < this.size(); i++) {
             FlowActivity activity = getActivity(i);
             activity.saveChanges();
-            LapTimer.sLap(activity.getFullActivityName(), ".saveChanges() completed");
+            LapTimer.sLap(activity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
         }
         LapTimer.sLap(this.getActiveFlowLabel()," end saveChanges()");
     }
@@ -841,7 +842,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     private void setCurrentActivityIndex(int currentActivity) {
         if (currentActivity >= 0 && currentActivity < size()) {
             this.currentActivityIndex = currentActivity;
-            this.currentActivityByName = getCurrentActivity().getActivityName();
+            this.currentActivityByName = getCurrentActivity().getFlowPropertyProviderName();
         } else {
             // required to match the iterator definition.
             throw new NoSuchElementException(currentActivity + ": incorrect index for "
@@ -888,7 +889,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (isNotBlank(currentActivityByName)) {
                 int i = 0;
                 for (FlowActivity flowActivity : this.getFlow().getActivities()) {
-                    if (currentActivityByName.equals(flowActivity.getActivityName())) {
+                    if (currentActivityByName.equals(flowActivity.getFlowPropertyProviderName())) {
                         currentActivityIndex = i;
                         break;
                     } else {
@@ -1168,7 +1169,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @see org.amplafi.flow.FlowState#getFlow()
      */
     @Override
-    public synchronized Flow getFlow() {
+    public synchronized FlowImplementor getFlow() {
         if (this.flow == null && getFlowTypeName() != null) {
             this.flow = this.getFlowManagement().getInstanceFromDefinition(getFlowTypeName());
             if (this.flow == null) {
@@ -1376,7 +1377,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (FlowActivity activity : this.getActivities()) {
             FlowValidationResult flowValidationResult = activity.getFlowValidationResult(propertyRequired, flowStepDirection);
             if (!flowValidationResult.isValid()) {
-                result.put(activity.getActivityName(), flowValidationResult);
+                result.put(activity.getFlowPropertyProviderName(), flowValidationResult);
             }
         }
         return result;
@@ -1493,10 +1494,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#getFlowLifecycleState()
+     * @see org.amplafi.flow.FlowState#getFlowStateLifecycle()
      */
     @Override
-    public FlowStateLifecycle getFlowLifecycleState() {
+    public FlowStateLifecycle getFlowStateLifecycle() {
         return this.flowStateLifecycle;
     }
 

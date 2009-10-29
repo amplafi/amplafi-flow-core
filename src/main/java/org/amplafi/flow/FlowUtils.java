@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.json.JSONStringer;
@@ -133,14 +135,16 @@ public class FlowUtils {
     }
     public String toLowerCase(String flowName) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < flowName.length(); i++) {
-            if ( Character.isUpperCase(flowName.charAt(i)) ) {
-                if ( i > 0 ) {
-                    sb.append('-');
+        if ( isNotBlank(flowName)) {
+            for(int i = 0; i < flowName.length(); i++) {
+                if ( Character.isUpperCase(flowName.charAt(i)) ) {
+                    if ( i > 0 ) {
+                        sb.append('-');
+                    }
+                    sb.append(Character.toLowerCase(flowName.charAt(i)));
+                } else {
+                    sb.append(flowName.charAt(i));
                 }
-                sb.append(Character.toLowerCase(flowName.charAt(i)));
-            } else {
-                sb.append(flowName.charAt(i));
             }
         }
         return sb.toString();

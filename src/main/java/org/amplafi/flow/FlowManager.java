@@ -24,7 +24,7 @@ import java.net.URI;
  */
 public interface FlowManager {
 
-    Flow getInstanceFromDefinition(String flowTypeName);
+    FlowImplementor getInstanceFromDefinition(String flowTypeName);
 
     /**
      * Returns the flow having the specified name.

@@ -30,6 +30,7 @@ import java.util.Set;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowStateLifecycleListener;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowStateLifecycle;
@@ -40,7 +41,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.web.PageProvider;
@@ -416,7 +417,7 @@ public class BaseFlowManagement implements FlowManagement {
                 fs = (FlowStateImplementor) sessionFlows.removeByLookupKey(lookupKey);
                 if ( fs != null ) {
                     successful = true;
-                    if ( !fs.getFlowLifecycleState().isTerminalState()) {
+                    if ( !fs.getFlowStateLifecycle().isTerminalState()) {
                         fs.setFlowLifecycleState(FlowStateLifecycle.canceled);
                     }
 
@@ -516,7 +517,7 @@ public class BaseFlowManagement implements FlowManagement {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProvider flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
+    public <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
         if ( expected == null && sampleValue != null) {
             expected = (Class<T>) sampleValue.getClass();
         }
@@ -537,7 +538,7 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#getInstanceFromDefinition(java.lang.String)
      */
-    public Flow getInstanceFromDefinition(String flowTypeName) {
+    public FlowImplementor getInstanceFromDefinition(String flowTypeName) {
         return getFlowManager().getInstanceFromDefinition(flowTypeName);
     }
     /**

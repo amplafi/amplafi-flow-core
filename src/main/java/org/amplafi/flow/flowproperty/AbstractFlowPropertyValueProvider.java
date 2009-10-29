@@ -115,7 +115,7 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
      * @param flowPropertyValueProvider
      * @param flowPropertyDefinitions
      */
-    protected void addPropertyDefinitions(FlowPropertyProvider flowPropertyProvider, FlowPropertyValueProvider<FA> flowPropertyValueProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
+    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyValueProvider<FA> flowPropertyValueProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
         for(FlowPropertyDefinitionImpl flowPropertyDefinition: flowPropertyDefinitions) {
             if ( !flowPropertyDefinition.isDefaultAvailable()) {
                 flowPropertyDefinition.initFlowPropertyValueProvider(flowPropertyValueProvider);

@@ -15,7 +15,6 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.*;
@@ -47,7 +46,7 @@ public class TestTransitionFlowActivity {
     @Test(enabled=TEST_ENABLED)
     public void testTransitionActivate() {
         TransitionFlowActivity obj = new TransitionFlowActivity();
-        Flow flow = EasyMock.createMock(Flow.class);
+        FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
         FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
         expect(flow.getPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
