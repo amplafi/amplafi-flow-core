@@ -16,7 +16,6 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
-import org.amplafi.flow.flowproperty.PropertyRequired;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 
@@ -78,8 +77,8 @@ public interface FlowPropertyDefinition {
 
     String getUiComponentParameterName();
 
-    PropertyRequired getPropertyRequired();
-    void setPropertyRequired(PropertyRequired propertyRequired);
+    FlowActivityPhase getPropertyRequired();
+    void setPropertyRequired(FlowActivityPhase flowActivityPhase);
 
     boolean isSaveBack();
 

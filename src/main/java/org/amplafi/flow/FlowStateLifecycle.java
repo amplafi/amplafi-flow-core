@@ -22,7 +22,7 @@ import com.sworddance.core.FiniteState;
 
 /**
  * The lifecycle states that a {@link FlowState} can transition through.
- * @see FlowStateLifecycleListener for monitoring changes.
+ * @see FlowStateListener for monitoring changes.
  */
 public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
     /**

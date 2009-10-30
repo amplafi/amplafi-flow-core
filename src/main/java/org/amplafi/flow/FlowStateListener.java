@@ -22,7 +22,7 @@ import org.amplafi.flow.impl.FlowStateImplementor;
  * @author patmoore
  *
  */
-public interface FlowStateLifecycleListener {
+public interface FlowStateListener {
     /**
      * Note that listeners are not given veto permission.
      * TODO: Maybe should be ( FlowValidation ? ) - maybe new interface for vetoing?
@@ -32,5 +32,5 @@ public interface FlowStateLifecycleListener {
      */
     void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle);
 
-    void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity);
+    void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity, FlowStepDirection flowStepDirection, FlowActivityPhase flowActivityPhase);
 }

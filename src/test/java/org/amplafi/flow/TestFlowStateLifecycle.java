@@ -43,7 +43,7 @@ public class TestFlowStateLifecycle {
     }
 
     /**
-     * Make sure that {@link FlowStateLifecycleListener} are getting notified.
+     * Make sure that {@link FlowStateListener} are getting notified.
      */
     @Test
     public void testFlowLifecycleListener() {
@@ -58,7 +58,7 @@ public class TestFlowStateLifecycle {
         flowState.finishFlow();
         assertEquals(flowLifecycleStateListener.current, successful);
     }
-    class FlowStateLifecycleListenerImpl implements FlowStateLifecycleListener {
+    class FlowStateLifecycleListenerImpl implements FlowStateListener {
         FlowStateLifecycle last;
         FlowStateLifecycle current;
         @Override
@@ -69,10 +69,10 @@ public class TestFlowStateLifecycle {
             current = flowState.getFlowStateLifecycle();
         }
         /**
-         * @see org.amplafi.flow.FlowStateLifecycleListener#activityChange(org.amplafi.flow.impl.FlowStateImplementor, org.amplafi.flow.FlowActivity)
+         * @see org.amplafi.flow.FlowStateListener#activityChange(org.amplafi.flow.impl.FlowStateImplementor, org.amplafi.flow.FlowActivity, FlowStepDirection, FlowActivityPhase)
          */
         @Override
-        public void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity) {
+        public void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity, FlowStepDirection flowStepDirection, FlowActivityPhase flowActivityPhase) {
 
         }
     }

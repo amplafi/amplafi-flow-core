@@ -12,13 +12,13 @@
  * License.
  */
 
-package org.amplafi.flow.flowproperty;
+package org.amplafi.flow;
 
 /**
  * @author patmoore
  *
  */
-public enum PropertyRequired {
+public enum FlowActivityPhase {
     optional,
     /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
@@ -30,7 +30,7 @@ public enum PropertyRequired {
     activate,
     /**
      * FlowProperty is required to be set before advancing beyond the {@link org.amplafi.flow.FlowActivity}.
-     * This is used when *the* current FlowActivity is requesting a value that must be set.
+     * This is used when *the* current FlowActivity is requesting the user to set the property to a value.
      *
      * The FlowActivity must have the ability to let user set the property in this case.
      * Do not use as a gatekeeper to 'protect' later FlowActivities.

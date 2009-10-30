@@ -30,13 +30,15 @@ import java.util.Set;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.FlowStateLifecycleListener;
+import org.amplafi.flow.FlowStateListener;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
@@ -67,7 +69,7 @@ public class BaseFlowManagement implements FlowManagement {
     private transient PageProvider pageProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
-    private transient Set<FlowStateLifecycleListener> flowStateLifecycleListeners = Collections.synchronizedSet(new LinkedHashSet<FlowStateLifecycleListener>());
+    private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new LinkedHashSet<FlowStateListener>());
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
@@ -602,22 +604,29 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @return the flowLifecycleStateListeners
      */
-    protected Set<FlowStateLifecycleListener> getFlowLifecycleStateListeners() {
-        return flowStateLifecycleListeners;
+    protected Set<FlowStateListener> getFlowLifecycleStateListeners() {
+        return flowStateListeners;
     }
 
     /**
-     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowStateLifecycleListener)
+     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowStateListener)
      */
     @Override
-    public void addFlowLifecycleListener(FlowStateLifecycleListener flowStateLifecycleListener) {
-        this.getFlowLifecycleStateListeners().add(flowStateLifecycleListener);
+    public void addFlowLifecycleListener(FlowStateListener flowStateListener) {
+        this.getFlowLifecycleStateListeners().add(flowStateListener);
     }
 
-    public void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle) {
+    public void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle) {
         //TODO synchronization issues if new listeners being added.
-        for(FlowStateLifecycleListener flowStateLifecycleListener: this.flowStateLifecycleListeners) {
-            flowStateLifecycleListener.lifecycleChange(flowState, previousFlowStateLifecycle);
+        for(FlowStateListener flowStateListener: this.flowStateListeners) {
+            flowStateListener.lifecycleChange(flowState, previousFlowStateLifecycle);
+        }
+    }
+
+    public void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity, FlowStepDirection flowStepDirection, FlowActivityPhase flowActivityPhase) {
+        //TODO synchronization issues if new listeners being added.
+        for(FlowStateListener flowStateListener: this.flowStateListeners) {
+            flowStateListener.activityChange(flowState, flowActivity, flowStepDirection, flowActivityPhase);
         }
     }
 

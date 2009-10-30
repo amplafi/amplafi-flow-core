@@ -97,7 +97,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     private PropertySecurity propertySecurity;
 
     private String validators;
-    private PropertyRequired propertyRequired;
+    private FlowActivityPhase flowActivityPhase;
     private PropertyUsage propertyUsage;
     private PropertyScope propertyScope;
     /**
@@ -131,7 +131,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         }
         validators = clone.validators;
         saveBack = clone.saveBack;
-        this.propertyRequired = clone.propertyRequired;
+        this.flowActivityPhase = clone.flowActivityPhase;
         this.propertyUsage = clone.propertyUsage;
         this.propertyScope = clone.propertyScope;
     }
@@ -155,7 +155,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     public FlowPropertyDefinitionImpl(String name, String validators) {
         this.setName(name);
         this.validators = validators;
-        this.propertyRequired = isRequired()?PropertyRequired.advance: PropertyRequired.optional;
+        this.flowActivityPhase = isRequired()?FlowActivityPhase.advance: FlowActivityPhase.optional;
         dataClassDefinition = new DataClassDefinitionImpl();
     }
 
@@ -167,7 +167,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      * @param collectionClasses
      */
     public FlowPropertyDefinitionImpl(String name, Class<?> dataClass, Class<?>...collectionClasses) {
-        this(name, dataClass, PropertyRequired.optional, collectionClasses);
+        this(name, dataClass, FlowActivityPhase.optional, collectionClasses);
     }
 
     /**
@@ -176,7 +176,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      * @param name
      * @param required
      */
-    public FlowPropertyDefinitionImpl(String name, PropertyRequired required) {
+    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase required) {
         this(name, null, required);
     }
 
@@ -188,16 +188,16 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
      * @param required how required is this property?
      * @param collectionClasses
      */
-    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, PropertyRequired required, Class<?>...collectionClasses) {
+    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase required, Class<?>...collectionClasses) {
         this(name, required, new DataClassDefinitionImpl(dataClass, collectionClasses));
     }
     public FlowPropertyDefinitionImpl(String name, DataClassDefinitionImpl dataClassDefinition) {
-        this(name, PropertyRequired.optional, dataClassDefinition);
+        this(name, FlowActivityPhase.optional, dataClassDefinition);
     }
-    public FlowPropertyDefinitionImpl(String name, PropertyRequired required, DataClassDefinitionImpl dataClassDefinition) {
+    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase required, DataClassDefinitionImpl dataClassDefinition) {
         this.setName(name);
-        this.propertyRequired = required;
-        this.setRequired(required==PropertyRequired.advance);
+        this.flowActivityPhase = required;
+        this.setRequired(required==FlowActivityPhase.advance);
         this.dataClassDefinition = dataClassDefinition;
     }
 
@@ -438,26 +438,26 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
         return (V) this.getDataClassDefinition().deserialize(this, value);
     }
     /**
-     * @param propertyRequired the propertyRequired to set
+     * @param flowActivityPhase the propertyRequired to set
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initPropertyRequired(PropertyRequired propertyRequired) {
-        this.setPropertyRequired(propertyRequired);
+    public FlowPropertyDefinitionImpl initPropertyRequired(FlowActivityPhase flowActivityPhase) {
+        this.setPropertyRequired(flowActivityPhase);
         return this;
     }
     /**
-     * @param propertyRequired the propertyRequired to set
+     * @param flowActivityPhase the propertyRequired to set
      */
-    public void setPropertyRequired(PropertyRequired propertyRequired) {
-        this.propertyRequired = propertyRequired;
+    public void setPropertyRequired(FlowActivityPhase flowActivityPhase) {
+        this.flowActivityPhase = flowActivityPhase;
     }
 
     /**
      * @return the propertyRequired
      */
-    public PropertyRequired getPropertyRequired() {
-        return propertyRequired == null?PropertyRequired.optional:propertyRequired;
+    public FlowActivityPhase getPropertyRequired() {
+        return flowActivityPhase == null?FlowActivityPhase.optional:flowActivityPhase;
     }
 
     /**

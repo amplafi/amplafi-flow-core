@@ -29,6 +29,7 @@ import static org.apache.commons.lang.StringUtils.*;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
@@ -41,7 +42,6 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.PropertyRequired;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
@@ -178,7 +178,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
-        FlowValidationResult activationValidationResult = getFlowValidationResult(PropertyRequired.activate, flowStepDirection);
+        FlowValidationResult activationValidationResult = getFlowValidationResult(FlowActivityPhase.activate, flowStepDirection);
         if (!activationValidationResult.isValid()) {
             throw new FlowValidationException(activationValidationResult);
         }
@@ -191,7 +191,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             // additional work needed here -- FSAUTO_COMPLETE should be consumed.
             boolean autoComplete = isTrue(FSAUTO_COMPLETE);
             if (autoComplete) {
-                FlowValidationResult flowValidationResult = getFlowValidationResult(PropertyRequired.advance, flowStepDirection);
+                FlowValidationResult flowValidationResult = getFlowValidationResult(FlowActivityPhase.advance, flowStepDirection);
                 return flowValidationResult.isValid();
             }
             return false;
@@ -207,7 +207,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         if (verifyValues) {
             // HACK that needs to be fixed.
             FlowValidationResult validationResult = flowStepDirection == FlowStepDirection.backward?
-                getFlowValidationResult(PropertyRequired.advance, flowStepDirection):
+                getFlowValidationResult(FlowActivityPhase.advance, flowStepDirection):
                     getFlowValidationResult();
             return validationResult;
         }
@@ -308,21 +308,21 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @Deprecated
     public FlowValidationResult getFlowValidationResult() {
-        return this.getFlowValidationResult(PropertyRequired.advance, FlowStepDirection.forward);
+        return this.getFlowValidationResult(FlowActivityPhase.advance, FlowStepDirection.forward);
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.flowproperty.PropertyRequired, FlowStepDirection)
+     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.FlowActivityPhase, FlowStepDirection)
      */
     @SuppressWarnings("unused")
-    public FlowValidationResult getFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection) {
+    public FlowValidationResult getFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         // TODO : Don't validate if user is going backwards.
         // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
         FlowValidationResult result = new ReportAllValidationResult();
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
         if (MapUtils.isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
-                if ((propertyRequired != null && def.getPropertyRequired() == propertyRequired)
+                if ((flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
                         && isPropertyNotSet(def.getName())
                         && def.getDefaultObject(this) == null ) {
                     result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));

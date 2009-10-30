@@ -15,7 +15,6 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.flowproperty.PropertyRequired;
 
 /*
  * @author patmoore
@@ -113,7 +112,7 @@ public interface FlowActivity extends FlowPropertyProvider {
      *
      * @return result of validation
      */
-    FlowValidationResult getFlowValidationResult(PropertyRequired required, FlowStepDirection flowStepDirection);
+    FlowValidationResult getFlowValidationResult(FlowActivityPhase required, FlowStepDirection flowStepDirection);
     /**
      *
      * @return true if the activity name has been explicitly set.

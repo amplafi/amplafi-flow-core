@@ -30,6 +30,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -58,7 +59,7 @@ public class TestFlowPropertyDefinition {
 
     @Test(enabled=TEST_ENABLED)
     public void testValidateWith_required() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
         definition.validateWith("pass");
 
         assertTrue(definition.isRequired());
@@ -67,7 +68,7 @@ public class TestFlowPropertyDefinition {
 
     @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("uri", URI.class, PropertyRequired.advance);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("uri", URI.class, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
         assertNull(definition.getDefaultObject(null));
     }
@@ -131,14 +132,14 @@ public class TestFlowPropertyDefinition {
     }
 
     private void assertDefaultObject(Class<?> clazz, Object value) {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("u", clazz, PropertyRequired.advance);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("u", clazz, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
         assertEquals(definition.getDefaultObject(null), value);
     }
 
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCtor() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
         assertTrue(definition.isRequired());
         assertEquals(definition.getName(), "foo");
@@ -220,7 +221,7 @@ public class TestFlowPropertyDefinition {
 
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCloning() {
-        FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance, Set.class, List.class);
+        FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance, Set.class, List.class);
         FlowPropertyDefinitionImpl cloned = new FlowPropertyDefinitionImpl(original);
         assertEquals(original, cloned, "cloning failed");
     }
@@ -245,7 +246,7 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testListCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, List.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, List.class);
         new FlowTestingUtils().resolveAndInit(definition);
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV = definition.serialize(list);
@@ -261,7 +262,7 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Set.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, Set.class);
         new FlowTestingUtils().resolveAndInit(definition);
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV = definition.serialize(set);
@@ -274,7 +275,7 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, PropertyRequired.advance, Map.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, Map.class);
         new FlowTestingUtils().resolveAndInit(definition);
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));
@@ -289,7 +290,7 @@ public class TestFlowPropertyDefinition {
      */
     @Test(enabled=TEST_ENABLED)
     public void testRemoveRequire() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, PropertyRequired.advance);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
         assertTrue(definition.isRequired());
         assertTrue(definition.getValidators().contains("required"));
         definition.setRequired(false);

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
-import org.amplafi.flow.impl.FlowStateImplementor;
 import org.apache.commons.logging.Log;
 
 
@@ -28,7 +27,7 @@ import org.apache.commons.logging.Log;
  * @author Patrick Moore
  *
  */
-public interface FlowManagement {
+public interface FlowManagement extends FlowStateListener {
 
     public static final String USER_INFORMATION = "sessionFlows";
 
@@ -240,13 +239,6 @@ public interface FlowManagement {
 
     <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
-    void addFlowLifecycleListener(FlowStateLifecycleListener flowStateLifecycleListener);
-
-    /**
-     *
-     * @param flowState
-     * @param previousFlowLifecycleState
-     */
-    void notifyFlowLifecycleListeners(FlowStateImplementor flowState, FlowStateLifecycle previousFlowLifecycleState);
+    void addFlowLifecycleListener(FlowStateListener flowStateListener);
 
 }

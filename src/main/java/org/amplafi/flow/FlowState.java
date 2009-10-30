@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.PropertyRequired;
 
 
 /**
@@ -211,23 +210,23 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     FlowValidationResult getCurrentActivityFlowValidationResult();
 
     /**
-     * @param propertyRequired
+     * @param flowActivityPhase
      * @return result returned by the currentActivity's
-     *         {@link FlowActivity#getFlowValidationResult(PropertyRequired, FlowStepDirection)}
+     *         {@link FlowActivity#getFlowValidationResult(FlowActivityPhase, FlowStepDirection)}
      */
-    FlowValidationResult getCurrentActivityFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    FlowValidationResult getCurrentActivityFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 
     boolean isCurrentActivityCompletable();
 
-    Map<String, FlowValidationResult> getFlowValidationResults(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    Map<String, FlowValidationResult> getFlowValidationResults(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 
 
     /**
      * @return the combination of {@link #getCurrentActivityFlowValidationResult()} and
-     *  {@link #getFullFlowValidationResult(PropertyRequired, FlowStepDirection)}({@link PropertyRequired#finish}, {@link FlowStepDirection#forward})
+     *  {@link #getFullFlowValidationResult(FlowActivityPhase, FlowStepDirection)}({@link FlowActivityPhase#finish}, {@link FlowStepDirection#forward})
      */
     FlowValidationResult getFinishFlowValidationResult();
-    FlowValidationResult getFullFlowValidationResult(PropertyRequired propertyRequired, FlowStepDirection flowStepDirection);
+    FlowValidationResult getFullFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
     void setAfterPage(String afterPage);
 
     String getAfterPage();
