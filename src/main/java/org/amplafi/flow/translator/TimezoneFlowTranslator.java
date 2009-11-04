@@ -37,10 +37,8 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
         return TimeZone.class;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.JSONWriter, java.lang.Object)
-     */
     @Override
+    @SuppressWarnings({"unused"})
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, TimeZone object) {
         toJson(jsonWriter, object);
         return jsonWriter;
@@ -53,15 +51,21 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
      */
     @Override
     public IJsonWriter toJson(IJsonWriter jsonWriter, TimeZone object) {
-        return jsonWriter.value(object.getID());
+        String timezoneId = object.getID();
+        return jsonWriter.value(timezoneId);
     }
 
     /**
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, java.lang.Object[])
      */
+    @SuppressWarnings({"unchecked","unused"})
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
-        return (K) TimeZone.getTimeZone(value.toString());
+        if ( value == null ) {
+            return null;
+        } else {
+            return (K) TimeZone.getTimeZone(value.toString());
+        }
     }
 
     /**
