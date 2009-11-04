@@ -69,7 +69,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
      */
     @Override
     public Class<? extends TimeZone> getClassToRender() {
-        throw new UnsupportedOperationException();
+        return TimeZone.class;
     }
 
     /**
