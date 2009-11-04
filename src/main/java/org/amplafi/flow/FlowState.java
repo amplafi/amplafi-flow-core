@@ -303,9 +303,11 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     <T> FlowPropertyDefinition getFlowPropertyDefinition(String key);
 
     /**
+     * Used when continuing on to another FlowState. Clear out all the properties that should not be seen by downstream flows.
      * @return a FlowValuesMap with all the flowLocal, activityLocal values cleared.
      */
     FlowValuesMap getExportedValuesMap();
+
 
     /**
      * @param possibleReferencedState

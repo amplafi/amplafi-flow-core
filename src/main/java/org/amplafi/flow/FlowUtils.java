@@ -35,26 +35,7 @@ import org.apache.commons.lang.ObjectUtils;
 public class FlowUtils {
 
     public static final FlowUtils INSTANCE = new FlowUtils();
-    /**
-     * Copy state from old FlowState to the new one. Only copy supplied keys.
-     * @param old
-     * @param keys if not supplied then the entire flowstate is copied.
-     * @return the new state
-     */
-    @Deprecated // PropertyUsage/PropertyScope should make this method of limited use.
-    public Map<String, String> copyState(FlowState old, String...keys) {
-        Map<String, String> ret;
-        if (keys==null || keys.length == 0) {
-            ret = new LinkedHashMap<String, String>(old.getFlowValuesMap().getAsStringMap(true, true));
-        } else {
-            ret = new LinkedHashMap<String, String>();
-            for (String key: keys) {
-                // HACK!!!
-                ret.put(key, ((FlowStateImplementor)old).getRawProperty(key));
-            }
-        }
-        return ret;
-    }
+
     public void copyMapToFlowState(FlowState flowState, Map<String, String> overrideValues, String...keys) {
         if ( MapUtils.isNotEmpty(overrideValues)) {
             Map<String, String> ret;

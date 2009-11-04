@@ -287,6 +287,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         FlowValuesMap valuesMap =exportProperties(false);
         return valuesMap;
     }
+    /**
+     * Method to allow overriding.
+     * @return a copied FlowValuesMap
+     */
     @SuppressWarnings("unchecked")
     protected FlowValuesMap createFlowValuesMapCopy() {
         return new DefaultFlowValuesMap(getFlowValuesMap());
