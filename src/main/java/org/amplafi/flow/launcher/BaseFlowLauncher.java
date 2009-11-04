@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
 import org.amplafi.flow.FlowManagement;
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  *
@@ -54,10 +55,11 @@ public abstract class BaseFlowLauncher implements FlowLauncher {
      * @param lookupKeyOrBoolean the lookupKeyOrBoolean to set
      */
     public void setReturnToFlow(Object lookupKeyOrBoolean) {
+        String value = ObjectUtils.toString(lookupKeyOrBoolean, null);
         // TODO need to handle boolean
         // (idea is to return to the top-most flow at the time the flow launched by this flowlauncher completes (which may not have been the case when the flow started)
-        put(FSRETURN_TO_FLOW, lookupKeyOrBoolean.toString());
-        this.returnToFlowLookupKey = lookupKeyOrBoolean.toString();
+        put(FSRETURN_TO_FLOW, value);
+        this.returnToFlowLookupKey = value;
     }
     /**
      * @return the lookupKeyOrBoolean
