@@ -15,6 +15,7 @@
 package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
@@ -35,7 +36,8 @@ public class CancelTextFlowPropertyValueProvider implements FlowPropertyValuePro
         String label = "message:flow.label-cancel";
         String lookupKey =flowActivity.getProperty(FSRETURN_TO_FLOW);
         if ( lookupKey != null ) {
-            FlowState flowState = flowActivity.getFlowManagement().getFlowState(lookupKey);
+            FlowManagement flowManagement = flowActivity.getFlowState().getFlowManagement();
+            FlowState flowState = flowManagement.getFlowState(lookupKey);
             if ( flowState != null) {
                 label = flowState.getCurrentActivity().getProperty(FSRETURN_TO_TEXT);
                 if (isBlank(label)) {

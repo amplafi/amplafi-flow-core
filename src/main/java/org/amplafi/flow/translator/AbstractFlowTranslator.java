@@ -72,9 +72,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
             return doDeserialize(flowPropertyDefinition, dataClassDefinition, serializedObject);
         }
     }
-    /**
-     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.JSONWriter, java.lang.Object)
-     */
+
     @Override
     public final IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object) {
         if ( jsonWriter == null ) {

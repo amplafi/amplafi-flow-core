@@ -147,8 +147,6 @@ public interface FlowActivity extends FlowPropertyProvider {
      */
     void setFinishingActivity(boolean finishedActivity);
 
-    FlowManagement getFlowManagement();
-
     <FS extends FlowState> FS getFlowState();
 
     boolean isInstance();

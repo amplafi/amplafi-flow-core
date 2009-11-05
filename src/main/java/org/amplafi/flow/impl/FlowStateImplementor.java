@@ -83,9 +83,10 @@ public interface FlowStateImplementor extends FlowState {
 
 
     /**
+     * @param <T>
      * @param flowPropertyDefinition
      * @param flowActivity
-     * @return
+     * @return cached value
      */
     <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity);
 }

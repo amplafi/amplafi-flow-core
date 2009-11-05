@@ -152,10 +152,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#createInstance()
-     */
-
     public FlowImplementor createInstance() {
         FlowImpl inst = new FlowImpl(this);
         inst.activities = new ArrayList<FlowActivityImplementor>();
@@ -174,9 +170,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return inst;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setActivities(java.util.List)
-     */
     public void setActivities(List<FlowActivityImplementor> activities) {
         this.activities = null;
         for(FlowActivityImplementor activity: activities) {
@@ -184,6 +177,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<FlowActivityImplementor> getActivities() {
         return activities;
@@ -249,25 +243,21 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return propDefs == null? null : propDefs.get(key);
     }
 
-    /**
-     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
-     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
-     */
     public FlowManagement getFlowManagement() {
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
 
-    /**
-     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
-     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T getProperty(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
-        FlowStateImplementor flowStateImplementor =  getFlowState();
-        T result = null;//(T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
-        return result;
-    }
+//    /**
+//     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
+//     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
+//     */
+//    @SuppressWarnings("unchecked")
+//    public <T> T getProperty(String key) {
+//        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+//        FlowStateImplementor flowStateImplementor =  getFlowState();
+//        T result = null;//(T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
+//        return result;
+//    }
 
     /**
      * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
@@ -280,16 +270,11 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
         return flowPropertyDefinition;
     }
-    /**
-     * @see org.amplafi.flow.Flow#setFlowTypeName(java.lang.String)
-     */
+
     public void setFlowPropertyProviderName(String flowTypeName) {
         this.flowPropertyProviderName = flowTypeName;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getFlowTypeName()
-     */
     public String getFlowPropertyProviderName() {
         if ( flowPropertyProviderName == null && isInstance()) {
             return getDefinition().getFlowPropertyProviderName();

@@ -467,10 +467,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return finishingActivity;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getFlowManagement()
-     */
-    public FlowManagement getFlowManagement() {
+    protected FlowManagement getFlowManagement() {
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
 

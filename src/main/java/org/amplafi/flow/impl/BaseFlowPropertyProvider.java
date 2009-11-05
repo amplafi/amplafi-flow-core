@@ -19,8 +19,11 @@ import java.util.Map;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 /**
  * @author patmoore
+ * @param <T>
  *
  */
 public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> implements FlowPropertyProvider {
@@ -68,7 +71,8 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
     }
     /**
      * method used by hivemind to add in properties
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
+     * @param flowPropertyDefinition
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
      */
     public void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition) {
         if ( flowPropertyDefinition == null ) {
@@ -88,7 +92,7 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         FlowPropertyDefinition current = this.propertyDefinitions.get(flowPropertyDefinition.getName());
         if ( current != null ) {
             if ( !flowPropertyDefinition.merge(current) ) {
-                throw new IllegalArgumentException(flowPropertyDefinition+": cannot be merged with "+current);
+                throw new ApplicationIllegalArgumentException(flowPropertyDefinition,": cannot be merged with ",current);
             }
         }
         this.propertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);

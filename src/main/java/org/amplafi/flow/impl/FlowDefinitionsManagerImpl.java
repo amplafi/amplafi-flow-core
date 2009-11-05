@@ -30,7 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * Basic implementation for managing Flow definitions. Provides no persistence mechanism.
  *
  */
 public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
@@ -60,7 +60,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         }
     }
     /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitions(Flow...)
+     * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitions(FlowImplementor...)
      */
     @Override
     public void addDefinitions(FlowImplementor... flows) {
