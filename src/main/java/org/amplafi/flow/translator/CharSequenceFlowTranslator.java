@@ -23,6 +23,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {
 
+    @SuppressWarnings("unchecked")
     public static final CharSequenceFlowTranslator INSTANCE = new CharSequenceFlowTranslator();
     public CharSequenceFlowTranslator() {
         // potentially anything could be deserialized from a String.
@@ -30,11 +31,13 @@ public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {
         addDeserializedFormClasses(Object.class);
     }
     @Override
+    @SuppressWarnings({ "unused", "unchecked" })
     public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         return (T) JSONObject.unquote(ObjectUtils.toString(serializedObject, null));
     }
 
     @Override
+    @SuppressWarnings({ "unused" })
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object) {
         return jsonWriter.value(object);
     }
@@ -49,6 +52,7 @@ public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {
      * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
      */
     @Override
+    @SuppressWarnings({ "unused", "unchecked" })
     protected T doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition,
         Object serializedObject) throws FlowValidationException {
         return (T) JSONObject.unquote(serializedObject.toString());

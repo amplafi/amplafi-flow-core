@@ -29,10 +29,6 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 public interface FlowPropertyDefinition {
     String getName();
 
-    <T> String serialize(T object);
-
-    FlowPropertyDefinition initialize();
-
     DataClassDefinition getDataClassDefinition();
 
     /**
@@ -47,8 +43,6 @@ public interface FlowPropertyDefinition {
      */
     Class<?> getDataClass();
 
-    <V> V parse(String value) throws FlowException;
-
     /**
      * @return true if a default value for this property can be created.
      */
@@ -57,8 +51,6 @@ public interface FlowPropertyDefinition {
     Object getDefaultObject(FlowActivity flowActivity);
 
     boolean isCacheOnly();
-
-    <FA extends FlowActivity> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
 
     <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
 
@@ -78,7 +70,6 @@ public interface FlowPropertyDefinition {
     String getUiComponentParameterName();
 
     FlowActivityPhase getPropertyRequired();
-    void setPropertyRequired(FlowActivityPhase flowActivityPhase);
 
     boolean isSaveBack();
 

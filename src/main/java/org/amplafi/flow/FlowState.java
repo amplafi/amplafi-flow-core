@@ -300,7 +300,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
 
-    <T> FlowPropertyDefinition getFlowPropertyDefinition(String key);
+    <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
 
     /**
      * Used when continuing on to another FlowState. Clear out all the properties that should not be seen by downstream flows.

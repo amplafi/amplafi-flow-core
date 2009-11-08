@@ -34,6 +34,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -930,14 +931,14 @@ public class FlowStateImpl implements FlowStateImplementor {
         T result = (T) getCached(propertyDefinition, flowActivity);
         if ( result == null ) {
             String value = getRawProperty(flowActivity, propertyDefinition);
-            result = (T) propertyDefinition.parse(value);
+            result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(value);
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowActivity);
                 // TODO: Maybe should be checking !isCacheOnly() ?
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
-                    setPropertyWithDefinition(flowActivity, propertyDefinition, result);
+                    setPropertyWithDefinition(flowActivity, (FlowPropertyDefinitionImplementor)propertyDefinition, result);
                 }
             }
             setCached(propertyDefinition, flowActivity, result);
@@ -946,7 +947,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
-    public <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition, T value) {
+    public <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         Object actual;
         String stringValue = null;
 
@@ -954,7 +955,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // handle case for when initializing from string values.
             // or some other raw format.
             stringValue = (String) value;
-            actual = propertyDefinition.parse(stringValue);
+            actual = (propertyDefinition).parse(stringValue);
         } else {
             actual = value;
         }
@@ -1139,6 +1140,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity) {
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowActivity);
         return (T) getCached(namespace, flowPropertyDefinition.getName());
@@ -1548,15 +1550,16 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.getCurrentActivityIndex() >= 0 && getCurrentActivityIndex() < size();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> FlowPropertyDefinition getFlowPropertyDefinition(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = null;
+    public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
+        T flowPropertyDefinition = null;
         if ( this.getFlow() != null ) {
-            flowPropertyDefinition = this.getFlow().getPropertyDefinition(key);
+            flowPropertyDefinition = (T) this.getFlow().getPropertyDefinition(key);
         }
         if (flowPropertyDefinition == null && this.getFlowManagement() != null) {
             // (may not be assigned to a flowManagement any more -- historical FlowState )
-            flowPropertyDefinition = this.getFlowManagement().getFlowPropertyDefinition(key);
+            flowPropertyDefinition = (T) this.getFlowManagement().getFlowPropertyDefinition(key);
         }
         return flowPropertyDefinition;
     }
@@ -1572,22 +1575,17 @@ public class FlowStateImpl implements FlowStateImplementor {
             getCurrentActivity().setProperty(key, value);
         } else {
             Class<T> expected = (Class<T>) (value == null?null:value.getClass());
-            FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
+            FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
             setPropertyWithDefinition(null, flowPropertyDefinition, value);
         }
     }
 
-    /**
-     * @param <T>
-     * @param key
-     * @param value
-     * @return
-     */
-    private <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T value) {
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinition(key);
+    @SuppressWarnings("unchecked")
+    private <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T value) {
+        FP flowPropertyDefinition = (FP)getFlowPropertyDefinition(key);
 
         if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, value);
+            flowPropertyDefinition = (FP) getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, value);
         }
         return flowPropertyDefinition;
     }

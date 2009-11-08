@@ -37,10 +37,12 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
      * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
      */
     private Set<String> requiredProperties;
+    private Set<String> optionalProperties;
 
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
         this.propertiesHandled = new HashSet<String>();
         this.requiredProperties = new HashSet<String>();
+        this.optionalProperties = new HashSet<String>();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
     }
 
@@ -103,11 +105,19 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
         }
         return false;
     }
+    @SuppressWarnings("hiding")
     protected void addRequires(String...requiredProperties) {
         CollectionUtils.addAll(this.requiredProperties, requiredProperties);
     }
     public Collection<String> getRequiredProperties() {
         return this.requiredProperties;
+    }
+    @SuppressWarnings("hiding")
+    protected void addOptional(String...optionalProperties) {
+        CollectionUtils.addAll(this.optionalProperties, optionalProperties);
+    }
+    public Collection<String> getOptionalProperties() {
+        return this.optionalProperties;
     }
     /**
      * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.

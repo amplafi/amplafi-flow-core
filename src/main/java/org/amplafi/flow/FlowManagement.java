@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.apache.commons.logging.Log;
 
@@ -92,8 +93,7 @@ public interface FlowManagement extends FlowStateListener {
      * @param returnToFlow TODO
      * @return the newly-started FlowState
      */
-    <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow,
-            Map<String, String> initialFlowState, Object returnToFlow);
+    <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow, Map<String, String> initialFlowState, Object returnToFlow);
 
     /**
      * Starts a flow by name.
@@ -109,8 +109,7 @@ public interface FlowManagement extends FlowStateListener {
      * @param returnToFlow
      * @return the newly-started FlowState
      */
-    <FS extends FlowState> FS startFlowState(String flowType, boolean currentFlow, Object propertyRoot,
-            Iterable<String> initialValues, Object returnToFlow);
+    <FS extends FlowState> FS startFlowState(String flowType, boolean currentFlow, Object propertyRoot, Iterable<String> initialValues, Object returnToFlow);
 
     /**
      * Continue the flow with the given lookup key.
@@ -122,8 +121,7 @@ public interface FlowManagement extends FlowStateListener {
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot,
-            Iterable<String> initialValues);
+    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot, Iterable<String> initialValues);
     /**
      * Continue the flow with the given lookup key.
      * @param <FS>
@@ -224,10 +222,11 @@ public interface FlowManagement extends FlowStateListener {
 
     /**
      * look for a global {@link FlowPropertyDefinition} that is not specific to a {@link Flow} or {@link FlowActivity}.
+     * @param <T>
      * @param key
      * @return the global {@link FlowPropertyDefinition}
      */
-    FlowPropertyDefinition getFlowPropertyDefinition(String key);
+    <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
 
     /**
      * similar to {@link FlowManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
@@ -237,7 +236,7 @@ public interface FlowManagement extends FlowStateListener {
      */
     URI getDefaultHomePage();
 
-    <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
+    <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
     void addFlowLifecycleListener(FlowStateListener flowStateListener);
 

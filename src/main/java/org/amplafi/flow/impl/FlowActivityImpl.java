@@ -42,6 +42,7 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
@@ -565,22 +566,24 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * @see org.amplafi.flow.FlowActivity#getPropertyDefinition(java.lang.String)
      */
-    public FlowPropertyDefinition getPropertyDefinition(String key) {
-        FlowPropertyDefinition propertyDefinition = getLocalPropertyDefinition(key);
+    @SuppressWarnings("unchecked")
+    public <T extends FlowPropertyDefinition> T getPropertyDefinition(String key) {
+        T propertyDefinition = (T) getLocalPropertyDefinition(key);
         if (propertyDefinition == null) {
-            propertyDefinition = getFlowPropertyDefinitionDefinedInFlow(key);
+            propertyDefinition = (T) getFlowPropertyDefinitionDefinedInFlow(key);
         }
         return propertyDefinition;
     }
 
-    private FlowPropertyDefinition getFlowPropertyDefinitionDefinedInFlow(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = null;
+    @SuppressWarnings("unchecked")
+    private <T extends FlowPropertyDefinition> T getFlowPropertyDefinitionDefinedInFlow(String key) {
+        T flowPropertyDefinition = null;
         if ( this.getFlowState() != null) {
-            flowPropertyDefinition = getFlowState().getFlowPropertyDefinition(key);
+            flowPropertyDefinition = (T) getFlowState().getFlowPropertyDefinition(key);
         }
         // should be else if
         if ( flowPropertyDefinition == null && this.getFlow() != null) {
-            flowPropertyDefinition = this.getFlow().getPropertyDefinition(key);
+            flowPropertyDefinition = (T) this.getFlow().getPropertyDefinition(key);
         }
         return flowPropertyDefinition;
     }
@@ -590,11 +593,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @param key
      * @return
      */
-    private FlowPropertyDefinition getLocalPropertyDefinition(String key) {
+    @SuppressWarnings("unchecked")
+    private <T extends FlowPropertyDefinition> T getLocalPropertyDefinition(String key) {
         Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
-        FlowPropertyDefinition def = null;
+        T def = null;
         if (propDefs != null) {
-            def = propDefs.get(key);
+            def = (T) propDefs.get(key);
         }
         return def;
     }
@@ -639,7 +643,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             } else {
                 // no flow version of this property.
                 // NOTE that this means the first FlowActivity to define this property sets the meaning for the whole flow.
-                // TODO we may want to see if we can merge up to the flow property as well . but this could cause problems with previous flowactivities that have already checked against the
+                // TODO we may want to see if we can merge up to the flow property as well. but this could cause problems with previous flowactivities that have already checked against the
                 // property ( the property might become more precise in a way that causes a conflict.)
                 // TODO: maybe in such cases if no FlowPropertyValueProvider the provider gets merged up?
                 pushPropertyDefinitionToFlow(definition);
@@ -767,10 +771,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @param key
      * @return a flow property definition, if none then the definition is created
      */
-    protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
-        FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
+    @SuppressWarnings("unchecked")
+    protected <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
+        FP flowPropertyDefinition = (FP)getPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, sampleValue);
+            flowPropertyDefinition = (FP)getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, sampleValue);
         }
         return flowPropertyDefinition;
     }
@@ -808,7 +813,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     public <T> void setProperty(String key, T value) {
         Class<T> expected = (Class<T>) (value == null?null:value.getClass());
         if ( getFlowState() != null) { // TODO: why are we ignoring (probably a test that should be fixed )
-            FlowPropertyDefinition propertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
+            FlowPropertyDefinitionImplementor propertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
             setProperty(propertyDefinition, value);
         }
     }
@@ -818,7 +823,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @param propertyDefinition
      * @param value
      */
-    protected <T> void setProperty(FlowPropertyDefinition propertyDefinition, T value) {
+    protected <T> void setProperty(FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         getFlowStateImplementor().setPropertyWithDefinition(this, propertyDefinition, value);
     }
 
@@ -953,7 +958,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @SuppressWarnings("unchecked")
     protected void handleFlowPropertyValueProvider(String key, FlowPropertyValueProvider flowPropertyValueProvider) {
-        FlowPropertyDefinition flowPropertyDefinition = this.getLocalPropertyDefinition(key);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = this.getLocalPropertyDefinition(key);
         if ( flowPropertyDefinition != null) {
             if ( flowPropertyValueProvider instanceof ChainedFlowPropertyValueProvider) {
                 ((ChainedFlowPropertyValueProvider)flowPropertyValueProvider).setPrevious(flowPropertyDefinition.getFlowPropertyValueProvider());

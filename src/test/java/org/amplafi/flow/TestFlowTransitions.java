@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
@@ -44,7 +45,7 @@ public class TestFlowTransitions {
     public void testSimpleFlowTransitionMapChecking() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
         FlowActivityImpl fa1 = new FlowActivityImpl();
-        FlowPropertyDefinition definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);
+        FlowPropertyDefinitionImplementor definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNull(definition);
         flow.addActivity(fa1);
         definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);

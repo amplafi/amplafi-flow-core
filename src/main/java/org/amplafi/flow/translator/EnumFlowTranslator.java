@@ -26,10 +26,12 @@ public class EnumFlowTranslator<T> extends AbstractFlowTranslator<T> implements 
 
     private Class<T> translatedClass;
 
+    @SuppressWarnings("unchecked")
     public EnumFlowTranslator() {
         super(EnumJsonRenderer.INSTANCE);
         this.translatedClass = (Class<T>) Enum.class;
     }
+    @SuppressWarnings("unchecked")
     public EnumFlowTranslator(EnumFlowTranslator<?> original, Class<T> translatedClass) {
         super(original);
         this.jsonRenderer = EnumJsonRenderer.INSTANCE;

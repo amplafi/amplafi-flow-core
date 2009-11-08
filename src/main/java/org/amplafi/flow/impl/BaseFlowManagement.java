@@ -43,6 +43,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -519,7 +520,7 @@ public class BaseFlowManagement implements FlowManagement {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> FlowPropertyDefinition createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
+    public <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
         if ( expected == null && sampleValue != null) {
             expected = (Class<T>) sampleValue.getClass();
         }

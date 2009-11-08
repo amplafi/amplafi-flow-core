@@ -43,7 +43,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowPropertyDefinitionProvider {
+public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImplementor, FlowPropertyDefinitionProvider {
     private static final String REQUIRED = "required";
 
     /**
@@ -301,7 +301,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinition, FlowP
     public void setTranslator(FlowTranslator<?> flowTranslator) {
         this.getDataClassDefinition().setFlowTranslator(flowTranslator);
     }
-    @SuppressWarnings("hiding")
+
     public FlowPropertyDefinitionImpl initTranslator(FlowTranslator<?> flowTranslator) {
         setTranslator(flowTranslator);
         return this;

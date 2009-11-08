@@ -19,12 +19,13 @@ import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 
 /**
  * @author patmoore
  */
 public interface FlowStateImplementor extends FlowState {
-    <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, T value);
+    <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinitionImplementor flowPropertyDefinition, T value);
 
     <T> T getPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 

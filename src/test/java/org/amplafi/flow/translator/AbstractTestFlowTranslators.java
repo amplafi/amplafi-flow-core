@@ -16,7 +16,7 @@ package org.amplafi.flow.translator;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
-import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -52,14 +52,14 @@ public abstract class AbstractTestFlowTranslators<T> {
         return dataClassDefinition;
     }
 
-    protected FlowPropertyDefinition createFlowPropertyDefinition() {
+    protected FlowPropertyDefinitionImpl createFlowPropertyDefinition() {
         return new FlowPropertyDefinitionImpl("foo", createDataClassDefinition());
     }
 
     @Test(dataProvider="flowTranslatorExpectations")
     public void serializeDeserializeAndCompare(Object object, String expectedSerialize) throws Exception {
 
-        FlowPropertyDefinition flowPropertyDefinition = createFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = createFlowPropertyDefinition();
         DataClassDefinition dataClassDefinition = flowPropertyDefinition.getDataClassDefinition();
 
         String actual = flowPropertyDefinition.serialize(object);

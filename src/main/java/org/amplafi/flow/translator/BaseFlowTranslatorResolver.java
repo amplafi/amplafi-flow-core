@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONStringer;
@@ -132,6 +133,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     /**
      *
      */
+    @SuppressWarnings("unchecked")
     public void addStandardFlowTranslators() {
         getFlowTranslators().add(new ListFlowTranslator());
         getFlowTranslators().add(new SetFlowTranslator());
@@ -179,7 +181,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         if ( !resolve(context+definition.getName()+":", definition.getDataClassDefinition(), !definition.isCacheOnly())) {
             // TODO: anything special?
         }
-        definition.initialize();
+        ((FlowPropertyDefinitionImplementor)definition).initialize();
     }
     public boolean resolve(String context, DataClassDefinition definition, boolean resolvedRequired) {
         if (definition == null || definition.isFlowTranslatorSet()) {
@@ -203,6 +205,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     /**
      * @see org.amplafi.flow.FlowTranslatorResolver#resolve(java.lang.Class)
      */
+    @SuppressWarnings("unchecked")
     @Override
     public FlowTranslator<?> resolve(Class<?> clazz) {
         FlowTranslator<?> flowTranslator;
