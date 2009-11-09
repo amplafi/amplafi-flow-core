@@ -16,7 +16,7 @@
     <name>Amplafi Flow - Core</name>
     <description>Flow core services (including data objects)</description>
     <scm>
-        <developerConnection>scm:svn:${svn-base}/${artifactId}/trunk</developerConnection>
+        <developerConnection>scm:svn:${svn-base}/${project.artifactId}/trunk</developerConnection>
     </scm>    
     <!--<reporting>-->
         <!--<outputDirectory>../target/site/${pom.artifactId}</outputDirectory>-->
@@ -25,12 +25,12 @@
         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-sworddance</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-json</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-hivemind</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
         </dependency>                
         <dependency>
             <groupId>org.testng</groupId>
@@ -72,11 +72,6 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
