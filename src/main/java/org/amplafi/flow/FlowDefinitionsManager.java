@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import java.util.Map;
+import org.amplafi.flow.definitions.DefinitionSource;
 
 
 /**
@@ -22,23 +22,9 @@ import java.util.Map;
  *
  * @author Patrick Moore
  */
-public interface FlowDefinitionsManager {
+public interface FlowDefinitionsManager extends DefinitionSource {
 
     void addDefinitions(FlowImplementor... flows);
-
-    /**
-     * Returns the flow having the specified name.
-     * @param flowTypeName
-     * @return the Flow definition.
-     */
-    FlowImplementor getFlowDefinition(String flowTypeName);
-    boolean isFlowDefined(String flowTypeName);
-
-    /**
-     * Returns all defined flows, keyed by their name.
-     * @return the map with all the currently defined flows indexed by (usually) the {@link Flow#getFlowPropertyProviderName()}.
-     */
-    Map<String, FlowImplementor> getFlowDefinitions();
 
     /**
      * @param key (usually) the {@link Flow#getFlowPropertyProviderName()}.
