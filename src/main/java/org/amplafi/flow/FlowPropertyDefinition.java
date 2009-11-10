@@ -16,6 +16,7 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 
@@ -53,6 +54,7 @@ public interface FlowPropertyDefinition {
     boolean isCacheOnly();
 
     <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
+    <FA extends FlowActivity> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
 
     FlowPropertyDefinition clone();
 

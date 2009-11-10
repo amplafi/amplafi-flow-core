@@ -63,6 +63,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private FlowPropertyValueProvider<FlowActivity> factoryFlowPropertyValueProvider;
     private FlowPropertyValueProvider<FlowActivity> flowPropertyValueProvider;
+    private FlowPropertyValuePersister<FlowActivity> flowPropertyValuePersister;
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
@@ -124,6 +125,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         autoCreate = clone.autoCreate;
         this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
+        this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
         this.setUiComponentParameterName(clone.uiComponentParameterName);
         if (clone.propertySecurity != null) {
@@ -697,6 +699,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         if ( flowPropertyValueProvider == null && source.flowPropertyValueProvider != null ) {
             this.setFlowPropertyValueProvider(source.flowPropertyValueProvider);
         }
+        if ( flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
+            this.setFlowPropertyValuePersister(source.flowPropertyValuePersister);
+        }
         if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
             this.setDefaultObject(source.factoryFlowPropertyValueProvider);
         }
@@ -799,6 +804,32 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowActivity> flowPropertyValueProvider) {
         setFlowPropertyValueProvider(flowPropertyValueProvider);
+        return this;
+    }
+
+    /**
+     * @return the flowPropertyValuePersister
+     */
+    public FlowPropertyValuePersister<FlowActivity> getFlowPropertyValuePersister() {
+        return flowPropertyValuePersister;
+    }
+
+    /**
+     * @param <FA>
+     * @param flowPropertyValuePersister the flowPropertyValuePersister to set
+     */
+    @SuppressWarnings("unchecked")
+    public <FA extends FlowActivity> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister) {
+        this.flowPropertyValuePersister = (FlowPropertyValuePersister<FlowActivity>) flowPropertyValuePersister;
+    }
+
+    /**
+     * @param flowPropertyValuePersister
+     * @return this
+     */
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowActivity> flowPropertyValuePersister) {
+        setFlowPropertyValuePersister(flowPropertyValuePersister);
         return this;
     }
 

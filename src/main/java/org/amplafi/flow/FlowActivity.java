@@ -84,18 +84,12 @@ public interface FlowActivity extends FlowPropertyProvider {
     Flow getFlow();
 
     /**
-     * @param pageName The pageName to set.
-     */
-    void setPageName(String pageName);
-
-    /**
      * @return the pageName.
      */
     String getPageName();
 
     String getComponentName();
 
-    void setComponentName(String componentName);
 
     /**
      * can the current FlowActivity's completeActivity() method be called.
@@ -119,12 +113,6 @@ public interface FlowActivity extends FlowPropertyProvider {
      */
     boolean isFlowPropertyProviderNameSet();
 
-
-    /**
-     * @param activityTitle The flowTitle to set.
-     */
-    void setActivityTitle(String activityTitle);
-
     /**
      * @return Returns the flowTitle.
      */
@@ -136,28 +124,12 @@ public interface FlowActivity extends FlowPropertyProvider {
      * @return namespace for activity.
      */
     String getFullActivityInstanceNamespace();
-    /**
-     * @param activatable true if this flowActivity can be selected from the UI.
-     */
-    void setActivatable(boolean activatable);
-
-    /**
-     * @param finishedActivity The user can finish the flow when this activity
-     *        is current.
-     */
-    void setFinishingActivity(boolean finishedActivity);
 
     <FS extends FlowState> FS getFlowState();
 
     boolean isInstance();
 
-    FlowActivity initInvisible();
-
-    void setInvisible(boolean invisible);
-
     boolean isInvisible();
-
-    void setPersistFlow(boolean persistFlow);
 
     boolean isPersistFlow();
 

@@ -14,7 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.amplafi.flow.FlowActivity;
@@ -24,6 +24,8 @@ import org.apache.commons.collections.CollectionUtils;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
+
+import static com.sworddance.util.CUtilities.*;
 
 /**
  * @author patmoore
@@ -39,10 +41,14 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
     private Set<String> requiredProperties;
     private Set<String> optionalProperties;
 
+    /**
+     *
+     * @param propertiesHandled first property listed is property returned by
+     */
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
-        this.propertiesHandled = new HashSet<String>();
-        this.requiredProperties = new HashSet<String>();
-        this.optionalProperties = new HashSet<String>();
+        this.propertiesHandled = new LinkedHashSet<String>();
+        this.requiredProperties = new LinkedHashSet<String>();
+        this.optionalProperties = new LinkedHashSet<String>();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
     }
 
@@ -92,6 +98,10 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
         return this.propertiesHandled;
     }
 
+    public String getPropertyHandled() {
+        return getFirst(this.propertiesHandled);
+    }
+
     /**
      *
      * @param flowPropertyDefinition
@@ -124,10 +134,15 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity>
      * @param flowPropertyProvider
      * @param flowPropertyDefinitions
      */
+    @SuppressWarnings("unchecked")
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
         for(FlowPropertyDefinitionImpl flowPropertyDefinition: flowPropertyDefinitions) {
             if ( !flowPropertyDefinition.isDefaultAvailable()) {
                 flowPropertyDefinition.initFlowPropertyValueProvider(this);
+            }
+            if ( flowPropertyDefinition.getFlowPropertyValuePersister() == null && flowPropertyProvider instanceof FlowPropertyValuePersister) {
+                FlowPropertyValuePersister<? extends FlowActivity> flowPropertyValuePersister = (FlowPropertyValuePersister<? extends FlowActivity>) flowPropertyProvider;
+                flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
             }
         }
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);

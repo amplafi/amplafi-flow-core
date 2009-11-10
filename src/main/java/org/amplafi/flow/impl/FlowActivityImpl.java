@@ -43,6 +43,7 @@ import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
@@ -240,10 +241,21 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
     /**
+     * Saves properties using the FlowPropertyValuePersister.
      * @see org.amplafi.flow.FlowActivity#saveChanges()
      */
+    @SuppressWarnings("unchecked")
     public void saveChanges() {
-
+        Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
+        if ( MapUtils.isNotEmpty(definitions)) {
+            for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
+                FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
+                FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
+                if ( flowPropertyValuePersister != null) {
+                    flowPropertyValuePersister.saveChanges(this, flowPropertyDefinition);
+                }
+            }
+        }
     }
 
     /**
@@ -260,9 +272,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return flow;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setPageName(java.lang.String)
-     */
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
@@ -281,9 +290,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return componentName;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setComponentName(java.lang.String)
-     */
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }
@@ -366,12 +372,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
-    public void setFlowPropertyProviderName(String activityName) {
-        if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, activityName)) {
+    public void setFlowPropertyProviderName(String flowPropertyProviderName) {
+        if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, flowPropertyProviderName)) {
             if ( this.flowPropertyProviderName != null && this.flow != null) {
-                throw new IllegalStateException(this+": cannot change activityName once it is part of a flow. Tried to change to ="+activityName);
+                throw new IllegalStateException(this+": cannot change flowPropertyProviderName once it is part of a flow. Tried to change to ="+flowPropertyProviderName);
             }
-            this.flowPropertyProviderName = activityName;
+            this.flowPropertyProviderName = flowPropertyProviderName;
         }
     }
 
@@ -379,9 +385,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return isFlowPropertyProviderNameSet()?flowPropertyProviderName:this.getClass().getSimpleName();
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setActivityTitle(java.lang.String)
-     */
     public void setActivityTitle(String activityTitle) {
         this.activityTitle = activityTitle;
     }
@@ -436,9 +439,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setActivatable(boolean)
-     */
     public void setActivatable(boolean activatable) {
         this.activatable = activatable;
     }
@@ -453,9 +453,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return activatable;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setFinishingActivity(boolean)
-     */
     public void setFinishingActivity(boolean finishedActivity) {
         finishingActivity = finishedActivity;
     }
@@ -519,17 +516,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         instance.persistFlow = persistFlow;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#initInvisible()
-     */
     public FlowActivityImpl initInvisible() {
         setInvisible(true);
         return this;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setInvisible(boolean)
-     */
     public void setInvisible(boolean invisible) {
         // HACK -- larger problem this value is cached so the next FA looks invisible as well.
         // good test case complete the registration of a new user which transitions to the FinishSignUp.
@@ -549,9 +540,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#setPersistFlow(boolean)
-     */
     public void setPersistFlow(boolean persistFlow) {
         this.persistFlow = persistFlow;
     }

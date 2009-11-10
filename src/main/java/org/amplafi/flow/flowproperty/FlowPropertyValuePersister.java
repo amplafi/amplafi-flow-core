@@ -14,23 +14,12 @@
 package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinition {
-
-    <T> String serialize(T object);
-
-    FlowPropertyDefinition initialize();
-
-    void setPropertyRequired(FlowActivityPhase flowActivityPhase);
-    <FA extends FlowActivity> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
-    <FA extends FlowActivity> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
-    <V> V parse(String value) throws FlowException;
+public interface FlowPropertyValuePersister<T extends FlowActivity> {
+    void saveChanges(T flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 }

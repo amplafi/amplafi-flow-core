@@ -69,4 +69,30 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
     boolean isPropertyBlank(String key);
 
     void setFlow(FlowImplementor flow);
+
+    /**
+     * @param activatable true if this flowActivity can be selected from the UI.
+     */
+    void setActivatable(boolean activatable);
+
+    /**
+     * @param activityTitle The flowTitle to set.
+     */
+    void setActivityTitle(String activityTitle);
+    /**
+     * @param finishedActivity The user can finish the flow when this activity
+     *        is current.
+     */
+    void setFinishingActivity(boolean finishedActivity);
+    FlowActivity initInvisible();
+
+    void setInvisible(boolean invisible);
+
+    void setPersistFlow(boolean persistFlow);
+
+    /**
+     * @param pageName The pageName to set.
+     */
+    void setPageName(String pageName);
+    void setComponentName(String componentName);
 }

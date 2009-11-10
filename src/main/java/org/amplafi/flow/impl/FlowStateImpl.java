@@ -483,6 +483,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             for (int i = 0; i < size; i++) {
                 FlowActivity activity = getActivity(i);
                 FlowState returned = activity.finishFlow(currentNextFlowState);
+                // activity.refresh(); -- commented out because saves default values back to the flowState
                 // avoids lose track of FlowState if another FA later in the Flow
                 // definition returns a null. ( this means that a FA cannot override a previous decision ).
                 if (returned != null && currentNextFlowState != returned) {
@@ -528,8 +529,13 @@ public class FlowStateImpl implements FlowStateImplementor {
             this.setCurrentActivityIndex(next);
 
             currentActivity = getCurrentActivity();
-            // TODO should really already be so...
-            currentActivity.setActivatable(true);
+            if ( currentActivity instanceof FlowActivityImplementor) {
+                // TODO should really already be so...
+                if (!((FlowActivityImplementor)currentActivity).isActivatable()) {
+                    getLog().debug(currentActivity+": had to be forced to be activatable");
+                    ((FlowActivityImplementor)currentActivity).setActivatable(true);
+                }
+            }
             switch(flowStepDirection) {
             case forward:
                 next = nextIndex();
@@ -592,6 +598,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < this.size(); i++) {
             FlowActivity activity = getActivity(i);
             activity.saveChanges();
+            // activity.refresh(); -- commented out because saves default values back to the flowState
             LapTimer.sLap(activity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
         }
         LapTimer.sLap(this.getActiveFlowLabel()," end saveChanges()");
