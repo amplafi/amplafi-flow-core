@@ -65,6 +65,15 @@ public class TestFlowPropertyDefinition {
         assertTrue(definition.isRequired());
         assertEquals(definition.getValidators(), "required,flowField=pass");
     }
+    
+    @Test(enabled=TEST_ENABLED)
+    public void testValidate_required_and_extra_validator() {
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
+        definition.addValidator("email").initPropertyUsage(PropertyUsage.io);
+
+        assertTrue(definition.isRequired());
+        assertEquals(definition.getValidators(), "required,email");
+    }    
 
     @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {

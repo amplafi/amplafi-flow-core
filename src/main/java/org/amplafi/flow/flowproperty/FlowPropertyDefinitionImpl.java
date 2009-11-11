@@ -277,12 +277,13 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     // TODO fix with template check
-    public void addValidator(String validator) {
+    public FlowPropertyDefinitionImpl addValidator(String validator) {
         if (StringUtils.isBlank(validators)) {
             setValidators(validator);
         } else {
             validators += "," + validator;
         }
+        return this;
     }
 
     public FlowPropertyDefinitionImpl validateWith(String... fields) {
@@ -290,6 +291,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return this;
     }
 
+    /**
+     * Sets validators for this definition. <p/>
+     * Note that existing validators will be removed - if you
+     * don't want that behavior, consider using {@link #addValidator(String)}.
+     */
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initValidators(String validators) {
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.validators, validators);
