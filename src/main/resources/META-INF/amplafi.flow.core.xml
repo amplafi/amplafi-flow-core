@@ -4,8 +4,8 @@
     <sub-module descriptor="amplafi.flow.definitions.xml"/>
     <sub-module descriptor="flows/amplafi.suppliedflows.xml"/>
     <service-point id="FlowManager" interface="org.amplafi.flow.FlowManager">
-        <invoke-factory service-id="amplafi.factory.facade.facadeServicesFactory">
-            <service class="com.amplafi.flow.impl.FlowManagerImpl" />
+        <invoke-factory service-id="amplafi.factory.appServicesFactory">
+            <construct class="org.amplafi.flow.impl.FlowManagerImpl" />
         </invoke-factory>
     </service-point>
     <service-point id="FlowManagement" interface="org.amplafi.flow.FlowManagement">
