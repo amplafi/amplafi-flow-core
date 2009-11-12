@@ -32,7 +32,7 @@ import static com.sworddance.util.CUtilities.*;
  * @param <FA>
  *
  */
-public abstract class AbstractFlowPropertyValueProvider<FA extends FlowActivity> implements FlowPropertyValueProvider<FA> {
+public abstract class AbstractFlowPropertyValueProvider<FA extends FlowPropertyProvider> implements FlowPropertyValueProvider<FA> {
     private Set<String> propertiesHandled;
     /**
      * TODO: in future should define the property requirements?

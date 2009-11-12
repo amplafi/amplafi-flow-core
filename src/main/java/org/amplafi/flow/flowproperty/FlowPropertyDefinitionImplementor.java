@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -30,7 +29,7 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinition initialize();
 
     void setPropertyRequired(FlowActivityPhase flowActivityPhase);
-    <FA extends FlowActivity> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
-    <FA extends FlowActivity> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
+    <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
+    <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
     <V> V parse(String value) throws FlowException;
 }

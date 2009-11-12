@@ -16,7 +16,6 @@ package org.amplafi.flow.flowproperty;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.lang.ObjectUtils;
 
@@ -27,7 +26,7 @@ import org.apache.commons.lang.ObjectUtils;
  * @param <FA>
  *
  */
-public class FixedFlowPropertyValueProvider<FA extends FlowActivity> extends AbstractFlowPropertyValueProvider<FA> {
+public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> extends AbstractFlowPropertyValueProvider<FA> {
 
     private Object defaultObject;
     private static Object NULL = new Object();

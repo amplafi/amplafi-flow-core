@@ -15,11 +15,13 @@
 package org.amplafi.flow.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.FlowDefinitionsManager;
@@ -37,6 +39,8 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private FlowTranslatorResolver flowTranslatorResolver;
     private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
+    private List<DefinitionSource> definitionSources;
+
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
@@ -76,6 +80,14 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         getFlowDefinitions().put(key, flow);
     }
     /**
+     * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitionSource(org.amplafi.flow.definitions.DefinitionSource)
+     */
+    @Override
+    public void addDefinitionSource(DefinitionSource definitionSource) {
+        this.definitionSources.add(definitionSource);
+    }
+
+    /**
      * @see org.amplafi.flow.FlowDefinitionsManager#getFlowDefinition(java.lang.String)
      */
     @Override
@@ -106,6 +118,20 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         if ( running) {
             initFlowDefinitions();
         }
+    }
+
+    /**
+     * @return the definitionSources
+     */
+    public List<DefinitionSource> getDefinitionSources() {
+        return definitionSources;
+    }
+
+    /**
+     * @param definitionSources the definitionSources to set
+     */
+    public void setDefinitionSources(List<DefinitionSource> definitionSources) {
+        this.definitionSources = definitionSources;
     }
 
     public Log getLog() {

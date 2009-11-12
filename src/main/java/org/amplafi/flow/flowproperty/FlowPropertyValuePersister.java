@@ -13,13 +13,12 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowPropertyValuePersister<T extends FlowActivity> {
+public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
     void saveChanges(T flowActivity, FlowPropertyDefinition flowPropertyDefinition);
 }

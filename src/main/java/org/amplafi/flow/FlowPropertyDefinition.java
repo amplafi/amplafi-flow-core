@@ -16,6 +16,7 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -53,8 +54,8 @@ public interface FlowPropertyDefinition {
 
     boolean isCacheOnly();
 
-    <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
-    <FA extends FlowActivity> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
+    <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
+    <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
 
     FlowPropertyDefinition clone();
 
@@ -91,16 +92,16 @@ public interface FlowPropertyDefinition {
 
     void setPropertyUsage(PropertyUsage propertyUsage);
 
-    String getNamespaceKey(FlowState flowState, FlowActivity flowActivity);
+    String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider);
 
     /**
      * the list of namespaces used to find the property value in the FlowState map.
      * This list is constructed by examining the PropertyUsage constraints.
      * @param flowState (may be null )
-     * @param flowActivity (may be null )
+     * @param flowPropertyProvider (may be null )
      * @return ordered collection used to find/set this property.
      */
-    List<String> getNamespaceKeySearchList(FlowState flowState, FlowActivity flowActivity);
+    List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider);
 
     String getValidators();
 

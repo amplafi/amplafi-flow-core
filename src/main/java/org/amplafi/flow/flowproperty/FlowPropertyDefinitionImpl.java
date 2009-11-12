@@ -61,9 +61,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
-    private FlowPropertyValueProvider<FlowActivity> factoryFlowPropertyValueProvider;
-    private FlowPropertyValueProvider<FlowActivity> flowPropertyValueProvider;
-    private FlowPropertyValuePersister<FlowActivity> flowPropertyValuePersister;
+    private FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
+    private FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
+    private FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
@@ -206,7 +206,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
-            FixedFlowPropertyValueProvider<FlowActivity> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowActivity>(defaultObject);
+            FixedFlowPropertyValueProvider<FlowPropertyProvider> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowPropertyProvider>(defaultObject);
             fixedFlowPropertyValueProvider.convertable(this);
             if (getDataClassDefinition().isDataClassDefined()) {
                 if (!this.getDataClass().isPrimitive()) {
@@ -218,7 +218,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             }
             this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
         } else {
-            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowActivity>)defaultObject;
+            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
         }
     }
 
@@ -230,7 +230,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     public Object getDefaultObject(FlowActivity flowActivity) {
         Object value;
-        FlowPropertyValueProvider<FlowActivity> provider = getFlowPropertyValueProviderToUse();
+        FlowPropertyValueProvider<FlowPropertyProvider> provider = getFlowPropertyValueProviderToUse();
         if ( provider != null) {
             value = provider.get(flowActivity, this);
         } else {
@@ -246,7 +246,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     /**
      * @return
      */
-    private FlowPropertyValueProvider<FlowActivity> getFlowPropertyValueProviderToUse() {
+    private FlowPropertyValueProvider<FlowPropertyProvider> getFlowPropertyValueProviderToUse() {
         if ( this.flowPropertyValueProvider != null) {
             return this.flowPropertyValueProvider;
         } else {
@@ -295,6 +295,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * Sets validators for this definition. <p/>
      * Note that existing validators will be removed - if you
      * don't want that behavior, consider using {@link #addValidator(String)}.
+     * @param validators
+     * @return this
      */
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initValidators(String validators) {
@@ -790,8 +792,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @param flowPropertyValueProvider the flowPropertyValueProvider to set
      */
     @SuppressWarnings("unchecked")
-    public <FA extends FlowActivity>void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider) {
-        this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowActivity>) flowPropertyValueProvider;
+    public <FA extends FlowPropertyProvider>void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider) {
+        this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>) flowPropertyValueProvider;
     }
 
     /**
@@ -799,7 +801,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @return the flowPropertyValueProvider
      */
     @SuppressWarnings("unchecked")
-    public <FA extends FlowActivity> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
+    public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
         return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
     }
 
@@ -808,7 +810,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowActivity> flowPropertyValueProvider) {
+    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
         setFlowPropertyValueProvider(flowPropertyValueProvider);
         return this;
     }
@@ -816,7 +818,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     /**
      * @return the flowPropertyValuePersister
      */
-    public FlowPropertyValuePersister<FlowActivity> getFlowPropertyValuePersister() {
+    public FlowPropertyValuePersister<FlowPropertyProvider> getFlowPropertyValuePersister() {
         return flowPropertyValuePersister;
     }
 
@@ -825,8 +827,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @param flowPropertyValuePersister the flowPropertyValuePersister to set
      */
     @SuppressWarnings("unchecked")
-    public <FA extends FlowActivity> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister) {
-        this.flowPropertyValuePersister = (FlowPropertyValuePersister<FlowActivity>) flowPropertyValuePersister;
+    public <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister) {
+        this.flowPropertyValuePersister = (FlowPropertyValuePersister<FlowPropertyProvider>) flowPropertyValuePersister;
     }
 
     /**
@@ -921,6 +923,24 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
         return list;
     }
+    private List<String> getNamespaceKeySearchList(Flow flow) {
+        //TODO have hierarchy of namespaces
+        List<String> list = new ArrayList<String>();
+        list.add(getNamespaceKey(flow));
+        if ( this.getPropertyUsage().isExternallySettable()) {
+            switch(this.getPropertyScope()) {
+            case flowLocal:
+            case requestFlowLocal:
+                list.add(flow.getFlowPropertyProviderName());
+                list.add(null);
+            case global:
+                break;
+            default:
+                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
+            }
+        }
+        return list;
+    }
     private String getNamespaceKey(FlowActivity flowActivity) {
         switch ( this.getPropertyScope()) {
         case activityLocal:
@@ -941,6 +961,21 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
 
+    private String getNamespaceKey(Flow flow) {
+        switch ( this.getPropertyScope()) {
+        case flowLocal:
+        case requestFlowLocal:
+            if ( flow.getFlowState() != null) {
+                return getNamespaceKey(flow.getFlowState());
+            } else {
+                return flow.getFlowPropertyProviderName();
+            }
+        case global:
+            return null;
+        default:
+            throw new IllegalStateException(flow.getFlowPropertyProviderFullName()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
+        }
+    }
     /**
      * see notes on {@link #getNamespaceKeySearchList(FlowActivity)}
      * @param flowState
@@ -980,18 +1015,22 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             throw new IllegalStateException(this.getPropertyScope() + ": don't know namespace.");
         }
     }
-    public List<String> getNamespaceKeySearchList(FlowState flowState, FlowActivity flowActivity) {
-        if( flowActivity != null) {
-            return this.getNamespaceKeySearchList(flowActivity);
-        } else {
+    public List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
+        if( flowPropertyProvider == null) {
             return this.getNamespaceKeySearchList(flowState);
+        } else if ( flowPropertyProvider instanceof FlowActivity) {
+            return this.getNamespaceKeySearchList((FlowActivity)flowPropertyProvider);
+        } else {
+            return this.getNamespaceKeySearchList((Flow)flowPropertyProvider);
         }
     }
-    public String getNamespaceKey(FlowState flowState, FlowActivity flowActivity) {
-        if( flowActivity != null) {
-            return this.getNamespaceKey(flowActivity);
-        } else {
+    public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
+        if( flowPropertyProvider == null) {
             return this.getNamespaceKey(flowState);
+        } else if ( flowPropertyProvider instanceof FlowActivity) {
+            return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
+        } else {
+            return this.getNamespaceKey((Flow)flowPropertyProvider);
         }
     }
 
