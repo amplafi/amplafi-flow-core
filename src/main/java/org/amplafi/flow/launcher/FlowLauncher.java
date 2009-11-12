@@ -79,7 +79,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      */
     String put(String key, String value);
     /**
-     * @param lookupKeyOrBoolean
+     * @param lookupKey
      */
-    void setReturnToFlow(Object lookupKeyOrBoolean);
+    void setReturnToFlow(String lookupKey);
 }
