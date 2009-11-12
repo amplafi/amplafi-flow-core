@@ -59,7 +59,12 @@
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-hivemind</artifactId>
             <version>${project.version}</version>
-        </dependency>                
+        </dependency>     
+        <!-- 
+        	Other runtime dependencies (needed for configuration code) are:
+        	org.apache.hivemind:hivemind
+        	org.apache.hivemind:hivemind-lib
+        -->           
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
