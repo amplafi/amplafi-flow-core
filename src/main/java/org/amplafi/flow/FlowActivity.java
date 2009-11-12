@@ -90,15 +90,7 @@ public interface FlowActivity extends FlowPropertyProvider {
 
     String getComponentName();
 
-
-    /**
-     * can the current FlowActivity's completeActivity() method be called.
-     *
-     * @return result of validation
-     */
-    @Deprecated
     FlowValidationResult getFlowValidationResult();
-
     /**
      * Determines if the flow passes validation for a specific level of required properties.
      * @param required
