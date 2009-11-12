@@ -101,7 +101,7 @@ public class FlowTestingUtils {
     public <T extends FlowActivityImplementor> T initActivity(Class<T> clazz, FlowState state)  {
         try {
             T activity = clazz.newInstance();
-            Flow flow = new FlowImpl();
+            FlowImpl flow = new FlowImpl();
             flow.addActivity(activity);
             if (state!=null) {
                 flow.setFlowState(state);
