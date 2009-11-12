@@ -311,9 +311,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     /**
      * HACK really need to make it easy for a FA to just be interested in inPlace, and PropertyRequired.saveChanges, advance or finish
-     * @see org.amplafi.flow.FlowActivity#getFlowValidationResult()
+     * @return {@link #getFlowValidationResult(FlowActivityPhase, FlowStepDirection)}(FlowActivityPhase.advance, FlowStepDirection.forward)
      */
-    @Deprecated
     public FlowValidationResult getFlowValidationResult() {
         return this.getFlowValidationResult(FlowActivityPhase.advance, FlowStepDirection.forward);
     }
