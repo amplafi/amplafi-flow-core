@@ -387,15 +387,10 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     private <FS extends FlowState> FS getNextFlowState(FlowState flowState) {
         String id = flowState.getProperty(FSCONTINUE_WITH_FLOW);
-        FS next = null;
-        if ( isNotBlank(id)) {
-            next = (FS) this.getFlowState(id);
-        }
+        FS next = (FS) this.getFlowState(id);
         if ( next == null ) {
             id = flowState.getProperty(FSRETURN_TO_FLOW);
-            if ( isNotBlank(id)) {
-                next = (FS) this.getFlowState(id);
-            }
+            next = (FS) this.getFlowState(id);
         }
         return next;
     }
