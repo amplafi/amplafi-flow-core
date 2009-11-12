@@ -671,7 +671,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 if ( isNotBlank(returnToFlow)) {
                     continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
                 }
-                this.setRawProperty(FSRETURN_TO_FLOW, null);
+                this.setProperty(FSRETURN_TO_FLOW, null);
                 pageName = getFlowManagement().completeFlowState(this, true);
                 if (!continueWithFlow.isActive()) {
                     pageName = continueWithFlow.begin();
@@ -689,7 +689,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 }
                 // save back to "this" so that if the current flowState is in turn part of a chain that the callers
                 // will find the correct continue flow state.
-                setRawProperty(FSCONTINUE_WITH_FLOW, continueWithFlowLookup);
+                setProperty(FSCONTINUE_WITH_FLOW, continueWithFlowLookup);
 
             }
         }
