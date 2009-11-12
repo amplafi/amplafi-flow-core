@@ -15,6 +15,7 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
@@ -74,7 +75,7 @@ public interface FlowTranslator <T>{
      */
     boolean isDeserializedForm(Class<?> value);
 
-    T getDefaultObject(FlowActivity flowActivity);
+    T getDefaultObject(FlowPropertyProvider flowPropertyProvider);
     /**
      * @return list of forms that this FlowTranslator can deserialize to.
      */

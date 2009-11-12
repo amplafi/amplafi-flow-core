@@ -13,9 +13,9 @@
  */
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.json.IJsonWriter;
@@ -67,7 +67,7 @@ public class ShortFlowTranslator extends AbstractFlowTranslator<Short> {
         }
     }
     @Override
-    public Short getDefaultObject(FlowActivity flowActivity) {
+    public Short getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return 0;
     }
     /**

@@ -81,7 +81,7 @@ public interface FlowActivity extends FlowPropertyProvider {
      */
     FlowState finishFlow(FlowState currentNextFlowState);
 
-    Flow getFlow();
+    <F extends Flow> F getFlow();
 
     /**
      * @return the pageName.
@@ -124,8 +124,6 @@ public interface FlowActivity extends FlowPropertyProvider {
      * @return namespace for activity.
      */
     String getFullActivityInstanceNamespace();
-
-    <FS extends FlowState> FS getFlowState();
 
     boolean isInstance();
 

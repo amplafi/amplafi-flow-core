@@ -68,9 +68,7 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
             throw new IllegalStateException(this + " cannot convert value="+ this.defaultObject);
         }
     }
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
-     */
+
     @Override
     @SuppressWarnings({ "unused", "unchecked" })
     public <T> T get(FA flowActivity, FlowPropertyDefinition flowPropertyDefinition) {

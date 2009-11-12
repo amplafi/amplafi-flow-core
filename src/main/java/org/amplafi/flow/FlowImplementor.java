@@ -35,4 +35,6 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor {
      *            The activities to set.
      */
     void setActivities(List<FlowActivityImplementor> activities);
+
+    void setFlowState(FlowState state);
 }

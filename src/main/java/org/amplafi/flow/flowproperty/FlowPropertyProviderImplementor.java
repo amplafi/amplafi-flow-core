@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowState;
 
 /**
  * @author patmoore
@@ -31,4 +32,6 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider {
     void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
 
     void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
+
+    <FS extends FlowState> FS getFlowState();
 }

@@ -31,4 +31,7 @@ public interface FlowDefinitionsManager extends DefinitionSource {
      * @param flow the flow definition to add.
      */
     void addDefinition(String key, FlowImplementor flow);
+
+    void addDefinitionSource(DefinitionSource definitionSource);
+
 }

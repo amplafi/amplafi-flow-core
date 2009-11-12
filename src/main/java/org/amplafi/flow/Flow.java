@@ -109,10 +109,6 @@ public interface Flow extends FlowPropertyProvider {
      */
     void refresh();
 
-    void setFlowState(FlowState state);
-
-    <FS extends FlowState> FS getFlowState();
-
     int indexOf(FlowActivity activity);
 
     void setActivatable(boolean activatable);

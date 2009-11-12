@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.impl.FlowStateImplementor;
@@ -24,7 +23,7 @@ import static org.amplafi.flow.FlowConstants.*;
  * @author patmoore
  *
  */
-public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivity> implements FlowPropertyDefinitionProvider {
+public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProviderImplementor> implements FlowPropertyDefinitionProvider {
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
     /**
@@ -38,14 +37,11 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
             );
     }
 
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
-     */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
-        FlowStateImplementor flowStateImplementor = flowActivity.getFlowState();
-        String lookupKey = flowStateImplementor.getRawProperty(flowActivity, flowPropertyDefinition);
+    public <T> T get(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        FlowStateImplementor flowStateImplementor = flowPropertyProvider.getFlowState();
+        String lookupKey = flowStateImplementor.getRawProperty(flowPropertyProvider, flowPropertyDefinition);
         FlowState flowState = flowStateImplementor.getFlowManagement().getFlowState(lookupKey);
         return (T) flowState;
     }

@@ -18,11 +18,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.DataClassDefinition;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
@@ -148,7 +148,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
 
     @Override
     @SuppressWarnings("unused")
-    public T getDefaultObject(FlowActivity flowActivity) {
+    public T getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return null;
     }
     protected void addSerializedFormClasses(Class<?>... clazz) {

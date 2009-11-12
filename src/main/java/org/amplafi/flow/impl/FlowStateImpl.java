@@ -35,6 +35,7 @@ import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -212,19 +213,19 @@ public class FlowStateImpl implements FlowStateImplementor {
             }
         }
     }
-    public void initializeFlowProperties(FlowActivityImplementor flowActivity, Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
+    public void initializeFlowProperties(FlowPropertyProvider flowPropertyProvider, Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
         for (FlowPropertyDefinition flowPropertyDefinition : flowPropertyDefinitions) {
-            initializeFlowProperty(flowActivity, flowPropertyDefinition);
+            initializeFlowProperty(flowPropertyProvider, flowPropertyDefinition);
         }
     }
     /**
-     * @param flowActivity
+     * @param flowPropertyProvider
      * @param flowPropertyDefinition
      */
-    public void initializeFlowProperty(FlowActivityImplementor flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public void initializeFlowProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.
-        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowActivity);
+        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowPropertyProvider);
         String value = null;
         boolean valueSet = false;
         PropertyUsage propertyUsage = flowPropertyDefinition.getPropertyUsage();
@@ -252,21 +253,21 @@ public class FlowStateImpl implements FlowStateImplementor {
             value = flowPropertyDefinition.getInitial();
             // TODO: what about flowPropertyValueProviders -- but need to handle lazy initialization + and better handling of initializing to null.
             // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
-            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowActivity != null) {
+            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowPropertyProvider != null) {
                 // trigger property
                 @SuppressWarnings("unused")
-                Object v = getPropertyWithDefinition(flowActivity, flowPropertyDefinition);
+                Object v = getPropertyWithDefinition(flowPropertyProvider, flowPropertyDefinition);
                 // HACK we should? flow through?
                 return;
             }
         }
-        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowActivity);
+        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String currentValue = getRawProperty(namespace, flowPropertyDefinition.getName());
         if (!StringUtils.equals(value, currentValue)) {
             if (!propertyUsage.isExternallySettable() && currentValue != null) {
                 // property cannot be overridden.
                 getLog().info(
-                    (flowActivity==null?getFlow().getFlowPropertyProviderName():flowActivity.getFlowPropertyProviderFullName())
+                    (flowPropertyProvider==null?getFlow().getFlowPropertyProviderName():flowPropertyProvider.getFlowPropertyProviderFullName())
                                 + '.'
                                 + flowPropertyDefinition.getName()
                                 + " cannot be set to '"
@@ -274,7 +275,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                                 + "' external to the flow. It is being force to the initial value of '"
                                 + value + "'");
             }
-            setRawProperty(flowActivity, flowPropertyDefinition, value);
+            setRawProperty(flowPropertyProvider, flowPropertyDefinition, value);
         }
     }
 
@@ -934,27 +935,27 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition) {
-        T result = (T) getCached(propertyDefinition, flowActivity);
+    public <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition propertyDefinition) {
+        T result = (T) getCached(propertyDefinition, flowPropertyProvider);
         if ( result == null ) {
-            String value = getRawProperty(flowActivity, propertyDefinition);
+            String value = getRawProperty(flowPropertyProvider, propertyDefinition);
             result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(value);
             if (result == null && propertyDefinition.isAutoCreate()) {
-                result =  (T) propertyDefinition.getDefaultObject(flowActivity);
+                result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
                 // TODO: Maybe should be checking !isCacheOnly() ?
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
-                    setPropertyWithDefinition(flowActivity, (FlowPropertyDefinitionImplementor)propertyDefinition, result);
+                    setPropertyWithDefinition(flowPropertyProvider, (FlowPropertyDefinitionImplementor)propertyDefinition, result);
                 }
             }
-            setCached(propertyDefinition, flowActivity, result);
+            setCached(propertyDefinition, flowPropertyProvider, result);
         }
         return result;
     }
 
     @Override
-    public <T> void setPropertyWithDefinition(FlowActivity flowActivity, FlowPropertyDefinitionImplementor propertyDefinition, T value) {
+    public <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         Object actual;
         String stringValue = null;
 
@@ -971,35 +972,35 @@ public class FlowStateImpl implements FlowStateImplementor {
             if ( stringValue==null ) {
                 stringValue = propertyDefinition.serialize(actual);
             }
-            cacheValue &= this.setRawProperty(flowActivity, propertyDefinition, stringValue);
+            cacheValue &= this.setRawProperty(flowPropertyProvider, propertyDefinition, stringValue);
         }
         if (cacheValue) {
             // HACK FPD can't currently parse AmpEntites to actual objects.
-            this.setCached(propertyDefinition, flowActivity, actual);
+            this.setCached(propertyDefinition, flowPropertyProvider, actual);
         }
 
     }
 
     /**
-     * @param flowActivity
+     * @param flowPropertyProvider
      * @param flowPropertyDefinition
      * @param value
      * @return true if the value has changed.
      */
-    protected boolean setRawProperty(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String value) {
-        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowActivity);
-        return setRawProperty(flowActivity, namespace, flowPropertyDefinition.getName(), value);
+    protected boolean setRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String value) {
+        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
+        return setRawProperty(flowPropertyProvider, namespace, flowPropertyDefinition.getName(), value);
     }
 
-    protected boolean setRawProperty(FlowActivity flowActivity, String namespace, String key, String value) {
+    protected boolean setRawProperty(FlowPropertyProvider flowPropertyProvider, String namespace, String key, String value) {
         String oldValue = getRawProperty(namespace, key);
         if (!StringUtils.equals(value, oldValue)) {
-            FlowActivity activity = getActivity(namespace);
+            FlowActivityImplementor activity = getActivity(namespace);
             if ( activity == null) {
-                activity = flowActivity!=null?flowActivity:getCurrentFlowActivityImplementor();
+                activity = flowPropertyProvider instanceof FlowActivityImplementor?((FlowActivityImplementor)flowPropertyProvider):getCurrentFlowActivityImplementor();
             }
             if ( activity != null) {
-                value = ((FlowActivityImplementor)activity).propertyChange(namespace, key, value, oldValue);
+                value = activity.propertyChange(namespace, key, value, oldValue);
             }
             put(namespace, key, value);
             return true;
@@ -1148,12 +1149,12 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity) {
-        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowActivity);
+    public <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider) {
+        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         return (T) getCached(namespace, flowPropertyDefinition.getName());
     }
-    public void setCached(FlowPropertyDefinition flowPropertyDefinition, FlowActivity flowActivity, Object value) {
-        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowActivity);
+    public void setCached(FlowPropertyDefinition flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider, Object value) {
+        String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         setCached(namespace, flowPropertyDefinition.getName(), value);
     }
 
@@ -1650,14 +1651,14 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
 
-    protected String getRawProperty(FlowActivity flowActivity, String key) {
+    protected String getRawProperty(FlowPropertyProvider flowPropertyProvider, String key) {
         FlowPropertyDefinition propertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
-        return getRawProperty(flowActivity, propertyDefinition);
+        return getRawProperty(flowPropertyProvider, propertyDefinition);
     }
     @Override
-    public String getRawProperty(FlowActivity flowActivity, FlowPropertyDefinition propertyDefinition) {
+    public String getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition propertyDefinition) {
         String key = propertyDefinition.getName();
-        String namespace = propertyDefinition.getNamespaceKey(this, flowActivity);
+        String namespace = propertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String value = getRawProperty(namespace, key);
         return value;
     }

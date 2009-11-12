@@ -156,6 +156,12 @@ public interface FlowConstants {
      * to return to Flow #1.
      */
     public static final String FSRETURN_TO_FLOW = "fsReturnToFlow";
+    /**
+     * Used when the flow to return to has not been started.
+     *
+     * Primary use case is Flow A1 (flowType 'A')  starts another flow (Flow B1). Flow A1 does not want to stay active ( unnecessary state ). Flow
+     */
+    public static final String FSRETURN_TO_FLOW_TYPE = "fsReturnToFlowType";
 
     /**
      * Map<String,FlowTransition> - map for transitions. Checked after {@link #FSFLOW_TRANSITIONS}, {@link #FSRETURN_TO_FLOW}

@@ -50,7 +50,7 @@ public interface FlowPropertyDefinition {
      */
     boolean isAutoCreate();
 
-    Object getDefaultObject(FlowActivity flowActivity);
+    Object getDefaultObject(FlowPropertyProvider flowPropertyProvider);
 
     boolean isCacheOnly();
 
@@ -92,10 +92,18 @@ public interface FlowPropertyDefinition {
 
     void setPropertyUsage(PropertyUsage propertyUsage);
 
+    /**
+     * The namespace used to retrieve this property while the flowState is actively running after the flowState's FlowValueMap has been initialized.
+     *  ( using the namespaces listed in {@link #getNamespaceKeySearchList(FlowState, FlowPropertyProvider)} )
+     *
+     * @param flowState
+     * @param flowPropertyProvider
+     * @return namespace
+     */
     String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider);
 
     /**
-     * the list of namespaces used to find the property value in the FlowState map.
+     * the list of namespaces used to find the property value in the FlowState map when INITIALIZING or EXPORTING the flowState's FlowValueMap
      * This list is constructed by examining the PropertyUsage constraints.
      * @param flowState (may be null )
      * @param flowPropertyProvider (may be null )

@@ -224,19 +224,19 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
     /**
      *
-     * @param flowActivity
+     * @param flowPropertyProvider
      * @return defaultObject Should not save default object in
      *         {@link FlowPropertyDefinitionImpl} if it is mutable.
      */
-    public Object getDefaultObject(FlowActivity flowActivity) {
+    public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         Object value;
         FlowPropertyValueProvider<FlowPropertyProvider> provider = getFlowPropertyValueProviderToUse();
         if ( provider != null) {
-            value = provider.get(flowActivity, this);
+            value = provider.get(flowPropertyProvider, this);
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
             // for example the property type is a primitive.
-            value = this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowActivity);
+            value = this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowPropertyProvider);
         }
         // TODO -- do we want to set the default object? or recalculate it each time?
         // might be important if the default object is to get modified or if a FPD is shared.
@@ -923,7 +923,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
         return list;
     }
-    private List<String> getNamespaceKeySearchList(Flow flow) {
+    private List<String> getNamespaceKeySearchList(FlowImplementor flow) {
         //TODO have hierarchy of namespaces
         List<String> list = new ArrayList<String>();
         list.add(getNamespaceKey(flow));
@@ -949,11 +949,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             return flowActivity.getFullActivityInstanceNamespace();
         case flowLocal:
         case requestFlowLocal:
-            if ( flowActivity.getFlowState() != null) {
-                return getNamespaceKey(flowActivity.getFlowState());
-            } else {
-                return flowActivity.getFlow().getFlowPropertyProviderName();
-            }
+            return getNamespaceKey((FlowImplementor)flowActivity.getFlow());
         case global:
             return null;
         default:
@@ -961,7 +957,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
 
-    private String getNamespaceKey(Flow flow) {
+    private String getNamespaceKey(FlowImplementor flow) {
         switch ( this.getPropertyScope()) {
         case flowLocal:
         case requestFlowLocal:
@@ -974,6 +970,20 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             return null;
         default:
             throw new IllegalStateException(flow.getFlowPropertyProviderFullName()+":"+this+":"+this.getPropertyScope()+": don't know namespace.");
+        }
+    }
+
+    private String getNamespaceKey(FlowState flowState) {
+        switch (this.getPropertyScope()) {
+        case activityLocal:
+            throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
+        case flowLocal:
+        case requestFlowLocal:
+            return flowState.getLookupKey();
+        case global:
+            return null;
+        default:
+            throw new IllegalStateException(this.getPropertyScope() + ": don't know namespace.");
         }
     }
     /**
@@ -990,7 +1000,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
         case flowLocal:
         case requestFlowLocal:
-            list.add(flowState.getFlowTypeName());
+            list.add(flowState.getFlow().getFlowPropertyProviderName());
             if ( getPropertyUsage().isExternallySettable()) {
                 list.add(null);
             }
@@ -1002,26 +1012,13 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return list;
     }
 
-    private String getNamespaceKey(FlowState flowState) {
-        switch (this.getPropertyScope()) {
-        case activityLocal:
-            throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
-        case flowLocal:
-        case requestFlowLocal:
-            return flowState.getLookupKey();
-        case global:
-            return null;
-        default:
-            throw new IllegalStateException(this.getPropertyScope() + ": don't know namespace.");
-        }
-    }
     public List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
         if( flowPropertyProvider == null) {
             return this.getNamespaceKeySearchList(flowState);
         } else if ( flowPropertyProvider instanceof FlowActivity) {
             return this.getNamespaceKeySearchList((FlowActivity)flowPropertyProvider);
         } else {
-            return this.getNamespaceKeySearchList((Flow)flowPropertyProvider);
+            return this.getNamespaceKeySearchList((FlowImplementor)flowPropertyProvider);
         }
     }
     public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
@@ -1030,7 +1027,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         } else if ( flowPropertyProvider instanceof FlowActivity) {
             return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
         } else {
-            return this.getNamespaceKey((Flow)flowPropertyProvider);
+            return this.getNamespaceKey((FlowImplementor)flowPropertyProvider);
         }
     }
 

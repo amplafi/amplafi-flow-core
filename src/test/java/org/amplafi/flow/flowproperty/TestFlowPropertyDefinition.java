@@ -65,7 +65,7 @@ public class TestFlowPropertyDefinition {
         assertTrue(definition.isRequired());
         assertEquals(definition.getValidators(), "required,flowField=pass");
     }
-    
+
     @Test(enabled=TEST_ENABLED)
     public void testValidate_required_and_extra_validator() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
@@ -73,7 +73,7 @@ public class TestFlowPropertyDefinition {
 
         assertTrue(definition.isRequired());
         assertEquals(definition.getValidators(), "required,email");
-    }    
+    }
 
     @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {
@@ -399,6 +399,7 @@ public class TestFlowPropertyDefinition {
         FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl("foo", Boolean.class).initPropertyScope(activityLocal);
         List<String> namespaces;
         {
+            // static test using FlowActivity
             FlowActivityImpl flowActivity = new FlowActivityImpl();
             flowActivity.setFlowPropertyProviderName(activityName);
 
@@ -420,19 +421,45 @@ public class TestFlowPropertyDefinition {
             assertEquals(namespaces.size(), 4, "namespaces="+namespaces);
         }
 
+        {
+            // static test for FlowImpl
+            Flow flow = flowTestingUtils.getFlowDefinitionsManager().getFlowDefinition(flowTypeName);
+            namespace = flowLocalProperty.getNamespaceKey(null, flow);
+            assertEquals(namespace, flowTypeName);
+            namespaces = flowLocalProperty.getNamespaceKeySearchList(null, flow);
+            assertEquals(namespaces.get(0), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(1), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
+            assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
+
+            try {
+                namespaces = activityLocalProperty.getNamespaceKeySearchList(null, flow);
+                fail("should throw exception");
+            } catch (IllegalStateException e) {
+                // expected
+            }
+            try {
+                namespace = activityLocalProperty.getNamespaceKey(null, flow);
+                fail("should throw exception");
+            } catch (IllegalStateException e) {
+                // expected
+            }
+        }
+
         // now as part of a running flow
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowStateImpl flowStateImpl = flowManagement.startFlowState(flowTypeName, true, null, null);
         FlowActivityImpl flowActivity = flowStateImpl.getCurrentActivity();
-        namespace = flowLocalProperty.getNamespaceKey(flowStateImpl, flowActivity);
-        assertEquals(namespace, flowStateImpl.getLookupKey());
+        for(FlowPropertyProvider flowPropertyProvider: new FlowPropertyProvider[] {flowActivity, flowStateImpl.getFlow()}) {
+            namespace = flowLocalProperty.getNamespaceKey(flowStateImpl, flowPropertyProvider);
+            assertEquals(namespace, flowStateImpl.getLookupKey());
 
-        namespaces = flowLocalProperty.getNamespaceKeySearchList(flowStateImpl, flowActivity);
-        assertEquals(namespaces.get(0), namespace, "namespaces="+namespaces);
-        assertEquals(namespaces.get(1), flowTypeName, "namespaces="+namespaces);
-        assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
-        assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
-
+            namespaces = flowLocalProperty.getNamespaceKeySearchList(flowStateImpl, flowPropertyProvider);
+            assertEquals(namespaces.get(0), namespace, "namespaces="+namespaces);
+            assertEquals(namespaces.get(1), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
+            assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
+        }
         namespace = activityLocalProperty.getNamespaceKey(flowStateImpl, flowActivity);
         assertTrue(namespace.contains(flowStateImpl.getLookupKey()), "namespace="+namespace+" fsLookupKey="+flowStateImpl.getLookupKey());
         assertTrue(namespace.contains(activityName), "namespace="+namespace);

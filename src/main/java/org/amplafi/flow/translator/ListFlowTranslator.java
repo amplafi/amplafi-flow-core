@@ -16,9 +16,9 @@ package org.amplafi.flow.translator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 
 
@@ -44,7 +44,7 @@ public class ListFlowTranslator<T> extends FlowCollectionTranslator<List<? exten
 
     @Override
     @SuppressWarnings("unused")
-    public List<? extends T> getDefaultObject(FlowActivity flowActivity) {
+    public List<? extends T> getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return new ArrayList<T>();
     }
 

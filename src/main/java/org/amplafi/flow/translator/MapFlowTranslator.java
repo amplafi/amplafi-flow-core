@@ -17,9 +17,9 @@ package org.amplafi.flow.translator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.renderers.MapJsonRenderer;
@@ -84,7 +84,7 @@ public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends
         }
     }
     @Override
-    public Map<? extends K, ? extends V> getDefaultObject(FlowActivity flowActivity) {
+    public Map<? extends K, ? extends V> getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         try {
             return (Map<? extends K, ? extends V>) getDefaultObjectClass().newInstance();
         } catch (InstantiationException e) {

@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -26,13 +26,11 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
-public class CancelTextFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowActivity> {
+public class CancelTextFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowActivityImplementor> {
     public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
-     */
+
     @Override
-    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FlowActivityImplementor flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
         String label = "message:flow.label-cancel";
         String lookupKey =flowActivity.getProperty(FSRETURN_TO_FLOW);
         if ( lookupKey != null ) {

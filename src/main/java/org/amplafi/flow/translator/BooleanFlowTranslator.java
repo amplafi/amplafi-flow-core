@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.renderers.BooleanJsonRenderer;
 
 
@@ -38,7 +38,7 @@ public class BooleanFlowTranslator extends AbstractFlowTranslator<Boolean> {
     }
 
     @Override
-    public Boolean getDefaultObject(FlowActivity flowActivity) {
+    public Boolean getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return Boolean.FALSE;
     }
 }
