@@ -13,24 +13,21 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import static org.amplafi.flow.FlowConstants.*;
 /**
  * @author patmoore
  *
  */
-public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivity> {
+public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProvider> {
 
     public FlowTransitionFlowPropertyValueProvider() {
         super(FSFLOW_TRANSITION);
         addRequires(FSFLOW_TRANSITIONS, FSALT_FINISHED);
     }
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
-     */
+
     @Override
-    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         throw new UnsupportedOperationException();
     }
 

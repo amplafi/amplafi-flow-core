@@ -16,7 +16,6 @@ package org.amplafi.flow.flowproperty;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
@@ -25,6 +24,6 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  * @param <V>
  *
  */
-public interface FutureFlowPropertyValueProvider<FA extends FlowActivity, V> extends Callable<V>, FlowPropertyValueProvider<FA>, Future<V> {
+public interface FutureFlowPropertyValueProvider<FA extends FlowPropertyProvider, V> extends Callable<V>, FlowPropertyValueProvider<FA>, Future<V> {
 
 }
