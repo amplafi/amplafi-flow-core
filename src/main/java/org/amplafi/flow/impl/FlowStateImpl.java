@@ -36,6 +36,7 @@ import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -989,20 +990,26 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     protected boolean setRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String value) {
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
-        return setRawProperty(flowPropertyProvider, namespace, flowPropertyDefinition.getName(), value);
-    }
-
-    protected boolean setRawProperty(FlowPropertyProvider flowPropertyProvider, String namespace, String key, String value) {
+        String key = flowPropertyDefinition.getName();
         String oldValue = getRawProperty(namespace, key);
-        if (!StringUtils.equals(value, oldValue)) {
+        String newValue = value;
+        if (!StringUtils.equals(newValue, oldValue)) {
+            FlowPropertyValueChangeListener flowPropertyValueChangeListener = flowPropertyDefinition.getFlowPropertyValueChangeListener();
+            if ( flowPropertyValueChangeListener != null) {
+                newValue = flowPropertyValueChangeListener.propertyChange(namespace, key, newValue, oldValue);
+            }
+            if ( flowPropertyProvider instanceof FlowPropertyValueChangeListener) {
+                newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(namespace, key, newValue, oldValue);
+            }
+
             FlowActivityImplementor activity = getActivity(namespace);
-            if ( activity == null) {
-                activity = flowPropertyProvider instanceof FlowActivityImplementor?((FlowActivityImplementor)flowPropertyProvider):getCurrentFlowActivityImplementor();
+            if ( activity == flowPropertyProvider || !(activity instanceof FlowPropertyValueChangeListener)) {
+                activity = getCurrentFlowActivityImplementor();
             }
-            if ( activity != null) {
-                value = activity.propertyChange(namespace, key, value, oldValue);
+            if ( activity instanceof FlowPropertyValueChangeListener && activity != flowPropertyProvider) {
+                newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(namespace, key, newValue, oldValue);
             }
-            put(namespace, key, value);
+            put(namespace, key, newValue);
             return true;
         } else {
             return false;
@@ -1013,21 +1020,8 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Deprecated
     @Override
     public boolean setRawProperty(String key, String value) {
-        FlowPropertyDefinition propertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
-        String oldValue = getRawProperty((FlowActivity)null, propertyDefinition);
-        if (!equalsIgnoreCase(value, oldValue)) {
-            String namespace = propertyDefinition.getNamespaceKey(this, null);
-            if (this.isActive()) {
-                value = getCurrentFlowActivityImplementor().propertyChange(namespace, key, value, oldValue);
-                if (value == oldValue) {
-                    return false;
-                }
-            }
-            put(namespace, key, value);
-            return true;
-        } else {
-            return false;
-        }
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
+        return setRawProperty(null, flowPropertyDefinition, value);
     }
 
     /**
