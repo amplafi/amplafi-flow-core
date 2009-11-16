@@ -239,9 +239,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#getPropertyDefinition(java.lang.String)
      */
-    public FlowPropertyDefinition getPropertyDefinition(String key) {
+    @SuppressWarnings("unchecked")
+    public <T extends FlowPropertyDefinition> T getPropertyDefinition(String key) {
         Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
-        return propDefs == null? null : propDefs.get(key);
+        return (T)( propDefs == null? null : propDefs.get(key));
     }
 
     public FlowManagement getFlowManagement() {
@@ -417,16 +418,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return getFlowPropertyProviderName();
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setFlowState(org.amplafi.flow.FlowState)
-     */
     public void setFlowState(FlowState state) {
         this.flowState = state;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getFlowState()
-     */
     @SuppressWarnings("unchecked")
     public <FS extends FlowState> FS getFlowState() {
         return (FS) this.flowState;

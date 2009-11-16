@@ -38,8 +38,10 @@ public class AddToListFlowPropertyValueProvider<V> implements ChainedFlowPropert
     public AddToListFlowPropertyValueProvider(V...valuesToAdd) {
         this.values = Arrays.asList(valuesToAdd);
     }
+
     /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
+     *
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowPropertyDefinition)
      */
     @SuppressWarnings("unchecked")
     @Override

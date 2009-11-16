@@ -15,24 +15,15 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 
 /**
  * @author patmoore
  *
+ * TODO: eliminate extension of FlowPropertyValueChangeListener
+ *
  */
-public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor {
-    /**
-     * Called when a property changes value.
-     *
-     * @param flowActivityName
-     * @param key
-     * @param newValue the new raw property value
-     * @param oldValue the old raw property value.
-     * @return what the value should be. Usually just return the value
-     *         parameter. By default should be 'value'.
-     */
-    String propertyChange(String flowActivityName, String key, String newValue, String oldValue);
-
+public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor, FlowPropertyValueChangeListener {
     /**
      * @return instance of this definition
      */

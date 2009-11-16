@@ -29,6 +29,11 @@ import static org.apache.commons.lang.StringUtils.*;
 public class CancelTextFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowActivityImplementor> {
     public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
 
+    /**
+     *
+     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowPropertyDefinition)
+     */
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T get(FlowActivityImplementor flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
         String label = "message:flow.label-cancel";

@@ -265,9 +265,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return currentNextFlowState;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getFlow()
-     */
     public FlowImplementor getFlow() {
         return flow;
     }
@@ -468,10 +465,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
 
-    /**
-     *
-     * @see org.amplafi.flow.FlowActivity#getFlowState()
-     */
     @SuppressWarnings("unchecked")
     @Override
     public <FS extends FlowState> FS getFlowState() {
@@ -832,11 +825,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);
     }
 
-
-    /**
-     *
-     * @see org.amplafi.flow.FlowActivityImplementor#propertyChange(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-     */
     @SuppressWarnings("unused")
     public String propertyChange(String flowActivityName, String key, String value,String oldValue) {
         return value;
