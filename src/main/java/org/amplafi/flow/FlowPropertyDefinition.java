@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -138,4 +139,9 @@ public interface FlowPropertyDefinition {
      * @return true if propertyUsage has been explicitly set.
      */
     boolean isPropertyUsageSet();
+
+    /**
+     * @return listener to be notified when the property changes value.
+     */
+    FlowPropertyValueChangeListener getFlowPropertyValueChangeListener();
 }

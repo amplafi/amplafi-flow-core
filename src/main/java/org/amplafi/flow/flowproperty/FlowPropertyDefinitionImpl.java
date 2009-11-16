@@ -64,6 +64,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     private FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
     private FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
+    private FlowPropertyValueChangeListener flowPropertyValueChangeListener;
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
@@ -713,6 +714,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
             this.setDefaultObject(source.factoryFlowPropertyValueProvider);
         }
+        // TODO: merging should handling chained notification.
+        if ( flowPropertyValueChangeListener == null && source.flowPropertyValueChangeListener != null ) {
+            this.setFlowPropertyValueChangeListener(source.flowPropertyValueChangeListener);
+        }
         if (initial == null && source.initial != null) {
             this.setInitial(source.initial);
         }
@@ -841,6 +846,25 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return this;
     }
 
+    /**
+     * @return the flowPropertyValueChangeListener
+     */
+    public FlowPropertyValueChangeListener getFlowPropertyValueChangeListener() {
+        return flowPropertyValueChangeListener;
+    }
+
+    /**
+     * @param flowPropertyValueChangeListener the flowPropertyValueChangeListener to set
+     */
+    public void setFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        this.flowPropertyValueChangeListener = flowPropertyValueChangeListener;
+    }
+
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        setFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
+        return this;
+    }
     @Override
     public boolean equals(Object o) {
         if ( o == null || ! (o instanceof FlowPropertyDefinitionImpl)) {
