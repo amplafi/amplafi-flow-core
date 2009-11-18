@@ -40,7 +40,7 @@ public class FlowTestingUtils {
 
     private FlowTranslatorResolver flowTranslatorResolver;
 
-    private BaseFlowManagement flowManagement;
+    private FlowManagement flowManagement;
 
     private AtomicInteger counter = new AtomicInteger();
 
@@ -48,10 +48,10 @@ public class FlowTestingUtils {
     public FlowTestingUtils() {
         this(new FlowManagerImpl(), new FlowDefinitionsManagerImpl(), new BaseFlowTranslatorResolver());
     }
-    public FlowTestingUtils(FlowManager flowManager, FlowDefinitionsManager flowDefinitionsManager, FlowTranslatorResolver flowTranslatorResolver) {
+    public FlowTestingUtils(FlowManager flowManager, FlowDefinitionsManager flowDefinitionsManager, FlowTranslatorResolver flowTranslatorResolver, FlowManagement flowManagement) {
         this.flowDefinitionsManager = flowDefinitionsManager;
         this.flowTranslatorResolver = flowTranslatorResolver;
-        this.flowManagement = new BaseFlowManagement();
+        this.flowManagement = flowManagement;
         this.flowManager = flowManager;
     }
 
@@ -80,8 +80,8 @@ public class FlowTestingUtils {
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new EnumFlowTranslator());
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).setFlowTranslatorResolver(flowTranslatorResolver);
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).initializeService();
-        this.flowManagement.setFlowManager(flowManager);
-        this.flowManagement.setFlowTranslatorResolver(flowTranslatorResolver);
+        ((BaseFlowManagement)this.flowManagement).setFlowManager(flowManager);
+        ((BaseFlowManagement)this.flowManagement).setFlowTranslatorResolver(flowTranslatorResolver);
 
     }
 

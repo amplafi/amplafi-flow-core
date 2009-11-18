@@ -15,8 +15,14 @@
 package org.amplafi.flow.impl;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.apache.commons.collections.CollectionUtils.*;
 
 import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.FlowStateListener;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowDefinitionsManager;
@@ -32,6 +38,8 @@ import org.apache.commons.logging.LogFactory;
 public class FlowManagerImpl implements FlowManager {
     private FlowTranslatorResolver flowTranslatorResolver;
     private FlowDefinitionsManager flowDefinitionsManager;
+
+    private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new LinkedHashSet<FlowStateListener>());
     private Log log;
     private URI defaultHomePage;
 
@@ -85,6 +93,25 @@ public class FlowManagerImpl implements FlowManager {
     }
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         return flowTranslatorResolver;
+    }
+    /**
+     * @param flowStateListeners the flowStateListeners to set
+     */
+    public void setFlowStateListeners(Set<FlowStateListener> flowStateListeners) {
+        this.flowStateListeners.clear();
+        if ( isNotEmpty(flowStateListeners)) {
+            this.flowStateListeners.addAll(flowStateListeners);
+        }
+    }
+
+    /**
+     * @return the flowStateListeners
+     */
+    public Set<FlowStateListener> getFlowStateListeners() {
+        return flowStateListeners;
+    }
+    public void addFlowStateListener(FlowStateListener flowStateListener) {
+        this.getFlowStateListeners().add(flowStateListener);
     }
 
     /**

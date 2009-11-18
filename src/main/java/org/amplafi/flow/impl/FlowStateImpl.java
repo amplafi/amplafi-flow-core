@@ -1343,11 +1343,13 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public Boolean getBoolean(String key) {
-        Boolean value = getProperty(key, Boolean.class);
+        Object value = getProperty(key);
         if (value == null) {
             return null;
+        } else if ( value instanceof Boolean ) {
+            return (Boolean) value;
         } else {
-            return Boolean.valueOf(value);
+            return Boolean.valueOf(value.toString());
         }
     }
 

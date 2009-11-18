@@ -14,6 +14,7 @@
 package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.apache.commons.collections.CollectionUtils.*;
 import static org.apache.commons.lang.StringUtils.*;
 
 import java.net.URI;
@@ -598,30 +599,25 @@ public class BaseFlowManagement implements FlowManagement {
     }
 
     /**
-     * @return the flowLifecycleStateListeners
-     */
-    protected Set<FlowStateListener> getFlowLifecycleStateListeners() {
-        return flowStateListeners;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowManagement#addFlowLifecycleListener(org.amplafi.flow.FlowStateListener)
+     * @see org.amplafi.flow.FlowManagement#addFlowStateListener(org.amplafi.flow.FlowStateListener)
      */
     @Override
-    public void addFlowLifecycleListener(FlowStateListener flowStateListener) {
-        this.getFlowLifecycleStateListeners().add(flowStateListener);
+    public void addFlowStateListener(FlowStateListener flowStateListener) {
+        if ( flowStateListener != null) {
+            this.getFlowStateListeners().add(flowStateListener);
+        }
     }
 
     public void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle) {
         //TODO synchronization issues if new listeners being added.
-        for(FlowStateListener flowStateListener: this.flowStateListeners) {
+        for(FlowStateListener flowStateListener: this.getFlowStateListeners()) {
             flowStateListener.lifecycleChange(flowState, previousFlowStateLifecycle);
         }
     }
 
     public void activityChange(FlowStateImplementor flowState, FlowActivity flowActivity, FlowStepDirection flowStepDirection, FlowActivityPhase flowActivityPhase) {
         //TODO synchronization issues if new listeners being added.
-        for(FlowStateListener flowStateListener: this.flowStateListeners) {
+        for(FlowStateListener flowStateListener: this.getFlowStateListeners()) {
             flowStateListener.activityChange(flowState, flowActivity, flowStepDirection, flowActivityPhase);
         }
     }
@@ -638,5 +634,22 @@ public class BaseFlowManagement implements FlowManagement {
      */
     public PageProvider getPageProvider() {
         return pageProvider;
+    }
+
+    /**
+     * @param flowStateListeners the flowStateListeners to set
+     */
+    public void setFlowStateListeners(Set<FlowStateListener> flowStateListeners) {
+        this.flowStateListeners.clear();
+        if ( isNotEmpty(flowStateListeners)) {
+            this.flowStateListeners.addAll(flowStateListeners);
+        }
+    }
+
+    /**
+     * @return the flowStateListeners
+     */
+    public Set<FlowStateListener> getFlowStateListeners() {
+        return flowStateListeners;
     }
 }

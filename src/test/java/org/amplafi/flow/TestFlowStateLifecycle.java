@@ -51,7 +51,7 @@ public class TestFlowStateLifecycle {
         String flowTypeName = flowTestingUtils.addFlowDefinition(new FlowActivityImpl());
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowStateLifecycleListenerImpl flowLifecycleStateListener = new FlowStateLifecycleListenerImpl();
-        flowManagement.addFlowLifecycleListener(flowLifecycleStateListener);
+        flowManagement.addFlowStateListener(flowLifecycleStateListener);
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, null);
         assertEquals(flowLifecycleStateListener.last, starting);
         assertEquals(flowLifecycleStateListener.current, started);

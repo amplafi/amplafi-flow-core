@@ -238,6 +238,6 @@ public interface FlowManagement extends FlowStateListener {
 
     <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
-    void addFlowLifecycleListener(FlowStateListener flowStateListener);
+    void addFlowStateListener(FlowStateListener flowStateListener);
 
 }

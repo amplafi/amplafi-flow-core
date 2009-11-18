@@ -39,7 +39,7 @@ public interface FlowManager {
      * if so how? per session? per thread?
      * @return (possibly new) FlowManagement object.
      */
-    FlowManagement getFlowManagement();
+    <FM extends FlowManagement> FM getFlowManagement();
 
     /**
      * @param flowTranslatorResolver
