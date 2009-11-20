@@ -24,14 +24,12 @@ import org.amplafi.flow.definitions.DefinitionSource;
  */
 public interface FlowDefinitionsManager extends DefinitionSource {
 
-    void addDefinitions(FlowImplementor... flows);
-
     /**
      * @param key (usually) the {@link Flow#getFlowPropertyProviderName()}.
      * @param flow the flow definition to add.
      */
     void addDefinition(String key, FlowImplementor flow);
 
-    void addDefinitionSource(DefinitionSource definitionSource);
+    void addDefinitions(DefinitionSource... definitionSource);
 
 }

@@ -150,6 +150,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
+    public FlowActivityImpl(String name) {
+        this();
+        setFlowPropertyProviderName(name);
+    }
+
     /**
      * subclasses should override to add their standard definitions.
      */

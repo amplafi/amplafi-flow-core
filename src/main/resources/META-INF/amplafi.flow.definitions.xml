@@ -3,6 +3,9 @@
     <configuration-point id="flows" schema-id="flowsSchema">
         Flow definitions are contributed to this configuration point
     </configuration-point>
+    <configuration-point id="flowsFilenames" schema-id="flowsFilenames">
+        Flow definitions are contributed to this configuration point
+    </configuration-point>
     <configuration-point id="flowTranslators" schema-id="amplafi.factory.servicelist">
         Translators are contributed here.
     </configuration-point>
@@ -23,7 +26,7 @@
                 The text in the link
                 continuing the flow.
             </attribute>
-            <attribute name="pageName">
+            <attribute name="page-name">
                 Page that the flow should start on. Also can be set with property, "fsPageName"
             </attribute>
             <attribute name="default-after-page">
@@ -48,8 +51,8 @@
             <element name="activity">
                 <attribute name="name" required="true"/>
                 <attribute name="class" translator="instance"/>
-                <attribute name="pageName"/>
-                <attribute name="componentName"/>
+                <attribute name="page-name"/>
+                <attribute name="component-name"/>
                 <attribute name="link-title"/>
                 <attribute name="finishing"/>
                 <attribute name="invisible">
@@ -67,7 +70,7 @@
                 <element name="property">
                     <attribute name="name" required="true"/>
                     <attribute name="translator" translator="instance"/>
-                    <attribute name="parameterName">
+                    <attribute name="parameter-name">
                         If the component or page has a different parameter name
                         than the name attribute, use this when assigning
                         the component parameter.
@@ -107,8 +110,8 @@
                     <custom class="org.amplafi.flow.hivemind.FlowActivityRule"/>
                     <!-- push-attribute attribute="class"/-->
                     <read-attribute attribute="name" property="flowPropertyProviderName"/>
-                    <read-attribute attribute="pageName" property="pageName"/>
-                    <read-attribute attribute="componentName"
+                    <read-attribute attribute="page-name" property="pageName"/>
+                    <read-attribute attribute="component-name"
                                     property="componentName"/>
                     <read-attribute attribute="link-title" property="activityTitle"/>
                     <read-attribute attribute="finishing"
@@ -130,10 +133,10 @@
                 <attribute name="afterPage">
                     .. or just transition to a new page (which may start a flow).
                 </attribute>
-                <attribute name="pageName">
+                <attribute name="page-name">
 
                 </attribute>
-                <attribute name="componentName"/>
+                <attribute name="component-name"/>
                 <attribute name="link-title"/>
                 <attribute name="finishing">
                     This activity can complete (end) the Flow.
@@ -153,8 +156,8 @@
                     
                     <read-attribute attribute="transition-label" property="fsFlowTransitionLabel"/>
                     <read-attribute attribute="persistFlow" property="persistFlow"/>
-                    <read-attribute attribute="pageName" property="pageName"/>
-                    <read-attribute attribute="componentName"
+                    <read-attribute attribute="page-name" property="pageName"/>
+                    <read-attribute attribute="component-name"
                                     property="componentName"/>
                     <read-attribute attribute="link-title" property="activityTitle"/>
                     <read-attribute attribute="nextFlow"
@@ -204,7 +207,7 @@
             <rules>
                 <create-object class="org.amplafi.flow.impl.FlowImpl"/>
                 <read-attribute attribute="name" property="flowPropertyProviderName"/>
-                <read-attribute attribute="pageName" property="pageName"/>
+                <read-attribute attribute="page-name" property="pageName"/>
                 <read-attribute attribute="default-after-page" property="defaultAfterPage"/>
                 <read-attribute attribute="after-page" property="afterPage"/>
                 <read-attribute attribute="activatable" property="activatable"/>
@@ -217,7 +220,18 @@
             </rules>
         </element>
     </schema>
-
+    
+    <schema id="flowsFilenames">
+        <!-- used to transition from flowsSchema ( above)  -->
+        <element name="definition" key-attribute="name">
+            <!-- no two definitions can be named the same, the name is the unique id! -->
+            <attribute name="name" required="true"/>
+            <rules>
+                <push-attribute attribute="name"/>
+                <invoke-parent method="addElement"/>
+            </rules>
+        </element>
+    </schema>
     <service-point id="FlowTranslatorResolver" interface="org.amplafi.flow.FlowTranslatorResolver">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.BaseFlowTranslatorResolver">
@@ -321,6 +335,7 @@
         <invoke-factory>
             <construct class="org.amplafi.flow.impl.FlowDefinitionsManagerImpl">
                 <set-configuration property="flowDefinitions" configuration-id="amplafi.flow.definitions.flows" />
+                <set-configuration property="flowsFilenames" configuration-id="amplafi.flow.definitions.flowsFilenames" />
             </construct>
         </invoke-factory>
     </service-point>

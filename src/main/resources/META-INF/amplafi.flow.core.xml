@@ -2,7 +2,9 @@
 <module id="amplafi.flow.core" version="0.0.1">
 
     <sub-module descriptor="amplafi.flow.definitions.xml"/>
-    <sub-module descriptor="flows/amplafi.suppliedflows.xml"/>
+    <contribution configuration-id="amplafi.flow.definitions.flowsFilenames">
+        <definition name="flows/amplafi.suppliedflows.xml"/>
+    </contribution>
     <service-point id="FlowManager" interface="org.amplafi.flow.FlowManager">
         <invoke-factory service-id="amplafi.factory.appServicesFactory">
             <construct class="org.amplafi.flow.impl.FlowManagerImpl" />

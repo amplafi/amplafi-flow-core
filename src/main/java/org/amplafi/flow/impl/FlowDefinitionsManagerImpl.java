@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
+import org.amplafi.flow.definitions.XmlDefinitionSource;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.FlowDefinitionsManager;
@@ -39,17 +41,22 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private FlowTranslatorResolver flowTranslatorResolver;
     private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
-    private List<DefinitionSource> definitionSources;
+    private List<String> flowsFilenames;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
+        flowsFilenames = new CopyOnWriteArrayList<String>();
     }
 
     /**
      *
      */
     public void initializeService() {
+        for(String fileName: getFlowsFilenames()) {
+            XmlDefinitionSource definitionSource = new XmlDefinitionSource(fileName);
+            addDefinitions(definitionSource);
+        }
         initFlowDefinitions();
         running = true;
     }
@@ -67,9 +74,12 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitions(FlowImplementor...)
      */
     @Override
-    public void addDefinitions(FlowImplementor... flows) {
-        for(FlowImplementor flow: flows) {
-            addDefinition(flow.getFlowPropertyProviderName(), flow);
+    public void addDefinitions(DefinitionSource... definitionSources) {
+        for(DefinitionSource definitionSource: definitionSources) {
+            Collection<FlowImplementor> flows = definitionSource.getFlowDefinitions().values();
+            for(FlowImplementor flow: flows) {
+                addDefinition(flow.getFlowPropertyProviderName(), flow);
+            }
         }
     }
     public void addDefinition(String key, FlowImplementor flow) {
@@ -78,13 +88,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         }
         this.flowTranslatorResolver.resolveFlow(flow);
         getFlowDefinitions().put(key, flow);
-    }
-    /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitionSource(org.amplafi.flow.definitions.DefinitionSource)
-     */
-    @Override
-    public void addDefinitionSource(DefinitionSource definitionSource) {
-        this.definitionSources.add(definitionSource);
     }
 
     /**
@@ -120,20 +123,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         }
     }
 
-    /**
-     * @return the definitionSources
-     */
-    public List<DefinitionSource> getDefinitionSources() {
-        return definitionSources;
-    }
-
-    /**
-     * @param definitionSources the definitionSources to set
-     */
-    public void setDefinitionSources(List<DefinitionSource> definitionSources) {
-        this.definitionSources = definitionSources;
-    }
-
     public Log getLog() {
         if ( this.log == null ) {
             this.log = LogFactory.getLog(this.getClass());
@@ -154,5 +143,20 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         return flowTranslatorResolver;
+    }
+
+    /**
+     * @param flowsFilenames the flowsFilenames to set
+     */
+    public void setFlowsFilenames(List<String> flowsFilenames) {
+        this.flowsFilenames.clear();
+        this.flowsFilenames.addAll(flowsFilenames);
+    }
+
+    /**
+     * @return the flowsFilenames
+     */
+    public List<String> getFlowsFilenames() {
+        return flowsFilenames;
     }
 }

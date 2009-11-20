@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.definitions;
 
+import java.util.Arrays;
+
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 /**
@@ -22,8 +24,17 @@ import static org.testng.Assert.*;
 public class TestXmlDefinitionSource {
 
     @Test
-    public void testLoading() {
+    public void testLoadingFromExternalFile() {
         XmlDefinitionSource xmlDefinitionSource = new XmlDefinitionSource("src/main/resources/META-INF/flows/amplafi.suppliedflows.xml");
         assertFalse(xmlDefinitionSource.getFlowDefinitions().isEmpty());
+    }
+    @Test
+    public void testLoadingFromIncludedResource() {
+        XmlDefinitionSource xmlDefinitionSource;
+        String file = "amplafi.suppliedflows.xml";
+        for(String fileName: Arrays.asList(file, "META-INF/flows/"+file, "/flows/"+file, "flows/"+file)) {
+            xmlDefinitionSource = new XmlDefinitionSource(fileName);
+            assertFalse(xmlDefinitionSource.getFlowDefinitions().isEmpty());
+        }
     }
 }

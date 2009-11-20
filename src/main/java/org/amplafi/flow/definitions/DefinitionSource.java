@@ -27,9 +27,14 @@ public interface DefinitionSource {
     /**
      * Returns the flow having the specified name.
      * @param flowTypeName
-     * @return the Flow definition.
+     * @return the Flow definition. null if {@link #isFlowDefined(String)} returns false.
      */
     FlowImplementor getFlowDefinition(String flowTypeName);
+    /**
+     * does this DefinitionSource have a definition for a flow with supplied name.
+     * @param flowTypeName
+     * @return true if definition exists.
+     */
     boolean isFlowDefined(String flowTypeName);
 
     /**

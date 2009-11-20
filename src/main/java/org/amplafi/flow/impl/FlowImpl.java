@@ -17,6 +17,7 @@ package org.amplafi.flow.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -468,5 +469,35 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     @Override
     public String toString() {
         return getFlowPropertyProviderName()+ (isInstance()?"(instance)":"");
+    }
+
+    /**
+     * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)
+     */
+    @Override
+    public FlowImplementor getFlowDefinition(String flowTypeName) {
+        if ( isFlowDefined(flowTypeName)) {
+            return this;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinitions()
+     */
+    @Override
+    public Map<String, FlowImplementor> getFlowDefinitions() {
+        Map<String, FlowImplementor> map = new HashMap<String, FlowImplementor>();
+        map.put(this.getFlowPropertyProviderName(), this);
+        return map;
+    }
+
+    /**
+     * @see org.amplafi.flow.definitions.DefinitionSource#isFlowDefined(java.lang.String)
+     */
+    @Override
+    public boolean isFlowDefined(String flowTypeName) {
+        return this.getFlowPropertyProviderName().equals(flowTypeName);
     }
 }

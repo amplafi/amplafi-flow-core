@@ -15,13 +15,14 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor {
+public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, DefinitionSource {
 
     /**
      * Create an instance of a Flow from Flow definition.
