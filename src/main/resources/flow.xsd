@@ -36,13 +36,12 @@
         </sequence>
     </group>
 
-    <element name="flows">
-        <complexType>
-
+    <element name="module">
+        <complexType name="FiniteStateTypes">
+        <attribute ref="ampflow:id"></attribute>
+        <attribute ref="ampflow:version"></attribute>
             <sequence>
                 <group ref="ampflow:FlowTypeList"></group>
-                <sequence>
-                    <group ref="ampflow:FlowTypeList"></group></sequence>
             </sequence>
         </complexType>
     </element>
