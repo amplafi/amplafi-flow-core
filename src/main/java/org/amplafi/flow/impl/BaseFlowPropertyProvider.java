@@ -45,7 +45,9 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
     public BaseFlowPropertyProvider(T definition) {
         this.definition = definition;
     }
-
+    public BaseFlowPropertyProvider(String flowPropertyProviderName) {
+        this.flowPropertyProviderName = flowPropertyProviderName;
+    }
     public boolean isInstance() {
         return this.definition != null;
     }
@@ -111,7 +113,23 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
             }
         }
     }
+    @SuppressWarnings("unchecked")
+    public <FPD extends FlowPropertyDefinition> FPD getPropertyDefinition(String key) {
+        Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
+        return (FPD)( propDefs == null? null : propDefs.get(key));
+    }
     public boolean isFlowPropertyProviderNameSet() {
         return this.flowPropertyProviderName != null;
+    }
+    public String getFlowPropertyProviderName() {
+        return this.flowPropertyProviderName;
+    }
+
+    public void setFlowPropertyProviderName(String flowPropertyProviderName) {
+        this.flowPropertyProviderName = flowPropertyProviderName;
+    }
+
+    public String getFlowPropertyProviderFullName() {
+        return getFlowPropertyProviderName();
     }
 }

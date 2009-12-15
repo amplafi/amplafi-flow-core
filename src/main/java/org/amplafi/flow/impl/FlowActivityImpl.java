@@ -373,6 +373,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
+    @Override
     public void setFlowPropertyProviderName(String flowPropertyProviderName) {
         if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, flowPropertyProviderName)) {
             if ( this.flowPropertyProviderName != null && this.flow != null) {
@@ -382,8 +383,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
+    @Override
     public String getFlowPropertyProviderName() {
-        return isFlowPropertyProviderNameSet()?flowPropertyProviderName:this.getClass().getSimpleName();
+        return isFlowPropertyProviderNameSet()?super.getFlowPropertyProviderName():this.getClass().getSimpleName();
     }
 
     public void setActivityTitle(String activityTitle) {
@@ -407,6 +409,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * @see org.amplafi.flow.FlowActivity#getFlowPropertyProviderFullName()
      */
+    @Override
     public String getFlowPropertyProviderFullName() {
         if ( this.getFlow() != null) {
             return this.getFlow().getFlowPropertyProviderName() + "." + getFlowPropertyProviderName();
@@ -551,6 +554,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * @see org.amplafi.flow.FlowActivity#getPropertyDefinition(java.lang.String)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends FlowPropertyDefinition> T getPropertyDefinition(String key) {
         T propertyDefinition = (T) getLocalPropertyDefinition(key);
