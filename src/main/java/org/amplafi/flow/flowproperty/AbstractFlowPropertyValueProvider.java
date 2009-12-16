@@ -29,10 +29,10 @@ import static com.sworddance.util.CUtilities.*;
 
 /**
  * @author patmoore
- * @param <FA>
+ * @param <FPP>
  *
  */
-public abstract class AbstractFlowPropertyValueProvider<FA extends FlowPropertyProvider> implements FlowPropertyValueProvider<FA> {
+public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements FlowPropertyValueProvider<FPP> {
     private Set<String> propertiesHandled;
     /**
      * TODO: in future should define the property requirements?
@@ -60,33 +60,35 @@ public abstract class AbstractFlowPropertyValueProvider<FA extends FlowPropertyP
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
      * @param <T>
-     * @param flowActivity
+     * @param flowPropertyProvider -- should this be FPP?
      * @param flowPropertyDefinition
      * @param propertyName
      * @return null if {@link FlowPropertyDefinition#isNamed(String)} is true otherwise the property retrieved.
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getSafe(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+    protected <T> T getSafe(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             return null; // TODO throw exception?
         } else {
-            return (T) flowActivity.getProperty(propertyName);
+            // HACK only temporary -- shift to flowPropertyProvider
+            return (T) ((FlowActivity)flowPropertyProvider).getProperty(propertyName);
         }
     }
     /**
      *
      * @param <T>
-     * @param flowActivity
+     * @param flowPropertyProvider -- should this be FPP?
      * @param flowPropertyDefinition
      * @param propertyName
      * @return will not be null.
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getRequired(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+    protected <T> T getRequired(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             throw new ApplicationIllegalArgumentException(propertyName);
         } else {
-            T result = (T) flowActivity.getProperty(propertyName);
+            // HACK only temporary -- shift to flowPropertyProvider
+            T result = (T) ((FlowActivity)flowPropertyProvider).getProperty(propertyName);
             if ( result == null ) {
                 throw new ApplicationNullPointerException(propertyName);
             }

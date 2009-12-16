@@ -16,9 +16,11 @@ package org.amplafi.flow.flowproperty;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
+ * Implementors know how to save the FlowProperty in persistent storage.
+ * @see org.amplafi.flow.FlowPropertyValueProvider
  * @author patmoore
  *
  */
 public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
-    void saveChanges(T flowActivity, FlowPropertyDefinition flowPropertyDefinition);
+    void saveChanges(T FlowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 }
