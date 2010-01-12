@@ -568,7 +568,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     private boolean activateFlowActivity(FlowActivity flowActivity, FlowStepDirection flowStepDirection) {
         getFlowManagement().activityChange(this, flowActivity, flowStepDirection, FlowActivityPhase.activate);
-        return getCurrentActivity().activate(flowStepDirection);
+        return flowActivity.activate(flowStepDirection);
     }
 
     /**
