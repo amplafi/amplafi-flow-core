@@ -21,6 +21,7 @@ public class TestJsonSelfRendererFlowTranslator extends AbstractTestFlowTranslat
         return translator;
     }
 
+    @Override
     protected DataClassDefinitionImpl createDataClassDefinition() {
         FlowTranslator flowTranslator = createFlowTranslator();
         DataClassDefinitionImpl dataClassDefinition = new DataClassDefinitionImpl(Subject.class);
