@@ -28,11 +28,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowGroupImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -177,18 +179,36 @@ public class XmlDefinitionSource implements DefinitionSource {
         }
     }
 
-
     private void parseDocument() {
-        NodeList flowDefinitions = this.xmlDocument.getElementsByTagName("definition");
-        for (int i = 0; i < flowDefinitions.getLength(); i++) {
-            FlowImplementor flow = parseFlow(flowDefinitions.item(i));
-            this.flows.put(flow.getFlowPropertyProviderName(), flow);
+        NodeList moduleList = this.xmlDocument.getElementsByTagName("module");
+        for (int i = 0; i < moduleList.getLength(); i++) {
+            FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
         }
+    }
+
+
+    private FlowGroup parseFlowGroup(Node flowGroupNode) {
+        FlowGroupImpl flowGroup = new FlowGroupImpl();
+        NodeList children = flowGroupNode.getChildNodes();
+        for (int index = 0; index < children.getLength(); index++) {
+            Node child = children.item(index);
+            switch ( child.getNodeType()) {
+            case Node.ELEMENT_NODE:
+                if (PROPERTY.equals(child.getNodeName())) {
+                    flowGroup.addPropertyDefinition(parseProperty(child));
+                } else if ("definition".equals(child.getNodeName())) {
+                    FlowImplementor flow = parseFlow(child);
+                    this.flows.put(flow.getFlowPropertyProviderName(), flow);
+                }
+            }
+        }
+        return flowGroup;
     }
 
     /**
      * @param flowNode
      */
+    @SuppressWarnings("unchecked")
     private FlowImplementor parseFlow(Node flowNode) {
         FlowImplementor flow;
         NamedNodeMap attributes = flowNode.getAttributes();

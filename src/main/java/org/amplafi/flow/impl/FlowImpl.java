@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -66,6 +67,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
 
     private static final long serialVersionUID = -985306244948511836L;
 
+    private FlowGroup primaryFlowGroup;
     private List<FlowActivityImplementor> activities;
 
     private String flowTitle;
@@ -135,16 +137,16 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      */
     public FlowImpl(FlowImplementor definition) {
         super(definition);
-        this.flowPropertyProviderName = definition.getFlowPropertyProviderName();
+        this.setFlowPropertyProviderName(definition.getFlowPropertyProviderName());
     }
     /**
      * Used to create a definition for testing.
      *
-     * @param flowTypeName
+     * @param flowPropertyProviderName
      */
-    public FlowImpl(String flowTypeName) {
+    public FlowImpl(String flowPropertyProviderName) {
         this();
-        this.flowPropertyProviderName = flowTypeName;
+        this.setFlowPropertyProviderName(flowPropertyProviderName);
     }
 
     public FlowImpl(String flowTypeName, FlowActivityImplementor... flowActivities) {
@@ -236,16 +238,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return list;
     }
 
-
-    /**
-     * @see org.amplafi.flow.Flow#getPropertyDefinition(java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends FlowPropertyDefinition> T getPropertyDefinition(String key) {
-        Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
-        return (T)( propDefs == null? null : propDefs.get(key));
-    }
-
     public FlowManagement getFlowManagement() {
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
@@ -274,15 +266,12 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return flowPropertyDefinition;
     }
 
-    public void setFlowPropertyProviderName(String flowTypeName) {
-        this.flowPropertyProviderName = flowTypeName;
-    }
-
+    @Override
     public String getFlowPropertyProviderName() {
-        if ( flowPropertyProviderName == null && isInstance()) {
+        if ( super.getFlowPropertyProviderName() == null && isInstance()) {
             return getDefinition().getFlowPropertyProviderName();
         } else {
-            return flowPropertyProviderName;
+            return super.getFlowPropertyProviderName();
         }
     }
 
@@ -415,10 +404,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    public String getFlowPropertyProviderFullName() {
-        return getFlowPropertyProviderName();
-    }
-
     public void setFlowState(FlowState state) {
         this.flowState = state;
     }
@@ -499,5 +484,19 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     @Override
     public boolean isFlowDefined(String flowTypeName) {
         return this.getFlowPropertyProviderName().equals(flowTypeName);
+    }
+
+    /**
+     * @param primaryFlowGroup the primaryFlowGroup to set
+     */
+    public void setPrimaryFlowGroup(FlowGroup primaryFlowGroup) {
+        this.primaryFlowGroup = primaryFlowGroup;
+    }
+
+    /**
+     * @return the primaryFlowGroup
+     */
+    public FlowGroup getPrimaryFlowGroup() {
+        return primaryFlowGroup;
     }
 }
