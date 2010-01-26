@@ -45,6 +45,7 @@ import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -204,7 +205,6 @@ public class BaseFlowManagement implements FlowManagement {
         flowState.initializeFlow();
     }
 
-
     /**
      * @see org.amplafi.flow.FlowManagement#transitionToFlowState(FlowState, String)
      */
@@ -218,7 +218,7 @@ public class BaseFlowManagement implements FlowManagement {
             FlowTransition flowTransition = transitions.get(finishKey);
             if ( flowTransition != null ) {
                 FlowActivityImplementor currentActivity = flowState.getCurrentActivity();
-                String flowType = currentActivity.resolve(flowTransition.getNextFlowType());
+                String flowType = currentActivity.resolveIndirectReference(flowTransition.getNextFlowType());
                 if (isNotBlank(flowType)) {
                     nextFlowState = this.createFlowState(flowType, flowState.getExportedValuesMap(), false);
                 }
@@ -396,11 +396,8 @@ public class BaseFlowManagement implements FlowManagement {
         return next;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowManagement#resolveFlowActivity(org.amplafi.flow.FlowActivity)
-     */
     @Override
-    public void resolveFlowActivity(FlowActivity activity) {
+    public void resolve(FlowPropertyProvider activity) {
         getFlowTranslatorResolver().resolve(activity);
     }
     /**
@@ -584,9 +581,10 @@ public class BaseFlowManagement implements FlowManagement {
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowPropertyDefinition(java.lang.String)
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public FlowPropertyDefinition getFlowPropertyDefinition(String key) {
-        return this.getFlowTranslatorResolver().getFlowPropertyDefinition(key);
+    public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
+        return (T) this.getFlowTranslatorResolver().getFlowPropertyDefinition(key);
     }
 
 

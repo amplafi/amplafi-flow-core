@@ -175,8 +175,8 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     public FlowLauncher getFlowLauncher(FlowState flowState) {
         FlowActivityImplementor flowActivity = flowState.getCurrentActivity();
         FlowLauncher flowLauncher = null;
-        String resolvedNextFlow = flowActivity.resolve(getNextFlow());
-        String resolvedNextFlowType = flowActivity.resolve(getNextFlowType());
+        String resolvedNextFlow = flowActivity.resolveIndirectReference(getNextFlow());
+        String resolvedNextFlowType = flowActivity.resolveIndirectReference(getNextFlowType());
         if ( isMorphingFlow()) {
             flowLauncher = new MorphFlowLauncher(resolvedNextFlowType, resolvedNextFlow, flowState.getFlowManagement());
         } else if ( resolvedNextFlow != null) {

@@ -24,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JsonRenderer;
@@ -228,32 +229,33 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     @Override
     public void resolveFlow(Flow flow) {
-        Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
-        if ( MapUtils.isNotEmpty(propertyDefinitions) ) {
-            Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-            initAndResolveCollection(flow.getFlowPropertyProviderName()+".", values);
-        }
-        List<FlowActivityImplementor> activities = flow.getActivities();
-        if ( activities != null ) {
-            for(FlowActivityImplementor flowActivity: activities) {
-                resolve(flowActivity);
-                // TODO ideally here...
-//                if ( !flow.isInstance()) {
-//                    flowActivity.processDefinitions();
-//                }
+        if (!(flow instanceof FlowPropertyProviderImplementor) || !((FlowPropertyProviderImplementor)flow).isResolved() ) {
+            resolve(flow);
+            List<FlowActivityImplementor> activities = flow.getActivities();
+            if ( activities != null ) {
+                for(FlowActivityImplementor flowActivity: activities) {
+                    resolve(flowActivity);
+                    // TODO ideally here...
+    //                if ( !flow.isInstance()) {
+    //                    flowActivity.processDefinitions();
+    //                }
+                }
             }
         }
     }
 
     /**
-     * @param flowActivity
+     * @param flowPropertyProvider
      */
-    public void resolve(FlowActivity flowActivity) {
-        if ( flowActivity != null) {
-            Map<String, FlowPropertyDefinition> propertyDefinitions = flowActivity.getPropertyDefinitions();
+    public void resolve(FlowPropertyProvider flowPropertyProvider) {
+        if ( flowPropertyProvider != null && (!(flowPropertyProvider instanceof FlowPropertyProviderImplementor) || !((FlowPropertyProviderImplementor)flowPropertyProvider).isResolved() )) {
+            Map<String, FlowPropertyDefinition> propertyDefinitions = flowPropertyProvider.getPropertyDefinitions();
             if ( MapUtils.isNotEmpty(propertyDefinitions)) {
                 Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
-                initAndResolveCollection(flowActivity.getFlowPropertyProviderFullName()+"("+flowActivity.getClass().getName()+").", values);
+                initAndResolveCollection(flowPropertyProvider.getFlowPropertyProviderFullName()+"("+flowPropertyProvider.getClass().getName()+").", values);
+            }
+            if (flowPropertyProvider instanceof FlowPropertyProviderImplementor) {
+                ((FlowPropertyProviderImplementor)flowPropertyProvider).setResolved(true);
             }
         }
     }

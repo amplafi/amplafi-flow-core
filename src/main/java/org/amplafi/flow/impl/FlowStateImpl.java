@@ -803,12 +803,12 @@ public class FlowStateImpl implements FlowStateImplementor {
      * This allows {@link FlowState} implementations to a chance to add in any
      * objects needed to access other parts of the service (database transactions for example).
      * @param <T>
-     * @see FlowManagement#resolveFlowActivity(FlowActivity)
+     * @see FlowManagement#resolve(FlowPropertyProvider)
      * @param flowActivity
      * @return flowActivity
      */
-    public <T extends FlowActivity> T resolveActivity(T flowActivity) {
-        getFlowManagement().resolveFlowActivity(flowActivity);
+    public <T extends FlowPropertyProvider> T resolveActivity(T flowActivity) {
+        getFlowManagement().resolve(flowActivity);
         return flowActivity;
     }
 

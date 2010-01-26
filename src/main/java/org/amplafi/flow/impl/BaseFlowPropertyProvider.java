@@ -37,6 +37,8 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
      */
     protected String flowPropertyProviderName;
 
+    private transient boolean resolved;
+
     public BaseFlowPropertyProvider() {
     }
     /**
@@ -131,5 +133,17 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
 
     public String getFlowPropertyProviderFullName() {
         return getFlowPropertyProviderName();
+    }
+    /**
+     * @param resolved the resolved to set
+     */
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
+    }
+    /**
+     * @return the resolved
+     */
+    public boolean isResolved() {
+        return resolved;
     }
 }

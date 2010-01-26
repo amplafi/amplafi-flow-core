@@ -34,4 +34,7 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider {
     void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
 
     <FS extends FlowState> FS getFlowState();
+
+    boolean isResolved();
+    void setResolved(boolean resolved);
 }

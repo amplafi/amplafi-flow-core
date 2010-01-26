@@ -33,7 +33,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
      * @param nextFlow
      * @return the nextFlow after all property substitution has had a change to find the real name.
      */
-    String resolve(String nextFlow);
+    String resolveIndirectReference(String nextFlow);
 
     /**
      *

@@ -348,8 +348,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      *        a {@link MissingRequiredTracking}.
      * @param property missing property's name
      */
-    protected void appendRequiredTrackingIfTrue(FlowValidationResult result, boolean value,
-            String property) {
+    protected void appendRequiredTrackingIfTrue(FlowValidationResult result, boolean value, String property) {
         if (value) {
             result.addTracking(new MissingRequiredTracking(property));
         }
@@ -904,7 +903,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      *         {@link FlowConstants#FLOW_PROPERTY_PREFIX}, otherwise look up the
      *         property value referenced and return that value.
      */
-    public String resolve(String value) {
+    public String resolveIndirectReference(String value) {
         if (value != null && value.startsWith(FLOW_PROPERTY_PREFIX)) {
             return getString(value.substring(FLOW_PROPERTY_PREFIX.length()));
         } else {
@@ -912,8 +911,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
     }
 
-    protected String getResolvedProperty(String key) {
-        return resolve(getString(key));
+    protected String getResolvedIndirectReferenceProperty(String key) {
+        return resolveIndirectReference(getString(key));
     }
 
     // TODO refactor to FlowState ?

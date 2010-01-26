@@ -145,16 +145,16 @@ public class TransitionFlowActivity extends FlowActivityImpl {
                     || getFinishKey().equalsIgnoreCase(finishType)) {
                 FlowManagement fm = getFlowManagement();
                 if (isNotBlank(getNextFlowId())) {
-                    FlowState possibleFlowState = fm.getFlowState(resolve(getNextFlowId()));
+                    FlowState possibleFlowState = fm.getFlowState(resolveIndirectReference(getNextFlowId()));
                     if ( possibleFlowState != null) {
                         nextFlowState = possibleFlowState;
                         fm.makeAfter(this.getFlowState(), possibleFlowState);
                     }
                 } else {
-                    String flowType = resolve(getNextFlowType());
+                    String flowType = resolveIndirectReference(getNextFlowType());
                     if (isBlank(flowType)) {
                         // why clear the FSNEXT_FLOW ?
-                        flowType = getResolvedProperty(FlowConstants.FSNEXT_FLOW);
+                        flowType = getResolvedIndirectReferenceProperty(FlowConstants.FSNEXT_FLOW);
                         setProperty(FlowConstants.FSNEXT_FLOW, null);
                     }
                     if (isNotBlank(flowType)) {

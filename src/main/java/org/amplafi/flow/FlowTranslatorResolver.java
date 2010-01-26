@@ -14,6 +14,7 @@
 
 package org.amplafi.flow;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 
 
@@ -58,7 +59,7 @@ public interface FlowTranslatorResolver {
     FlowPropertyDefinition getFlowPropertyDefinition(String key);
     void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions);
     /**
-     * @param flowActivity
+     * @param flowPropertyProvider
      */
-    void resolve(FlowActivity flowActivity);
+    void resolve(FlowPropertyProvider flowPropertyProvider);
 }
