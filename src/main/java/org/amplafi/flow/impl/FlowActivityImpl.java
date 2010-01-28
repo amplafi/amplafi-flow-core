@@ -478,9 +478,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return flow == null? null:(FS)flow.getFlowState();
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getFlowState()
-     */
     @SuppressWarnings("unchecked")
     protected <FS extends FlowStateImplementor> FS getFlowStateImplementor() {
         return flow == null? null:(FS)flow.getFlowState();

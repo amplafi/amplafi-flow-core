@@ -70,9 +70,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
             getFlowTranslatorResolver().resolveFlow(flow);
         }
     }
-    /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#addDefinitions(FlowImplementor...)
-     */
+
     @Override
     public void addDefinitions(DefinitionSource... definitionSources) {
         for(DefinitionSource definitionSource: definitionSources) {
