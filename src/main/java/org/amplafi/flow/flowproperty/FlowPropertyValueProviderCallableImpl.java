@@ -35,9 +35,7 @@ public class FlowPropertyValueProviderCallableImpl<FA extends FlowActivity, T> i
         this.flowPropertyDefinition = flowPropertyDefinition;
         this.flowPropertyValueProvider = flowPropertyValueProvider;
     }
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.FlowActivity, org.amplafi.flow.FlowPropertyDefinition)
-     */
+
     @SuppressWarnings({ "hiding", "unchecked" })
     public <T> T get(FA flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
         return (T) getFlowPropertyValueProvider().get(flowActivity, flowPropertyDefinition);

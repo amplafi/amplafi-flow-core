@@ -28,6 +28,7 @@ public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropert
 
     @Override
     public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        check(flowPropertyDefinition);
         throw new UnsupportedOperationException();
     }
 

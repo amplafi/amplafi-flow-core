@@ -84,7 +84,7 @@ public enum PropertyScope {
      * <li>A history tracker is better</li>
      * </ul>
      */
-    requestFlowLocal(true, false, internalState, noAccess, true, null),
+    requestFlowLocal(true, false, internalState, noAccess, true),
     /**
      * Global handles the case when a flow is having a property being set that it has no definition for. Since the flow does not understand the property,
      * it shouldn't try to manage it.
