@@ -14,12 +14,12 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 /*
  * @author patmoore
  */
-public interface FlowActivity extends FlowPropertyProvider {
+public interface FlowActivity extends FlowPropertyProviderWithValues {
     /**
      * Used to control which FlowActivities a user may select. This is used to
      * prevent the user from jumping ahead in a flow.
@@ -125,15 +125,6 @@ public interface FlowActivity extends FlowPropertyProvider {
 
     int getIndex();
     String getString(String key);
-    /**
-     * override to treat some properties as special. This method is called by
-     * FlowPropertyBinding.
-     *
-     * @param key
-     * @param <T> type of property.
-     * @return property
-     */
-    <T> T getProperty(String key);
 
     /**
      * Convert dataClass to a string using
