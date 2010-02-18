@@ -30,7 +30,6 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
         this.addSerializedFormClasses(Number.class, int.class, long.class, short.class);
         this.addDeserializedFormClasses(long.class);
     }
-    @SuppressWarnings("unchecked")
     @Override
     public Long deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         if (serializedObject == null ){
