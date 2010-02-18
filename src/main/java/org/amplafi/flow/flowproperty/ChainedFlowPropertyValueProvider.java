@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
@@ -22,12 +21,12 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  * property's value.
  *
  * @author patmoore
- * @param <FA> the expected FlowActivity
+ * @param <FPP> the expected FlowPropertyProvider
  */
-public interface ChainedFlowPropertyValueProvider<FA extends FlowActivity> extends FlowPropertyValueProvider<FA> {
+public interface ChainedFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends FlowPropertyValueProvider<FPP> {
     /**
      * Set the previous {@link FlowPropertyValueProvider} for this chain.
      * @param previous the previous {@link FlowPropertyValueProvider}
      */
-    void setPrevious(FlowPropertyValueProvider<FA> previous);
+    void setPrevious(FlowPropertyValueProvider<FPP> previous);
 }

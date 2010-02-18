@@ -98,7 +98,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         // see #2179 #2192
         this.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use),
-            new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE),
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
@@ -129,6 +128,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );
+        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this, null);
     }
 
     /**
@@ -259,7 +259,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
      */
     protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
-        FlowPropertyDefinition flowPropertyDefinition = getPropertyDefinition(key);
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
             flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(this, key, expected, sampleValue);
         }

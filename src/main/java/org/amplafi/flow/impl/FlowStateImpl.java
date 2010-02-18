@@ -148,9 +148,32 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @Override
     public String begin() {
-        // HACK feels hacky ... making assumptions about the value.. NOTE: we do have to reinitialize after a flow has been morphed to another flow. ( new activities/properties )
-        if ( !this.isCompleted() && this.getFlowStateLifecycle() != initialized ) {
-            this.initializeFlow();
+        FlowStateLifecycle lifecycle = this.getFlowStateLifecycle();
+        if ( lifecycle != null ) {
+            switch( lifecycle ) {
+            case initialized:
+                // normal case continue with begin
+                break;
+            case created:
+                // o.k. behavior - not initialized yet so do the initialization.
+                this.initializeFlow();
+                break;
+            case initializing:
+                // begin() within an initializing ??? very odd. for now just log and return
+                getLog().debug(this+": begin() called but state is "+lifecycle);
+                return null;
+            case started:
+                // double begin() called. slightly bad coding but o.k. otherwise
+                return this.getCurrentPage();
+            case starting:
+                // nested begin()'s also odd but for now just log and return.
+                getLog().debug(this+": begin() called but state is "+lifecycle);
+                return getCurrentPage();
+            default:
+                // the flowState has completed -- trying to restart is not supported.
+                getLog().debug(this+": begin() called but flow completed already state is "+lifecycle);
+                return getCurrentPage();
+            }
         }
         this.setFlowLifecycleState(starting);
         FlowStateLifecycle nextFlowLifecycleState = started;
@@ -195,7 +218,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             Map<String, FlowPropertyDefinition> propertyDefinitions = this.getFlow().getPropertyDefinitions();
             if (propertyDefinitions != null) {
                 Collection<FlowPropertyDefinition> flowPropertyDefinitions = propertyDefinitions.values();
-                initializeFlowProperties(null, flowPropertyDefinitions);
+                initializeFlowProperties(this, flowPropertyDefinitions);
             }
 
             int size = this.size();
@@ -265,6 +288,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String currentValue = getRawProperty(namespace, flowPropertyDefinition.getName());
         if (!StringUtils.equals(value, currentValue)) {
+            // This code allows FlowPropertyChangeListeners to be triggered when the flow starts up.
             if (!propertyUsage.isExternallySettable() && currentValue != null) {
                 // property cannot be overridden.
                 getLog().info(
@@ -803,12 +827,12 @@ public class FlowStateImpl implements FlowStateImplementor {
      * This allows {@link FlowState} implementations to a chance to add in any
      * objects needed to access other parts of the service (database transactions for example).
      * @param <T>
-     * @see FlowManagement#resolve(FlowPropertyProvider)
+     * @see FlowManagement#wireDependencies(Object)
      * @param flowActivity
      * @return flowActivity
      */
     public <T extends FlowPropertyProvider> T resolveActivity(T flowActivity) {
-        getFlowManagement().resolve(flowActivity);
+        getFlowManagement().wireDependencies(flowActivity);
         return flowActivity;
     }
 
@@ -942,6 +966,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             String value = getRawProperty(flowPropertyProvider, propertyDefinition);
             result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(value);
             if (result == null && propertyDefinition.isAutoCreate()) {
+                getFlowManagement().wireDependencies(propertyDefinition.getFlowPropertyValueProvider());
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
                 // TODO: Maybe should be checking !isCacheOnly() ?
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
@@ -996,10 +1021,11 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (!StringUtils.equals(newValue, oldValue)) {
             FlowPropertyValueChangeListener flowPropertyValueChangeListener = flowPropertyDefinition.getFlowPropertyValueChangeListener();
             if ( flowPropertyValueChangeListener != null) {
-                newValue = flowPropertyValueChangeListener.propertyChange(namespace, key, newValue, oldValue);
+                this.getFlowManagement().wireDependencies(flowPropertyValueChangeListener);
+                newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
             }
             if ( flowPropertyProvider instanceof FlowPropertyValueChangeListener) {
-                newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(namespace, key, newValue, oldValue);
+                newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
             }
 
             FlowActivityImplementor activity = getActivity(namespace);
@@ -1007,7 +1033,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 activity = getCurrentFlowActivityImplementor();
             }
             if ( activity instanceof FlowPropertyValueChangeListener && activity != flowPropertyProvider) {
-                newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(namespace, key, newValue, oldValue);
+                newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
             }
             put(namespace, key, newValue);
             return true;
@@ -1541,7 +1567,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             return (T) getCurrentActivity().getProperty(key);
         } else {
             FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
-            return (T) getPropertyWithDefinition(null, flowPropertyDefinition);
+            return (T) getPropertyWithDefinition(this, flowPropertyDefinition);
         }
     }
 
@@ -1554,12 +1580,37 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.getCurrentActivityIndex() >= 0 && getCurrentActivityIndex() < size();
     }
 
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getFlowPropertyProviderFullName()
+     */
+    @Override
+    public String getFlowPropertyProviderFullName() {
+        return getFlowTypeName()+"."+this.getFlowPropertyProviderName();
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getFlowPropertyProviderName()
+     */
+    @Override
+    public String getFlowPropertyProviderName() {
+        return getLookupKey();
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getPropertyDefinitions()
+     */
+    @Override
+    public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
+        return this.getFlow().getPropertyDefinitions();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
         T flowPropertyDefinition = null;
         if ( this.getFlow() != null ) {
-            flowPropertyDefinition = (T) this.getFlow().getPropertyDefinition(key);
+            flowPropertyDefinition = (T) this.getFlow().getFlowPropertyDefinition(key);
         }
         if (flowPropertyDefinition == null && this.getFlowManagement() != null) {
             // (may not be assigned to a flowManagement any more -- historical FlowState )

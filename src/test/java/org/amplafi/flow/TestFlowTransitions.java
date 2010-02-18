@@ -22,6 +22,7 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
@@ -45,13 +46,13 @@ public class TestFlowTransitions {
     public void testSimpleFlowTransitionMapChecking() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
         FlowActivityImpl fa1 = new FlowActivityImpl();
-        FlowPropertyDefinitionImplementor definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);
+        FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNull(definition);
         flow.addActivity(fa1);
-        definition = fa1.getPropertyDefinition(FSFLOW_TRANSITIONS);
+        definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNotNull(definition);
         String returnToFlowLookupKey = null;
-        definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
+        definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
         FlowManagement baseFlowManagement = getFlowManagement(flow);
         FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null, returnToFlowLookupKey);
 

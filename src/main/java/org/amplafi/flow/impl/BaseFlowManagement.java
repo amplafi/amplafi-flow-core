@@ -397,8 +397,10 @@ public class BaseFlowManagement implements FlowManagement {
     }
 
     @Override
-    public void resolve(FlowPropertyProvider activity) {
-        getFlowTranslatorResolver().resolve(activity);
+    public void wireDependencies(Object object) {
+        if (object instanceof FlowPropertyProvider) {
+            getFlowTranslatorResolver().resolve((FlowPropertyProvider)object);
+        }
     }
     /**
      * @see org.amplafi.flow.FlowManagement#dropFlowStateByLookupKey(java.lang.String)

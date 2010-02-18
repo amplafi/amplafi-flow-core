@@ -235,11 +235,11 @@ public class TestFlows {
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
         flowState.setProperty("fee", true);
         Flow inst = flowState.getFlow();
-        FlowPropertyDefinition flowPropertyDefinition = inst.getPropertyDefinition("fee");
+        FlowPropertyDefinition flowPropertyDefinition = inst.getFlowPropertyDefinition("fee");
         assertTrue(flowPropertyDefinition.getDataClass() == Boolean.class || flowPropertyDefinition.getDataClass() == boolean.class);
 
         // make sure that we can still see the original property definitions.
-        flowPropertyDefinition = inst.getPropertyDefinition("foo");
+        flowPropertyDefinition = inst.getFlowPropertyDefinition("foo");
         assertTrue(flowPropertyDefinition.getDataClass() == Long.class);
     }
 

@@ -13,7 +13,9 @@
  */
 package org.amplafi.flow.flowproperty;
 
+
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowValuesMap;
 
 
 /**
@@ -30,8 +32,9 @@ public interface FlowPropertyDefinitionProvider {
     /**
      * Add to the flowPropertyProvider the definitions needed by the
      * @param flowPropertyProvider
+     * @param additionalConfigurationParameters some FlowPropertyDefinitionProvider need additional configuration parameters.
      */
-    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider);
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters);
 
 
 }

@@ -15,6 +15,8 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
+import com.sworddance.core.Emptyable;
+
 /**
  * implementers will store values for the {@link FlowState}.
  *
@@ -27,7 +29,7 @@ import java.util.Map;
  * @param <V> extends CharSequence the value class.
  *
  */
-public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence> extends Map<K, V> {
+public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence> extends Emptyable, Map<K,V> {
 
     V get(Object key);
 
@@ -66,16 +68,14 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
 
     /**
      *
-     * @see java.util.Map#isEmpty()
-     */
-    boolean isEmpty();
-
-    /**
-     *
      * @return a simple map. Namespace will be combined with the key to make the key.
      */
     Map<String, String> getAsFlattenedStringMap();
 
     Map<String, String> getAsStringMap(boolean trimEmptyBlank, boolean preserveNamespace);
+
+    int size();
+
+
 
 }

@@ -14,17 +14,12 @@
 
 package org.amplafi.flow;
 
+import com.sworddance.util.map.NamespaceMapKey;
+
 /**
  * @author patmoore
  *
  */
-public interface FlowValueMapKey extends CharSequence {
-    public static final String NO_NAMESPACE = "";
-    /**
-     *
-     */
-    static final String NAMESPACE_SEPARATOR = ":::";
+public interface FlowValueMapKey extends CharSequence, NamespaceMapKey {
 
-    String getNamespace();
-    String getKey();
 }

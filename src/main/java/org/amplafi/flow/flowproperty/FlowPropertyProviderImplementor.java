@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowTranslatorResolver;
 
 /**
  * @author patmoore
@@ -35,6 +36,15 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider {
 
     <FS extends FlowState> FS getFlowState();
 
+    /**
+     * For performance
+     * @return true
+     * {@link FlowTranslatorResolver} has done its work.
+     */
     boolean isResolved();
+    /**
+     * set to true by the {@link FlowTranslatorResolver}
+     * @param resolved
+     */
     void setResolved(boolean resolved);
 }

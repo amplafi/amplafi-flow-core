@@ -332,7 +332,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             for (FlowPropertyDefinition def : propDefs.values()) {
                 if ((flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
                         && isPropertyNotSet(def.getName())
-                        && def.getDefaultObject(this) == null ) {
+                        && !def.isAutoCreate() ) {
                     result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));
                 }
             }
@@ -548,11 +548,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getPropertyDefinition(java.lang.String)
+     * @see org.amplafi.flow.FlowActivity#getFlowPropertyDefinition(java.lang.String)
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends FlowPropertyDefinition> T getPropertyDefinition(String key) {
+    public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
         T propertyDefinition = (T) getLocalPropertyDefinition(key);
         if (propertyDefinition == null) {
             propertyDefinition = (T) getFlowPropertyDefinitionDefinedInFlow(key);
@@ -568,7 +568,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         }
         // should be else if
         if ( flowPropertyDefinition == null && this.getFlow() != null) {
-            flowPropertyDefinition = (T) this.getFlow().getPropertyDefinition(key);
+            flowPropertyDefinition = (T) this.getFlow().getFlowPropertyDefinition(key);
         }
         return flowPropertyDefinition;
     }
@@ -639,7 +639,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinition definition) {
         if (getFlow() != null && !definition.isLocal()) {
-            FlowPropertyDefinition flowProp = this.getFlow().getPropertyDefinition( definition.getName());
+            FlowPropertyDefinition flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
             if (flowProp == null ) {
                 // push up to flow so that other can see it.
                 FlowPropertyDefinition cloned = definition.clone();
@@ -758,7 +758,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @SuppressWarnings("unchecked")
     protected <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
-        FP flowPropertyDefinition = (FP)getPropertyDefinition(key);
+        FP flowPropertyDefinition = (FP)getFlowPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
             flowPropertyDefinition = (FP)getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, sampleValue);
         }
@@ -830,11 +830,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);
     }
 
-    @SuppressWarnings("unused")
-    public String propertyChange(String flowActivityName, String key, String value,String oldValue) {
-        return value;
-    }
-
     /**
      * save an object in the cache. This cache is flushed when the current
      * transaction has been committed. This flushing is necessary because
@@ -846,7 +841,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @Deprecated // should look at initCacheOnly()
     protected <T> T cache(String key, T value) {
-        getFlowStateImplementor().setCached(getPropertyDefinition(key), this, value);
+        getFlowStateImplementor().setCached(getFlowPropertyDefinition(key), this, value);
         return value;
     }
 
@@ -854,7 +849,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @SuppressWarnings("unchecked")
     protected <T> T getCached(String key) {
         FlowStateImplementor flowState = getFlowStateImplementor();
-        return flowState == null ? null : (T) flowState.getCached(getPropertyDefinition(key), this);
+        return flowState == null ? null : (T) flowState.getCached(getFlowPropertyDefinition(key), this);
     }
 
     @Override

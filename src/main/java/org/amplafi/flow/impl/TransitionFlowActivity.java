@@ -27,6 +27,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.TransitionType;
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.apache.commons.lang.ObjectUtils;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 
@@ -104,7 +105,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
 //            }
             // HACK should really have FlowTransitions return a getFlowLauncher()
             this.handleFlowPropertyValueProvider(FSFLOW_TRANSITIONS,
-                new AddToMapFlowPropertyValueProvider<String, FlowTransition>(new FlowTransition(getFinishKey(), null, getFsFlowTransitionLabel(), transitionType, null)));
+                new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, FlowTransition>(new FlowTransition(getFinishKey(), null, getFsFlowTransitionLabel(), transitionType, null)));
         }
     }
     /**

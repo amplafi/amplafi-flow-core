@@ -20,13 +20,14 @@ package org.amplafi.flow.flowproperty;
 public interface FlowPropertyValueChangeListener {
     /**
      * Called when a property changes value.
-     *
+     * @param flowPropertyProvider TODO
      * @param namespace
      * @param key
      * @param newValue the new raw property value
      * @param oldValue the old raw property value.
+     *
      * @return what the value should be. Usually just return the value
      *         parameter. By default should be 'value'.
      */
-    String propertyChange(String namespace, String key, String newValue, String oldValue);
+    String propertyChange(FlowPropertyProvider flowPropertyProvider, String namespace, String key, String newValue, String oldValue);
 }

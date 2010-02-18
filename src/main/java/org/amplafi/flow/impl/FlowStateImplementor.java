@@ -20,11 +20,12 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 /**
  * @author patmoore
  */
-public interface FlowStateImplementor extends FlowState {
+public interface FlowStateImplementor extends FlowState, FlowPropertyProviderWithValues {
     <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition, T value);
 
     <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);

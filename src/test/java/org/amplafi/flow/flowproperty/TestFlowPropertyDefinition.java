@@ -369,14 +369,14 @@ public class TestFlowPropertyDefinition {
             }
         }
         flowState.finishFlow();
-        Map<String, String> finalMap = flowState.getExportedValuesMap();
+        FlowValuesMap<FlowValueMapKey, CharSequence> finalMap = flowState.getExportedValuesMap();
         // now make sure that only the properties allowed to be set externally are set.
         for (PropertyScope propertyScope: PropertyScope.values()) {
             for(PropertyUsage propertyUsage: PropertyUsage.values()) {
                 String name= propertyScope+"_"+propertyUsage;
                 String externalInitial = "ext_"+name;
                 String changed = "chg_"+name;
-                String actual = finalMap.get(name);
+                CharSequence actual = finalMap.get(name);
                 if ( !propertyScope.isCacheOnly() && propertyUsage.isCopyBackOnFlowSuccess() || propertyScope == global) {
                     assertEquals(actual, changed, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
                 } else if ( !propertyScope.isCacheOnly() && propertyUsage.isCleanOnInitialization()) {
@@ -563,10 +563,10 @@ public class TestFlowPropertyDefinition {
         String propertyName = "propertyName";
 
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
-        flowLocalProperty.initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowActivity>() {
+        flowLocalProperty.initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @Override
-            public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+            public <T> T get(FlowPropertyProvider flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
                 // return a non-String value to make sure initialization does not expect a string.
                 return (T) Boolean.TRUE;
             }

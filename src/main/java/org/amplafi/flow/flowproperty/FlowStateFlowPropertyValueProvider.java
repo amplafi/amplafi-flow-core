@@ -13,8 +13,10 @@
  */
 package org.amplafi.flow.flowproperty;
 
+
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import static org.amplafi.flow.FlowConstants.*;
 
@@ -26,11 +28,9 @@ import static org.amplafi.flow.FlowConstants.*;
 public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProviderImplementor> implements FlowPropertyDefinitionProvider {
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
-    /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(FlowPropertyProviderImplementor)
-     */
+    @SuppressWarnings("unused")
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters) {
         addPropertyDefinitions(flowPropertyProvider,
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)

@@ -22,10 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.FlowValueMapKey;
+
+import static com.sworddance.util.CUtilities.*;
 
 public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, String>, Serializable {
 
@@ -36,7 +37,19 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     }
     public DefaultFlowValuesMap(Map<?,?> initialFlowState) {
         this();
-        if ( MapUtils.isNotEmpty(initialFlowState)) {
+        if ( isNotEmpty(initialFlowState)) {
+            for(Map.Entry entry: initialFlowState.entrySet()) {
+                Object value = entry.getValue();
+                if ( value != null) {
+                    DefaultFlowValuesMapKey key = DefaultFlowValuesMapKey.toKey(entry.getKey());
+                    this.map.put(key, value.toString());
+                }
+            }
+        }
+    }
+    public DefaultFlowValuesMap(FlowValuesMap<FlowValueMapKey, CharSequence> initialFlowState) {
+        this();
+        if ( isNotEmpty(initialFlowState)) {
             for(Map.Entry entry: initialFlowState.entrySet()) {
                 Object value = entry.getValue();
                 if ( value != null) {

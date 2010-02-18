@@ -17,18 +17,23 @@ package org.amplafi.flow.flowproperty;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowValuesMap;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 import static org.apache.commons.lang.StringUtils.*;
 /**
  * @author patmoore
  *
  */
-public class CancelTextFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowActivityImplementor> {
+public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivityImplementor> implements FlowPropertyDefinitionProvider {
     public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
 
+    public CancelTextFlowPropertyValueProvider() {
+        super(FSCANCEL_TEXT);
+    }
     /**
      *
      * @see org.amplafi.flow.FlowPropertyValueProvider#get(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowPropertyDefinition)
@@ -36,6 +41,7 @@ public class CancelTextFlowPropertyValueProvider implements FlowPropertyValuePro
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(FlowActivityImplementor flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+        check(flowPropertyDefinition);
         String label = "message:flow.label-cancel";
         String lookupKey =flowActivity.getProperty(FSRETURN_TO_FLOW);
         if ( lookupKey != null ) {
@@ -50,6 +56,15 @@ public class CancelTextFlowPropertyValueProvider implements FlowPropertyValuePro
             }
         }
         return (T) label;
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor, org.amplafi.flow.FlowValuesMap)
+     */
+    @Override
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters) {
+        this.addPropertyDefinitions(flowPropertyProvider,
+            new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initAccess(flowLocal, use));
     }
 
 }

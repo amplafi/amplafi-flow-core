@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.apache.commons.logging.Log;
 
@@ -217,9 +216,9 @@ public interface FlowManagement extends FlowStateListener {
 
     /**
      * Do the Dependency Injection on this activity.
-     * @param activity may be null.
+     * @param object may be null.
      */
-    void resolve(FlowPropertyProvider activity);
+    void wireDependencies(Object object);
 
     /**
      * look for a global {@link FlowPropertyDefinition} that is not specific to a {@link Flow} or {@link FlowActivity}.

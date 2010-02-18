@@ -116,7 +116,7 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         }
     }
     @SuppressWarnings("unchecked")
-    public <FPD extends FlowPropertyDefinition> FPD getPropertyDefinition(String key) {
+    public <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String key) {
         Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
         return (FPD)( propDefs == null? null : propDefs.get(key));
     }

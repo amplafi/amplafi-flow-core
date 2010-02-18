@@ -18,13 +18,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+
 
 
 /**
  * Implementations hold the state of an active Flow. Implementers should expect
  * to be stored in a Session and should be serializable.
  */
-public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity> {
+public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity>, FlowPropertyProvider {
 
     /**
      * Copy all Flow-level {@link org.amplafi.flow.FlowPropertyDefinition}'s initial values to the flowState's key value map.
@@ -193,7 +195,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getFlowTypeName();
 
-    Flow getFlow();
+    <T extends Flow> T getFlow();
 
     boolean isTrue(String key);
 
@@ -299,8 +301,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return result from {@link FlowActivity#passivate(boolean, FlowStepDirection)}
      */
     FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection);
-
-    <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
 
     /**
      * Used when continuing on to another FlowState. Clear out all the properties that should not be seen by downstream flows.

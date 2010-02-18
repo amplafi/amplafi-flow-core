@@ -1041,6 +1041,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             return this.getNamespaceKeySearchList(flowState);
         } else if ( flowPropertyProvider instanceof FlowActivity) {
             return this.getNamespaceKeySearchList((FlowActivity)flowPropertyProvider);
+        } else if ( flowPropertyProvider instanceof FlowState) {
+            FlowImplementor flow = ((FlowState)flowPropertyProvider).getFlow();
+            return this.getNamespaceKeySearchList(flow);
         } else {
             return this.getNamespaceKeySearchList((FlowImplementor)flowPropertyProvider);
         }
@@ -1050,16 +1053,17 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             return this.getNamespaceKey(flowState);
         } else if ( flowPropertyProvider instanceof FlowActivity) {
             return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
+        } else if ( flowPropertyProvider instanceof FlowState) {
+            FlowImplementor flow = ((FlowState)flowPropertyProvider).getFlow();
+            return this.getNamespaceKey(flow);
         } else {
             return this.getNamespaceKey((FlowImplementor)flowPropertyProvider);
         }
     }
 
-    /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(FlowPropertyProviderImplementor)
-     */
+    @SuppressWarnings("unused")
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters) {
         flowPropertyProvider.addPropertyDefinition(this);
     }
 

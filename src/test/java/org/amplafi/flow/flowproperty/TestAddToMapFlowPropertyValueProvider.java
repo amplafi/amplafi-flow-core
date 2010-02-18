@@ -30,14 +30,14 @@ public class TestAddToMapFlowPropertyValueProvider extends Assert {
             this.put("key2", "value2");
         }};
 
-        AddToMapFlowPropertyValueProvider<String, String> provider =
-                new AddToMapFlowPropertyValueProvider<String, String>(map);
+        AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, String> provider =
+                new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, String>(map);
         Map<String, String> result = provider.get(null, null);
         assertEquals(result.size(), 2);
         assertEquals(result.get("key1"), "value1");
 
-        AddToMapFlowPropertyValueProvider<String, String> provider2 =
-                new AddToMapFlowPropertyValueProvider<String, String>();
+        AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, String> provider2 =
+                new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, String>();
         Map<String, String> result2 = provider2.get(null, null);
         assertEquals(result2.size(), 0);
 

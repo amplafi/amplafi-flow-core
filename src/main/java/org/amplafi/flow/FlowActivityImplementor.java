@@ -15,7 +15,6 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
-import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 
 /**
  * @author patmoore
@@ -23,7 +22,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
  * TODO: eliminate extension of FlowPropertyValueChangeListener
  *
  */
-public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor, FlowPropertyValueChangeListener {
+public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor {
     /**
      * @return instance of this definition
      */
