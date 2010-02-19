@@ -1677,9 +1677,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.flowValuesMap;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setFlowValuesMap(org.amplafi.flow.FlowValuesMap)
-     */
     @Override
     public void setFlowValuesMap(FlowValuesMap flowValuesMap) {
         this.flowValuesMap = flowValuesMap;

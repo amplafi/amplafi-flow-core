@@ -18,9 +18,9 @@
     <scm>
         <developerConnection>scm:svn:${svn-base}/${project.artifactId}/trunk</developerConnection>
     </scm>    
-    <!--<reporting>-->
-        <!--<outputDirectory>../target/site/${pom.artifactId}</outputDirectory>-->
-    <!--</reporting>-->
+    <build>
+        <defaultGoal>deploy</defaultGoal>
+    </build>
     <dependencies>
         <dependency>
             <groupId>org.amplafi</groupId>
@@ -59,6 +59,7 @@
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-hivemind</artifactId>
             <version>${project.version}</version>
+            <optional>true</optional>
         </dependency>     
         <!-- 
         	Other runtime dependencies (needed for configuration code) are:
