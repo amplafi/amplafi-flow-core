@@ -1191,10 +1191,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return flowManagement;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setFlowTypeName(java.lang.String)
-     */
-    @Override
     public synchronized void setFlowTypeName(String flowTypeName) {
         this.flowTypeName = flowTypeName;
         this.flow = null;

@@ -18,14 +18,14 @@ import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 /**
  * @author patmoore
  */
-public interface FlowStateImplementor extends FlowState, FlowPropertyProviderWithValues {
+public interface FlowStateImplementor extends FlowState {
     <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition, T value);
 
     <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
@@ -83,6 +83,7 @@ public interface FlowStateImplementor extends FlowState, FlowPropertyProviderWit
      */
     void setFlowManagement(FlowManagement flowManagement);
 
+    void setFlowValuesMap(FlowValuesMap flowValuesMap);
 
     /**
      * @param <T>

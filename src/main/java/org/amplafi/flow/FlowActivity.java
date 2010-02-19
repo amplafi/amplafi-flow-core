@@ -127,6 +127,8 @@ public interface FlowActivity extends FlowPropertyProviderWithValues {
     String getString(String key);
 
     /**
+     * TODO: see about using this more -- allows disconnecting names from properties ..
+     * unintended side-effects?
      * Convert dataClass to a string using
      * {@link FlowUtils#toPropertyName(Class)} and use that string to look up
      * the property.
@@ -136,17 +138,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues {
      * @return the value converted to dataClass.
      */
     <T> T getProperty(Class<T> dataClass);
-
-    /**
-     * override to treat some properties as special. This method is called by
-     * FlowPropertyBinding. Default behavior caches value and sets the property
-     * to value.
-     *
-     * @param key
-     * @param value
-     * @param <T> value's type
-     */
-    <T> void setProperty(String key, T value);
 
     /**
      * Convert value.getClass() to string using

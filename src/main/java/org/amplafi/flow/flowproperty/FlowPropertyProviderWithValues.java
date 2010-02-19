@@ -28,4 +28,18 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * @return property
      */
     <T> T getProperty(String key);
+
+    /**
+     * override to treat some properties as special. This method is called by
+     * FlowPropertyBinding. Default behavior caches value and sets the property
+     * to value.
+     *
+     * @param key
+     * @param value
+     * @param <T> value's type
+     * @throws UnsupportedOperationException if property modification is not supported.
+     * @throws IllegalStateException if the property cannot be modified ( but other properties maybe could be modified )
+     */
+    <T> void setProperty(String key, T value) throws UnsupportedOperationException, IllegalStateException;
+
 }

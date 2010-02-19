@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 
 
@@ -26,7 +26,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  * Implementations hold the state of an active Flow. Implementers should expect
  * to be stored in a Session and should be serializable.
  */
-public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity>, FlowPropertyProvider {
+public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity>, FlowPropertyProviderWithValues {
 
     /**
      * Copy all Flow-level {@link org.amplafi.flow.FlowPropertyDefinition}'s initial values to the flowState's key value map.
@@ -187,11 +187,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     String getFlowTitle();
 
     /**
-     * @return Returns the flowManagement.
+     * @return the flowManagement.
      */
     FlowManagement getFlowManagement();
-
-    void setFlowTypeName(String flowTypeName);
 
     String getFlowTypeName();
 
@@ -213,6 +211,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     /**
      * @param flowActivityPhase
+     * @param flowStepDirection
      * @return result returned by the currentActivity's
      *         {@link FlowActivity#getFlowValidationResult(FlowActivityPhase, FlowStepDirection)}
      */
@@ -273,8 +272,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return the property value
      */
     <T> T getProperty(String key, Class<T> expected);
-    <T> T getProperty(String key);
-    <T> void setProperty(String key, T value);
 
     boolean isActive();
 
@@ -285,8 +282,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     boolean isNotCurrentAllowed();
 
     FlowValuesMap getFlowValuesMap();
-
-    void setFlowValuesMap(FlowValuesMap flowValuesMap);
 
     boolean hasVisibleNext();
 
