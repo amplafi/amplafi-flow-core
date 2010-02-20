@@ -212,7 +212,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         if (verifyValues) {
-            // HACK that needs to be fixed.
+            // HACK that needs to be fixed. -- we only need to verify when we go back because:
+            // 1)if the user is on a previous step and a later step has a validation problem we need to advance the flow
+            // to that step.
+            // 2) if we have a step that does an immediate save operation.
             FlowValidationResult validationResult = flowStepDirection == FlowStepDirection.backward?
                 getFlowValidationResult(FlowActivityPhase.advance, flowStepDirection):
                     getFlowValidationResult();
