@@ -33,6 +33,7 @@ import static com.sworddance.util.CUtilities.*;
  *
  */
 public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements FlowPropertyValueProvider<FPP> {
+    private final Class<FPP> flowPropertyProviderClass;
     private Set<String> propertiesHandled;
     /**
      * TODO: in future should define the property requirements?
@@ -42,7 +43,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     private Set<String> optionalProperties;
 
     /**
-     *
+     * {@link #getFlowPropertyProviderClass()} will return {@link FlowPropertyProviderWithValues} if FPP extends that class. otherwise {@link FlowPropertyProvider}
      * @param propertiesHandled first property listed is property returned by
      */
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
@@ -50,7 +51,26 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         this.requiredProperties = new LinkedHashSet<String>();
         this.optionalProperties = new LinkedHashSet<String>();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
+        Class<FPP> clazz;
+        // TODO: is there a way to find out the class of FPP - last I checked there wasn't
+        try {
+            clazz = (Class<FPP>) FlowPropertyProviderWithValues.class;
+        } catch (ClassCastException e) {
+            clazz = (Class<FPP>) FlowPropertyProvider.class;
+        }
+        this.flowPropertyProviderClass = clazz;
     }
+    /**
+    *
+    * @param propertiesHandled first property listed is property returned by
+    */
+   protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, String...propertiesHandled) {
+       this.flowPropertyProviderClass = flowPropertyProviderClass;
+       this.propertiesHandled = new LinkedHashSet<String>();
+       this.requiredProperties = new LinkedHashSet<String>();
+       this.optionalProperties = new LinkedHashSet<String>();
+       CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
+   }
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
         if ( !isHandling(flowPropertyDefinition)) {
@@ -148,5 +168,12 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             }
         }
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
+    }
+
+    /**
+     * @return the flowPropertyProviderClass
+     */
+    public Class<FPP> getFlowPropertyProviderClass() {
+        return flowPropertyProviderClass;
     }
 }

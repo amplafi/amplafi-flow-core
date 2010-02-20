@@ -15,29 +15,28 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.concurrent.Callable;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
  * @author patmoore
- * @param <FA>
+ * @param <FPP>
  * @param <T>
  *
  */
-public class FlowPropertyValueProviderCallableImpl<FA extends FlowActivity, T> implements FlowPropertyValueProvider<FA>, Callable<T> {
+public class FlowPropertyValueProviderCallableImpl<FPP extends FlowPropertyProvider, T> implements FlowPropertyValueProvider<FPP>, Callable<T> {
 
-    private final FlowPropertyValueProvider<FA> flowPropertyValueProvider;
-    private final FA flowActivity;
+    private final FlowPropertyValueProvider<FPP> flowPropertyValueProvider;
+    private final FPP flowPropertyProvider;
     private final FlowPropertyDefinition flowPropertyDefinition;
-    public FlowPropertyValueProviderCallableImpl( FA flowActivity, FlowPropertyValueProvider<FA> flowPropertyValueProvider, FlowPropertyDefinition flowPropertyDefinition) {
-        this.flowActivity = flowActivity;
+    public FlowPropertyValueProviderCallableImpl( FPP flowPropertyProvider, FlowPropertyValueProvider<FPP> flowPropertyValueProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        this.flowPropertyProvider = flowPropertyProvider;
         this.flowPropertyDefinition = flowPropertyDefinition;
         this.flowPropertyValueProvider = flowPropertyValueProvider;
     }
 
     @SuppressWarnings({ "hiding", "unchecked" })
-    public <T> T get(FA flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FPP flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
         return (T) getFlowPropertyValueProvider().get(flowActivity, flowPropertyDefinition);
     }
 
@@ -47,27 +46,28 @@ public class FlowPropertyValueProviderCallableImpl<FA extends FlowActivity, T> i
     @SuppressWarnings("unchecked")
     @Override
     public T call() {
-        return (T) get(getFlowActivity(), getFlowPropertyDefinition());
+        return (T) get(flowPropertyProvider, getFlowPropertyDefinition());
     }
 
     /**
      * @return the flowPropertyValueProvider
      */
-    public FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
+    public FlowPropertyValueProvider<FPP> getFlowPropertyValueProvider() {
         return flowPropertyValueProvider;
     }
-
-    /**
-     * @return the flowActivity
-     */
-    public FA getFlowActivity() {
-        return flowActivity;
-    }
-
     /**
      * @return the flowPropertyDefinition
      */
     public FlowPropertyDefinition getFlowPropertyDefinition() {
         return flowPropertyDefinition;
+    }
+
+    /**
+     * @see org.amplafi.flow.FlowPropertyValueProvider#getFlowPropertyProviderClass()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Class<FPP> getFlowPropertyProviderClass() {
+        return (Class<FPP>) flowPropertyProvider.getClass();
     }
 }

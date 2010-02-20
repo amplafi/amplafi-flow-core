@@ -32,7 +32,7 @@ public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyVal
     public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
 
     public CancelTextFlowPropertyValueProvider() {
-        super(FSCANCEL_TEXT);
+        super(FlowActivityImplementor.class,FSCANCEL_TEXT);
     }
     /**
      *
@@ -40,12 +40,12 @@ public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyVal
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FlowActivityImplementor flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FlowActivityImplementor flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         check(flowPropertyDefinition);
         String label = "message:flow.label-cancel";
-        String lookupKey =flowActivity.getProperty(FSRETURN_TO_FLOW);
+        String lookupKey =flowPropertyProvider.getProperty(FSRETURN_TO_FLOW);
         if ( lookupKey != null ) {
-            FlowManagement flowManagement = flowActivity.getFlowState().getFlowManagement();
+            FlowManagement flowManagement = flowPropertyProvider.getFlowState().getFlowManagement();
             FlowState flowState = flowManagement.getFlowState(lookupKey);
             if ( flowState != null) {
                 label = flowState.getCurrentActivity().getProperty(FSRETURN_TO_TEXT);

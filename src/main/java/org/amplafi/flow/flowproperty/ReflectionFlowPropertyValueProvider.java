@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowPropertyDefinition;
 
@@ -24,7 +23,7 @@ import com.sworddance.beans.BeanWorker;
  * Uses reflection to trace to find the property value.
  * if at any point a null is returned then null is returned (no {@link NullPointerException} will be thrown)
  *
- * The root object can be either the flowActivity parameter in the {@link #get(FlowActivity, FlowPropertyDefinition)} call or another object
+ * The root object can be either the flowPropertyProvider parameter in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} call or another object
  * supplied in the constructor.
  *
  * TODO need to be able to set base as a String and that is the property name that will act as the base.
@@ -38,12 +37,12 @@ import com.sworddance.beans.BeanWorker;
  * @author patmoore
  *
  */
-public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowActivity> {
+public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
     private Object object;
 
     /**
-     * Use the {@link FlowActivity} that is passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} as the starting object to trace for
+     * Use the {@link FlowPropertyProvider} that is passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} as the starting object to trace for
      * using propertyNames.
      *
      * @param propertyNames
@@ -57,7 +56,7 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     }
 
     /**
-     * Used when an object other than the flowActivity passed in the {@link #get(FlowActivity, FlowPropertyDefinition)} should be used
+     * Used when an object other than the flowPropertyProvider passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} should be used
      * as the root for tracing out properties.
      * @param object
      */
@@ -76,9 +75,18 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
-        final Object base = this.object==null?flowActivity:this.object;
+    public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        final Object base = this.object==null?flowPropertyProvider:this.object;
         return (T) getValue(base, this.getPropertyName(0));
     }
+    /**
+     * @see org.amplafi.flow.FlowPropertyValueProvider#getFlowPropertyProviderClass()
+     */
+    @Override
+    public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+        return FlowPropertyProvider.class;
+    }
+
+
 
 }

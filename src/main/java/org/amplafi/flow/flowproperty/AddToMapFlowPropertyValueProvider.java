@@ -31,15 +31,21 @@ import static com.sworddance.util.CUtilities.*;
 public class AddToMapFlowPropertyValueProvider<FPP extends FlowPropertyProvider, K,V> extends AbstractChainedFlowPropertyValueProvider<FPP> {
 
     private Map<K,V> values;
+    @SuppressWarnings("unchecked")
     public AddToMapFlowPropertyValueProvider(V...valuesToAdd) {
+        super((Class<FPP>) FlowPropertyProvider.class);
         values = new LinkedHashMap<K, V>();
         putAll(values, valuesToAdd);
     }
+    @SuppressWarnings("unchecked")
     public AddToMapFlowPropertyValueProvider(K key, V valueToAdd) {
+        super((Class<FPP>) FlowPropertyProvider.class);
         values = new LinkedHashMap<K, V>();
         values.put(key, valueToAdd);
     }
+    @SuppressWarnings("unchecked")
     public AddToMapFlowPropertyValueProvider(Map<K,V>valuesToAdd) {
+        super((Class<FPP>) FlowPropertyProvider.class);
         values = new LinkedHashMap<K, V>();
         if( valuesToAdd != null) {
             values.putAll(valuesToAdd);
@@ -51,8 +57,8 @@ public class AddToMapFlowPropertyValueProvider<FPP extends FlowPropertyProvider,
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FPP flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
-        Map<K,V> result = getPropertyFromChain(flowActivity, flowPropertyDefinition);
+    public <T> T get(FPP flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        Map<K,V> result = getPropertyFromChain(flowPropertyProvider, flowPropertyDefinition);
         if ( result == null) {
             result = new LinkedHashMap<K,V>();
         }

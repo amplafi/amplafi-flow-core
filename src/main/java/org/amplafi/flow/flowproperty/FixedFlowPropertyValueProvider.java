@@ -35,7 +35,9 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
      */
     private ConcurrentMap<FlowPropertyDefinition, Object> map = new ConcurrentHashMap<FlowPropertyDefinition, Object>();
 
+    @SuppressWarnings("unchecked")
     public FixedFlowPropertyValueProvider(Object defaultObject) {
+        super((Class<FA>)FlowPropertyProvider.class);
         this.defaultObject = defaultObject;
     }
     /**
@@ -71,7 +73,7 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
 
     @Override
     @SuppressWarnings({ "unused", "unchecked" })
-    public <T> T get(FA flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FA flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         return (T) this.getDefaultValue(flowPropertyDefinition);
     }
     /**

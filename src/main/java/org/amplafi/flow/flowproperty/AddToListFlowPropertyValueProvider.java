@@ -33,6 +33,7 @@ public class AddToListFlowPropertyValueProvider<V> extends AbstractChainedFlowPr
 
     private List<V> values;
     public AddToListFlowPropertyValueProvider(V...valuesToAdd) {
+        super(FlowPropertyProvider.class);
         this.values = Arrays.asList(valuesToAdd);
     }
 
@@ -42,8 +43,8 @@ public class AddToListFlowPropertyValueProvider<V> extends AbstractChainedFlowPr
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FlowPropertyProvider flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
-        List<V> result = getPropertyFromChain(flowActivity, flowPropertyDefinition);
+    public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        List<V> result = getPropertyFromChain(flowPropertyProvider, flowPropertyDefinition);
         if ( result == null) {
             result = new ArrayList<V>();
         }

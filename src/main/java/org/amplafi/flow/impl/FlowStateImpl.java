@@ -1550,6 +1550,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.flowStateLifecycle != null && this.flowStateLifecycle.isTerminalState();
     }
 
+    public boolean isPropertySet(String key) {
+        return getRawProperty(key) != null;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(String key) {

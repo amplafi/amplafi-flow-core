@@ -29,7 +29,6 @@ import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -79,7 +78,7 @@ public class TestFlowPropertyDefinition {
     public void testUriProperty() {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("uri", URI.class, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
-        assertNull(definition.getDefaultObject(null));
+        assertNull(definition.getDefaultObject(new Dummy()));
     }
 
     @Test(enabled=TEST_ENABLED)
@@ -109,7 +108,7 @@ public class TestFlowPropertyDefinition {
         new FlowTestingUtils().resolveAndInit(definition);
         Boolean t = (Boolean) definition.parse(null);
         assertNull(t);
-        t = (Boolean) definition.getDefaultObject(null);
+        t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
         assertTrue(definition.isAutoCreate());
 
@@ -121,21 +120,26 @@ public class TestFlowPropertyDefinition {
         new FlowTestingUtils().resolveAndInit(definition);
         t = (Boolean) definition.parse(null);
         assertNull(t);
-        t = (Boolean) definition.getDefaultObject(null);
+        t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
         assertTrue(definition.isAutoCreate());
 
         final FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionImpl("foo");
-        definition1.setFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowActivity>() {
+        definition1.setFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
             @Override
-            @SuppressWarnings({ "unused", "unchecked" })
-            public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+            @SuppressWarnings({ "unchecked" })
+            public <T> T get(FlowPropertyProvider flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
                 assertSame(flowPropertyDefinition, definition1);
                 return (T) Boolean.TRUE;
             }
 
+            @Override
+            public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+                return FlowPropertyProvider.class;
+            }
+
         });
-        t = (Boolean) definition.getDefaultObject(null);
+        t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
         assertTrue(definition.isAutoCreate());
     }
@@ -143,7 +147,7 @@ public class TestFlowPropertyDefinition {
     private void assertDefaultObject(Class<?> clazz, Object value) {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("u", clazz, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
-        assertEquals(definition.getDefaultObject(null), value);
+        assertEquals(definition.getDefaultObject(new Dummy()), value);
     }
 
     @Test(enabled=TEST_ENABLED)
@@ -169,7 +173,7 @@ public class TestFlowPropertyDefinition {
         assertTrue( definition1.isMergeable(definition));
         definition.merge(definition1);
         new FlowTestingUtils().resolveAndInit(definition);
-        assertTrue((Boolean)definition.getDefaultObject(null));
+        assertTrue((Boolean)definition.getDefaultObject(new Dummy()));
         assertEquals(definition.getDataClass(), definition1.getDataClass());
     }
 
@@ -565,10 +569,16 @@ public class TestFlowPropertyDefinition {
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
         flowLocalProperty.initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
 
+            @SuppressWarnings("unchecked")
             @Override
             public <T> T get(FlowPropertyProvider flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
                 // return a non-String value to make sure initialization does not expect a string.
                 return (T) Boolean.TRUE;
+            }
+
+            @Override
+            public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+                return FlowPropertyProvider.class;
             }
         });
         FlowActivityImpl flowActivity0 = new FlowActivityImpl();
@@ -593,6 +603,42 @@ public class TestFlowPropertyDefinition {
 
     public Object[] data(Object...data) {
         return data;
+    }
+
+    private static class Dummy implements FlowPropertyProvider {
+
+        /**
+         * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getFlowPropertyDefinition(java.lang.String)
+         */
+        @Override
+        public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getFlowPropertyProviderFullName()
+         */
+        @Override
+        public String getFlowPropertyProviderFullName() {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getFlowPropertyProviderName()
+         */
+        @Override
+        public String getFlowPropertyProviderName() {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see org.amplafi.flow.flowproperty.FlowPropertyProvider#getPropertyDefinitions()
+         */
+        @Override
+        public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
+            throw new UnsupportedOperationException();
+        }
+
     }
 
 }

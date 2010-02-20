@@ -18,6 +18,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowUtils;
 
 /**
@@ -25,7 +26,7 @@ import org.amplafi.flow.FlowUtils;
  * @author patmoore
  *
  */
-public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowActivity> {
+public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowPropertyProvider> {
     private String standardPrefix;
 
     public static final MessageFlowPropertyValueProvider INSTANCE = new MessageFlowPropertyValueProvider("message:");
@@ -41,12 +42,22 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T get(FlowActivity flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         StringBuilder standardKey = new StringBuilder(standardPrefix);
-        Flow flow = flowActivity.getFlow();
-        standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flow.getFlowPropertyProviderName())).append(".");
+        Flow flow = null;
+        if(flowPropertyProvider instanceof FlowActivity) {
+            flow = ((FlowActivity)flowPropertyProvider).getFlow();
+        } else if ( flowPropertyProvider instanceof FlowState) {
+            flow = ((FlowState)flowPropertyProvider).getFlow();
+        } else if ( flowPropertyProvider instanceof Flow) {
+            flow = (Flow) flowPropertyProvider;
+        }
+        if ( flow != null ) {
+            String flowPropertyProviderName = flow.getFlowPropertyProviderName();
+            standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flowPropertyProviderName)).append(".");
+        }
         if (flowPropertyDefinition.getPropertyScope() == PropertyScope.activityLocal) {
-            standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowActivity.getFlowPropertyProviderName())).append(".");
+            standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowPropertyProvider.getFlowPropertyProviderName())).append(".");
         }
         if (flowPropertyDefinition.getName().startsWith("fs") || flowPropertyDefinition.getName().startsWith("fa")) {
             standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowPropertyDefinition.getName().substring(2)));
@@ -59,5 +70,12 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
     @Override
     public String toString() {
         return getClass()+" standardPrefix="+this.standardPrefix;
+    }
+    /**
+     * @see org.amplafi.flow.FlowPropertyValueProvider#getFlowPropertyProviderClass()
+     */
+    @Override
+    public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+        return FlowPropertyProvider.class;
     }
 }

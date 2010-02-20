@@ -15,11 +15,15 @@ package org.amplafi.flow.flowproperty;
 
 /**
  * @author patmoore
- * @param <FA>
+ * @param <FPP>
  * @param <V>
  *
  */
-public abstract class AbstractFutureFlowPropertyValueProvider<FA extends FlowPropertyProvider, V> extends  AbstractFlowPropertyValueProvider<FA>
-    implements FutureFlowPropertyValueProvider<FA, V> {
+public abstract class AbstractFutureFlowPropertyValueProvider<FPP extends FlowPropertyProvider, V> extends  AbstractFlowPropertyValueProvider<FPP>
+    implements FutureFlowPropertyValueProvider<FPP, V> {
+
+    public AbstractFutureFlowPropertyValueProvider(Class<FPP> flowPropertyProviderClass, String... propertiesHandled) {
+        super(flowPropertyProviderClass, propertiesHandled);
+    }
 
 }

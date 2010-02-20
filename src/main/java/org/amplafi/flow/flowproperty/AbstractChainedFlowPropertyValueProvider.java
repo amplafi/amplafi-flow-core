@@ -23,18 +23,22 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  */
 public abstract class AbstractChainedFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements ChainedFlowPropertyValueProvider<FPP> {
 
+    private Class<FPP> flowPropertyProviderClass;
     private FlowPropertyValueProvider<FPP> previous;
 
+    protected AbstractChainedFlowPropertyValueProvider(Class<FPP> flowPropertyProviderClass) {
+        this.flowPropertyProviderClass = flowPropertyProviderClass;
+    }
     /**
-     * @param flowActivity
+     * @param flowPropertyProvider
      * @param flowPropertyDefinition
      * @return the value from the previous {@link org.amplafi.flow.FlowPropertyValueProvider} in the chain of {@link org.amplafi.flow.FlowPropertyValueProvider}
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getPropertyFromChain(FPP flowActivity, FlowPropertyDefinition flowPropertyDefinition) {
+    protected <T> T getPropertyFromChain(FPP flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         T result = null;
         if ( getPrevious() != null ) {
-            result = (T) getPrevious().get(flowActivity, flowPropertyDefinition);
+            result = (T) getPrevious().get(flowPropertyProvider, flowPropertyDefinition);
         }
         return result;
     }
@@ -53,5 +57,12 @@ public abstract class AbstractChainedFlowPropertyValueProvider<FPP extends FlowP
     protected FlowPropertyValueProvider<FPP> getPrevious() {
         return previous;
     }
+    /**
+     * @return the flowPropertyProviderClass
+     */
+    public Class<FPP> getFlowPropertyProviderClass() {
+        return flowPropertyProviderClass;
+    }
+
 
 }

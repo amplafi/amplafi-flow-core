@@ -23,6 +23,8 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * override to treat some properties as special. This method is called by
      * FlowPropertyBinding.
      *
+     * Will trigger property initialization including possible call to {@link org.amplafi.flow.FlowPropertyValueProvider}
+     *
      * @param key
      * @param <T> type of property.
      * @return property
@@ -42,4 +44,10 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      */
     <T> void setProperty(String key, T value) throws UnsupportedOperationException, IllegalStateException;
 
+    /**
+     * checks to see if the property has been set without triggering the property initialization.
+     * @param key
+     * @return true if the property is set.
+     */
+    boolean isPropertySet(String key);
 }

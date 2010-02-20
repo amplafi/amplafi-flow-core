@@ -30,6 +30,8 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+import com.sworddance.util.ApplicationNullPointerException;
+
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -230,10 +232,16 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      *         {@link FlowPropertyDefinitionImpl} if it is mutable.
      */
     public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
-        Object value;
-        FlowPropertyValueProvider<FlowPropertyProvider> provider = getFlowPropertyValueProviderToUse();
-        if ( provider != null) {
-            value = provider.get(flowPropertyProvider, this);
+        Object value = null;
+        if ( flowPropertyProvider == null ) {
+            throw new ApplicationNullPointerException("flowPropertyProvider cannot be null");
+        }
+        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
+        if ( propertyValueProvider != null) {
+            Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
+            if (  expected.isAssignableFrom(flowPropertyProvider.getClass())) {
+                value = propertyValueProvider.get(flowPropertyProvider, this);
+            }
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
             // for example the property type is a primitive.

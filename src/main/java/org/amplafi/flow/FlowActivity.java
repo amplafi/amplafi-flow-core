@@ -171,7 +171,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues {
     boolean isFinishingActivity();
     boolean isPropertyNotSet(String key);
 
-    boolean isPropertySet(String key);
     /**
      * Handles all the various namespaces that FlowActivity may be referenced by.
      * @param possibleName

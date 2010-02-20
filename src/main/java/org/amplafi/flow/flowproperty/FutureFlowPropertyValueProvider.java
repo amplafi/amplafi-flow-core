@@ -20,10 +20,10 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
  * @author patmoore
- * @param <FA>
+ * @param <FPP>
  * @param <V>
  *
  */
-public interface FutureFlowPropertyValueProvider<FA extends FlowPropertyProvider, V> extends Callable<V>, FlowPropertyValueProvider<FA>, Future<V> {
+public interface FutureFlowPropertyValueProvider<FPP extends FlowPropertyProvider, V> extends Callable<V>, FlowPropertyValueProvider<FPP>, Future<V> {
 
 }
