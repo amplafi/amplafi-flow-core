@@ -344,20 +344,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     /**
-     * Helps describing 'missing value' problems.
-     *
-     * @param result keeps track of validation results
-     * @param value if true then the property is *NOT set correctly and we need
-     *        a {@link MissingRequiredTracking}.
-     * @param property missing property's name
-     */
-    protected void appendRequiredTrackingIfTrue(FlowValidationResult result, boolean value, String property) {
-        if (value) {
-            result.addTracking(new MissingRequiredTracking(property));
-        }
-    }
-
-    /**
      * Helps describing 'incorrect value' problems.
      *
      * @param result keeps track of validation results

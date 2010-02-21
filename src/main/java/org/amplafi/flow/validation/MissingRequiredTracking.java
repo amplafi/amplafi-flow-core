@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.validation;
 
+import org.amplafi.flow.FlowValidationResult;
+
 /**
  * {@link org.amplafi.flow.FlowValidationTracking Tracking} for missing required values.
  * <p/>
@@ -23,9 +25,24 @@ package org.amplafi.flow.validation;
  */
 public class MissingRequiredTracking extends SimpleValidationTracking {
     /**
-     * @param missing The missing field
+     * @param params The missing field
      */
-    public MissingRequiredTracking(String missing) {
-        super(MissingRequiredTracking.class.getSimpleName(), missing);
+    public MissingRequiredTracking(Object... params) {
+        super(MissingRequiredTracking.class.getSimpleName(), params);
     }
+    /**
+     * Helps describing 'missing value' problems.
+    *
+    * @param flowValidationResult keeps track of validation results
+    * @param missingRequiredValue if true then the property is *NOT set correctly and we need
+    *        a {@link MissingRequiredTracking}.
+    * @param property missing property's name
+     * @return flowValidationResult
+    */
+    public static FlowValidationResult appendRequiredTrackingIfTrue(FlowValidationResult flowValidationResult, boolean missingRequiredValue, Object... property) {
+       if (missingRequiredValue) {
+           flowValidationResult.addTracking(new MissingRequiredTracking(property));
+       }
+       return flowValidationResult;
+   }
 }
