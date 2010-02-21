@@ -19,6 +19,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
+import org.amplafi.flow.validation.FlowValidationException;
 
 
 
@@ -91,8 +92,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param verifyValues if true, verifies the values for each {@link FlowActivity} examined.
      *
      * @return the now current {@link FlowActivity}
+     * @throws FlowValidationException validation of the flow state data failed
      */
-    <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues);
+    <T extends FlowActivity> T selectActivity(int newActivity, boolean verifyValues) throws FlowValidationException;
 
     /**
      * Move to the specified visible activity.
@@ -100,8 +102,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      *
      * @param visibleIndex The index of the activity among the visible ones.
      * @return the now current FlowActivity
+     * @throws FlowValidationException validation of the flow state data failed
      */
-    <T extends FlowActivity> T selectVisibleActivity(int visibleIndex);
+    <T extends FlowActivity> T selectVisibleActivity(int visibleIndex)  throws FlowValidationException;
 
     void saveChanges();
 
@@ -110,8 +113,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * completes the flow.
      *
      * @return The name of the page that should be presented (or null).
+     * @throws FlowValidationException validation of the flow state data failed
      */
-    String finishFlow();
+    String finishFlow() throws FlowValidationException;
 
     /**
      *
@@ -228,7 +232,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     FlowValidationResult getFinishFlowValidationResult();
     FlowValidationResult getFullFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
-    void setAfterPage(String afterPage);
 
     String getAfterPage();
 
@@ -240,11 +243,8 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getCancelText();
 
-    void setCancelText(String cancelText);
-
     String getFinishText();
 
-    void setFinishText(String finishText);
 
     /**
      * Set this to a not-null value to indicate that an alternative button has

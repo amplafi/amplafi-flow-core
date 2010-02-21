@@ -66,6 +66,9 @@ public interface FlowStateImplementor extends FlowState {
 
 
     void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle);
+    void setAfterPage(String afterPage);
+    void setCancelText(String cancelText);
+    void setFinishText(String finishText);
 
     /**
      * Called when this flowstate no longer represents the current flow. Assume
