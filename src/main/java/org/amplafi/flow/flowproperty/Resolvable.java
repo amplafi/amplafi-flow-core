@@ -13,26 +13,23 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import java.util.Map;
-
-import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowTranslatorResolver;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, Resolvable {
+public interface Resolvable {
+
     /**
-     * @param flowPropertyProviderName The flowPropertyProviderName to set.
+     * For performance
+     * @return true
+     * {@link FlowTranslatorResolver} has done its work.
      */
-    void setFlowPropertyProviderName(String flowPropertyProviderName);
-    void setPropertyDefinitions(Map<String, FlowPropertyDefinition> flowPropertyDefinitions);
-
-    void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
-
-    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
-
-    <FS extends FlowState> FS getFlowState();
-
+    boolean isResolved();
+    /**
+     * set to true by the {@link FlowTranslatorResolver}
+     * @param resolved
+     */
+    void setResolved(boolean resolved);
 }

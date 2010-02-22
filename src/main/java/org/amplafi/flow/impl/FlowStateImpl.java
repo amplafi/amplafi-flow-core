@@ -176,10 +176,11 @@ public class FlowStateImpl implements FlowStateImplementor {
             }
         }
         this.setFlowLifecycleState(starting);
-        FlowStateLifecycle nextFlowLifecycleState = started;
+        FlowStateLifecycle nextFlowLifecycleState = failed;
         try {
             // TODO ... should we just be using next()... seems better.
             selectActivity(0, true);
+            nextFlowLifecycleState = started;
         } catch(RuntimeException e) {
             nextFlowLifecycleState = failed;
             throw e;

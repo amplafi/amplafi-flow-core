@@ -24,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.Resolvable;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JsonRenderer;
@@ -229,7 +229,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     @Override
     public void resolveFlow(Flow flow) {
-        if (!(flow instanceof FlowPropertyProviderImplementor) || !((FlowPropertyProviderImplementor)flow).isResolved() ) {
+        if (!(flow instanceof Resolvable) || !((Resolvable)flow).isResolved() ) {
             resolve(flow);
             List<FlowActivityImplementor> activities = flow.getActivities();
             if ( activities != null ) {
@@ -248,14 +248,14 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      * @param flowPropertyProvider
      */
     public void resolve(FlowPropertyProvider flowPropertyProvider) {
-        if ( flowPropertyProvider != null && (!(flowPropertyProvider instanceof FlowPropertyProviderImplementor) || !((FlowPropertyProviderImplementor)flowPropertyProvider).isResolved() )) {
+        if ( flowPropertyProvider != null && (!(flowPropertyProvider instanceof Resolvable) || !((Resolvable)flowPropertyProvider).isResolved() )) {
             Map<String, FlowPropertyDefinition> propertyDefinitions = flowPropertyProvider.getPropertyDefinitions();
             if ( MapUtils.isNotEmpty(propertyDefinitions)) {
                 Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
                 initAndResolveCollection(flowPropertyProvider.getFlowPropertyProviderFullName()+"("+flowPropertyProvider.getClass().getName()+").", values);
             }
-            if (flowPropertyProvider instanceof FlowPropertyProviderImplementor) {
-                ((FlowPropertyProviderImplementor)flowPropertyProvider).setResolved(true);
+            if (flowPropertyProvider instanceof Resolvable) {
+                ((Resolvable)flowPropertyProvider).setResolved(true);
             }
         }
     }

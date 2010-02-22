@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
+import static org.apache.commons.lang.StringUtils.*;
 
 
 /**
@@ -453,7 +454,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      */
     @Override
     public String toString() {
-        return getFlowPropertyProviderName()+ (isInstance()?"(instance)":"");
+        return getFlowPropertyProviderName()+ (isInstance()?"(instance)":"")+" activities=["+join(this.activities, ", ")+"]";
     }
 
     /**
