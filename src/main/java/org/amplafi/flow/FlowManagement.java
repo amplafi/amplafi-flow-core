@@ -52,7 +52,7 @@ public interface FlowManagement extends FlowStateListener {
      */
     <FS extends FlowState> FS getFirstFlowStateByType(String... flowTypes);
     /**
-     * synchronized because a user may have multiple concurrently active
+     * a user may have multiple concurrently active
      * requests.
      * @param <FS>
      *

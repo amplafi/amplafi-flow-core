@@ -21,12 +21,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -72,7 +71,7 @@ public class BaseFlowManagement implements FlowManagement {
     private transient PageProvider pageProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
-    private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new LinkedHashSet<FlowStateListener>());
+    private transient Set<FlowStateListener> flowStateListeners = new ConcurrentSkipListSet<FlowStateListener>();
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
