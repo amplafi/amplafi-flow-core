@@ -30,6 +30,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
 
 
@@ -241,6 +242,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             if (  expected.isAssignableFrom(flowPropertyProvider.getClass())) {
                 value = propertyValueProvider.get(flowPropertyProvider, this);
+            } else {
+                throw new ApplicationIllegalArgumentException("expected a ", expected, " but got a ", flowPropertyProvider.getClass());
             }
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.

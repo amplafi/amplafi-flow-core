@@ -364,6 +364,7 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     protected <FS extends FlowState> FS beginFlowState(FlowState flowState) {
         boolean success = false;
+        getLog().debug("beginning flow:"+flowState);
         try {
             flowState.begin();
             success = true;

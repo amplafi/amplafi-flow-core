@@ -86,12 +86,11 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @return null if {@link FlowPropertyDefinition#isNamed(String)} is true otherwise the property retrieved.
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getSafe(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+    protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             return null; // TODO throw exception?
         } else {
-            // HACK only temporary -- shift to flowPropertyProvider
-            return (T) ((FlowActivity)flowPropertyProvider).getProperty(propertyName);
+            return (T) flowPropertyProvider.getProperty(propertyName);
         }
     }
     /**
