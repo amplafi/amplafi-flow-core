@@ -42,7 +42,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
             return new Long(s);
         } catch(NumberFormatException e) {
             throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
-                    s+": contains non-numerics"));
+                    s,": contains non-numerics"));
         }
     }
 

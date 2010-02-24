@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.validation;
 
+import org.amplafi.flow.FlowValidationResult;
+
 /**
  * {@link org.amplafi.flow.FlowValidationTracking Tracking} for
  * incosistent data.<p/>
@@ -27,7 +29,26 @@ package org.amplafi.flow.validation;
  */
 public class InconsistencyTracking extends SimpleValidationTracking {
 
-    public InconsistencyTracking(String detailKey, String...value) {
+    public InconsistencyTracking(String detailKey, Object...value) {
         super(InconsistencyTracking.class.getSimpleName() + "." + detailKey, value);
+    }
+    /**
+     * Helps describing 'incorrect value' problems.
+     *
+     * @param result keeps track of validation results
+     * @param value if true then we need to inform of an inconsistency (using
+     *        {@link InconsistencyTracking}) described be the key and data
+     *        parameters.
+     * @param key The key that describes the inconsistency.
+     * @param data Additional values to use for generating the message that
+     *        describes the problem.
+     * @return result
+     */
+    public static FlowValidationResult appendInconsistencyTrackingIfTrue(FlowValidationResult result, boolean value,
+            String key, Object... data) {
+        if (value) {
+            result.addTracking(new InconsistencyTracking(key, data));
+        }
+        return result;
     }
 }

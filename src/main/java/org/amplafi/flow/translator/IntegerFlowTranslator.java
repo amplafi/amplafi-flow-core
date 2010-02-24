@@ -41,7 +41,7 @@ public class IntegerFlowTranslator extends AbstractFlowTranslator<Integer> {
             return new Integer(s);
         } catch(NumberFormatException e) {
             throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
-                    s+": contains non-numerics"));
+                    s, ": contains non-numerics"));
         }
     }
 
