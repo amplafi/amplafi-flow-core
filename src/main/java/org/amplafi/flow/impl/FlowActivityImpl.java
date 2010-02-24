@@ -46,7 +46,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.validation.InconsistencyTracking;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
@@ -341,24 +340,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             }
         }
         return result;
-    }
-
-    /**
-     * Helps describing 'incorrect value' problems.
-     *
-     * @param result keeps track of validation results
-     * @param value if true then we need to inform of an inconsistency (using
-     *        {@link InconsistencyTracking}) described be the key and data
-     *        parameters.
-     * @param key The key that describes the inconsistency.
-     * @param data Additional values to use for generating the message that
-     *        describes the problem.
-     */
-    protected void appendInconsistencyTrackingIfTrue(FlowValidationResult result, boolean value,
-            String key, String... data) {
-        if (value) {
-            result.addTracking(new InconsistencyTracking(key, data));
-        }
     }
 
     @Override
