@@ -21,13 +21,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
@@ -55,6 +54,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sworddance.util.perf.LapTimer;
+
 /**
  * A basic implementation of FlowManagement.
  *
@@ -72,12 +73,7 @@ public class BaseFlowManagement implements FlowManagement {
     private transient PageProvider pageProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
-    private transient Set<FlowStateListener> flowStateListeners = new ConcurrentSkipListSet<FlowStateListener>(new Comparator<FlowStateListener>() {
-        @Override
-        public int compare(FlowStateListener o1, FlowStateListener o2) {
-            return 0;
-        }
-    });
+    private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
@@ -369,7 +365,7 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     protected <FS extends FlowState> FS beginFlowState(FlowState flowState) {
         boolean success = false;
-        getLog().debug("beginning flow:"+flowState);
+        LapTimer.sLap(flowState, "beginning");
         try {
             flowState.begin();
             success = true;
@@ -383,6 +379,8 @@ public class BaseFlowManagement implements FlowManagement {
         } finally {
             if ( !success ) {
                 this.dropFlowState(flowState);
+            } else {
+                LapTimer.sLap(flowState, "begun");
             }
         }
     }
