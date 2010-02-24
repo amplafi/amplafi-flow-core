@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,12 @@ public class BaseFlowManagement implements FlowManagement {
     private transient PageProvider pageProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
-    private transient Set<FlowStateListener> flowStateListeners = new ConcurrentSkipListSet<FlowStateListener>();
+    private transient Set<FlowStateListener> flowStateListeners = new ConcurrentSkipListSet<FlowStateListener>(new Comparator<FlowStateListener>() {
+        @Override
+        public int compare(FlowStateListener o1, FlowStateListener o2) {
+            return 0;
+        }
+    });
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
