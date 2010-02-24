@@ -15,9 +15,9 @@
 package org.amplafi.flow.impl;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 import static org.apache.commons.collections.CollectionUtils.*;
 
 import org.amplafi.flow.FlowImplementor;
@@ -38,7 +38,7 @@ public class FlowManagerImpl implements FlowManager {
     private FlowTranslatorResolver flowTranslatorResolver;
     private FlowDefinitionsManager flowDefinitionsManager;
 
-    private transient Set<FlowStateListener> flowStateListeners = new ConcurrentSkipListSet<FlowStateListener>();
+    private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
     private Log log;
     private URI defaultHomePage;
 
