@@ -852,7 +852,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowActivity> flowPropertyValuePersister) {
+    public FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister) {
         setFlowPropertyValuePersister(flowPropertyValuePersister);
         return this;
     }

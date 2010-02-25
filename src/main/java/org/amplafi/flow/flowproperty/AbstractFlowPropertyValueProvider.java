@@ -156,7 +156,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
                 flowPropertyDefinition.initFlowPropertyValueProvider(this);
             }
             if ( flowPropertyDefinition.getFlowPropertyValuePersister() == null && flowPropertyProvider instanceof FlowPropertyValuePersister) {
-                FlowPropertyValuePersister<? extends FlowActivity> flowPropertyValuePersister = (FlowPropertyValuePersister<? extends FlowActivity>) flowPropertyProvider;
+                FlowPropertyValuePersister<?> flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
                 flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
             }
         }
