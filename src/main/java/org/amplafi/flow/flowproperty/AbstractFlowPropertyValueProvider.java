@@ -25,8 +25,6 @@ import org.apache.commons.collections.CollectionUtils;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
 
-import static com.sworddance.util.CUtilities.*;
-
 /**
  * @author patmoore
  * @param <FPP>
@@ -117,10 +115,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
 
     public Collection<String> getPropertiesHandled() {
         return this.propertiesHandled;
-    }
-
-    public String getPropertyHandled() {
-        return getFirst(this.propertiesHandled);
     }
 
     /**
