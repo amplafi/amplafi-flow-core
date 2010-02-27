@@ -18,8 +18,8 @@ package org.amplafi.flow;
  * Marks a class that can access flow information.
  */
 public interface FlowStateProvider {
-    <FM extends FlowManagement> FM getFlowManagement();
+    FlowManagement getFlowManagement();
 
     // TODO : Can we just set a default value that points it to the FlowAware#getAttachedFlowState()?
-    <FS extends FlowState> FS getFlowState();
+    FlowState getFlowState();
 }
