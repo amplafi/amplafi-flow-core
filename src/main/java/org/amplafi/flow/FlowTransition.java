@@ -178,9 +178,13 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         String resolvedNextFlow = flowActivity.resolveIndirectReference(getNextFlow());
         String resolvedNextFlowType = flowActivity.resolveIndirectReference(getNextFlowType());
         if ( isMorphingFlow()) {
+            // HACK: Do not understand reason why an existing flow would morph to another existing flow
+            // which is what passing resolvedNextFlow seems to imply.
+            // or maybe this is to continue the chain of Flows ?? needs investigation
             flowLauncher = new MorphFlowLauncher(resolvedNextFlowType, resolvedNextFlow, flowState.getFlowManagement());
         } else if ( resolvedNextFlow != null) {
-            flowLauncher = new ContinueFlowLauncher(resolvedNextFlow, flowState.getFlowManagement());
+            FlowState resolvedNextFlowState = flowState.getFlowManagement().getFlowState(resolvedNextFlow);
+            flowLauncher = new ContinueFlowLauncher(resolvedNextFlowState, flowState.getFlowManagement());
         } else if ( resolvedNextFlowType != null) {
             flowLauncher = new StartFromDefinitionFlowLauncher(resolvedNextFlowType, flowState.getFlowManagement());
         }

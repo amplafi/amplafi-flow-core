@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowGroup;
@@ -157,6 +158,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
+    @Override
     public FlowImplementor createInstance() {
         FlowImpl inst = new FlowImpl(this);
         inst.activities = new ArrayList<FlowActivityImplementor>();
@@ -175,6 +177,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return inst;
     }
 
+    @Override
     public void setActivities(List<FlowActivityImplementor> activities) {
         this.activities = null;
         for(FlowActivityImplementor activity: activities) {
@@ -199,6 +202,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#getActivity(int)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends FlowActivity> T getActivity(int activityIndex) {
         if ( activityIndex < 0 || activityIndex >= activities.size()) {
@@ -207,7 +211,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
         return (T) activities.get(activityIndex);
     }
-
 
     @Override
     public void addActivity(FlowActivityImplementor activity) {
@@ -239,7 +242,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return list;
     }
 
-    public FlowManagement getFlowManagement() {
+    protected FlowManagement getFlowManagement() {
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
 
@@ -276,9 +279,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getFlowTitle()
-     */
+    @Override
     public String getFlowTitle() {
         if ( flowTitle == null && isInstance()) {
             return getDefinition().getFlowTitle();
@@ -287,16 +288,12 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setFlowTitle(java.lang.String)
-     */
+    @Override
     public void setFlowTitle(String flowTitle) {
         this.flowTitle = flowTitle;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getContinueFlowTitle()
-     */
+    @Override
     public String getContinueFlowTitle() {
         if ( continueFlowTitle == null && isInstance()) {
             return getDefinition().getContinueFlowTitle();
@@ -305,23 +302,17 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setContinueFlowTitle(java.lang.String)
-     */
+    @Override
     public void setContinueFlowTitle(String continueFlowTitle) {
         this.continueFlowTitle = continueFlowTitle;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setLinkTitle(java.lang.String)
-     */
+    @Override
     public void setLinkTitle(String linkTitle) {
         this.linkTitle = linkTitle;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getLinkTitle()
-     */
+    @Override
     public String getLinkTitle() {
         if ( linkTitle != null ) {
             return this.linkTitle;
@@ -332,9 +323,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getMouseoverEntryPointText()
-     */
+    @Override
     public String getMouseoverEntryPointText() {
         if ( mouseoverEntryPointText == null && isInstance()) {
             return getDefinition().getMouseoverEntryPointText();
@@ -342,9 +331,8 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             return this.mouseoverEntryPointText;
         }
     }
-    /**
-     * @see org.amplafi.flow.Flow#setMouseoverEntryPointText(java.lang.String)
-     */
+
+    @Override
     public void setMouseoverEntryPointText(String mouseoverEntryPointText) {
         this.mouseoverEntryPointText = mouseoverEntryPointText;
     }
@@ -352,6 +340,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#getFlowDescriptionText()
      */
+    @Override
     public String getFlowDescriptionText() {
         if ( flowDescriptionText == null && isInstance()) {
             return getDefinition().getFlowDescriptionText();
@@ -359,16 +348,13 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             return this.flowDescriptionText;
         }
     }
-    /**
-     * @see org.amplafi.flow.Flow#setFlowDescriptionText(java.lang.String)
-     */
+
+    @Override
     public void setFlowDescriptionText(String flowDescriptionText) {
         this.flowDescriptionText = flowDescriptionText;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setPageName(java.lang.String)
-     */
+    @Override
     public void setPageName(String pageName) {
         this.pageName = pageName;
     }
@@ -376,27 +362,22 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#getPageName()
      */
+    @Override
     public String getPageName() {
         return isInstance()&& pageName == null? getDefinition().getPageName() : pageName;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setDefaultAfterPage(java.lang.String)
-     */
+    @Override
     public void setDefaultAfterPage(String defaultAfterPage) {
         this.defaultAfterPage = defaultAfterPage;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getDefaultAfterPage()
-     */
+    @Override
     public String getDefaultAfterPage() {
         return isInstance() && defaultAfterPage ==null? getDefinition().getDefaultAfterPage():defaultAfterPage;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#refresh()
-     */
+    @Override
     public void refresh() {
         int activityIndex = flowState.getCurrentActivityIndex();
         FlowActivity flowActivity = getActivity(activityIndex);
@@ -405,11 +386,13 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         }
     }
 
+    @Override
     public void setFlowState(FlowState state) {
         this.flowState = state;
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <FS extends FlowState> FS getFlowState() {
         return (FS) this.flowState;
     }
@@ -417,6 +400,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#indexOf(org.amplafi.flow.FlowActivity)
      */
+    @Override
     public int indexOf(FlowActivity activity) {
         return this.activities.indexOf(activity);
     }
@@ -424,6 +408,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#setActivatable(boolean)
      */
+    @Override
     public void setActivatable(boolean activatable) {
         this.activatable = activatable;
     }
@@ -431,6 +416,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#isActivatable()
      */
+    @Override
     public boolean isActivatable() {
         return activatable;
     }
@@ -438,6 +424,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     /**
      * @see org.amplafi.flow.Flow#setNotCurrentAllowed(boolean)
      */
+    @Override
     public void setNotCurrentAllowed(boolean notCurrentAllowed) {
         this.notCurrentAllowed = notCurrentAllowed;
     }
@@ -449,9 +436,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return notCurrentAllowed;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#toString()
-     */
     @Override
     public String toString() {
         return getFlowPropertyProviderName()+ (isInstance()?"(instance)":"")+" activities=["+join(this.activities, ", ")+"]";
@@ -499,5 +483,14 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      */
     public FlowGroup getPrimaryFlowGroup() {
         return primaryFlowGroup;
+    }
+
+    /**
+     * @see org.amplafi.flow.FlowProvider#getFlow()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <F extends Flow> F getFlow() {
+        return (F) this;
     }
 }

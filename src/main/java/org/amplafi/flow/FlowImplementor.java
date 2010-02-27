@@ -37,5 +37,26 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, 
      */
     void setActivities(List<FlowActivityImplementor> activities);
 
+    /**
+     * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getFlowPropertyProviderName()} must
+     * not duplicate the name of any previously added FlowActivityImplementor. The check is case-insensitive.
+     * @param activity
+     */
+    void addActivity(FlowActivityImplementor activity);
+
     void setFlowState(FlowState state);
+
+    void setContinueFlowTitle(String continueFlowTitle);
+
+    void setLinkTitle(String linkTitle);
+
+    void setFlowTitle(String flowTitle);
+
+    void setMouseoverEntryPointText(String mouseoverEntryPointText);
+
+    void setFlowDescriptionText(String flowDescriptionText);
+
+    void setPageName(String pageName);
+
+    void setDefaultAfterPage(String defaultAfterPage);
 }

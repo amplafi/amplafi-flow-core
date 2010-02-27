@@ -15,7 +15,6 @@ package org.amplafi.flow.launcher;
 
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.apache.commons.lang.ObjectUtils;
@@ -27,13 +26,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
 
-    private String flowTypeName;
-
-    private String flowLabel;
-
     private String lookupKey;
-
-    private Object keyExpression;
 
     public MorphFlowLauncher(String flowTypeName, String lookupKey, FlowManagement flowManagement) {
         this(flowTypeName, lookupKey, null, flowManagement);
@@ -41,15 +34,14 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
 
     public MorphFlowLauncher(String flowTypeName, String lookupKey,
             Map<String, String> initialFlowState, FlowManagement flowManagement) {
-        super(flowManagement, initialFlowState);
-        this.flowTypeName = flowTypeName;
+        super(flowTypeName, flowManagement, initialFlowState, lookupKey /*see comment in FlowTransition.*/);
         this.lookupKey = lookupKey;
     }
 
     @Override
     public FlowState call() {
         FlowState currentFlowState = getFlowState();
-        currentFlowState.morphFlow(flowTypeName, getValuesMap());
+        currentFlowState.morphFlow(getFlowTypeName(), getValuesMap());
         return currentFlowState;
     }
 
@@ -58,25 +50,6 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
      */
     public FlowState getFlowState() {
         return getFlowManagement().getFlowState(lookupKey);
-    }
-
-
-    @Override
-    public String getFlowLabel() {
-        if ( flowLabel == null ) {
-            Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
-            flowLabel = flow.getLinkTitle();
-        }
-        return flowLabel;
-    }
-
-    @Override
-    public String getFlowTypeName() {
-        return flowTypeName;
-    }
-
-    public void setKeyExpression(Object keyExpression) {
-        this.keyExpression = keyExpression;
     }
 
     public Object getKeyExpression() {

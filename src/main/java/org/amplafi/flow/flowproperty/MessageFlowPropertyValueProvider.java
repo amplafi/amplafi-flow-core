@@ -15,10 +15,9 @@
 package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
-import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowProvider;
 import org.amplafi.flow.FlowUtils;
 
 /**
@@ -45,12 +44,8 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
     public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         StringBuilder standardKey = new StringBuilder(standardPrefix);
         Flow flow = null;
-        if(flowPropertyProvider instanceof FlowActivity) {
-            flow = ((FlowActivity)flowPropertyProvider).getFlow();
-        } else if ( flowPropertyProvider instanceof FlowState) {
-            flow = ((FlowState)flowPropertyProvider).getFlow();
-        } else if ( flowPropertyProvider instanceof Flow) {
-            flow = (Flow) flowPropertyProvider;
+        if(flowPropertyProvider instanceof FlowProvider) {
+            flow = ((FlowProvider)flowPropertyProvider).getFlow();
         }
         if ( flow != null ) {
             String flowPropertyProviderName = flow.getFlowPropertyProviderName();

@@ -14,32 +14,57 @@
 
 package org.amplafi.flow.launcher;
 
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.Map;
-import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import static org.amplafi.flow.FlowConstants.*;
+
+import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
+
+import com.sworddance.util.CUtilities;
 
 /**
  *
  *
  */
-public abstract class BaseFlowLauncher implements FlowLauncher {
+public abstract class BaseFlowLauncher implements FlowLauncher,
+// HACK Need to rework how links are being constructed in FlowEntryPoint to use LaunchLinkGenerator
+// right now we are relying on the tapestry serialization mechanism.
+    Serializable{
     private transient FlowManagement flowManagement;
-    private String returnToFlowLookupKey;
-    private Map<String, String> valuesMap;
+    private ConcurrentMap<String, String> valuesMap = new ConcurrentHashMap<String, String>();
+    protected String flowTypeName;
+    /**
+     * Used for Listable items.
+     */
+    protected Serializable keyExpression;
     protected BaseFlowLauncher() {
 
     }
     /**
-     * @param flowManagement
+     * @param flowTypeName
      * @param valuesMap
+     * @param keyExpression
      */
-    public BaseFlowLauncher(FlowManagement flowManagement, Map<String, String> valuesMap) {
-        this.flowManagement = flowManagement;
-        this.valuesMap = new HashMap<String, String>();
+    public BaseFlowLauncher(String flowTypeName, Map<String, String> valuesMap, Serializable keyExpression) {
+        this.flowTypeName = flowTypeName;
         if ( valuesMap != null) {
             this.valuesMap.putAll(valuesMap);
         }
+        this.keyExpression = keyExpression;
+    }
+    /**
+     * @param flowTypeName
+     * @param flowManagement
+     * @param valuesMap
+     * @param keyExpression
+     */
+    public BaseFlowLauncher(String flowTypeName, FlowManagement flowManagement, Map<String, String> valuesMap, Serializable keyExpression) {
+        this(flowTypeName, valuesMap, keyExpression);
+        this.flowManagement = flowManagement;
     }
     @Override
     public void setFlowManagement(FlowManagement sessionFlowManagement) {
@@ -56,18 +81,14 @@ public abstract class BaseFlowLauncher implements FlowLauncher {
      */
     public void setReturnToFlow(String lookupKey) {
         put(FSRETURN_TO_FLOW, lookupKey);
-        this.returnToFlowLookupKey = lookupKey;
     }
     /**
      * @return the lookupKeyOrBoolean
      */
     public String getReturnToFlow() {
-        return returnToFlowLookupKey;
+        return getValuesMap().get(FSRETURN_TO_FLOW);
     }
-    public Map<String, String> getValuesMap() {
-        if ( this.valuesMap == null) {
-            this.valuesMap = new HashMap<String, String>();
-        }
+    protected ConcurrentMap<String, String> getValuesMap() {
         return this.valuesMap;
     }
     @Override
@@ -79,21 +100,36 @@ public abstract class BaseFlowLauncher implements FlowLauncher {
      */
     @Override
     public String put(String key, String value) {
-        return this.getValuesMap().put(key, value);
+        return CUtilities.put(this.getValuesMap(),key, value);
     }
     /**
      * @see org.amplafi.flow.launcher.FlowLauncher#putIfAbsent(java.lang.String, java.lang.String)
      */
     @Override
     public String putIfAbsent(String key, String defaultValue) {
-        if ( !this.getValuesMap().containsKey(key)) {
-            return this.getValuesMap().put(key, defaultValue);
-        } else {
-            return null;
-        }
+        return this.getValuesMap().putIfAbsent(key, defaultValue);
     }
     public String getListDisplayValue() {
         return getFlowLabel();
     }
-
+    @Override
+    public String getFlowTypeName() {
+        return flowTypeName;
+    }
+    public void setFlowLabel(String flowLabel) {
+        this.put(FSTITLE_TEXT, flowLabel);
+    }
+    @Override
+    public String getFlowLabel() {
+        String flowLabel = this.getInitialFlowState().get(FSTITLE_TEXT);
+        if ( flowLabel == null && this.flowManagement !=null ) {
+            Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
+            flowLabel = flow.getLinkTitle();
+        }
+        return flowLabel;
+    }
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+" :" +this.getFlowTypeName()+ " initialValues="+getValuesMap();
+    }
 }

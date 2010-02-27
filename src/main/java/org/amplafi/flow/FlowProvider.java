@@ -11,23 +11,12 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow.web;
-
-import org.amplafi.flow.FlowState;
+package org.amplafi.flow;
 
 /**
- * Implementors are adaptors between the application's web framework
- * and the amplafi-flow library.
- *
- * Implementors initialize the FlowState with information about which pages should be displayed
- * when the FlowState is displayed.
  * @author patmoore
  *
  */
-public interface PageProvider {
-    /**
-     * Called after the FlowState is created ( {@link org.amplafi.flow.FlowStateLifecycle#created} ) but before initialization.
-     * @param flowState
-     */
-    void initializePages(FlowState flowState);
+public interface FlowProvider {
+    <F extends Flow> F getFlow();
 }

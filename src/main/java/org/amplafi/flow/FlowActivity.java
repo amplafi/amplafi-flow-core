@@ -19,7 +19,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 /*
  * @author patmoore
  */
-public interface FlowActivity extends FlowPropertyProviderWithValues {
+public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvider {
     /**
      * Used to control which FlowActivities a user may select. This is used to
      * prevent the user from jumping ahead in a flow.
@@ -80,8 +80,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues {
      * @return the next FlowState that is now the current FlowState.
      */
     FlowState finishFlow(FlowState currentNextFlowState);
-
-    <F extends Flow> F getFlow();
 
     /**
      * @return the pageName.

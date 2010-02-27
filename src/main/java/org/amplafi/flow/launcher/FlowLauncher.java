@@ -14,10 +14,10 @@
 package org.amplafi.flow.launcher;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.SerializableCallable;
 
 
 /**
@@ -25,9 +25,10 @@ import org.amplafi.flow.SerializableCallable;
  *
  * FlowLaunchers are used when it is desired to encapsulate the state surrounding starting/continuing a new flow
  * before it is known if the starting will actually happen.
+ *
  * @author Patrick Moore
  */
-public interface FlowLauncher extends SerializableCallable<FlowState> {
+public interface FlowLauncher extends Callable<FlowState> {
     public static final String FLOW_ID = "fid";
     public static final String ADVANCE_TO_END = "advance";
     public static final String AS_FAR_AS_POSSIBLE = "afap";
@@ -44,6 +45,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      */
     public static final String COMPLETE_FLOW = "fsCompleteFlow";
     public static final String FLOW_STATE_JSON_KEY = "flowState";
+    FlowManagement getFlowManagement();
     void setFlowManagement(FlowManagement sessionFlowManagement);
     /**
      * enter the flow.
@@ -53,6 +55,7 @@ public interface FlowLauncher extends SerializableCallable<FlowState> {
      */
     FlowState call();
     String getFlowLabel();
+    void setFlowLabel(String flowLabel);
     /**
      *
      * @return the flow type this {@link FlowLauncher launcher}.

@@ -66,7 +66,20 @@ public interface FlowStateImplementor extends FlowState {
 
 
     void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle);
+    /**
+     * set the page that the flow should tell the UI to go to when this flow completes.
+     * sets the {@link org.amplafi.flow.FlowConstants#FSAFTER_PAGE} property.
+     * @see org.amplafi.flow.FlowConstants#FSDEFAULT_AFTER_PAGE
+     * @see org.amplafi.flow.FlowConstants#FSDEFAULT_AFTER_CANCEL_PAGE
+     *
+     * @param afterPage
+     */
     void setAfterPage(String afterPage);
+    /**
+     * set the {@link org.amplafi.flow.FlowConstants#FSPAGE_NAME}
+     * @param currentPage
+     */
+    void setCurrentPage(String currentPage);
     void setCancelText(String cancelText);
     void setFinishText(String finishText);
 

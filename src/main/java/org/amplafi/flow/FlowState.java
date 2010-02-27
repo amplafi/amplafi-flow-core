@@ -27,7 +27,7 @@ import org.amplafi.flow.validation.FlowValidationException;
  * Implementations hold the state of an active Flow. Implementers should expect
  * to be stored in a Session and should be serializable.
  */
-public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity>, FlowPropertyProviderWithValues {
+public interface FlowState extends ListIterator<FlowActivity>, Serializable, Iterable<FlowActivity>, FlowPropertyProviderWithValues, FlowProvider {
 
     /**
      * Copy all Flow-level {@link org.amplafi.flow.FlowPropertyDefinition}'s initial values to the flowState's key value map.
@@ -197,8 +197,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getFlowTypeName();
 
-    <T extends Flow> T getFlow();
-
     boolean isTrue(String key);
 
     Boolean getBoolean(String key);
@@ -233,6 +231,10 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     FlowValidationResult getFinishFlowValidationResult();
     FlowValidationResult getFullFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 
+    /**
+     *
+     * @return the page the UI should be on after this flow completes
+     */
     String getAfterPage();
 
     boolean isUpdatePossible();

@@ -37,7 +37,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public interface Flow extends FlowPropertyProvider {
+public interface Flow extends FlowPropertyProvider, FlowProvider {
 
     /**
      * @param <T>
@@ -46,13 +46,6 @@ public interface Flow extends FlowPropertyProvider {
     <T extends FlowActivity> List<T> getActivities();
 
     <T extends FlowActivity> T getActivity(int activityIndex);
-
-    /**
-     * add another {@link FlowActivityImplementor} to the end of this Flow. The {@link FlowActivityImplementor#getFlowPropertyProviderName()} must
-     * not duplicate the name of any previously added FlowActivityImplementor. The check is case-insensitive.
-     * @param activity
-     */
-    void addActivity(FlowActivityImplementor activity);
 
     /**
      * @return Returns the definition.
@@ -67,17 +60,11 @@ public interface Flow extends FlowPropertyProvider {
      */
     String getFlowTitle();
 
-    void setFlowTitle(String flowTitle);
-
     /**
      * @return Used if this is a secondary flow that will be started as the next
      *         flow.
      */
     String getContinueFlowTitle();
-
-    void setContinueFlowTitle(String continueFlowTitle);
-
-    void setLinkTitle(String linkTitle);
 
     String getLinkTitle();
 
@@ -87,20 +74,12 @@ public interface Flow extends FlowPropertyProvider {
      */
     String getMouseoverEntryPointText();
 
-    void setMouseoverEntryPointText(String mouseoverEntryPointText);
-
     /**
      * @return Explanatory text about what the purpose of this flow is.
      */
     String getFlowDescriptionText();
 
-    void setFlowDescriptionText(String flowDescriptionText);
-
-    void setPageName(String pageName);
-
     String getPageName();
-
-    void setDefaultAfterPage(String defaultAfterPage);
 
     String getDefaultAfterPage();
 
@@ -123,7 +102,4 @@ public interface Flow extends FlowPropertyProvider {
      * no longer the current flow.
      */
     boolean isNotCurrentAllowed();
-
-    String toString();
-
 }

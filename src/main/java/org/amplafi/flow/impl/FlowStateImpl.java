@@ -796,6 +796,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         return pageName;
     }
 
+    public void setCurrentPage(String page) {
+        setProperty(FSPAGE_NAME, page);
+    }
+
     /**
      * @see org.amplafi.flow.FlowState#setActiveFlowLabel(java.lang.String)
      */
@@ -1425,9 +1429,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return result;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setAfterPage(java.lang.String)
-     */
     @Override
     public void setAfterPage(String afterPage) {
         this.setProperty(FSAFTER_PAGE, afterPage);
@@ -1486,9 +1487,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.getProperty(FSCANCEL_TEXT, String.class);
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setCancelText(java.lang.String)
-     */
     @Override
     public void setCancelText(String cancelText) {
         this.setProperty(FSCANCEL_TEXT, cancelText);
@@ -1502,9 +1500,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.getProperty(FSFINISH_TEXT, String.class);
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#setFinishText(java.lang.String)
-     */
     @Override
     public void setFinishText(String finishText) {
         this.setProperty(FSFINISH_TEXT, finishText);
@@ -1530,7 +1525,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     public void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle) {
         if ( this.flowStateLifecycle != flowStateLifecycle) {
             FlowStateLifecycle previousFlowLifecycleState = this.flowStateLifecycle;
-            this.flowStateLifecycle = STATE_CHECKER.checkAllowed(this.flowStateLifecycle, flowStateLifecycle);;
+            this.flowStateLifecycle = STATE_CHECKER.checkAllowed(this.flowStateLifecycle, flowStateLifecycle);
             this.getFlowManagement().lifecycleChange(this, previousFlowLifecycleState);
         }
     }

@@ -12,12 +12,11 @@
  * License.
  */
 package org.amplafi.flow.launcher;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.apache.commons.lang.ObjectUtils;
@@ -31,12 +30,6 @@ import static org.apache.commons.collections.CollectionUtils.*;
  */
 public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
     private static final long serialVersionUID = 7909909329479094947L;
-    private String flowTypeName;
-    private String flowLabel;
-    /**
-     * Used for Listable items.
-     */
-    private Object keyExpression;
     private List<String> initialValues;
     private transient Object propertyRoot;
 
@@ -44,7 +37,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
 
     }
     public StartFromDefinitionFlowLauncher(String flowTypeName, FlowManagement flowManagement) {
-        this(flowTypeName, new HashMap<String, String>(), flowManagement);
+        this(flowTypeName, null, flowManagement);
     }
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
             FlowManagement flowManagement) {
@@ -52,9 +45,12 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     }
 
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
-            FlowManagement flowManagement, Object keyExpression) {
-        super(flowManagement, initialFlowState);
-        this.flowTypeName = flowTypeName;
+            FlowManagement flowManagement, Serializable keyExpression) {
+        super(flowTypeName, flowManagement, initialFlowState, keyExpression);
+        this.keyExpression = keyExpression;
+    }
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState, Serializable keyExpression) {
+        super(flowTypeName, initialFlowState, keyExpression);
         this.keyExpression = keyExpression;
     }
     /**
@@ -70,9 +66,8 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     * @param keyExpression for html rendering identification.
     */
     public StartFromDefinitionFlowLauncher(String flowTypeName, Object propertyRoot, Iterable<String> initialValues,
-            FlowManagement flowManagement, Object keyExpression) {
-        super(flowManagement, null);
-        this.flowTypeName = flowTypeName;
+            FlowManagement flowManagement, Serializable keyExpression) {
+        super(flowTypeName, flowManagement, null, keyExpression);
         this.setInitialValues(initialValues);
         this.keyExpression = keyExpression;
         this.propertyRoot = propertyRoot;
@@ -89,29 +84,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         return flowState;
     }
 
+    @Deprecated // used only one place and that is questionable.
     public void setFlowTypeName(String flowTypeName) {
         this.flowTypeName = flowTypeName;
-    }
-
-    @Override
-    public String getFlowTypeName() {
-        return flowTypeName;
-    }
-    public void setFlowLabel(String flowLabel) {
-        this.flowLabel = flowLabel;
-    }
-
-    @Override
-    public String getFlowLabel() {
-        if ( flowLabel == null ) {
-            Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
-            flowLabel = flow.getLinkTitle();
-        }
-        return flowLabel;
-    }
-
-    public void setKeyExpression(Object keyExpression) {
-        this.keyExpression = keyExpression;
     }
 
     public Object getKeyExpression() {
@@ -143,10 +118,5 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     }
     public Iterable<String> getInitialValues() {
         return initialValues;
-    }
-
-    @Override
-    public String toString() {
-        return "StartFromDefinitionFlowLauncher :" +this.flowTypeName+ " initialValues="+getValuesMap();
     }
 }

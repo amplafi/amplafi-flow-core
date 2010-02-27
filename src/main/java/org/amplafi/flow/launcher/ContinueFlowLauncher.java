@@ -16,6 +16,8 @@ package org.amplafi.flow.launcher;
 
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.*;
+
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 
@@ -29,19 +31,12 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
 
     private static final long serialVersionUID = -1221490458104629351L;
     private String lookupKey;
-    private String flowTypeName;
-
     public ContinueFlowLauncher() {
 
     }
-    public ContinueFlowLauncher(String lookupKey, FlowManagement flowManagement) {
-        super(flowManagement, null);
-        this.lookupKey = lookupKey;
-    }
     public ContinueFlowLauncher(FlowState flowState, FlowManagement flowManagement) {
-        super(flowManagement, null);
+        super(flowState.getFlowTypeName(), flowManagement, null, flowState.getLookupKey());
         this.lookupKey = flowState.getLookupKey();
-        this.flowTypeName = flowState.getFlowTypeName();
     }
 
     public FlowState getFlowState() {
@@ -57,18 +52,24 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
     public FlowState call() {
         return getFlowManagement().continueFlowState(lookupKey, true, this.getValuesMap());
     }
+    @Override
     public String getFlowLabel() {
-        if ( getFlowState() == null ) {
-            return "";
-        } else {
-            return getFlowState().getActiveFlowLabel();
+        String linkLabel = null;
+        if ( getFlowState() != null ) {
+            linkLabel = getFlowState().getActiveFlowLabel();
         }
+        if ( isBlank(linkLabel)) {
+            linkLabel = super.getFlowLabel();
+        }
+        return linkLabel;
     }
 
+    @Override
     public void setFlowLabel(String label) {
         if ( getFlowState() != null ) {
             getFlowState().setActiveFlowLabel(label);
         }
+        super.setFlowLabel(label);
     }
 
     public Object getKeyExpression() {
@@ -77,11 +78,6 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
 
     public boolean hasKey(Object key) {
         return this.lookupKey.equals(key);
-    }
-
-    @Override
-    public String getFlowTypeName() {
-        return this.flowTypeName;
     }
 
     @SuppressWarnings("unchecked")
