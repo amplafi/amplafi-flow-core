@@ -38,7 +38,6 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     @Override
-    @SuppressWarnings({"unused"})
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, TimeZone object) {
         toJson(jsonWriter, object);
         return jsonWriter;
@@ -58,7 +57,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     /**
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, java.lang.Object[])
      */
-    @SuppressWarnings({"unchecked","unused"})
+    @SuppressWarnings({"unchecked"})
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
         if ( value == null ) {

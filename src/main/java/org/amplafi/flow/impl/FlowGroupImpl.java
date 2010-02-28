@@ -68,9 +68,6 @@ public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> imp
         return definitionSource.isFlowDefined(flowTypeName);
     }
 
-    /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#getFlowState()
-     */
     @Override
     public <FS extends FlowState> FS getFlowState() {
         // flow groups do not have a FlowState.

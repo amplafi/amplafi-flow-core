@@ -37,6 +37,7 @@ public interface FlowManager {
     /**
      * TODO: Need to define if the FlowManagement object is saved by FlowManager implementations.
      * if so how? per session? per thread?
+     * @param <FM>
      * @return (possibly new) FlowManagement object.
      */
     <FM extends FlowManagement> FM getFlowManagement();

@@ -19,10 +19,10 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 /**
  * @author patmoore
  *
- * TODO: eliminate extension of FlowPropertyValueChangeListener
+ * TODO: may not make sense to extend FlowStateProvider as definition FlowActivityImplementors will not have a FlowState.
  *
  */
-public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor {
+public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor, FlowStateProvider {
     /**
      * @return instance of this definition
      */

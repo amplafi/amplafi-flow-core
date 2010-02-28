@@ -43,7 +43,6 @@ public class ListFlowTranslator<T> extends FlowCollectionTranslator<List<? exten
     }
 
     @Override
-    @SuppressWarnings("unused")
     public List<? extends T> getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return new ArrayList<T>();
     }

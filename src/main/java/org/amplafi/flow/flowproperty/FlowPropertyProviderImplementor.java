@@ -16,13 +16,13 @@ package org.amplafi.flow.flowproperty;
 import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateProvider;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, Resolvable {
+public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, Resolvable, FlowStateProvider {
     /**
      * @param flowPropertyProviderName The flowPropertyProviderName to set.
      */
@@ -32,7 +32,4 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, R
     void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
 
     void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
-
-    <FS extends FlowState> FS getFlowState();
-
 }

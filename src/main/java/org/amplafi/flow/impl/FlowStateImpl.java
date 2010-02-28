@@ -1738,6 +1738,15 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     }
 
+    /**
+     * @see org.amplafi.flow.FlowStateProvider#getFlowState()
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <FS extends FlowState> FS getFlowState() {
+        return (FS) this;
+    }
+
     public boolean isApiCall() {
         return isTrue(FSAPI_CALL);
     }
