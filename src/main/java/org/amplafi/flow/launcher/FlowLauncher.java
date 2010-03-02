@@ -54,8 +54,8 @@ public interface FlowLauncher extends Callable<FlowState> {
      *
      */
     FlowState call();
-    String getFlowLabel();
-    void setFlowLabel(String flowLabel);
+    String getLinkTitle();
+    void setLinkTitle(String flowLabel);
     /**
      *
      * @return the flow type this {@link FlowLauncher launcher}.

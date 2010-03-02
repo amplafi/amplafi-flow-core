@@ -20,9 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 import com.sworddance.util.CUtilities;
 
@@ -109,25 +112,38 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     public String putIfAbsent(String key, String defaultValue) {
         return this.getValuesMap().putIfAbsent(key, defaultValue);
     }
+
+    public String get(Object key) {
+        return this.getValuesMap().get(key);
+    }
     public String getListDisplayValue() {
-        return getFlowLabel();
+        return getLinkTitle();
     }
     @Override
     public String getFlowTypeName() {
         return flowTypeName;
     }
-    public void setFlowLabel(String flowLabel) {
-        this.put(FSTITLE_TEXT, flowLabel);
+    public void setLinkTitle(String linkTitle) {
+        this.put(FSLINK_TEXT, linkTitle);
     }
     @Override
-    public String getFlowLabel() {
-        String flowLabel = this.getInitialFlowState().get(FSTITLE_TEXT);
-        if ( flowLabel == null && this.flowManagement !=null ) {
-            Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
-            flowLabel = flow.getLinkTitle();
+    public String getLinkTitle() {
+        String linkTitle = this.get(FSLINK_TEXT);
+        if ( isBlank(linkTitle) ) {
+            FlowPropertyProviderWithValues flowPropertyProvider = getFlowState();
+            if ( flowPropertyProvider != null ) {
+                linkTitle = flowPropertyProvider.getProperty(FSLINK_TEXT);
+            }
+            if ( isBlank(linkTitle) && this.flowManagement !=null) {
+                Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
+                linkTitle = flow.getLinkTitle();
+            }
         }
-        return flowLabel;
+        return linkTitle;
     }
+
+    protected abstract FlowState getFlowState();
+
     @Override
     public String toString() {
         return this.getClass().getSimpleName()+" :" +this.getFlowTypeName()+ " initialValues="+getValuesMap();

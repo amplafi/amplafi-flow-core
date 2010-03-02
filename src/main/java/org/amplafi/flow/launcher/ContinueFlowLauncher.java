@@ -53,23 +53,23 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
         return getFlowManagement().continueFlowState(lookupKey, true, this.getValuesMap());
     }
     @Override
-    public String getFlowLabel() {
+    public String getLinkTitle() {
         String linkLabel = null;
         if ( getFlowState() != null ) {
             linkLabel = getFlowState().getActiveFlowLabel();
         }
         if ( isBlank(linkLabel)) {
-            linkLabel = super.getFlowLabel();
+            linkLabel = super.getLinkTitle();
         }
         return linkLabel;
     }
 
     @Override
-    public void setFlowLabel(String label) {
+    public void setLinkTitle(String label) {
         if ( getFlowState() != null ) {
             getFlowState().setActiveFlowLabel(label);
         }
-        super.setFlowLabel(label);
+        super.setLinkTitle(label);
     }
 
     public Object getKeyExpression() {

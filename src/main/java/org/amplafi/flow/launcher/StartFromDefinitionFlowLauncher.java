@@ -119,4 +119,13 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     public Iterable<String> getInitialValues() {
         return initialValues;
     }
+    /**
+     * @see org.amplafi.flow.launcher.BaseFlowLauncher#getFlowState()
+     */
+    @Override
+    protected FlowState getFlowState() {
+        return null;
+    }
+
+
 }

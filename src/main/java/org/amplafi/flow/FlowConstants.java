@@ -25,6 +25,10 @@ public interface FlowConstants {
      */
     public static final String FSTITLE_TEXT = "fsTitleText";
     /**
+     * TODO: need to add and eliminate FlowImpl.linkTitle
+     */
+    public static final String FSLINK_TEXT = "fsLinkText";
+    /**
      * An individual FlowActivity's title
      */
     public static final String FATITLE_TEXT = "faTitleText";

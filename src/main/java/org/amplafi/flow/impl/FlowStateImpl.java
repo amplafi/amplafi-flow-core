@@ -820,6 +820,18 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
 
+    // TODO: merge? with activeFlowLabel?
+    /**
+     * @return the text for a link to activate this FlowState
+     */
+    public String getLinkTitle() {
+        String linkTitle = getProperty(FSLINK_TEXT);
+        if ( isBlank(linkTitle)) {
+            linkTitle = this.getFlow().getLinkTitle();
+        }
+        return linkTitle;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T extends FlowActivity> T getActivity(int activityIndex) {
@@ -1140,10 +1152,11 @@ public class FlowStateImpl implements FlowStateImplementor {
             flowTitle = this.getFlow().getFlowTitle();
         }
         if (isBlank(flowTitle)) {
-            flowTitle = this.getFlow().getLinkTitle();
+            flowTitle = getLinkTitle();
         }
         return flowTitle;
     }
+
 
     @Override
     public synchronized void setCached(String namespace, String key, Object value) {
