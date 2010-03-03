@@ -179,6 +179,7 @@ public interface FlowConstants {
      * the new flow type that should be started.
      * Used by {@link org.amplafi.flow.impl.TransitionFlowActivity}, seems like should be combined with {@link #FSFLOW_TRANSITIONS}
      * But need to handle "default" specified via xml?
+     * Also can be specified via url parameters.
      */
     @Deprecated
     public static final String FSNEXT_FLOW = "fsNextFlow";
