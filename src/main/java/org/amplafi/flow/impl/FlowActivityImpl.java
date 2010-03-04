@@ -253,6 +253,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @SuppressWarnings("unchecked")
     public void saveChanges() {
+        // TODO: refactor so that FlowStateImpl can save the global flow Properties.
+        // TODO: make sure that each property is only saved once.
+        // TODO: have mechanism to determine if a property has been changed.
+        // TODO: security mechanism on who is allowed to change the value.
         Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
         if ( MapUtils.isNotEmpty(definitions)) {
             for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
@@ -272,6 +276,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return currentNextFlowState;
     }
 
+    @SuppressWarnings("unchecked")
     public FlowImplementor getFlow() {
         return flow;
     }
