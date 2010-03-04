@@ -42,6 +42,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
+import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -222,6 +223,7 @@ public class BaseFlowManagement implements FlowManagement {
                 String flowType = currentActivity.resolveIndirectReference(flowTransition.getNextFlowType());
                 if (isNotBlank(flowType)) {
                     nextFlowState = this.createFlowState(flowType, flowState.getExportedValuesMap(), false);
+                    FlowUtils.INSTANCE.copyMapToFlowState(nextFlowState, flowTransition.getInitialValues());
                 }
             }
         }
