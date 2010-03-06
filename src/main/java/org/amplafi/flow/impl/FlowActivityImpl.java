@@ -600,9 +600,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                         + " has a FlowPropertyDefinition '"
                         + definition.getName()
                         + "' that conflicts with flow's property definition. The data classes are NOT mergeable. This might cause problems so the FlowActivity's definition will be marked as 'activityLocal' and 'internalState'.");
-                    definition.setPropertyUsage(PropertyUsage.internalState);
+                    ((FlowPropertyDefinitionImplementor)definition).setPropertyUsage(PropertyUsage.internalState);
                 }
-                definition.setPropertyScope(activityLocal);
+                ((FlowPropertyDefinitionImplementor)definition).setPropertyScope(activityLocal);
             } else {
                 // no flow version of this property.
                 // NOTE that this means the first FlowActivity to define this property sets the meaning for the whole flow.
@@ -617,16 +617,17 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinition definition) {
         if (getFlow() != null && !definition.isLocal()) {
-            FlowPropertyDefinition flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
+            FlowPropertyDefinitionImplementor flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
             if (flowProp == null ) {
                 // push up to flow so that other can see it.
-                FlowPropertyDefinition cloned = definition.clone();
+                // seems like flows should handle this issue with properties.
+                FlowPropertyDefinitionImplementor cloned = definition.clone();
                 // a FPD may be pushed so for an earlier FA may not require the property be set.
-                cloned.setRequired(false);
+                cloned.setPropertyRequired(FlowActivityPhase.optional);
                 this.getFlow().addPropertyDefinitions(cloned);
             } else if ( flowProp.isMergeable(definition)) {
                 flowProp.merge(definition);
-                flowProp.setRequired(false);
+                flowProp.setPropertyRequired(FlowActivityPhase.optional);
             }
         }
     }

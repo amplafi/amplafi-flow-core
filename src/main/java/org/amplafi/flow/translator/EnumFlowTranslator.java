@@ -34,7 +34,7 @@ public class EnumFlowTranslator<T> extends AbstractFlowTranslator<T> implements 
     @SuppressWarnings("unchecked")
     public EnumFlowTranslator(EnumFlowTranslator<?> original, Class<T> translatedClass) {
         super(original);
-        this.jsonRenderer = EnumJsonRenderer.INSTANCE;
+        this.setJsonRenderer(EnumJsonRenderer.INSTANCE);
         this.translatedClass = translatedClass;
     }
 

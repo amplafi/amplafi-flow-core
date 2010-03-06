@@ -47,7 +47,6 @@ import com.sworddance.util.ApplicationNullPointerException;
  * @author Patrick Moore
  */
 public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImplementor, FlowPropertyDefinitionProvider {
-    private static final String REQUIRED = "required";
 
     /**
      * Name of the property as used in the flow code.
@@ -101,6 +100,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private PropertySecurity propertySecurity;
 
+    /**
+     * A string meaningful to the UI framework
+     */
     private String validators;
     private FlowActivityPhase flowActivityPhase;
     private PropertyUsage propertyUsage;
@@ -153,19 +155,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     /**
-     * Creates a named String property having the given validators.
-     *
-     * @param name property name
-     * @param validators validators for the property.
-     */
-    public FlowPropertyDefinitionImpl(String name, String validators) {
-        this.setName(name);
-        this.validators = validators;
-        this.flowActivityPhase = isRequired()?FlowActivityPhase.advance: FlowActivityPhase.optional;
-        dataClassDefinition = new DataClassDefinitionImpl();
-    }
-
-    /**
      * Creates an optional property of the given type.
      *
      * @param name
@@ -203,7 +192,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     public FlowPropertyDefinitionImpl(String name, FlowActivityPhase required, DataClassDefinitionImpl dataClassDefinition) {
         this.setName(name);
         this.flowActivityPhase = required;
-        this.setRequired(required==FlowActivityPhase.advance);
         this.dataClassDefinition = dataClassDefinition;
     }
 
@@ -317,6 +305,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return flowPropertyDefinition;
     }
 
+    @Override
     public FlowTranslator<?> getTranslator() {
         return this.getDataClassDefinition().getFlowTranslator();
     }
@@ -374,31 +363,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     public FlowPropertyDefinitionImpl initParameterName(String parameterName) {
         setUiComponentParameterName(parameterName);
         return this;
-    }
-
-    public boolean isRequired() {
-        return validators != null && validators.contains(REQUIRED);
-    }
-
-    public void setRequired(boolean required) {
-        if (isRequired() != required) {
-            if (required) {
-                validators = StringUtils.isBlank(validators) ? REQUIRED : validators + ","
-                        + REQUIRED;
-            } else if (validators.length() == REQUIRED.length()) {
-                validators = null;
-            } else {
-                int i = validators.indexOf(REQUIRED);
-                if (i == 0) {
-                    // remove trailing ','
-                    validators = validators.substring(REQUIRED.length() + 1);
-                } else {
-                    // remove preceding ','
-                    validators = validators.substring(0, i - 1)
-                            + validators.substring(i + REQUIRED.length());
-                }
-            }
-        }
     }
 
     public void setAutoCreate(boolean autoCreate) {

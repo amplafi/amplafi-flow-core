@@ -980,10 +980,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     public <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition propertyDefinition) {
         T result = (T) getCached(propertyDefinition, flowPropertyProvider);
         if ( result == null ) {
+            getFlowManagement().wireDependencies(propertyDefinition);
             String value = getRawProperty(flowPropertyProvider, propertyDefinition);
             result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(value);
             if (result == null && propertyDefinition.isAutoCreate()) {
-                getFlowManagement().wireDependencies(propertyDefinition.getFlowPropertyValueProvider());
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
                 // TODO: Maybe should be checking !isCacheOnly() ?
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
@@ -1001,12 +1001,12 @@ public class FlowStateImpl implements FlowStateImplementor {
     public <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         Object actual;
         String stringValue = null;
-
+        getFlowManagement().wireDependencies(propertyDefinition);
         if (value instanceof String && propertyDefinition.getDataClass() != String.class) {
             // handle case for when initializing from string values.
             // or some other raw format.
             stringValue = (String) value;
-            actual = (propertyDefinition).parse(stringValue);
+            actual = propertyDefinition.parse(stringValue);
         } else {
             actual = value;
         }

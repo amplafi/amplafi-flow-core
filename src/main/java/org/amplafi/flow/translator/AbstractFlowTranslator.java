@@ -27,12 +27,18 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
+/**
+ *
+ * @author patmoore
+ *
+ * @param <T> class being translated.
+ */
 public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     private FlowTranslatorResolver flowTranslatorResolver;
     protected List<Class<?>> serializedFormClasses = new ArrayList<Class<?>>();
     private List<Class<?>> deserializedFormClasses = new ArrayList<Class<?>>();
     private boolean flowTranslatorJsonRenderer;
-    protected JsonRenderer<T> jsonRenderer;
+    private JsonRenderer<T> jsonRenderer;
 
     @SuppressWarnings("unchecked")
     protected static final FlowTranslator<CharSequence> DEFAULT_FLOW_TRANSLATOR = CharSequenceFlowTranslator.INSTANCE;
@@ -137,7 +143,6 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object value) {
         if ( value == null ) {
             return true;
@@ -147,7 +152,6 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     @Override
-    @SuppressWarnings("unused")
     public T getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         return null;
     }
@@ -214,6 +218,10 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     @Override
     public JsonRenderer<T> getJsonRenderer() {
         return jsonRenderer == null && this.flowTranslatorJsonRenderer? (JsonRenderer<T>)this : jsonRenderer ;
+    }
+
+    protected void setJsonRenderer(JsonRenderer<T> jsonRenderer) {
+        this.jsonRenderer = jsonRenderer;
     }
 
     /**

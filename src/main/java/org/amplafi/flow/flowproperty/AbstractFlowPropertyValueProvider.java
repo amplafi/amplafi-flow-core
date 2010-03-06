@@ -20,6 +20,8 @@ import java.util.Set;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowValueMapKey;
+import org.amplafi.flow.FlowValuesMap;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -166,6 +168,16 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             }
         }
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
+    }
+
+    protected <T extends CharSequence> T getAdditionalConfigParameter(FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters, Object key, T defaultValue) {
+        T result;
+        if ( additionalConfigurationParameters != null && additionalConfigurationParameters.containsKey(key)) {
+            result = (T) additionalConfigurationParameters.get(key);
+        } else {
+            result = defaultValue;
+        }
+        return result;
     }
 
     /**

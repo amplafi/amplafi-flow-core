@@ -44,35 +44,35 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.*;
  */
 public class TestFlowPropertyDefinition {
     private static final boolean TEST_ENABLED = true;
-    @Test(enabled=TEST_ENABLED)
-    public void testValidateWith_empty() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl();
-        definition.validateWith("a", "b");
+//    @Test(enabled=TEST_ENABLED)
+//    public void testValidateWith_empty() {
+//        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl();
+//        definition.validateWith("a", "b");
+//
+//        assertFalse(definition.isRequired());
+//
+//        definition.addValidator("required");
+//        assertTrue(definition.isRequired());
+//        assertEquals(definition.getValidators(), "flowField=a-b,required");
+//    }
+//
+//    @Test(enabled=TEST_ENABLED)
+//    public void testValidateWith_required() {
+//        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
+//        definition.validateWith("pass");
+//
+//        assertTrue(definition.isRequired());
+//        assertEquals(definition.getValidators(), "required,flowField=pass");
+//    }
 
-        assertFalse(definition.isRequired());
-
-        definition.addValidator("required");
-        assertTrue(definition.isRequired());
-        assertEquals(definition.getValidators(), "flowField=a-b,required");
-    }
-
-    @Test(enabled=TEST_ENABLED)
-    public void testValidateWith_required() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
-        definition.validateWith("pass");
-
-        assertTrue(definition.isRequired());
-        assertEquals(definition.getValidators(), "required,flowField=pass");
-    }
-
-    @Test(enabled=TEST_ENABLED)
-    public void testValidate_required_and_extra_validator() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
-        definition.addValidator("email").initPropertyUsage(PropertyUsage.io);
-
-        assertTrue(definition.isRequired());
-        assertEquals(definition.getValidators(), "required,email");
-    }
+//    @Test(enabled=TEST_ENABLED)
+//    public void testValidate_required_and_extra_validator() {
+//        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
+//        definition.addValidator("email").initPropertyUsage(PropertyUsage.io);
+//
+//        assertTrue(definition.isRequired());
+//        assertEquals(definition.getValidators(), "required,email");
+//    }
 
     @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {
@@ -148,18 +148,6 @@ public class TestFlowPropertyDefinition {
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("u", clazz, FlowActivityPhase.advance);
         new FlowTestingUtils().resolveAndInit(definition);
         assertEquals(definition.getDefaultObject(new Dummy()), value);
-    }
-
-    @Test(enabled=TEST_ENABLED)
-    public void testFlowPropertyDefinitionCtor() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
-        new FlowTestingUtils().resolveAndInit(definition);
-        assertTrue(definition.isRequired());
-        assertEquals(definition.getName(), "foo");
-
-        definition = new FlowPropertyDefinitionImpl("foo1", Boolean.class).initDefaultObject(true);
-        assertFalse(definition.isRequired());
-        assertEquals(definition.getName(), "foo1");
     }
 
     /**
@@ -298,35 +286,6 @@ public class TestFlowPropertyDefinition {
         Map<String, URI> result = (Map<String, URI>) definition.parse(strV);
         assertTrue(result.equals(map));
     }
-    /**
-     * test handling "required" which can be in the validator list or as a separate boolean.
-     */
-    @Test(enabled=TEST_ENABLED)
-    public void testRemoveRequire() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance);
-        assertTrue(definition.isRequired());
-        assertTrue(definition.getValidators().contains("required"));
-        definition.setRequired(false);
-        assertNull(definition.getValidators());
-        definition.setValidators("peanuts");
-        definition.setRequired(false);
-        assertEquals(definition.getValidators(), "peanuts");
-        definition.setRequired(true);
-        assertEquals(definition.getValidators(), "peanuts,required");
-        definition.setRequired(false);
-        assertEquals(definition.getValidators(), "peanuts");
-        definition.setValidators("required,peanuts");
-        assertTrue(definition.isRequired());
-        assertTrue(definition.getValidators().contains("required"));
-        definition.setRequired(false);
-        assertEquals(definition.getValidators(), "peanuts");
-        definition.setValidators("peas,required,peanuts");
-        assertTrue(definition.isRequired());
-        assertTrue(definition.getValidators().contains("required"));
-        definition.setRequired(false);
-        assertEquals(definition.getValidators(), "peas,peanuts");
-    }
-
     /**
      * test all combinations of PropertyUsage and PropertyScope.
      * Only the correct combinations will result in external values initializing the flow

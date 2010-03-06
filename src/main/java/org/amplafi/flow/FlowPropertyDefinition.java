@@ -57,16 +57,18 @@ public interface FlowPropertyDefinition {
 
     <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
     <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
-
-    FlowPropertyDefinition clone();
+    /**
+     *
+     * @return the {@link FlowTranslator} used to serialize/deserialize the property value.
+     */
+    FlowTranslator<?> getTranslator();
+    <T extends FlowPropertyDefinition> T clone();
 
     /**
      * @return if property is local to the flow activity
      * @see org.amplafi.flow.flowproperty.PropertyScope#activityLocal
      */
     boolean isLocal();
-
-    void setRequired(boolean required);
 
     boolean isMergeable(FlowPropertyDefinition source);
     boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition);
@@ -91,8 +93,6 @@ public interface FlowPropertyDefinition {
      */
     PropertyUsage getPropertyUsage();
 
-    void setPropertyUsage(PropertyUsage propertyUsage);
-
     /**
      * The namespace used to retrieve this property while the flowState is actively running after the flowState's FlowValueMap has been initialized.
      *  ( using the namespaces listed in {@link #getNamespaceKeySearchList(FlowState, FlowPropertyProvider)} )
@@ -116,7 +116,6 @@ public interface FlowPropertyDefinition {
 
     boolean isAssignableFrom(Class<?> clazz);
 
-    boolean isRequired();
     /**
      *
      * @param possiblePropertyName
@@ -124,10 +123,6 @@ public interface FlowPropertyDefinition {
      */
     boolean isNamed(String possiblePropertyName);
 
-    /**
-     * @param activitylocal
-     */
-    void setPropertyScope(PropertyScope activitylocal);
     PropertyScope getPropertyScope();
 
     /**

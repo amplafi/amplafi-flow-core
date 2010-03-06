@@ -161,14 +161,13 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     /**
      * @param flowTranslator
      * @param clazz
-     * @return the previous FlowTranslator
      */
-    public FlowTranslator<?> addFlowTranslator(FlowTranslator<?> flowTranslator, Class<?> clazz) {
+    public void addFlowTranslator(FlowTranslator<?> flowTranslator, Class<?> clazz) {
         JsonRenderer<?> jsonRenderer = flowTranslator.getJsonRenderer();
         if ( jsonRenderer != null) {
             this.jsonRenderers.put(clazz, jsonRenderer);
         }
-        return translators.put(clazz, flowTranslator);
+        translators.put(clazz, flowTranslator);
     }
     /**
      * @see org.amplafi.flow.FlowTranslatorResolver#resolve(String, org.amplafi.flow.FlowPropertyDefinition)

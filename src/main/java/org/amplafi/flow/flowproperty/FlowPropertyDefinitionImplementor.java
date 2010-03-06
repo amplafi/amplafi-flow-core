@@ -32,4 +32,8 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
     <V> V parse(String value) throws FlowException;
+
+    void setPropertyScope(PropertyScope propertyScope);
+
+    void setPropertyUsage(PropertyUsage propertyUsage);
 }

@@ -407,6 +407,14 @@ public class BaseFlowManagement implements FlowManagement {
         if (object instanceof FlowPropertyProvider) {
             getFlowTranslatorResolver().resolve((FlowPropertyProvider)object);
         }
+        if ( object instanceof FlowPropertyDefinition) {
+            // HACK : really should be handling the wiring issue without special casing.
+            FlowPropertyDefinition flowPropertyDefinition = (FlowPropertyDefinition) object;
+            wireDependencies(flowPropertyDefinition.getFlowPropertyValueChangeListener());
+            wireDependencies(flowPropertyDefinition.getTranslator());
+            wireDependencies(flowPropertyDefinition.getFlowPropertyValuePersister());
+            wireDependencies(flowPropertyDefinition.getFlowPropertyValueProvider());
+        }
     }
     /**
      * @see org.amplafi.flow.FlowManagement#dropFlowStateByLookupKey(java.lang.String)

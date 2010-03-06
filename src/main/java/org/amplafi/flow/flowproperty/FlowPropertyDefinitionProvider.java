@@ -15,6 +15,7 @@ package org.amplafi.flow.flowproperty;
 
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 
 
@@ -30,11 +31,13 @@ import org.amplafi.flow.FlowValuesMap;
 public interface FlowPropertyDefinitionProvider {
 
     /**
-     * Add to the flowPropertyProvider the definitions needed by the
+     * Add to the flowPropertyProvider the definitions supplied by this FlowPropertyDefinitionProvider
+     *
+     * TODO: the wiring has not happened on this object when the define is called
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters some FlowPropertyDefinitionProvider need additional configuration parameters.
      */
-    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters);
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters);
 
 
 }
