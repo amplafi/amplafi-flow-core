@@ -31,6 +31,10 @@ import com.sworddance.core.Emptyable;
  */
 public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence> extends Emptyable, Map<K,V> {
 
+    /**
+     * FlowValueMap is expected to do any needed conversions to the FlowValueMapKey used (? what about put operations ? )
+     * @see java.util.Map#get(java.lang.Object)
+     */
     V get(Object key);
 
     V get(Object namespace, Object key);
@@ -44,6 +48,10 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      */
     V put(Object namespace, Object key, Object value);
 
+    /**
+     *
+     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+     */
     V put(K key, V value);
     /**
      * Removes the key.
@@ -75,7 +83,5 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
     Map<String, String> getAsStringMap(boolean trimEmptyBlank, boolean preserveNamespace);
 
     int size();
-
-
 
 }

@@ -28,7 +28,7 @@ import org.amplafi.json.IJsonWriter;
  */
 public interface FlowTranslatorResolver {
     /**
-     *
+     * Determines the FlowTranslators needed for the supplied {@link FlowPropertyDefinition}.
      * @param context TODO
      * @param flowPropertyDefinition
      */
