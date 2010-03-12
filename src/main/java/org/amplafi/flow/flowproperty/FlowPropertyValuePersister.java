@@ -23,5 +23,5 @@ import org.amplafi.flow.FlowPropertyDefinition;
  *
  */
 public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
-    void saveChanges(T FlowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
+    void saveChanges(T flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 }
