@@ -139,7 +139,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     }
 
     @Override
-    public void toJson(IJsonWriter jsonWriter) {
+    public IJsonWriter toJson(IJsonWriter jsonWriter) {
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());
@@ -149,6 +149,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         jsonWriter.keyValue(INITIAL_VALUES, getInitialValues());
         jsonWriter.keyValue(TRANSITION_COMPLETION_MESSAGE, this.getTransitionCompletionMessage());
         jsonWriter.endObject();
+        return jsonWriter;
 
     }
 

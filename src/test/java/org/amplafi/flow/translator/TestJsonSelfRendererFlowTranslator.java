@@ -59,8 +59,8 @@ public class TestJsonSelfRendererFlowTranslator extends AbstractTestFlowTranslat
         }
 
         @Override
-        public void toJson(IJsonWriter jsonWriter) {
-            jsonWriter.object().keyValue("name", getName()).endObject();
+        public IJsonWriter toJson(IJsonWriter jsonWriter) {
+            return jsonWriter.object().keyValue("name", getName()).endObject();
         }
 
         @Override
