@@ -41,7 +41,7 @@ public class ClearFlowsFlowActivity extends FlowActivityImpl {
     @Override
     public void initializeFlow() {
         super.initializeFlow();
-        if ( isPropertyNotSet(FLOWS)) {
+        if ( !isPropertySet(FLOWS)) {
             // we don't want to try to clear ourselves.
             ArrayList<String> l = new ArrayList<String>();
             for(FlowState fs: this.getFlowManagement().getFlowStates()) {
