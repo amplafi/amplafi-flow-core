@@ -243,6 +243,21 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return value;
     }
 
+    public boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider) {
+        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
+        if ( propertyValueProvider != null) {
+            Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
+            if (  expected.isAssignableFrom(flowPropertyProvider.getClass())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            // slight HACK as we should really check first and not actually get the default object.
+            return this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowPropertyProvider) != null;
+        }
+    }
+
     /**
      * @return
      */

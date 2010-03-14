@@ -45,9 +45,26 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
     <T> void setProperty(String key, T value) throws UnsupportedOperationException, IllegalStateException;
 
     /**
-     * checks to see if the property has been set without triggering the property initialization.
+     * checks to see if {@link #isPropertyValueSet(String)} or if the property has a {@link org.amplafi.flow.FlowPropertyValueProvider}.
+     *
+     * This method is NOT {@link #getProperty(String)} != null. Implementors check the actual storage to see if the value
+     * is set. This method is intended to avoid initialization overhead.
+     *
+     * FlowPropertyValueProvider
+     * are assumed to always supply a default. For complex {@link org.amplafi.flow.FlowPropertyValueProvider}s,
+     * this may not always be the case.
+     *
      * @param key
-     * @return true if the property is set.
+     * @return true if the property is set or if the property has a FlowPropertyValueProvider.
      */
     boolean isPropertySet(String key);
+    /**
+     * checks to see if the property is set.
+     *
+     * This method is NOT {@link #getProperty(String)} != null. Implementors check the actual storage to see if the value
+     * is set. This method is intended to avoid initialization overhead.
+     * @param key
+     * @return true if the property is set
+     */
+    boolean isPropertyValueSet(String key);
 }

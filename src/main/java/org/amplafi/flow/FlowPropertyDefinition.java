@@ -53,6 +53,12 @@ public interface FlowPropertyDefinition {
 
     Object getDefaultObject(FlowPropertyProvider flowPropertyProvider);
 
+    /**
+     *
+     * @param flowPropertyProvider
+     * @return true if {@link #getDefaultObject(FlowPropertyProvider)} will return a value
+     */
+    boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider);
     boolean isCacheOnly();
 
     <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();

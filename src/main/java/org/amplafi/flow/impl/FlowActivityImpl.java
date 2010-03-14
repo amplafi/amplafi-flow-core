@@ -337,7 +337,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         if (MapUtils.isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
                 if ((flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
-                        && isPropertyNotSet(def.getName())
+                        && !isPropertySet(def.getName())
                         && !def.isAutoCreate() ) {
                     result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));
                 }
@@ -507,7 +507,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @see org.amplafi.flow.FlowActivity#isInvisible()
      */
     public boolean isInvisible() {
-        if (isPropertyNotSet(FAINVISIBLE)) {
+        if (!isPropertyValueSet(FAINVISIBLE)) {
             return invisible;
         } else {
             return isTrue(FAINVISIBLE);
@@ -654,11 +654,22 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return flow.indexOf(this);
     }
 
-    public boolean isPropertyNotSet(String key) {
-        return getRawProperty(key) == null;
+    // Duplicated in FlowStateImpl
+    public boolean isPropertySet(String key) {
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        if ( !flowPropertyDefinition.isDefaultObjectAvailable(this)) {
+            return isPropertyValueSet(key);
+        } else {
+            return true;
+        }
     }
 
-    public boolean isPropertySet(String key) {
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#isPropertyValueSet(java.lang.String)
+     */
+    @Override
+    // Duplicated in FlowStateImpl
+    public boolean isPropertyValueSet(String key) {
         return getRawProperty(key) != null;
     }
 
@@ -765,10 +776,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return b != null && b;
     }
 
-    public boolean isFalse(String key) {
-        return !isTrue(key);
-    }
-
     /**
      *
      * @see org.amplafi.flow.FlowActivity#setProperty(java.lang.String, java.lang.Object)
@@ -847,10 +854,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      *
      * @param key
      * @param value
-     * @see #isPropertyNotSet(String)
+     * @see #isPropertyValueSet(String)
      */
     public void initPropertyIfNull(String key, Object value) {
-        if (isPropertyNotSet(key)) {
+        if (!isPropertyValueSet(key)) {
             this.setProperty(key, value);
         }
     }

@@ -162,12 +162,11 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      * Called before a flow is {@link #passivate(boolean, FlowStepDirection)} also called if the flow is not
      * advancing but wants to inform the current FlowActivity that all the
      * values from the UI have been refreshed so the FlowActivity can do any
-     * in-place updates. This can be used for the rare case when it is desireable
+     * in-place updates. This can be used for the rare case when it is desirable
      * to immediately commit a change to the database.
      */
     void refresh();
     boolean isFinishingActivity();
-    boolean isPropertyNotSet(String key);
 
     /**
      * Handles all the various namespaces that FlowActivity may be referenced by.

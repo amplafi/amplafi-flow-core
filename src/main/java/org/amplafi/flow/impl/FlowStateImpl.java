@@ -680,6 +680,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 }
             }
             // TODO: THIS block of code should be in the FlowManagement code.
+            // TODO: Put this in a FlowPropertyValueProvider !!
             // OLD note but may still be valid:
             // if continueWithFlow is not null then we do not want start
             // any other flows except continueWithFlow. Autorun flows should
@@ -1272,7 +1273,6 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @see java.util.ListIterator#add(java.lang.Object)
      */
     @Override
-    @SuppressWarnings("unused")
     public void add(FlowActivity e) {
         throw new UnsupportedOperationException("cannot add FlowActivities");
     }
@@ -1364,7 +1364,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void set(FlowActivity e) {
         throw new UnsupportedOperationException("TODO: Auto generated");
     }
@@ -1560,6 +1559,19 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     public boolean isPropertySet(String key) {
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        if ( !flowPropertyDefinition.isDefaultObjectAvailable(this)) {
+            return isPropertyValueSet(key);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#isPropertyValueSet(java.lang.String)
+     */
+    @Override
+    public boolean isPropertyValueSet(String key) {
         return getRawProperty(key) != null;
     }
 
