@@ -1561,12 +1561,13 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     public boolean isPropertySet(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
-        if ( !flowPropertyDefinition.isDefaultObjectAvailable(this)) {
+        // HACK : too problematic need better way to ask if a FlowPropertyValueProvider can actually return a value.
+//        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+//        if ( !flowPropertyDefinition.isDefaultObjectAvailable(this)) {
             return isPropertyValueSet(key);
-        } else {
-            return true;
-        }
+//        } else {
+//            return true;
+//        }
     }
 
     /**
