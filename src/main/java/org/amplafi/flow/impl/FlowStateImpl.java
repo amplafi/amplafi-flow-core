@@ -1037,10 +1037,12 @@ public class FlowStateImpl implements FlowStateImplementor {
         String oldValue = getRawProperty(namespace, key);
         String newValue = value;
         if (!StringUtils.equals(newValue, oldValue)) {
-            FlowPropertyValueChangeListener flowPropertyValueChangeListener = flowPropertyDefinition.getFlowPropertyValueChangeListener();
-            if ( flowPropertyValueChangeListener != null) {
-                this.getFlowManagement().wireDependencies(flowPropertyValueChangeListener);
-                newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
+            List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = flowPropertyDefinition.getFlowPropertyValueChangeListeners();
+            if ( isNotEmpty(flowPropertyValueChangeListeners)) {
+                for(FlowPropertyValueChangeListener flowPropertyValueChangeListener: flowPropertyValueChangeListeners) {
+                    this.getFlowManagement().wireDependencies(flowPropertyValueChangeListener);
+                    newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
+                }
             }
             if ( flowPropertyProvider instanceof FlowPropertyValueChangeListener) {
                 newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);

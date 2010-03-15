@@ -47,6 +47,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.web.PageProvider;
@@ -410,7 +411,9 @@ public class BaseFlowManagement implements FlowManagement {
         if ( object instanceof FlowPropertyDefinition) {
             // HACK : really should be handling the wiring issue without special casing.
             FlowPropertyDefinition flowPropertyDefinition = (FlowPropertyDefinition) object;
-            wireDependencies(flowPropertyDefinition.getFlowPropertyValueChangeListener());
+            for(FlowPropertyValueChangeListener flowPropertyValueChangeListener: flowPropertyDefinition.getFlowPropertyValueChangeListeners()) {
+                wireDependencies(flowPropertyValueChangeListener);
+            }
             wireDependencies(flowPropertyDefinition.getTranslator());
             wireDependencies(flowPropertyDefinition.getFlowPropertyValuePersister());
             wireDependencies(flowPropertyDefinition.getFlowPropertyValueProvider());

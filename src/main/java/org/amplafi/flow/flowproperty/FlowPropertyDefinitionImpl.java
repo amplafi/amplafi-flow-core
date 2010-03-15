@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
 import org.amplafi.json.JsonSelfRenderer;
@@ -66,7 +67,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     private FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
     private FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
-    private FlowPropertyValueChangeListener flowPropertyValueChangeListener;
+    private List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
@@ -254,7 +255,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             }
         } else {
             // slight HACK as we should really check first and not actually get the default object.
-            return this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowPropertyProvider) != null;
+            return false;//this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowPropertyProvider) != null;
         }
     }
 
@@ -705,8 +706,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             this.setDefaultObject(source.factoryFlowPropertyValueProvider);
         }
         // TODO: merging should handling chained notification.
-        if ( flowPropertyValueChangeListener == null && source.flowPropertyValueChangeListener != null ) {
-            this.setFlowPropertyValueChangeListener(source.flowPropertyValueChangeListener);
+        if ( flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
+            this.setFlowPropertyValueChangeListeners(source.flowPropertyValueChangeListeners);
         }
         if (initial == null && source.initial != null) {
             this.setInitial(source.initial);
@@ -839,20 +840,20 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     /**
      * @return the flowPropertyValueChangeListener
      */
-    public FlowPropertyValueChangeListener getFlowPropertyValueChangeListener() {
-        return flowPropertyValueChangeListener;
+    public List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners() {
+        return flowPropertyValueChangeListeners;
     }
 
     /**
-     * @param flowPropertyValueChangeListener the flowPropertyValueChangeListener to set
+     * @param flowPropertyValueChangeListeners the flowPropertyValueChangeListener to set
      */
-    public void setFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        this.flowPropertyValueChangeListener = flowPropertyValueChangeListener;
+    public void setFlowPropertyValueChangeListeners(List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
+        this.flowPropertyValueChangeListeners.clear();
+        this.flowPropertyValueChangeListeners.addAll(flowPropertyValueChangeListeners);
     }
 
-    @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        setFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
+        this.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
         return this;
     }
     @Override
@@ -1051,9 +1052,12 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor, org.amplafi.flow.FlowValuesMap)
+     */
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,
+        FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters) {
         flowPropertyProvider.addPropertyDefinition(this);
     }
 

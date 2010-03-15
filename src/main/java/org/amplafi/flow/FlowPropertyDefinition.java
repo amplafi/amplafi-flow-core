@@ -144,5 +144,5 @@ public interface FlowPropertyDefinition {
     /**
      * @return listener to be notified when the property changes value.
      */
-    FlowPropertyValueChangeListener getFlowPropertyValueChangeListener();
+    List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
 }
