@@ -29,7 +29,12 @@ import org.apache.commons.lang.ObjectUtils;
 public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> extends AbstractFlowPropertyValueProvider<FA> {
 
     private Object defaultObject;
-    private static Object NULL = new Object();
+    private static Object NULL = new Object() {
+        @Override
+        public String toString() {
+            return "<null>";
+        }
+    };
     /**
      * key off of FlowPropertyDefinition so that different FPD can translate defaultObject differently
      */
@@ -101,4 +106,8 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
         }
     }
 
+    @Override
+    public String toString() {
+        return "FixedProperty value="+getDefaultString();
+    }
 }
