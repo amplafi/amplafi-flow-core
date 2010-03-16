@@ -733,6 +733,8 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     public FlowValidationResult getFullFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         FlowValidationResult flowValidationResult = new ReportAllValidationResult();
+        // TODO : need to account for properties that earlier activities will create the property required by a later property.
+        // we should look for PropertyUsage.create (and equivalents )
         for(FlowActivity flowActivity: this.getActivities()) {
             FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(flowActivityPhase, flowStepDirection);
             flowValidationResult.merge(flowActivityValidationResult);
