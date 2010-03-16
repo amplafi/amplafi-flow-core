@@ -29,15 +29,15 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class FlowValidationException extends FlowException {
-    private final FlowValidationResult validationResult;
+    private final FlowValidationResult flowValidationResult;
 
-    public FlowValidationException(FlowValidationResult validationResult) {
-        this.validationResult = validationResult;
+    public FlowValidationException(FlowValidationResult flowValidationResult) {
+        this.flowValidationResult = flowValidationResult;
     }
 
     public FlowValidationException(FlowValidationTracking...flowValidationTrackings) {
         super("Validation Problem");
-        this.validationResult = new ReportAllValidationResult(flowValidationTrackings);
+        this.flowValidationResult = new ReportAllValidationResult(flowValidationTrackings);
     }
     public FlowValidationException(Throwable cause, FlowValidationTracking...flowValidationTrackings) {
         this(flowValidationTrackings);
@@ -46,7 +46,7 @@ public class FlowValidationException extends FlowException {
 
     public FlowValidationException(String key, FlowValidationTracking...flowValidationTrackings) {
         this(flowValidationTrackings);
-        this.validationResult.addTracking(new SimpleValidationTracking(key));
+        this.flowValidationResult.addTracking(new SimpleValidationTracking(key));
     }
 
     /**
@@ -55,11 +55,11 @@ public class FlowValidationException extends FlowException {
      */
     public FlowValidationException(FlowActivity currentActivity, FlowValidationResult flowValidationResult) {
         super(currentActivity.getFlowPropertyProviderFullName());
-        this.validationResult = flowValidationResult;
+        this.flowValidationResult = flowValidationResult;
     }
 
     public List<FlowValidationTracking> getTrackings() {
-        return this.validationResult.getTrackings();
+        return this.flowValidationResult.getTrackings();
     }
     @Override
     public FlowValidationException initCause(Throwable cause) {
@@ -71,12 +71,12 @@ public class FlowValidationException extends FlowException {
     /**
      * @return the result causing the problem
      */
-    public FlowValidationResult getResult() {
-        return this.validationResult;
+    public FlowValidationResult getFlowValidationResult() {
+        return this.flowValidationResult;
     }
     @Override
     public String toString() {
-        return this.getMessage()+" : "+ this.validationResult.toString()
+        return this.getMessage()+" : "+ this.flowValidationResult
             // CHECK Is the toString() used to print on the screen and that is why the stack trace is not visible?
             + StringUtils.join(super.getStackTrace(), "\n");
     }

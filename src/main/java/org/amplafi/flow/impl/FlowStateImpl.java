@@ -623,10 +623,16 @@ public class FlowStateImpl implements FlowStateImplementor {
     public void saveChanges() {
         LapTimer.sLap(this.getActiveFlowLabel()," beginning saveChanges()");
         for (int i = 0; i < this.size(); i++) {
-            FlowActivity activity = getActivity(i);
-            activity.saveChanges();
+            FlowActivity flowActivity = getActivity(i);
+            FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(FlowActivityPhase.saveChanges, FlowStepDirection.forward);
+            if (flowActivityValidationResult.isValid()) {
+                flowActivity.saveChanges();
+            } else {
+                // what to do?
+                throw new FlowValidationException(flowActivityValidationResult);
+            }
             // activity.refresh(); -- commented out because saves default values back to the flowState
-            LapTimer.sLap(activity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
+            LapTimer.sLap(flowActivity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
         }
         LapTimer.sLap(this.getActiveFlowLabel()," end saveChanges()");
     }
@@ -656,9 +662,6 @@ public class FlowStateImpl implements FlowStateImplementor {
 
             if (verifyValues) {
                 if (flowValidationResult.isValid()) {
-                    flowValidationResult = getFullFlowValidationResult(FlowActivityPhase.saveChanges, FlowStepDirection.forward);
-                }
-                if (flowValidationResult == null || flowValidationResult.isValid()) {
                     saveChanges();
                 } else {
                     throw new FlowValidationException(flowValidationResult);
