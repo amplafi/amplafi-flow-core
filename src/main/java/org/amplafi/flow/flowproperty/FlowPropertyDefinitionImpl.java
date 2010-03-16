@@ -853,7 +853,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     public FlowPropertyDefinitionImpl initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        this.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
+        if ( flowPropertyValueChangeListener != null) {
+            this.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
+        }
         return this;
     }
     @Override
