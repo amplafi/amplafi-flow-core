@@ -32,9 +32,6 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
 
     private Map<String, FlowPropertyDefinition> propertyDefinitions;
 
-    /**
-     * This is the activity name (id) of this FlowActivity.
-     */
     protected String flowPropertyProviderName;
 
     private transient boolean resolved;

@@ -48,8 +48,8 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
             flow = ((FlowProvider)flowPropertyProvider).getFlow();
         }
         if ( flow != null ) {
-            String flowPropertyProviderName = flow.getFlowPropertyProviderName();
-            standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flowPropertyProviderName)).append(".");
+            String flowTypeName = flow.getFlowPropertyProviderName();
+            standardKey.append("flow.").append(FlowUtils.INSTANCE.toLowerCase(flowTypeName)).append(".");
         }
         if (flowPropertyDefinition.getPropertyScope() == PropertyScope.activityLocal) {
             standardKey.append(FlowUtils.INSTANCE.toLowerCase(flowPropertyProvider.getFlowPropertyProviderName())).append(".");
