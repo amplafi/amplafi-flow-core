@@ -995,6 +995,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
+                    // also triggers FlowPropertyValueChangeListeners on the initial set.
                     setPropertyWithDefinition(flowPropertyProvider, (FlowPropertyDefinitionImplementor)propertyDefinition, result);
                 }
             }

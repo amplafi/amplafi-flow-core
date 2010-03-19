@@ -99,7 +99,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public FlowImpl() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use),
+            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
@@ -245,18 +245,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     protected FlowManagement getFlowManagement() {
         return this.getFlowState() == null ? null : this.getFlowState().getFlowManagement();
     }
-
-//    /**
-//     * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
-//     * Need somewhat to find statically defined properties - not enough to always be looking at the flowState.
-//     */
-//    @SuppressWarnings("unchecked")
-//    public <T> T getProperty(String key) {
-//        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
-//        FlowStateImplementor flowStateImplementor =  getFlowState();
-//        T result = null;//(T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
-//        return result;
-//    }
 
     /**
      * TODO -- copied from FlowActivityImpl -- not certain this is good idea.
