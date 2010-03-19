@@ -44,7 +44,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
      *
      * @param key
      * @param value
-     * @see #!isPropertySet(String)
+     * @see #isPropertySet(String)
      */
     void initPropertyIfNull(String key, Object value) ;
 
