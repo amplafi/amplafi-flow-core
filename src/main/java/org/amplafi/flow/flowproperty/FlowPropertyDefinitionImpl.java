@@ -858,6 +858,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
         return this;
     }
+
+    public boolean isDynamic() {
+        return this.flowPropertyValueChangeListeners != null && !this.flowPropertyValueChangeListeners.isEmpty();
+    }
     @Override
     public boolean equals(Object o) {
         if ( o == null || ! (o instanceof FlowPropertyDefinitionImpl)) {

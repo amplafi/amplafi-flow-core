@@ -145,4 +145,10 @@ public interface FlowPropertyDefinition {
      * @return listener to be notified when the property changes value.
      */
     List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
+
+    /**
+     * @return true if there are {@link #getFlowPropertyValueChangeListeners()} ( in future may have change listeners that
+     * are static. - i.e. don't ask to be updated. )
+     */
+    boolean isDynamic();
 }
