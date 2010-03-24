@@ -1047,11 +1047,11 @@ public class FlowStateImpl implements FlowStateImplementor {
             if ( isNotEmpty(flowPropertyValueChangeListeners)) {
                 for(FlowPropertyValueChangeListener flowPropertyValueChangeListener: flowPropertyValueChangeListeners) {
                     this.getFlowManagement().wireDependencies(flowPropertyValueChangeListener);
-                    newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
+                    newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, flowPropertyDefinition, newValue, oldValue);
                 }
             }
             if ( flowPropertyProvider instanceof FlowPropertyValueChangeListener) {
-                newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
+                newValue = ((FlowPropertyValueChangeListener)flowPropertyProvider).propertyChange(flowPropertyProvider, namespace, flowPropertyDefinition, newValue, oldValue);
             }
 
             FlowActivityImplementor activity = getActivity(namespace);
@@ -1059,7 +1059,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 activity = getCurrentFlowActivityImplementor();
             }
             if ( activity instanceof FlowPropertyValueChangeListener && activity != flowPropertyProvider) {
-                newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(flowPropertyProvider, namespace, key, newValue, oldValue);
+                newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(flowPropertyProvider, namespace, flowPropertyDefinition, newValue, oldValue);
             }
             put(namespace, key, newValue);
             return true;
