@@ -860,7 +860,22 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     public boolean isDynamic() {
-        return this.flowPropertyValueChangeListeners != null && !this.flowPropertyValueChangeListeners.isEmpty();
+        if (this.flowPropertyValueChangeListeners != null) {
+            for (FlowPropertyValueChangeListener flowPropertyValueChangeListener: this.flowPropertyValueChangeListeners) {
+                if ( isDynamic(flowPropertyValueChangeListener)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isDynamic(Object object) {
+        if ( object instanceof PossibleDynamic) {
+            return ((PossibleDynamic)object).isDynamic();
+        } else {
+            return false;
+        }
     }
     @Override
     public boolean equals(Object o) {
