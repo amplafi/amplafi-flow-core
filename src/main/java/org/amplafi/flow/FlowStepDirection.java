@@ -24,6 +24,8 @@ public enum FlowStepDirection {
     backward,
     inPlace;
 
+    private FlowStepDirection reverse;
+
     /**
      * Determine the FlowStepDirection based on the starting FlowActivity index and the next FlowActivity index.
      * @param currentFlowActivityIndex
@@ -38,5 +40,13 @@ public enum FlowStepDirection {
         } else {
             return forward;
         }
+    }
+    public FlowStepDirection getReverse() {
+        return reverse;
+    }
+
+    static {
+        forward.reverse = backward;
+        backward.reverse = forward;
     }
 }

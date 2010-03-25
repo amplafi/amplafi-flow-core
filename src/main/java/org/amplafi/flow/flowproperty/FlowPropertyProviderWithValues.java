@@ -36,6 +36,8 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * FlowPropertyBinding. Default behavior caches value and sets the property
      * to value.
      *
+     * TODO: If called on a definition have it set the default object on the definition ( if there is no other {@link org.amplafi.flow.FlowPropertyValueProvider} )
+     *
      * @param key
      * @param value
      * @param <T> value's type

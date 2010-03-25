@@ -100,16 +100,19 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * The page name that this FlowActivity will activate.
      */
+    @Deprecated // use FlowPropertyDefinition
     private String pageName;
 
     /**
      * The component name that this FlowActivity will activate.
      */
+    @Deprecated // use FlowPropertyDefinition
     private String componentName;
 
     /**
      * The flow title that the appears in the flow picture.
      */
+    @Deprecated // use FlowPropertyDefinition
     private String activityTitle;
 
     /**
@@ -117,16 +120,20 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * optional and the user may exit gracefully out of the flow if this
      * activity is the current activity.
      */
+    @Deprecated // use FlowPropertyDefinition
     private boolean finishingActivity;
 
     /**
      * indicates that this flow activity is accessible. Generally, each previous
      * step must be completed for the activity to be available.
      */
+    @Deprecated // use FlowPropertyDefinition
     private boolean activatable;
 
-    private boolean invisible;
+    @Deprecated // use FlowPropertyDefinition
+    private Boolean invisible;
 
+    @Deprecated // use FlowPropertyDefinition
     private boolean persistFlow;
 
     /**
@@ -164,7 +171,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use),
             new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use),
             new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, internalState)
+            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume)
         );
     }
 
@@ -490,8 +497,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         instance.persistFlow = persistFlow;
     }
 
-    public FlowActivityImpl initInvisible() {
-        setInvisible(true);
+    @SuppressWarnings("hiding")
+    public FlowActivityImpl initInvisible(Boolean invisible) {
+        this.invisible = invisible;
         return this;
     }
 
@@ -499,7 +507,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         // HACK -- larger problem this value is cached so the next FA looks invisible as well.
         // good test case complete the registration of a new user which transitions to the FinishSignUp.
         // the ChangePasswordFA acts as if it is invisible because of cached "faInvisible" value = true.
-//        this.setProperty(FAINVISIBLE, invisible);
+        if ( isInstance() ) {
+            this.setProperty(FAINVISIBLE, invisible);
+        }
+
         this.invisible = invisible;
     }
 
@@ -507,11 +518,19 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @see org.amplafi.flow.FlowActivity#isInvisible()
      */
     public boolean isInvisible() {
-        if (!isPropertyValueSet(FAINVISIBLE)) {
+        if (isPropertyValueSet(FAINVISIBLE)) {
+            // forced no matter what
+            return isTrue(FAINVISIBLE);
+        } else if (invisible != null ) {
             return invisible;
         } else {
-            return isTrue(FAINVISIBLE);
+            // no component -- how could this be visible?
+            return !isPossiblyVisible();
         }
+    }
+
+    public boolean isPossiblyVisible() {
+        return StringUtils.isNotBlank(getComponentName()) || StringUtils.isNotBlank(getPageName());
     }
 
     public void setPersistFlow(boolean persistFlow) {
@@ -779,7 +798,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
 
     /**
      *
-     * @see org.amplafi.flow.FlowActivity#setProperty(java.lang.String, java.lang.Object)
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#setProperty(java.lang.String, java.lang.Object)
      */
     @SuppressWarnings("unchecked")
     public <T> void setProperty(String key, T value) {

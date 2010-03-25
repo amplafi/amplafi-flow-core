@@ -74,7 +74,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
      *        is current.
      */
     void setFinishingActivity(boolean finishedActivity);
-    FlowActivity initInvisible();
+    FlowActivityImplementor initInvisible(Boolean invisible);
 
     void setInvisible(boolean invisible);
 

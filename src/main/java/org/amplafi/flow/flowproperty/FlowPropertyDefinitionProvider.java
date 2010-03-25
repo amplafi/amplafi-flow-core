@@ -36,6 +36,8 @@ public interface FlowPropertyDefinitionProvider {
      * TODO: the wiring has not happened on this object when the define is called
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters some FlowPropertyDefinitionProvider need additional configuration parameters.
+     * TODO: Using {@link FlowValuesMap} prevents us from passing in actual objects, seems wrong.
+     * TODO: seems like a map to return the created FPDs is appropriate.
      */
     void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters);
 

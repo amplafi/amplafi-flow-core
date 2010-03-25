@@ -298,7 +298,7 @@ public class TestFlowPropertyDefinition {
         String flowTypeName = "myflow";
         Map<String, String> initialFlowState= new HashMap<String, String>();
         {
-            FlowActivityImpl flowActivity = new FlowActivityImpl();
+            FlowActivityImpl flowActivity = newFlowActivity();
             flowActivity.setFlowPropertyProviderName(activityName);
             for (PropertyScope propertyScope: PropertyScope.values()) {
                 for(PropertyUsage propertyUsage: PropertyUsage.values()) {
@@ -363,7 +363,7 @@ public class TestFlowPropertyDefinition {
         List<String> namespaces;
         {
             // static test using FlowActivity
-            FlowActivityImpl flowActivity = new FlowActivityImpl();
+            FlowActivityImpl flowActivity = newFlowActivity();
             flowActivity.setFlowPropertyProviderName(activityName);
 
             flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
@@ -377,11 +377,13 @@ public class TestFlowPropertyDefinition {
             assertEquals(namespaces.get(2), null, "namespaces="+namespaces);
             assertEquals(namespaces.size(), 3, "namespaces="+namespaces);
             namespaces = activityLocalProperty.getNamespaceKeySearchList(null, flowActivity);
-            assertEquals(namespaces.get(0), flowActivity.getFlowPropertyProviderFullName(), "namespaces="+namespaces);
-            assertEquals(namespaces.get(1), flowActivity.getFlowPropertyProviderName(), "namespaces="+namespaces);
-            assertEquals(namespaces.get(2), flowTypeName, "namespaces="+namespaces);
-            assertEquals(namespaces.get(3), null, "namespaces="+namespaces);
-            assertEquals(namespaces.size(), 4, "namespaces="+namespaces);
+            int i = 0;
+            assertEquals(namespaces.get(i++), flowActivity.getFullActivityInstanceNamespace(), "namespaces="+namespaces);
+            assertEquals(namespaces.get(i++), flowActivity.getFlowPropertyProviderFullName(), "namespaces="+namespaces);
+            assertEquals(namespaces.get(i++), flowActivity.getFlowPropertyProviderName(), "namespaces="+namespaces);
+            assertEquals(namespaces.get(i++), flowTypeName, "namespaces="+namespaces);
+            assertEquals(namespaces.get(i++), null, "namespaces="+namespaces);
+            assertEquals(namespaces.size(), i, "namespaces="+namespaces);
         }
 
         {
@@ -427,11 +429,13 @@ public class TestFlowPropertyDefinition {
         assertTrue(namespace.contains(flowStateImpl.getLookupKey()), "namespace="+namespace+" fsLookupKey="+flowStateImpl.getLookupKey());
         assertTrue(namespace.contains(activityName), "namespace="+namespace);
         namespaces = activityLocalProperty.getNamespaceKeySearchList(flowStateImpl, flowActivity);
-        assertEquals(namespaces.get(0), namespace, "namespaces="+namespaces);
-        assertEquals(namespaces.get(1), activityName, "namespaces="+namespaces);
-        assertEquals(namespaces.get(2), flowTypeName, "namespaces="+namespaces);
-        assertEquals(namespaces.get(3), null, "namespaces="+namespaces);
-        assertEquals(namespaces.size(), 4, "namespaces="+namespaces);
+        int i = 0;
+        assertEquals(namespaces.get(i++), namespace, "namespaces="+namespaces);
+        assertEquals(namespaces.get(i++), flowActivity.getFlowPropertyProviderFullName(), "namespaces="+namespaces);
+        assertEquals(namespaces.get(i++), activityName, "namespaces="+namespaces);
+        assertEquals(namespaces.get(i++), flowTypeName, "namespaces="+namespaces);
+        assertEquals(namespaces.get(i++), null, "namespaces="+namespaces);
+        assertEquals(namespaces.size(), i, "namespaces="+namespaces);
     }
 
     /**
@@ -448,16 +452,16 @@ public class TestFlowPropertyDefinition {
         String propertyName = "propertyName";
 
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
-        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
 
-        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity1 = newFlowActivity();
         flowActivity1.setFlowPropertyProviderName("activity1");
         FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(activityLocal,internalState);
         flowActivity1.addPropertyDefinitions(activityLocalProperty);
 
-        FlowActivityImpl flowActivity2 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity2 = newFlowActivity();
         flowActivity2.setFlowPropertyProviderName("activity2");
         FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,io);
         flowActivity2.addPropertyDefinitions(globalProperty);
@@ -487,16 +491,16 @@ public class TestFlowPropertyDefinition {
         String propertyName = "propertyName";
 
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(flowLocal,initialize).initInitial("true");
-        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
 
-        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity1 = newFlowActivity();
         flowActivity1.setFlowPropertyProviderName("activity1");
         FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(activityLocal,internalState);
         flowActivity1.addPropertyDefinitions(activityLocalProperty);
 
-        FlowActivityImpl flowActivity2 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity2 = newFlowActivity();
         flowActivity2.setFlowPropertyProviderName("activity2");
         FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionImpl(propertyName, String.class).initAccess(flowLocal,io);
         flowActivity2.addPropertyDefinitions(globalProperty);
@@ -515,6 +519,13 @@ public class TestFlowPropertyDefinition {
         propertyValue = flowState.getProperty(propertyName, String.class);
         assertNotNull(propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
         assertEquals("true", propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
+    }
+
+    /**
+     * @return
+     */
+    private FlowActivityImpl newFlowActivity() {
+        return new FlowActivityImpl().initInvisible(false);
     }
 
     /**
@@ -540,7 +551,7 @@ public class TestFlowPropertyDefinition {
                 return FlowPropertyProvider.class;
             }
         });
-        FlowActivityImpl flowActivity0 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
@@ -551,6 +562,7 @@ public class TestFlowPropertyDefinition {
         Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertEquals(Boolean.TRUE,propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
     }
+
     @DataProvider(name = "serializationData")
     protected Object[][] getDataForSerialization() {
         return new Object[][]{

@@ -945,7 +945,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             switch(this.getPropertyScope()) {
             case activityLocal:
                 // TODO should really be ? but what about morphing??
-    //            list.add(flowActivity.getFullActivityName());
+                list.add(flowActivity.getFlowPropertyProviderFullName());
                 list.add(flowActivity.getFlowPropertyProviderName());
             case flowLocal:
             case requestFlowLocal:

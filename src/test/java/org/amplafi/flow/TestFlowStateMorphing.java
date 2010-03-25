@@ -154,7 +154,7 @@ public class TestFlowStateMorphing {
     }
 
     private FlowActivityImpl createFA(String name) {
-        FlowActivityImpl activity = new FlowActivityImpl();
+        FlowActivityImpl activity = new FlowActivityImpl().initInvisible(false);
         activity.setFlowPropertyProviderName(name);
         return activity;
     }

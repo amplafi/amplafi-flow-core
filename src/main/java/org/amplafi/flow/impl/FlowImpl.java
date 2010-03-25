@@ -72,18 +72,26 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     private FlowGroup primaryFlowGroup;
     private List<FlowActivityImplementor> activities;
 
+    @Deprecated // use FlowPropertyDefinition
     private String flowTitle;
+    @Deprecated // use FlowPropertyDefinition
     private String continueFlowTitle;
+    @Deprecated // use FlowPropertyDefinition
     private String linkTitle;
+    @Deprecated // use FlowPropertyDefinition
     private String pageName;
+    @Deprecated // use FlowPropertyDefinition
     private String defaultAfterPage;
 
+    @Deprecated // use FlowPropertyDefinition
     private String mouseoverEntryPointText;
 
+    @Deprecated // use FlowPropertyDefinition
     private String flowDescriptionText;
 
     private FlowState flowState;
 
+    @Deprecated // use FlowPropertyDefinition
     private boolean activatable;
 
     /**
@@ -91,6 +99,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      * Flow type is no longer the current flow (after being the current flow), the FlowState
      * is dropped.
      */
+    @Deprecated // use FlowPropertyDefinition
     private boolean notCurrentAllowed;
 
     /**
@@ -235,7 +244,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public <T extends FlowActivity> List<T> getVisibleActivities() {
         List<T> list = new ArrayList<T>();
         for(FlowActivity flowActivity: this.activities) {
-            if (!flowActivity.isInvisible() && !StringUtils.isBlank(flowActivity.getComponentName())) {
+            if (!flowActivity.isInvisible() ) {
                 list.add((T)flowActivity);
             }
         }

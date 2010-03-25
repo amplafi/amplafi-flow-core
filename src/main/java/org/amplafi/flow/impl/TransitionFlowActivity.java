@@ -18,7 +18,6 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
@@ -85,12 +84,6 @@ public class TransitionFlowActivity extends FlowActivityImpl {
         transitionFlowActivity.transitionType = transitionType;
     }
 
-    @Override
-    public void initializeFlow() {
-        super.initializeFlow();
-        setInvisible(isBlank(getPageName()) && isBlank(getComponentName()));
-    }
-
     /**
      *
      */
@@ -107,14 +100,6 @@ public class TransitionFlowActivity extends FlowActivityImpl {
             this.handleFlowPropertyValueProvider(FSFLOW_TRANSITIONS,
                 new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, FlowTransition>(new FlowTransition(getFinishKey(), null, getFsFlowTransitionLabel(), transitionType, null)));
         }
-    }
-    /**
-     * advance to next FlowActivity if we have no component (or page) or the
-     * superclass
-     */
-    @Override
-    public boolean activate(FlowStepDirection flowStepDirection) {
-        return super.activate(flowStepDirection) || (isBlank(getPageName()) && isBlank(getComponentName()));
     }
 
     @Override

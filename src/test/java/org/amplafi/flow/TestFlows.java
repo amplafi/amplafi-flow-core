@@ -24,8 +24,12 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.testng.annotations.Test;
+
+import com.sworddance.util.map.NamespaceMapKey;
+
 import static org.testng.Assert.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.FlowConstants.*;
 
 /**
  * Tests around flows that don't require db.
@@ -126,8 +130,8 @@ public class TestFlows {
     @Test(enabled=TEST_ENABLE)
     public void testVisiblePreviousNext() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE);
-        flow.addActivity(new FlowActivityImpl());
-        flow.addActivity(new FlowActivityImpl());
+        flow.addActivity(new FlowActivityImpl().initInvisible(false));
+        flow.addActivity(new FlowActivityImpl().initInvisible(false));
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
         flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
@@ -157,11 +161,9 @@ public class TestFlows {
     @Test(enabled=TEST_ENABLE)
     public void testVisiblePreviousNextWithHidden() {
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowActivityImpl fa1 = new FlowActivityImpl();
-        FlowActivityImpl fa2 = new FlowActivityImpl();
-        FlowActivityImpl fa3 = new FlowActivityImpl();
-        fa1.setInvisible(true);
-        fa2.setInvisible(true);
+        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(true);
+        FlowActivityImpl fa2 = new FlowActivityImpl().initInvisible(true);
+        FlowActivityImpl fa3 = new FlowActivityImpl().initInvisible(false);
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolve(fa1);
@@ -243,13 +245,38 @@ public class TestFlows {
         assertTrue(flowPropertyDefinition.getDataClass() == Long.class);
     }
 
+    /**
+     * Make sure that a FA changing its visibility does not cause other FAs to change their visibility.
+     */
+    @Test(enabled=TEST_ENABLE)
+    public void testInvisibleFlowActivitiesInterferingWithVisibleFA() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        FlowActivityImplementor vis0 = new FlowActivityImpl("vis0").initInvisible(false);
+        FlowActivityImplementor inv1 = new FlowActivityImpl("inv1").initInvisible(true);
+        FlowActivityImplementor chg2 = new FlowActivityImpl("chg2").initInvisible(false);
+        FlowActivityImplementor vis3 = new FlowActivityImpl("vis3").initInvisible(false);
+        String flowTypeName = flowTestingUtils.addFlowDefinition(vis0, inv1, chg2,vis3);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        String prefix = chg2.getFlowPropertyProviderFullName();
+        //TODO need mechanism to generate correct namespace/key for setting an override value.
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(prefix + NamespaceMapKey.NAMESPACE_SEPARATOR + FAINVISIBLE, true);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState, null);
+        FlowActivityImplementor newChg2 = flowState.getActivity("chg2");
+        assertTrue(newChg2.isInvisible());
+        List<FlowActivity> visibleActivities = flowState.getVisibleActivities();
+        assertEquals(visibleActivities.size(), 2,"visible activities="+visibleActivities);
+        newChg2.setInvisible(false);
+        visibleActivities = flowState.getVisibleActivities();
+        assertEquals(visibleActivities.size(), 3,"visible activities="+visibleActivities);
+    }
+
     @Test(enabled=TEST_ENABLE)
     public void testEnumHandling() {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
         flow.addPropertyDefinitions(definition);
-        FlowActivityImpl fa1 = new FlowActivityImpl();
+        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
         definition = new FlowPropertyDefinitionImpl("fa1fp", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
         fa1.addPropertyDefinitions(definition);
         flow.addActivity(fa1);

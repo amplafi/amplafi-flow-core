@@ -117,7 +117,16 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
 
     boolean isInstance();
 
+    /**
+     * Checks the current state before using {@link #isPossiblyVisible()} as a default.
+     * @return true if the FlowActivity is currently invisible.
+     */
     boolean isInvisible();
+    /**
+     * static check to see if the FlowActivity could be visible ( has a componentName defined )
+     * @return true if the FlowActivity could be visible (
+     */
+    boolean isPossiblyVisible();
 
     boolean isPersistFlow();
 

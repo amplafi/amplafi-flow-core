@@ -28,8 +28,10 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.impl.TransitionFlowActivity;
+import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.easymock.EasyMock.*;
 
 /**
  * Tests to see that transitioning between flows ( other than morphing ) happens correctly.
@@ -45,7 +47,7 @@ public class TestFlowTransitions {
     @Test(enabled=TEST_ENABLED)
     public void testSimpleFlowTransitionMapChecking() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
-        FlowActivityImpl fa1 = new FlowActivityImpl();
+        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
         FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNull(definition);
         flow.addActivity(fa1);
@@ -70,7 +72,7 @@ public class TestFlowTransitions {
         String defaultPage1 = "page-of-"+FLOW_TYPE_1;
         flow1.setPageName(defaultPage1);
         flow1.setDefaultAfterPage(defaultAfterPage1);
-        FlowActivityImpl fa1 = new FlowActivityImpl();
+        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
         flow1.addActivity(fa1);
 
         FlowImpl flow2 = new FlowImpl(FLOW_TYPE_2);
@@ -78,7 +80,7 @@ public class TestFlowTransitions {
         String defaultPage2 = "page-of-"+FLOW_TYPE_2;
         flow2.setPageName(defaultPage2);
         flow2.setDefaultAfterPage(defaultAfterPage2);
-        FlowActivityImpl fa2_1 = new FlowActivityImpl();
+        FlowActivityImpl fa2_1 = new FlowActivityImpl().initInvisible(false);
         flow2.addActivity(fa2_1);
         Object returnToFlowLookupKey = true;
         FlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);
@@ -103,9 +105,9 @@ public class TestFlowTransitions {
      * <li>make sure that cache is cleared on flow completion.</li>
      * </ul>
      */
-    @Test
+    @Test(enabled=TEST_ENABLED)
     public void testAvoidConflictsOnFlowTransitions() {
-        FlowActivityImpl flowActivity1 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity1 = new FlowActivityImpl().initInvisible(false);
         // initialized by "first" flow ignored by second flow.
         String initializedByFirst = "initializedByFirst";
         flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionImpl(initializedByFirst).initPropertyUsage(PropertyUsage.initialize));
@@ -114,7 +116,7 @@ public class TestFlowTransitions {
         flowTestingUtils.addFlowDefinition("first", flowActivity1,
             new TransitionFlowActivity(null, "second", TransitionType.normal));
 
-        FlowActivityImpl flowActivity2 = new FlowActivityImpl();
+        FlowActivityImpl flowActivity2 = new FlowActivityImpl().initInvisible(false);
         // this property name is unknown to "first" flow so "first" flow should not affect this property value at all.
         // for second flow, the property is flowLocal/ internalState so the setting should only affect the flowLocal copy.
         String privatePropertyForSecondFlow = "privateForSecond";
@@ -152,6 +154,29 @@ public class TestFlowTransitions {
         flowTestingUtils.advanceToEnd(flowState);
 
     }
+    /**
+     * Test to make sure that a {@link FlowActivityImpl} returns true (advance to next {@link FlowActivity} ) in {@link FlowActivityImpl#activate(FlowStepDirection)} if there
+     * is no page or component name.
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testTransitionActivate() {
+        FlowActivityImpl obj = new FlowActivityImpl();
+        FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
+        FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
+        expect(flow.getFlowState()).andReturn(flowState).anyTimes();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class)).anyTimes();
+        obj.setFlow(flow);
+        EasyMock.replay(flow, flowState);
+        assertTrue(obj.activate(FlowStepDirection.inPlace));
+        obj.setPageName("foo");
+        assertFalse(obj.activate(FlowStepDirection.inPlace));
+        obj.setPageName(null);
+        assertTrue(obj.activate(FlowStepDirection.inPlace));
+        obj.setComponentName("foo");
+        assertFalse(obj.activate(FlowStepDirection.inPlace));
+    }
+
     /**
      * @param flow
      * @return
