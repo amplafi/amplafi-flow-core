@@ -13,9 +13,12 @@
  */
 package org.amplafi.flow.impl;
 
-import static org.amplafi.flow.FlowConstants.*;
-import static org.apache.commons.collections.CollectionUtils.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
+import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
+import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.split;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,17 +30,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.FlowStateListener;
-import org.amplafi.flow.FlowManager;
-import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateLifecycle;
+import org.amplafi.flow.FlowStateListener;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
@@ -308,7 +312,7 @@ public class BaseFlowManagement implements FlowManagement {
         if ( initialValues != null) {
 
             for(String entry: initialValues) {
-                String[] v = entry.split("=");
+                String[] v = split(entry, "=", 2);
                 String key = v[0];
                 String lookup;
                 if ( v.length < 2 ) {
