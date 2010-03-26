@@ -26,9 +26,9 @@ import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.IJsonWriter;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-import com.sworddance.beans.PropertyDefinition;
+import com.sworddance.beans.PropertyDefinitionImpl;
 
-public class DataClassDefinitionImpl extends PropertyDefinition implements DataClassDefinition {
+public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements DataClassDefinition {
     @SuppressWarnings("unchecked")
     private FlowTranslator flowTranslator;
     // TODO should be immutable some how or a copy made when used ( otherwise could this end up getting changed?? )
@@ -47,18 +47,20 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
      * @param elementClassDefinition
      */
     @SuppressWarnings("unchecked")
-    public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinitionImpl keyClassDefinition, DataClassDefinitionImpl elementClassDefinition) {
+    public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinition keyClassDefinition, DataClassDefinition elementClassDefinition) {
         super(mapClass, keyClassDefinition, elementClassDefinition);
     }
     /**
      * clone ctor
      * @param dataClassDefinition
      */
-    public DataClassDefinitionImpl(DataClassDefinitionImpl dataClassDefinition) {
+    public DataClassDefinitionImpl(DataClassDefinition dataClassDefinition) {
         super(dataClassDefinition.getPropertyClass(),
             dataClassDefinition.isKeyPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getKeyPropertyDefinition()):null,
             dataClassDefinition.isElementPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getElementPropertyDefinition()):null);
-        this.flowTranslator = dataClassDefinition.flowTranslator;
+        if ( dataClassDefinition.isFlowTranslatorSet() ) {
+            this.flowTranslator = dataClassDefinition.getFlowTranslator();
+        }
     }
     // don't use yet.
     public DataClassDefinitionImpl(Class<?> element, Class<?>... collections) {
@@ -138,7 +140,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
     /**
      * @param dataClassDefinition
      */
-    public void merge(DataClassDefinitionImpl dataClassDefinition) {
+    public void merge(DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition == null ) {
             return;
         }
@@ -152,7 +154,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
     /**
      * @param dataClassDefinition
      */
-    private DataClassDefinitionImpl mergeIt(DataClassDefinitionImpl original, DataClassDefinitionImpl dataClassDefinition) {
+    private DataClassDefinition mergeIt(DataClassDefinition original, DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition != null ) {
             if( original == null ) {
                 return new DataClassDefinitionImpl(dataClassDefinition);
@@ -162,7 +164,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
         }
         return original;
     }
-    public boolean isMergable(DataClassDefinitionImpl dataClassDefinition) {
+    public boolean isMergable(DataClassDefinition dataClassDefinition) {
         if(equals(dataClassDefinition) || dataClassDefinition == null) {
             return true;
         } else if (dataClassDefinition.isDataClassDefined() &&getDataClassReplaced(dataClassDefinition)==null) {
@@ -182,7 +184,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
      * @param dataClassDefinition
      * @return
      */
-    private Boolean getDataClassReplaced(DataClassDefinitionImpl dataClassDefinition) {
+    private Boolean getDataClassReplaced(DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition == null || this.isSameDataClass(dataClassDefinition) || !dataClassDefinition.isDataClassDefined()) {
             return false;
         } else if ( !this.isDataClassDefined() ) {
@@ -255,7 +257,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
     /**
      * @param keyDataClassDefinition the keyPropertyDefinition to set
      */
-    public void setKeyDataClassDefinition(DataClassDefinitionImpl keyDataClassDefinition) {
+    public void setKeyDataClassDefinition(DataClassDefinition keyDataClassDefinition) {
         this.setKeyPropertyDefinition(keyDataClassDefinition);
     }
     /**
@@ -273,7 +275,7 @@ public class DataClassDefinitionImpl extends PropertyDefinition implements DataC
     /**
      * @param elementDataClassDefinition the elementPropertyDefinition to set
      */
-    public void setElementDataClassDefinition(DataClassDefinitionImpl elementDataClassDefinition) {
+    public void setElementDataClassDefinition(DataClassDefinition elementDataClassDefinition) {
         this.setElementPropertyDefinition(elementDataClassDefinition);
     }
     /**

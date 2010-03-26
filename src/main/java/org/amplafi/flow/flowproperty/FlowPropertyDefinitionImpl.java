@@ -92,7 +92,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private Boolean autoCreate;
 
-    private DataClassDefinitionImpl dataClassDefinition;
+    private DataClassDefinition dataClassDefinition;
 
     private Set<String> alternates;
 
@@ -552,14 +552,14 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     /**
      * @param dataClassDefinition the dataClassDefinition to set
      */
-    public void setDataClassDefinition(DataClassDefinitionImpl dataClassDefinition) {
+    public void setDataClassDefinition(DataClassDefinition dataClassDefinition) {
         this.dataClassDefinition = dataClassDefinition;
     }
 
     /**
      * @return the dataClassDefinition
      */
-    public DataClassDefinitionImpl getDataClassDefinition() {
+    public DataClassDefinition getDataClassDefinition() {
         return dataClassDefinition;
     }
 
@@ -636,7 +636,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     public boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition) {
-        return getDataClassDefinition().isMergable(((FlowPropertyDefinitionImpl)flowPropertyDefinition).dataClassDefinition);
+        return getDataClassDefinition().isMergable(((FlowPropertyDefinitionImpl)flowPropertyDefinition).getDataClassDefinition());
     }
 
     public boolean isMergeable(FlowPropertyDefinition property) {
@@ -646,7 +646,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean result = isDataClassMergeable(source);
         if ( result ) {
-            result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.flowPropertyValueProvider);
+            result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.getFlowPropertyValueProvider());
             if ( result ) {
                 result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
                 result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()

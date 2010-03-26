@@ -15,6 +15,8 @@ package org.amplafi.flow;
 
 import org.amplafi.json.IJsonWriter;
 
+import com.sworddance.beans.PropertyDefinition;
+
 /**
  * Handles the issues around data structure for the {@link FlowPropertyDefinition}.
  * This way {@link FlowPropertyDefinition}  focuses on required status, name, etc. and DataClassDefinition
@@ -24,7 +26,7 @@ import org.amplafi.json.IJsonWriter;
  *
  * @author patmoore
  */
-public interface DataClassDefinition {
+public interface DataClassDefinition extends PropertyDefinition {
 
     DataClassDefinition getKeyDataClassDefinition();
 
@@ -85,4 +87,18 @@ public interface DataClassDefinition {
      */
     Class<?> getKeyClass();
 
+    DataClassDefinition getElementPropertyDefinition();
+    DataClassDefinition getKeyPropertyDefinition();
+
+    /**
+     * @param dataClassDefinition
+     */
+    void merge(DataClassDefinition dataClassDefinition);
+
+    /**
+     * @param dataClassDefinition
+     * @return
+     */
+    boolean isMergable(DataClassDefinition dataClassDefinition);
+    public boolean isAssignableFrom(Class<?> clazz);
 }
