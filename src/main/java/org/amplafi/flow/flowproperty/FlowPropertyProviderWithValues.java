@@ -69,4 +69,11 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * @return true if the property is set
      */
     boolean isPropertyValueSet(String key);
+
+    /**
+     * Used when dealing with Boolean properties. Allows nulls to be handled when converting to a boolean.
+     * @param key
+     * @return false if property value is null or {@link Boolean#FALSE}
+     */
+    boolean isTrue(String key);
 }

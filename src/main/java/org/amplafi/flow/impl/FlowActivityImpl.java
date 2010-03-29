@@ -497,10 +497,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         instance.persistFlow = persistFlow;
     }
 
-    @SuppressWarnings("hiding")
-    public FlowActivityImpl initInvisible(Boolean invisible) {
+    @SuppressWarnings({ "hiding", "unchecked" })
+    public <T extends FlowActivityImplementor> T initInvisible(Boolean invisible) {
         this.invisible = invisible;
-        return this;
+        return (T) this;
     }
 
     public void setInvisible(boolean invisible) {
@@ -691,11 +691,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     // Duplicated in FlowStateImpl
     public boolean isPropertyValueSet(String key) {
         return getRawProperty(key) != null;
-    }
-
-    public boolean isPropertyNotBlank(String key) {
-        String v = getRawProperty(key);
-        return isNotBlank(v);
     }
 
     public boolean isPropertyBlank(String key) {

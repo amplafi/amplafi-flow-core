@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 /**
  * @author patmoore
@@ -22,7 +23,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
  * TODO: may not make sense to extend FlowStateProvider as definition FlowActivityImplementors will not have a FlowState.
  *
  */
-public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor, FlowStateProvider {
+public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProviderImplementor, FlowPropertyProviderWithValues, FlowStateProvider {
     /**
      * @return instance of this definition
      */
@@ -53,9 +54,11 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
     void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
 
     String getRawProperty(String key);
-
-    boolean isPropertyNotBlank(String key);
-
+    /**
+     *
+     * @param key
+     * @return true if {@link #getRawProperty(String)} returns null or blank
+     */
     boolean isPropertyBlank(String key);
 
     void setFlow(FlowImplementor flow);
@@ -74,7 +77,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
      *        is current.
      */
     void setFinishingActivity(boolean finishedActivity);
-    FlowActivityImplementor initInvisible(Boolean invisible);
+    <T extends FlowActivityImplementor> T initInvisible(Boolean invisible);
 
     void setInvisible(boolean invisible);
 

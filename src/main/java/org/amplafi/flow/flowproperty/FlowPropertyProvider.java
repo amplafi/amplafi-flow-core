@@ -40,5 +40,4 @@ public interface FlowPropertyProvider {
 
     <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
 
-
 }
