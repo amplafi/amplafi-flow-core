@@ -19,8 +19,9 @@ package org.amplafi.flow.flowproperty;
  */
 public interface PossibleDynamic {
     /**
-     *
      * @return true if the implementor wants the property to be dynamically refreshed.
+     * (From the UI perspective this means that the field binded to the property will be submitted 
+     * just after it looses focus.)
      */
     boolean isDynamic();
 }
