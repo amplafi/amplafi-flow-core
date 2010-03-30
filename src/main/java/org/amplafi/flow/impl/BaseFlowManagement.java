@@ -479,8 +479,7 @@ public class BaseFlowManagement implements FlowManagement {
      * @param newFlowActive pass false if you already have flow to run.
      */
     @Override
-    @SuppressWarnings("unused")
-    public String completeFlowState(FlowState flowState, boolean newFlowActive) {
+    public String completeFlowState(FlowState flowState, boolean newFlowActive, FlowStateLifecycle flowStateLifecycle) {
         return dropFlowState(flowState);
     }
     /**

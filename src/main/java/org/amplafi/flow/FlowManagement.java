@@ -205,9 +205,10 @@ public interface FlowManagement extends FlowStateListener {
      * flow has exited. Called by {@link FlowState#finishFlow()}
      * @param flowState
      * @param newFlowActive
+     * @param nextFlowLifecycleState 
      * @return the page that should be rendered next.
      */
-    String completeFlowState(FlowState flowState, boolean newFlowActive);
+    String completeFlowState(FlowState flowState, boolean newFlowActive, FlowStateLifecycle nextFlowLifecycleState);
 
     /**
      * @return the FlowTranslatorResolver

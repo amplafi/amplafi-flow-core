@@ -693,7 +693,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // make sure that don't get into trouble by a finishFlow that
             // returns the current FlowState.
             if (continueWithFlow == null || continueWithFlow == this) {
-                pageName = getFlowManagement().completeFlowState(this, false);
+                pageName = getFlowManagement().completeFlowState(this, false, nextFlowLifecycleState);
             } else {
                 // pass on the return flow to the continuation flow.
                 // need to set before starting continuation flow because continuation flow may run to completion.
@@ -703,7 +703,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                     continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
                 }
                 this.setProperty(FSRETURN_TO_FLOW, null);
-                pageName = getFlowManagement().completeFlowState(this, true);
+                pageName = getFlowManagement().completeFlowState(this, true, nextFlowLifecycleState);
                 if (!continueWithFlow.isActive()) {
                     pageName = continueWithFlow.begin();
                 } else if (!continueWithFlow.isCompleted()) {
