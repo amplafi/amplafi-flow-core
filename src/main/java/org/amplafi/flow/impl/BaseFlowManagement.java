@@ -630,6 +630,8 @@ public class BaseFlowManagement implements FlowManagement {
 
     public void lifecycleChange(FlowStateImplementor flowState, FlowStateLifecycle previousFlowStateLifecycle) {
         //TODO synchronization issues if new listeners being added.
+        // TODO: allow FlowState specific listeners ( for example ExternalServiceConfigurationFlowActivity.finishFlow() )
+        // this would make the need to extend FA disappear even more.
         for(FlowStateListener flowStateListener: this.getFlowStateListeners()) {
             flowStateListener.lifecycleChange(flowState, previousFlowStateLifecycle);
         }

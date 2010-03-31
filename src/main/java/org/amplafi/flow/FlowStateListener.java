@@ -24,8 +24,10 @@ import org.amplafi.flow.impl.FlowStateImplementor;
  */
 public interface FlowStateListener {
     /**
-     * Note that listeners are not given veto permission.
+     * Note that listeners are not given veto permission as they are called after the transition has happened.
      * TODO: Maybe should be ( FlowValidation ? ) - maybe new interface for vetoing?
+     * TODO: maybe the lifecycle listener should be called with the nextFlowStateLifecycle and then have this method return the
+     * new nextFlowStateLifecycle. ( mischief potential )
      *
      * @param flowState
      * @param previousFlowStateLifecycle may be null if not known or there was no previous state.

@@ -157,7 +157,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             if ( !flowPropertyDefinition.isDefaultAvailable()) {
                 flowPropertyDefinition.initFlowPropertyValueProvider(this);
             }
-            if ( flowPropertyDefinition.getFlowPropertyValuePersister() == null) {
+            // TODO : also create a "read-only" v. writeable property mechanism.
+            if ( !flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.getFlowPropertyValuePersister() == null) {
                 FlowPropertyValuePersister<?> flowPropertyValuePersister = null;
                 if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
                     flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;

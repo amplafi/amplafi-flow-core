@@ -264,6 +264,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         // TODO: make sure that each property is only saved once.
         // TODO: have mechanism to determine if a property has been changed.
         // TODO: security mechanism on who is allowed to change the value.
+        // TODO: watch out for case when a FlowActivity uses a property read-only where a later FA will do the actual modifications for saving.
+        // For example, CreateEndPointFA accesses the ExternalServiceInstance. The ExternalUriFA, which occurs later in the Flow, is actually defining and creating the ESI.
+        // Probably 1) we need to define access as readonly v. write. So this loop here would only save properties that are writeable. This would also be a good security feature.
+        // so even if there is a bug that some how permits someone to change the data of a readonly object during the flow - that change is not persisted. ( watch out for things that
+        // would allow user to upgrade their permissions.
+        // 2) should persistence be sequenced?
         Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
         if ( MapUtils.isNotEmpty(definitions)) {
             for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
