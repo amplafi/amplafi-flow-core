@@ -18,8 +18,6 @@ import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
 import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.split;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +52,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
+import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -77,6 +76,7 @@ public class BaseFlowManagement implements FlowManagement {
     private transient FlowTx flowTx;
 
     private transient PageProvider pageProvider;
+    private transient ValueFromBindingProvider valueFromBindingProvider;
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
     private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
@@ -202,7 +202,7 @@ public class BaseFlowManagement implements FlowManagement {
         }
         return flowState;
     }
-    @SuppressWarnings({ "unused", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public <FS extends FlowState> FS createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent) {
         FS flowState = (FS) createFlowState(flowTypeName, initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
         return flowState;
@@ -290,42 +290,7 @@ public class BaseFlowManagement implements FlowManagement {
         }
         return initialFlowState;
     }
-    /**
-     * @see org.amplafi.flow.FlowManagement#startFlowState(java.lang.String, boolean, java.lang.Object, java.lang.Iterable, Object)
-     */
-    @SuppressWarnings("unchecked")
-    public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Object propertyRoot, Iterable<String> initialValues, Object returnToFlow) {
-        Map<String, String> initialMap = convertToMap(propertyRoot, initialValues);
-        return (FS) startFlowState(flowTypeName, makeNewStateCurrent, initialMap, returnToFlow);
-    }
-    /**
-     * @see org.amplafi.flow.FlowManagement#continueFlowState(java.lang.String, boolean, java.lang.Object, java.lang.Iterable)
-     */
-    @SuppressWarnings("unchecked")
-    public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Object propertyRoot, Iterable<String> initialValues) {
-        Map<String, String> initialMap = convertToMap(propertyRoot, initialValues);
-        return (FS) continueFlowState(lookupKey, makeStateCurrent, initialMap);
-    }
 
-    private Map<String, String> convertToMap(Object propertyRoot, Iterable<String> initialValues) {
-        Map<String, String> initialMap = new HashMap<String, String>();
-        if ( initialValues != null) {
-
-            for(String entry: initialValues) {
-                String[] v = split(entry, "=", 2);
-                String key = v[0];
-                String lookup;
-                if ( v.length < 2 ) {
-                    lookup = key;
-                } else {
-                    lookup = v[1];
-                }
-                Object value = getValueFromBinding(propertyRoot, lookup);
-                initialMap.put(key, value == null?null:value.toString());
-            }
-        }
-        return initialMap;
-    }
     /**
      * @see org.amplafi.flow.FlowManagement#continueFlowState(java.lang.String, boolean, java.util.Map)
      */
@@ -347,22 +312,7 @@ public class BaseFlowManagement implements FlowManagement {
         }
         return flowState;
     }
-    /**
-     * Used to map object properties into flowState values.
-     * <p/>
-     * TODO: current implementation ignores lookup and just returns the root object.
-     *
-     * @param root the root object.
-     * @param lookup the property 'path' that will result in the value to be assigned.
-     * For example, 'bar.foo' will look for a 'bar' property in the "current" object.
-     * That 'bar' object should have a 'foo' property. The 'foo' property will be returned
-     * as the value to be stored into the FlowState map.
-     * @return the value that root and lookup bind to.
-     */
-    @SuppressWarnings("unused")
-    protected Object getValueFromBinding(Object root, String lookup) {
-        return root;
-    }
+
     /**
      * call flowState's {@link FlowState#begin()}. If flowState is now completed then see if the flow has transitioned to a new flow.
      *
@@ -673,5 +623,19 @@ public class BaseFlowManagement implements FlowManagement {
      */
     public Set<FlowStateListener> getFlowStateListeners() {
         return flowStateListeners;
+    }
+
+    /**
+     * @param valueFromBindingProvider the valueFromBindingProvider to set
+     */
+    public void setValueFromBindingProvider(ValueFromBindingProvider valueFromBindingProvider) {
+        this.valueFromBindingProvider = valueFromBindingProvider;
+    }
+
+    /**
+     * @return the valueFromBindingProvider
+     */
+    public ValueFromBindingProvider getValueFromBindingProvider() {
+        return valueFromBindingProvider;
     }
 }

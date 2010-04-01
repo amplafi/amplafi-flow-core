@@ -14,6 +14,8 @@
 package org.amplafi.flow.launcher;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import org.apache.commons.lang.ObjectUtils;
 
 
 import static org.apache.commons.collections.CollectionUtils.*;
+import static org.apache.commons.lang.StringUtils.*;
 
 /**
  * {@link FlowLauncher} that starts a new {@link FlowState}.
@@ -56,31 +59,35 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     /**
     *
     * @param flowTypeName
-    * @param initialValues used to define the initial values for flow. This is a
+     * @param initialFlowState map of strings - not evaluated like initialValues is.
+     * @param flowManagement
+     * @param keyExpression for html rendering identification.
+     * @param propertyRoot must be provided if the initialValues need to be evaluated when the flow is launched.
+     * @param initialValues used to define the initial values for flow. This is a
     * list of strings. Each string is 'key=value'. if value is the same name as a component
     * that has a 'value' attribute (like TextField components) then the initial value.
     * If value is a container's property then that value is used. Otherwise the value
     * provided is used as a literal.
-    * @param propertyRoot
-    * @param flowManagement
-    * @param keyExpression for html rendering identification.
     */
-    public StartFromDefinitionFlowLauncher(String flowTypeName, Object propertyRoot, Iterable<String> initialValues,
-            FlowManagement flowManagement, Serializable keyExpression) {
-        super(flowTypeName, flowManagement, null, keyExpression);
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState, FlowManagement flowManagement,
+            Serializable keyExpression, Object propertyRoot, Iterable<String> initialValues) {
+        this(flowTypeName, initialFlowState, flowManagement, keyExpression);
         this.setInitialValues(initialValues);
-        this.keyExpression = keyExpression;
         this.propertyRoot = propertyRoot;
     }
 
     @Override
     public FlowState call() {
         FlowState flowState;
+        Map<String,String> launchMap;
         if(this.initialValues != null && !this.initialValues.isEmpty()) {
-            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, propertyRoot, initialValues, getReturnToFlow());
+            launchMap = new LinkedHashMap<String, String>();
+            launchMap.putAll(getValuesMap());
+            launchMap.putAll(convertToMap());
         } else {
-            flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, this.getValuesMap(), getReturnToFlow());
+            launchMap = getValuesMap();
         }
+        flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
         return flowState;
     }
 
@@ -127,5 +134,31 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         return null;
     }
 
+    /**
+     * @param propertyRoot
+     * @param initialValues
+     * @return
+     */
+    private Map<String, String> convertToMap() {
+        Map<String, String> initialMap = new HashMap<String, String>();
+        if ( initialValues != null) {
 
+            for(String entry: initialValues) {
+                String[] v = split(entry, "=", 2);
+                String key = v[0];
+                String lookup;
+                if ( v.length < 2 ) {
+                    lookup = key;
+                } else {
+                    lookup = v[1];
+                }
+                Object value = getValueFromBindingProvider() == null? lookup:getValueFromBindingProvider().getValueFromBinding(propertyRoot, lookup);
+                initialMap.put(key, value == null?null:value.toString());
+            }
+        }
+        return initialMap;
+    }
+    private ValueFromBindingProvider getValueFromBindingProvider() {
+        return this.getFlowManagement().getValueFromBindingProvider();
+    }
 }

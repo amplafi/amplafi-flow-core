@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.apache.commons.logging.Log;
 
 
@@ -95,33 +96,6 @@ public interface FlowManagement extends FlowStateListener {
      */
     <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow, Map<String, String> initialFlowState, Object returnToFlow);
 
-    /**
-     * Starts a flow by name.
-     * @param <FS>
-     * @param flowType
-     * @param currentFlow the new flow should be set the current flow.
-     * @param propertyRoot
-     * @param initialValues used to define the initial values for flow. This is a
-     * list of strings. Each string is 'key=value'. if value is the same name as a component
-     * that has a 'value' attribute (like TextField components) then the initial value.
-     * If value is a container's property then that value is used. Otherwise the value
-     * provided is used as a literal.
-     * @param returnToFlow
-     * @return the newly-started FlowState
-     */
-    <FS extends FlowState> FS startFlowState(String flowType, boolean currentFlow, Object propertyRoot, Iterable<String> initialValues, Object returnToFlow);
-
-    /**
-     * Continue the flow with the given lookup key.
-     * @param <FS>
-     * @param lookupKey
-     * @param currentFlow
-     * @param propertyRoot
-     * @param initialValues
-     * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
-     * happens if the lookupKey'ed flow completes.
-     */
-    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow, Object propertyRoot, Iterable<String> initialValues);
     /**
      * Continue the flow with the given lookup key.
      * @param <FS>
@@ -205,7 +179,7 @@ public interface FlowManagement extends FlowStateListener {
      * flow has exited. Called by {@link FlowState#finishFlow()}
      * @param flowState
      * @param newFlowActive
-     * @param nextFlowLifecycleState 
+     * @param nextFlowLifecycleState
      * @return the page that should be rendered next.
      */
     String completeFlowState(FlowState flowState, boolean newFlowActive, FlowStateLifecycle nextFlowLifecycleState);
@@ -240,5 +214,10 @@ public interface FlowManagement extends FlowStateListener {
     <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
 
     void addFlowStateListener(FlowStateListener flowStateListener);
+
+    /**
+     * @return the ValueFromBindingProvider - needed so the FlowLaunchers can get this service
+     */
+    ValueFromBindingProvider getValueFromBindingProvider();
 
 }
