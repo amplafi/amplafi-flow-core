@@ -96,8 +96,9 @@ public interface DataClassDefinition extends PropertyDefinition {
     void merge(DataClassDefinition dataClassDefinition);
 
     /**
+     * Checks to see that there is no conflict between the two DataClassDefinition
      * @param dataClassDefinition
-     * @return
+     * @return true if dataClassDefinition can be merged with this.
      */
     boolean isMergable(DataClassDefinition dataClassDefinition);
     public boolean isAssignableFrom(Class<?> clazz);
