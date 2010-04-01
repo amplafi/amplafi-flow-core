@@ -253,6 +253,7 @@
         <service id="SetFlowTranslator"/>
         <service id="MapFlowTranslator"/>
         <service id="NavigableMapFlowTranslator"/>
+        <service id="EnumFlowTranslator"/>
     </contribution>
     
     <service-point id="UriTranslator" interface="org.amplafi.flow.FlowTranslator">
@@ -261,6 +262,11 @@
             </construct>
         </invoke-factory>
     </service-point>  
+    <service-point id="EnumFlowTranslator" interface="org.amplafi.flow.translator.InstanceSpecificFlowTranslator">
+	    <invoke-factory>
+            <construct class="org.amplafi.flow.translator.EnumFlowTranslator"/>
+        </invoke-factory>
+    </service-point>
     <service-point id="CalendarFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.CalendarFlowTranslator">
