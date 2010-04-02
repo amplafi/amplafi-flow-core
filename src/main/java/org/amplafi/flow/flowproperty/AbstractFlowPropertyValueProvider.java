@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowValueMapKey;
@@ -79,6 +78,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     }
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
+     *
+     * Use {@link #getRequired(FlowPropertyProviderWithValues, FlowPropertyDefinition, String, Object...)} if a value should always be returned.
      * @param <T>
      * @param flowPropertyProvider -- should this be FPP?
      * @param flowPropertyDefinition
@@ -88,7 +89,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     @SuppressWarnings("unchecked")
     protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
-            return null; // TODO throw exception?
+            return null;
         } else {
             return (T) flowPropertyProvider.getProperty(propertyName);
         }
@@ -102,15 +103,12 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @return will not be null.
      */
     @SuppressWarnings("unchecked")
-    protected <T> T getRequired(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Object...messages) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             throw new ApplicationIllegalArgumentException(propertyName);
         } else {
-            // HACK only temporary -- shift to flowPropertyProvider
-            T result = (T) ((FlowActivity)flowPropertyProvider).getProperty(propertyName);
-            if ( result == null ) {
-                throw new ApplicationNullPointerException(propertyName);
-            }
+            T result = (T) flowPropertyProvider.getProperty(propertyName);
+            ApplicationNullPointerException.notNull(result, propertyName, messages);
             return result;
         }
     }
