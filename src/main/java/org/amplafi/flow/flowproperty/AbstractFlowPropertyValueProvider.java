@@ -165,6 +165,9 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
                 }
                 flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
             }
+            if ( this instanceof FlowPropertyValueChangeListener ) {
+                flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
+            }
         }
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
     }
