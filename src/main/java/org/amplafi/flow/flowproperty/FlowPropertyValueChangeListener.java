@@ -16,6 +16,8 @@ package org.amplafi.flow.flowproperty;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
+ *
+ * Implementors register to be notified when a property changes its value. This includes the initialization.
  * @author patmoore
  *
  */
