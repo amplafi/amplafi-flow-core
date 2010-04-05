@@ -151,4 +151,9 @@ public interface FlowPropertyDefinition {
      * are static. - i.e. don't ask to be updated. )
      */
     boolean isDynamic();
+
+    /**
+     * @return true if the value should be copied back to an exported flow values map.
+     */
+    boolean isCopyBackOnFlowSuccess();
 }

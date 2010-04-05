@@ -20,6 +20,7 @@ import org.amplafi.flow.FlowState;
  * This differs from how the property is initialized and exported ( {@link PropertyUsage} ) and how
  * broad any changes to the property are spread. ( PropertyScope )
  *
+ * Still experimental - not completely implemented.
  * @author patmoore
  *
  */
@@ -29,7 +30,8 @@ public enum PropertySecurity {
      */
     noRestrictions(true, true),
     /**
-     * property value is visible external to the user  ( isn't this {@link PropertyUsage#use}? )
+     * property value is visible external to the user. property value cannot be modified even during the Flow. The change prohibition during the flow
+     * makes this different than {@link PropertyUsage#use}
      */
     readonly(true, false),
     /**

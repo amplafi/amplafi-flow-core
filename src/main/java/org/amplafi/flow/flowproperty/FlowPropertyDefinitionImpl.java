@@ -752,6 +752,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
 
+    public boolean isCopyBackOnFlowSuccess() {
+        // TODO: This needs to be a more complex test involving PropertySecurity as well.
+        return getPropertyUsage().isCopyBackOnFlowSuccess();
+    }
+
     private boolean getBoolean(Boolean b) {
         return b != null && b;
     }
