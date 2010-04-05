@@ -29,6 +29,8 @@ import static org.apache.commons.lang.StringUtils.*;
 
 /**
  * {@link FlowLauncher} that starts a new {@link FlowState}.
+ * TODO:
+ * Check login case. initialValues has email and password repeated
  * @author Patrick Moore
  */
 public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {

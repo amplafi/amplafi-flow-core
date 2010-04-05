@@ -329,7 +329,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * all the properties. This flow is just passing the values on unaltered.
      *
      * TODO: if flow is still in progress then flowLocal/activityLocal values should be in the export map -- so that callees can get values.
-     * @param clearFrom
+     * @param clearFrom removes the exported values from this's FlowValuesMap.
      * @return the exported values
      */
     @SuppressWarnings("unchecked")
@@ -390,7 +390,8 @@ public class FlowStateImpl implements FlowStateImplementor {
             // TODO HANDLE case where we need a to copy from caller to callee. This situation suggests that if PropertyUsage != internalState then the property should be exposed.
             // but need to know the situation: copy to callee or back to caller?
             String namespace = null;
-            if ( flowPropertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
+            if ( flowPropertyDefinition.isCopyBackOnFlowSuccess()) {
+                // HACK: investigate. Any use of getExportedValuesMap() will trigger this copyback to the FlowState's default namespace.
                 put(namespace, flowPropertyDefinition.getName(), value);
                 exportValueMap.put(namespace, flowPropertyDefinition.getName(), value);
             }
@@ -992,7 +993,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
                 // TODO: Maybe should be checking !isCacheOnly() ?
-                if ( propertyDefinition.getPropertyUsage().isCopyBackOnFlowSuccess()) {
+                if ( propertyDefinition.isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
                     // also triggers FlowPropertyValueChangeListeners on the initial set.
@@ -1594,7 +1595,8 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public <T> T getProperty(String key, Class<T> expected) {
         if (isActive()) {
-            return (T) getCurrentActivity().getProperty(key);
+            FlowActivity currentActivity = getCurrentActivity();
+            return (T) currentActivity.getProperty(key);
         } else {
             FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
             return (T) getPropertyWithDefinition(this, flowPropertyDefinition);
