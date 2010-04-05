@@ -229,11 +229,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
-            if ( expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass())) {
-                value = propertyValueProvider.get(flowPropertyProvider, this);
-            } else {
-                throw new ApplicationIllegalArgumentException(this+": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
-            }
+            ApplicationIllegalArgumentException.valid(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()),
+                this+": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
+            value = propertyValueProvider.get(flowPropertyProvider, this);
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
             // for example the property type is a primitive.

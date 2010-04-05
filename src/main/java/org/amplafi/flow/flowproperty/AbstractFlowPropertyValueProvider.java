@@ -72,9 +72,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
    }
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
-        if ( !isHandling(flowPropertyDefinition)) {
-            throw new IllegalArgumentException(flowPropertyDefinition+": is not handled by "+this.getClass().getCanonicalName()+" only "+propertiesHandled);
-        }
+        ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition),
+            flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",propertiesHandled);
     }
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
