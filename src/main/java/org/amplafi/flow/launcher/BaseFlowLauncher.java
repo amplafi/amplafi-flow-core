@@ -113,6 +113,10 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         return this.getValuesMap().putIfAbsent(key, defaultValue);
     }
 
+    public void putAll(Map<? extends String, ? extends String> map) {
+        this.getValuesMap().putAll(map);
+    }
+
     public String get(Object key) {
         return this.getValuesMap().get(key);
     }

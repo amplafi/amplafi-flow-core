@@ -74,6 +74,7 @@ public interface FlowLauncher extends Callable<FlowState> {
      * @return the previous value.
      */
     String putIfAbsent(String key, String defaultValue);
+    void putAll(Map<? extends String, ? extends String> map);
     /**
      * add to the flow values Map
      * @param key
