@@ -728,7 +728,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @return the property as a string not converted to the object.
      */
     protected String getRawProperty(FlowPropertyDefinition flowPropertyDefinition) {
-        return getFlowStateImplementor().getRawProperty(this, flowPropertyDefinition);
+        if ( isInstance()) {
+            return getFlowStateImplementor().getRawProperty(this, flowPropertyDefinition);
+        } else {
+            // TODO: initial not always set - for example, "invisible" -property.
+            return flowPropertyDefinition.getInitial();
+        }
     }
 
     public Boolean getRawBoolean(String key) {
