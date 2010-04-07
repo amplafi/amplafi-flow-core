@@ -54,6 +54,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sworddance.util.ApplicationIllegalStateException;
+
 
 /**
  * defines one activity in the flow. This can be a definition of an activity or
@@ -192,9 +194,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
         FlowValidationResult activationValidationResult = getFlowValidationResult(FlowActivityPhase.activate, flowStepDirection);
-        if (!activationValidationResult.isValid()) {
-            throw new FlowValidationException(activationValidationResult);
-        }
+        FlowValidationException.valid(activationValidationResult);
 
         if ( flowStepDirection == FlowStepDirection.backward) {
             // skip back only through invisible steps.
@@ -349,11 +349,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
         if (MapUtils.isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
-                if ((flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
+                MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
+                    (flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
                         && !isPropertySet(def.getName())
-                        && !def.isAutoCreate() ) {
-                    result.addTracking(new MissingRequiredTracking(def.getUiComponentParameterName()));
-                }
+                        && !def.isAutoCreate(),
+                        def.getUiComponentParameterName());
             }
         }
         return result;
@@ -362,9 +362,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @Override
     public void setFlowPropertyProviderName(String flowPropertyProviderName) {
         if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, flowPropertyProviderName)) {
-            if ( this.flowPropertyProviderName != null && this.flow != null) {
-                throw new IllegalStateException(this+": cannot change flowPropertyProviderName once it is part of a flow. Tried to change to ="+flowPropertyProviderName);
-            }
+            ApplicationIllegalStateException.valid(this.flowPropertyProviderName == null || this.flow == null,
+                this,": cannot change flowPropertyProviderName once it is part of a flow. Tried to change to =",flowPropertyProviderName);
             this.flowPropertyProviderName = flowPropertyProviderName;
         }
     }

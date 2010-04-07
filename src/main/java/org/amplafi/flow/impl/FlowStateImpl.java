@@ -505,23 +505,20 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (verifyValues) {
             flowValidationResult = getFullFlowValidationResult(FlowActivityPhase.finish, FlowStepDirection.forward);
         }
-        if (flowValidationResult == null || flowValidationResult.isValid()) {
-            FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this, FSFLOW_TRANSITIONS);
-            int size = this.size();
-            for (int i = 0; i < size; i++) {
-                FlowActivity activity = getActivity(i);
-                FlowState returned = activity.finishFlow(currentNextFlowState);
-                // activity.refresh(); -- commented out because saves default values back to the flowState
-                // avoids lose track of FlowState if another FA later in the Flow
-                // definition returns a null. ( this means that a FA cannot override a previous decision ).
-                if (returned != null && currentNextFlowState != returned) {
-                    currentNextFlowState = returned;
-                }
+        FlowValidationException.valid(flowValidationResult);
+        FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this, FSFLOW_TRANSITIONS);
+        int size = this.size();
+        for (int i = 0; i < size; i++) {
+            FlowActivity activity = getActivity(i);
+            FlowState returned = activity.finishFlow(currentNextFlowState);
+            // activity.refresh(); -- commented out because saves default values back to the flowState
+            // avoids lose track of FlowState if another FA later in the Flow
+            // definition returns a null. ( this means that a FA cannot override a previous decision ).
+            if (returned != null && currentNextFlowState != returned) {
+                currentNextFlowState = returned;
             }
-            return currentNextFlowState;
-        } else {
-            throw new FlowValidationException(flowValidationResult);
         }
+        return currentNextFlowState;
     }
 
 
@@ -626,12 +623,8 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < this.size(); i++) {
             FlowActivity flowActivity = getActivity(i);
             FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(FlowActivityPhase.saveChanges, FlowStepDirection.forward);
-            if (flowActivityValidationResult.isValid()) {
-                flowActivity.saveChanges();
-            } else {
-                // what to do?
-                throw new FlowValidationException(flowActivityValidationResult);
-            }
+            FlowValidationException.valid(flowActivityValidationResult);
+            flowActivity.saveChanges();
             // activity.refresh(); -- commented out because saves default values back to the flowState
             LapTimer.sLap(flowActivity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
         }
@@ -662,11 +655,8 @@ public class FlowStateImpl implements FlowStateImplementor {
             FlowValidationResult flowValidationResult = passivate(verifyValues, FlowStepDirection.inPlace);
 
             if (verifyValues) {
-                if (flowValidationResult.isValid()) {
-                    saveChanges();
-                } else {
-                    throw new FlowValidationException(flowValidationResult);
-                }
+                FlowValidationException.valid(flowValidationResult);
+                saveChanges();
             }
 
             this.setFlowLifecycleState(nextFlowLifecycleState);

@@ -80,4 +80,13 @@ public class FlowValidationException extends FlowException {
             // CHECK Is the toString() used to print on the screen and that is why the stack trace is not visible?
             + StringUtils.join(super.getStackTrace(), "\n");
     }
+
+    /**
+     * @param flowValidationResult
+     */
+    public static void valid(FlowValidationResult flowValidationResult) {
+        if ( flowValidationResult != null && !flowValidationResult.isValid()) {
+            throw new FlowValidationException(flowValidationResult);
+        }
+    }
 }
