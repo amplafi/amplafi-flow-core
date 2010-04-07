@@ -83,8 +83,9 @@ public class FlowValidationException extends FlowException {
 
     /**
      * @param flowValidationResult
+     * @throws FlowValidationException thrown if flowValidationResult != null && !flowValidationResult.isValid()
      */
-    public static void valid(FlowValidationResult flowValidationResult) {
+    public static void valid(FlowValidationResult flowValidationResult) throws FlowValidationException {
         if ( flowValidationResult != null && !flowValidationResult.isValid()) {
             throw new FlowValidationException(flowValidationResult);
         }
