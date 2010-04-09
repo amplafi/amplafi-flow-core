@@ -53,17 +53,17 @@ public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
     failed(false);
 
     static {
-        created.nextAllowed = Arrays.asList(canceled,failed,initializing);
-        initializing.nextAllowed = Arrays.asList(canceled,failed,successful,initialized);
-        initialized.nextAllowed = Arrays.asList(canceled,failed,successful,starting);
-        starting.nextAllowed = Arrays.asList(started,canceled,failed,successful,initializing,initialized);
-        started.nextAllowed = Arrays.asList(canceled,failed,successful,initializing,initialized);
-        successful.nextAllowed = Collections.emptyList();
-        canceled.nextAllowed = Collections.emptyList();
-        failed.nextAllowed = Collections.emptyList();
+        created.allowedTransitions = Arrays.asList(canceled,failed,initializing);
+        initializing.allowedTransitions = Arrays.asList(canceled,failed,successful,initialized);
+        initialized.allowedTransitions = Arrays.asList(canceled,failed,successful,starting);
+        starting.allowedTransitions = Arrays.asList(started,canceled,failed,successful,initializing,initialized);
+        started.allowedTransitions = Arrays.asList(canceled,failed,successful,initializing,initialized);
+        successful.allowedTransitions = Collections.emptyList();
+        canceled.allowedTransitions = Collections.emptyList();
+        failed.allowedTransitions = Collections.emptyList();
     }
 
-    private List<FlowStateLifecycle> nextAllowed;
+    private List<FlowStateLifecycle> allowedTransitions;
     private final boolean verifyValues;
     public static final FiniteStateChecker<FlowStateLifecycle> STATE_CHECKER = new FiniteStateChecker<FlowStateLifecycle>();
 
@@ -84,7 +84,7 @@ public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
      */
     @Override
     public boolean isAllowedTransition(FlowStateLifecycle nextFlowLifecycleState) {
-        return this == nextFlowLifecycleState || (nextAllowed != null && nextAllowed.contains(nextFlowLifecycleState));
+        return STATE_CHECKER.isAllowedTransition(this, nextFlowLifecycleState);
     }
 
     /**
@@ -92,14 +92,14 @@ public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
      */
     @Override
     public Collection<FlowStateLifecycle> getAllowedTransitions() {
-        return nextAllowed;
+        return allowedTransitions;
     }
 
     /**
      * @return true if cannot transition out of this {@link FlowStateLifecycle}.
      */
     public boolean isTerminalState() {
-        return getAllowedTransitions().isEmpty();
+        return STATE_CHECKER.isTerminalState(this);
     }
     /**
      * @return true if this FlowLifecycleState permits verifying values.
