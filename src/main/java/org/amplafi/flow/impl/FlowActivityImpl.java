@@ -762,11 +762,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        return (T) this.getProperty(key, null);
+    }
+    @Override
+    public <T> T getProperty(String key, Class<? extends T> expected) {
+        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
         T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
         return result;
     }
-
     /**
      * @param key
      * @return a flow property definition, if none then the definition is created
@@ -805,11 +808,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      *
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#setProperty(java.lang.String, java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
     public <T> void setProperty(String key, T value) {
-        Class<T> expected = (Class<T>) (value == null?null:value.getClass());
         if ( getFlowState() != null) { // TODO: why are we ignoring (probably a test that should be fixed )
-            FlowPropertyDefinitionImplementor propertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
+            FlowPropertyDefinitionImplementor propertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
             setProperty(propertyDefinition, value);
         }
     }

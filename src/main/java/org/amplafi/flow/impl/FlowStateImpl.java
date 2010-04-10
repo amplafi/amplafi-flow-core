@@ -1583,10 +1583,10 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getProperty(String key, Class<T> expected) {
+    public <T> T getProperty(String key, Class<? extends T> expected) {
         if (isActive()) {
             FlowActivity currentActivity = getCurrentActivity();
-            return (T) currentActivity.getProperty(key);
+            return currentActivity.getProperty(key, expected);
         } else {
             FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
             return (T) getPropertyWithDefinition(this, flowPropertyDefinition);

@@ -266,15 +266,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     boolean isCompleted();
 
-    /**
-     *
-     * @param <T>
-     * @param key
-     * @param expected class maybe null if not known.
-     * @return the property value
-     */
-    <T> T getProperty(String key, Class<T> expected);
-
     boolean isActive();
 
     void setDefaultAfterPage(String pageName);
