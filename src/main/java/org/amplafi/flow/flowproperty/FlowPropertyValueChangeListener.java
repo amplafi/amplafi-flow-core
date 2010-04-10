@@ -18,6 +18,7 @@ import org.amplafi.flow.FlowPropertyDefinition;
 /**
  *
  * Implementors register to be notified when a property changes its value. This includes the initialization.
+ *             // TODO: really need a propertyChange method that gets the original objects.
  * @author patmoore
  *
  */
