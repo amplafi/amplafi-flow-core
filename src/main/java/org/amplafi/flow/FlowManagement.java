@@ -23,6 +23,8 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.apache.commons.logging.Log;
 
+import com.sworddance.beans.ClassResolver;
+
 
 /**
  * implementation that provides session level FlowManagement.
@@ -220,4 +222,5 @@ public interface FlowManagement extends FlowStateListener {
      */
     ValueFromBindingProvider getValueFromBindingProvider();
 
+    ClassResolver getClassResolver();
 }

@@ -59,6 +59,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sworddance.beans.ClassResolver;
+import com.sworddance.beans.DefaultClassResolver;
 import com.sworddance.util.perf.LapTimer;
 
 /**
@@ -80,6 +82,8 @@ public class BaseFlowManagement implements FlowManagement {
 
     private transient FlowTranslatorResolver flowTranslatorResolver;
     private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
+
+    private transient ClassResolver classResolver;
 
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
@@ -483,17 +487,23 @@ public class BaseFlowManagement implements FlowManagement {
         return wasFirst;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue) {
-        if ( expected == null && sampleValue != null) {
-            expected = (Class<T>) sampleValue.getClass();
+        Class<? extends T> expectedClass;
+        if ( expected == null) {
+            if ( this.getClassResolver() != null ) {
+                expectedClass = getClassResolver().getRealClass(sampleValue);
+            } else {
+                expectedClass = DefaultClassResolver.INSTANCE.getRealClass(sampleValue);
+            }
+        } else {
+            expectedClass = expected;
         }
         FlowPropertyDefinitionImpl propertyDefinition = new FlowPropertyDefinitionImpl(key).initAccess(PropertyScope.global, PropertyUsage.io);
-        if (expected != null && !CharSequence.class.isAssignableFrom(expected) ) {
+        if (expectedClass != null && !CharSequence.class.isAssignableFrom(expectedClass) ) {
             // auto define property
             // TODO save the definition when the flowState is persisted.
-            propertyDefinition.setDataClass(expected);
+            propertyDefinition.setDataClass(expectedClass);
             if ( sampleValue != null) {
                 // actually going to be setting this property
                 flowPropertyProvider.addPropertyDefinitions(propertyDefinition);
@@ -637,5 +647,19 @@ public class BaseFlowManagement implements FlowManagement {
      */
     public ValueFromBindingProvider getValueFromBindingProvider() {
         return valueFromBindingProvider;
+    }
+
+    /**
+     * @param classResolver the classResolver to set
+     */
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
+    }
+
+    /**
+     * @return the classResolver
+     */
+    public ClassResolver getClassResolver() {
+        return classResolver;
     }
 }
