@@ -1649,7 +1649,8 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public <T> void setProperty(String key, T value) {
         if (isActive()) {
-            getCurrentActivity().setProperty(key, value);
+            FlowActivity currentActivity = getCurrentActivity();
+            currentActivity.setProperty(key, value);
         } else {
             Class<T> expected = (Class<T>) (value == null?null:value.getClass());
             FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);

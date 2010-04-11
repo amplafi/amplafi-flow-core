@@ -499,6 +499,8 @@ public class BaseFlowManagement implements FlowManagement {
         } else {
             expectedClass = expected;
         }
+        // something to be said for making it requestFlowLocal - because this would give flash persistence for free.
+        // but using global allows a property to be set that is really for the next flow to be run.
         FlowPropertyDefinitionImpl propertyDefinition = new FlowPropertyDefinitionImpl(key).initAccess(PropertyScope.global, PropertyUsage.io);
         if (expectedClass != null && !CharSequence.class.isAssignableFrom(expectedClass) ) {
             // auto define property
