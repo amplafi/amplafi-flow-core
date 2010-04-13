@@ -52,11 +52,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
             FlowManagement flowManagement, Serializable keyExpression) {
         super(flowTypeName, flowManagement, initialFlowState, keyExpression);
-        this.keyExpression = keyExpression;
     }
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState, Serializable keyExpression) {
         super(flowTypeName, initialFlowState, keyExpression);
-        this.keyExpression = keyExpression;
     }
     /**
     *
@@ -98,14 +96,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         this.flowTypeName = flowTypeName;
     }
 
-    public Object getKeyExpression() {
-        return keyExpression;
-    }
-
-    public boolean hasKey(Object key) {
-        return ObjectUtils.equals(this.keyExpression, key);
-    }
-
     public void setPropertyRoot(Object propertyRoot) {
         this.propertyRoot = propertyRoot;
     }
@@ -132,7 +122,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
      * @see org.amplafi.flow.launcher.BaseFlowLauncher#getFlowState()
      */
     @Override
-    protected FlowState getFlowState() {
+    protected <FS extends FlowState> FS getFlowState() {
         return null;
     }
 

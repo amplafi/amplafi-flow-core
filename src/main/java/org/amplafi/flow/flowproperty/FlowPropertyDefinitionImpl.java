@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
+import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
 
 
@@ -224,15 +225,17 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         Object value = null;
-        if ( flowPropertyProvider == null ) {
-            throw new ApplicationNullPointerException("flowPropertyProvider cannot be null");
-        }
+        ApplicationNullPointerException.notNull(flowPropertyProvider,this,"flowPropertyProvider cannot be null");
         FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             ApplicationIllegalArgumentException.valid(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()),
-                this+": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
-            value = propertyValueProvider.get(flowPropertyProvider, this);
+                this,": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
+            try {
+                value = propertyValueProvider.get(flowPropertyProvider, this);
+            } catch(Exception e) {
+                throw new ApplicationIllegalStateException(this+" was trying to use "+propertyValueProvider, e);
+            }
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
             // for example the property type is a primitive.

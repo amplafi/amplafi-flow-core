@@ -20,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.impl.FlowStateImplementor;
 
 
 
@@ -30,17 +31,11 @@ import org.amplafi.flow.FlowState;
 public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
 
     private static final long serialVersionUID = -1221490458104629351L;
-    private String lookupKey;
     public ContinueFlowLauncher() {
 
     }
     public ContinueFlowLauncher(FlowState flowState, FlowManagement flowManagement) {
-        super(flowState.getFlowTypeName(), flowManagement, null, flowState.getLookupKey());
-        this.lookupKey = flowState.getLookupKey();
-    }
-
-    public FlowState getFlowState() {
-        return getFlowManagement().getFlowState(lookupKey);
+        super(flowState, flowManagement, flowState.getLookupKey());
     }
 
     /**
@@ -50,7 +45,7 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
      * @return the flow that was continued
      */
     public FlowState call() {
-        return getFlowManagement().continueFlowState(lookupKey, true, this.getValuesMap());
+        return getFlowManagement().continueFlowState(getExistingFlowStateLookupKey(), true, this.getValuesMap());
     }
     @Override
     public String getLinkTitle() {
@@ -67,17 +62,9 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
     @Override
     public void setLinkTitle(String label) {
         if ( getFlowState() != null ) {
-            getFlowState().setActiveFlowLabel(label);
+            ((FlowStateImplementor)getFlowState()).setActiveFlowLabel(label);
         }
         super.setLinkTitle(label);
-    }
-
-    public Object getKeyExpression() {
-        return this.lookupKey;
-    }
-
-    public boolean hasKey(Object key) {
-        return this.lookupKey.equals(key);
     }
 
     @SuppressWarnings("unchecked")

@@ -82,6 +82,7 @@ public interface FlowStateImplementor extends FlowState {
     void setCurrentPage(String currentPage);
     void setCancelText(String cancelText);
     void setFinishText(String finishText);
+    void setActiveFlowLabel(String activeFlowLabel);
 
     /**
      * Called when this flowstate no longer represents the current flow. Assume

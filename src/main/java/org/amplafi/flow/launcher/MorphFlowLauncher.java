@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.apache.commons.lang.ObjectUtils;
 
 
 /**
@@ -26,8 +25,6 @@ import org.apache.commons.lang.ObjectUtils;
 
 public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
 
-    private String lookupKey;
-
     public MorphFlowLauncher(String flowTypeName, String lookupKey, FlowManagement flowManagement) {
         this(flowTypeName, lookupKey, null, flowManagement);
     }
@@ -35,7 +32,7 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
     public MorphFlowLauncher(String flowTypeName, String lookupKey,
             Map<String, String> initialFlowState, FlowManagement flowManagement) {
         super(flowTypeName, flowManagement, initialFlowState, lookupKey /*see comment in FlowTransition.*/);
-        this.lookupKey = lookupKey;
+        this.existingFlowStateLookupKey = lookupKey;
     }
 
     @Override
@@ -43,20 +40,5 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
         FlowState currentFlowState = getFlowState();
         currentFlowState.morphFlow(getFlowTypeName(), getValuesMap());
         return currentFlowState;
-    }
-
-    /**
-     * @return the flow lookupKey that will be morphed.
-     */
-    public FlowState getFlowState() {
-        return getFlowManagement().getFlowState(lookupKey);
-    }
-
-    public Object getKeyExpression() {
-        return keyExpression;
-    }
-
-    public boolean hasKey(Object key) {
-        return ObjectUtils.equals(this.keyExpression, key);
     }
 }

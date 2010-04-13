@@ -130,8 +130,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     String getCurrentPage();
 
-    void setActiveFlowLabel(String activeFlowLabel);
-
     String getActiveFlowLabel();
 
     /**

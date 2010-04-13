@@ -26,7 +26,9 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
+import org.apache.commons.lang.ObjectUtils;
 
+import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.CUtilities;
 
 /**
@@ -43,7 +45,11 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     /**
      * Used for Listable items.
      */
-    protected Serializable keyExpression;
+    private Serializable keyExpression;
+    /**
+     * Lookup Key to find existing flow. May not be unique within a list so can not be used as the keyExpression.
+     */
+    protected String existingFlowStateLookupKey;
     protected BaseFlowLauncher() {
 
     }
@@ -69,14 +75,16 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         this(flowTypeName, valuesMap, keyExpression);
         this.flowManagement = flowManagement;
     }
+    public BaseFlowLauncher(FlowState flowState, FlowManagement flowManagement, Serializable keyExpression) {
+        this(flowState.getFlowTypeName(), flowManagement, null, keyExpression);
+        this.existingFlowStateLookupKey = flowState.getLookupKey();
+    }
     @Override
     public void setFlowManagement(FlowManagement sessionFlowManagement) {
         this.flowManagement = sessionFlowManagement;
     }
     public FlowManagement getFlowManagement() {
-        if(flowManagement == null) {
-            throw new IllegalStateException("no flowmanagement object supplied!");
-        }
+        ApplicationNullPointerException.notNull(flowManagement,"no flowmanagement object supplied!");
         return flowManagement;
     }
     /**
@@ -146,10 +154,23 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         return linkTitle;
     }
 
-    protected abstract FlowState getFlowState();
-
     @Override
     public String toString() {
         return this.getClass().getSimpleName()+" :" +this.getFlowTypeName()+ " initialValues="+getValuesMap();
+    }
+    @SuppressWarnings("unchecked")
+    protected <FS extends FlowState> FS getFlowState() {
+        return (FS) getFlowManagement().getFlowState(getExistingFlowStateLookupKey());
+    }
+    protected String getExistingFlowStateLookupKey() {
+        return this.existingFlowStateLookupKey;
+    }
+
+    public Object getKeyExpression() {
+        return this.keyExpression;
+    }
+
+    public boolean hasKey(Object key) {
+        return ObjectUtils.equals(this.keyExpression, key);
     }
 }
