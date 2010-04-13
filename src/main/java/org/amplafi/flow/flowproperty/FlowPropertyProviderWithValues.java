@@ -25,10 +25,6 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      *
      * Will trigger property initialization including possible call to {@link org.amplafi.flow.FlowPropertyValueProvider}
      *
-     * TO_PAT: The method is no longer invoked by FlowState.
-     * Seems that now getProperty(String key, Class<? extends T> expected)
-     * has to be overriden to get the special properties through binding.
-     *   
      * @param key
      * @param <T> type of property.
      * @return property
