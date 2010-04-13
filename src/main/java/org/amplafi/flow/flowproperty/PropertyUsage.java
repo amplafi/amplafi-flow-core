@@ -80,9 +80,9 @@ public enum PropertyUsage {
         initialize.canbeChangedTo = Arrays.asList();
     }
 
-    private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnExit, boolean externallySettable) {
+    private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnFlowSuccess, boolean externallySettable) {
         this.cleanOnInitialization = cleanOnInitialization;
-        this.copyBackOnFlowSuccess = copyBackOnExit;
+        this.copyBackOnFlowSuccess = copyBackOnFlowSuccess;
         this.externallySettable = externallySettable;
     }
 

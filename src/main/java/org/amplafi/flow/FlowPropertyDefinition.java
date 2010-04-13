@@ -154,6 +154,7 @@ public interface FlowPropertyDefinition {
     boolean isDynamic();
 
     /**
+     * Needed for case when a FlowPropertyValueProvider supplies an object. Need to make sure the default object is saved in the FlowState, particularly if the flow transitions to another flow.
      * @return true if the value should be copied back to an exported flow values map.
      */
     boolean isCopyBackOnFlowSuccess();
