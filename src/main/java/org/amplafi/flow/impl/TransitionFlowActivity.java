@@ -104,7 +104,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T getProperty(String key) {
+    public <T> T getProperty(String key, Class<? extends T> expected) {
         if (FlowConstants.FSNEXT_FLOW.equals(key)) {
             T value = (T) this.getNextFlowType();
             if (value == null) {

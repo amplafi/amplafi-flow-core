@@ -761,7 +761,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.String)
      */
     @SuppressWarnings("unchecked")
-    public <T> T getProperty(String key) {
+    public final <T> T getProperty(String key) {
         return (T) this.getProperty(key, null);
     }
     @SuppressWarnings("unchecked")
