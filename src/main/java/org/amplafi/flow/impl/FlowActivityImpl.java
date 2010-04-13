@@ -764,6 +764,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     public <T> T getProperty(String key) {
         return (T) this.getProperty(key, null);
     }
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(String key, Class<? extends T> expected) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);

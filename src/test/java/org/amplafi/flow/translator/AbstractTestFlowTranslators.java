@@ -17,6 +17,7 @@ package org.amplafi.flow.translator;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
- * Recreate the {@link org.amplafi.flow.FlowTranslator}s a bunch of times to make sure that
+ * Recreate the {@link org.amplafi.flow.translator.FlowTranslator}s a bunch of times to make sure that
  * no state is passed between serialize and deserialize steps.
  * @param <T>
  *
@@ -64,7 +65,8 @@ public abstract class AbstractTestFlowTranslators<T> {
 
         String actual = flowPropertyDefinition.serialize(object);
 
-        Object deserialized = createFlowTranslator().deserialize(flowPropertyDefinition, dataClassDefinition, actual);
+        FlowPropertyProvider flowPropertyProvider = null;
+        Object deserialized = createFlowTranslator().deserialize(flowPropertyProvider, flowPropertyDefinition, dataClassDefinition, actual);
 
         compareResults(object, expectedSerialize, actual, deserialized);
     }

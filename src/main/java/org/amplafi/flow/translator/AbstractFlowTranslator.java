@@ -20,7 +20,6 @@ import java.util.List;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
@@ -65,17 +64,17 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     /**
-     * @see org.amplafi.flow.FlowTranslator#deserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
+     * @see org.amplafi.flow.translator.FlowTranslator#deserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowException {
+    public T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowException {
         if ( serializedObject == null ) {
             return null;
         } else if ( isDeserializedForm(serializedObject.getClass())) {
             return (T) serializedObject;
         } else {
-            return doDeserialize(flowPropertyDefinition, dataClassDefinition, serializedObject);
+            return doDeserialize(flowPropertyProvider, flowPropertyDefinition, dataClassDefinition, serializedObject);
         }
     }
 
@@ -87,7 +86,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
         if ( object == null ) {
             return jsonWriter;
         } else if ( this.isSerializedForm(object.getClass())) {
-            // already in a serialzed form? (we hope )
+            // already in a serialized form? (we hope )
             return jsonWriter.value(object);
         } else {
             return doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
@@ -111,7 +110,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     @SuppressWarnings({"unused","unchecked"})
-    protected T doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
+    protected T doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         return (T) fromJson(serializedObject);
     }
 
@@ -182,7 +181,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
 
     /**
      * NOTE: May be overridden!
-     * @see org.amplafi.flow.FlowTranslator#getTranslatedClass()
+     * @see org.amplafi.flow.translator.FlowTranslator#getTranslatedClass()
      */
     @Override
     public Class<?> getTranslatedClass() {

@@ -18,6 +18,7 @@ import java.util.TimeZone;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
@@ -30,7 +31,7 @@ import org.amplafi.json.JsonRenderer;
 public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> implements JsonRenderer<TimeZone> {
 
     /**
-     * @see org.amplafi.flow.FlowTranslator#getTranslatedClass()
+     * @see org.amplafi.flow.translator.FlowTranslator#getTranslatedClass()
      */
     @Override
     public Class<TimeZone> getTranslatedClass() {
@@ -76,10 +77,10 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
      */
     @Override
-    protected TimeZone doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
+    protected TimeZone doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         return (TimeZone) fromJson(dataClassDefinition.getDataClass(), serializedObject);
     }
 

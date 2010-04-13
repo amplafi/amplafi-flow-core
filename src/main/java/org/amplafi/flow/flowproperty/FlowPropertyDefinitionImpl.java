@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.amplafi.flow.*;
+import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.JsonSelfRenderer;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -434,8 +435,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     @SuppressWarnings("unchecked")
-    public <V> V parse(String value) throws FlowException {
-        return (V) this.getDataClassDefinition().deserialize(this, value);
+    public <V> V parse(FlowPropertyProvider flowPropertyProvider, String value) throws FlowException {
+        return (V) this.getDataClassDefinition().deserialize(flowPropertyProvider, this, value);
     }
     /**
      * @param flowActivityPhase the propertyRequired to set

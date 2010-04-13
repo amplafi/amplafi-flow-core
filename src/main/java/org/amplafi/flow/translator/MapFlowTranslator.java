@@ -27,7 +27,7 @@ import org.apache.commons.collections.MapUtils;
 
 
 /**
- * {@link org.amplafi.flow.FlowTranslator} that serializes/deserializes {@link Map}s for flows.
+ * {@link org.amplafi.flow.translator.FlowTranslator} that serializes/deserializes {@link Map}s for flows.
  * @author patmoore
  *
  * @param <K>
@@ -42,15 +42,15 @@ public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends
     }
     @SuppressWarnings("unchecked")
     @Override
-    protected Map<? extends K, ? extends V> doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
+    protected Map<? extends K, ? extends V> doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         JSONObject jsonObject = JSONObject.toJsonObject(serializedObject);
         Map<K, V> map = new LinkedHashMap<K, V>();
         for(String key : jsonObject.keys() ) {
             Object object = jsonObject.get(key);
             DataClassDefinition keyDataClassDefinition = dataClassDefinition.getKeyDataClassDefinition();
-            K realKey = (K) keyDataClassDefinition.deserialize(flowPropertyDefinition, key);
+            K realKey = (K) keyDataClassDefinition.deserialize(flowPropertyProvider, flowPropertyDefinition, key);
             DataClassDefinition elementDataClassDefinition = dataClassDefinition.getElementDataClassDefinition();
-            V realValue = (V) elementDataClassDefinition.deserialize(flowPropertyDefinition, object);
+            V realValue = (V) elementDataClassDefinition.deserialize(flowPropertyProvider, flowPropertyDefinition, object);
             map.put(realKey, realValue);
         }
         return map;

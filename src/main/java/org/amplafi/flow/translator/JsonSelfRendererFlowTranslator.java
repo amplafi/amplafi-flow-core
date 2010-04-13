@@ -16,6 +16,7 @@ package org.amplafi.flow.translator;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
@@ -28,7 +29,7 @@ import org.amplafi.json.JsonSelfRenderer;
 public class JsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
 
     /**
-     * @see org.amplafi.flow.FlowTranslator#getTranslatedClass()
+     * @see org.amplafi.flow.translator.FlowTranslator#getTranslatedClass()
      */
     @Override
     public Class<JsonSelfRenderer> getTranslatedClass() {
@@ -36,7 +37,7 @@ public class JsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
     }
 
     /**
-     * @see org.amplafi.flow.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.IJsonWriter, java.lang.Object)
+     * @see org.amplafi.flow.translator.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.IJsonWriter, java.lang.Object)
      */
     @Override
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter,
@@ -45,7 +46,7 @@ public class JsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
     }
 
     @Override
-    protected Object doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
+    protected Object doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         try {
             JsonSelfRenderer jsonSelfRenderer = (JsonSelfRenderer) dataClassDefinition.getDataClass().newInstance();
             return jsonSelfRenderer.fromJson(serializedObject);

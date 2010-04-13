@@ -1,6 +1,5 @@
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowTranslator;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

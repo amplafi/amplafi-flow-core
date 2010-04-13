@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.IJsonWriter;
 
 import com.sworddance.beans.PropertyDefinition;
@@ -36,7 +38,7 @@ public interface DataClassDefinition extends PropertyDefinition {
 
     <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value);
 
-    <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value);
+    <T> T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object value);
 
     /**
      * @return the flowTranslator

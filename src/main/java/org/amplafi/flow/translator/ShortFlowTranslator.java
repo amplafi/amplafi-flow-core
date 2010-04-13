@@ -32,7 +32,7 @@ public class ShortFlowTranslator extends AbstractFlowTranslator<Short> {
     }
     @SuppressWarnings("unused")
     @Override
-    public Short deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
+    public Short deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         if (serializedObject == null ){
             return null;
         } else if ( serializedObject instanceof Number) {
@@ -71,10 +71,10 @@ public class ShortFlowTranslator extends AbstractFlowTranslator<Short> {
         return 0;
     }
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
      */
     @Override
-    protected Short doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
+    protected Short doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         throw new UnsupportedOperationException();
     }
 }

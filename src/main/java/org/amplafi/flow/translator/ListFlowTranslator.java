@@ -27,10 +27,10 @@ public class ListFlowTranslator<T> extends FlowCollectionTranslator<List<? exten
         super(new IterableJsonOutputRenderer<List<? extends T>>());
     }
     @Override
-    public List<? extends T> deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
+    public List<? extends T> deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         if ( serializedObject != null ) {
             List<T> list = new ArrayList<T>();
-            super.deserialize(flowPropertyDefinition, dataClassDefinition, list, serializedObject);
+            super.deserialize(flowPropertyProvider, flowPropertyDefinition, dataClassDefinition, list, serializedObject);
             return list;
         } else {
             return null;

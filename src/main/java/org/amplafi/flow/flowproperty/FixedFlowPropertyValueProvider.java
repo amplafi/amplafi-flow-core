@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentMap;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.lang.ObjectUtils;
 
+import com.sworddance.util.ApplicationIllegalStateException;
+
 /**
  * {@link org.amplafi.flow.FlowPropertyValueProvider} that handles statically provided values.
  *
@@ -47,14 +49,19 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
     }
     /**
      * @param flowPropertyDefinition
-     * @param value
      */
-    @SuppressWarnings("unchecked")
-    private <T> T getDefaultValue(FlowPropertyDefinition flowPropertyDefinition) {
+    public void convertable(FlowPropertyDefinition flowPropertyDefinition) {
+        ApplicationIllegalStateException.valid( flowPropertyDefinition.getDataClassDefinition().isDeserializable(flowPropertyDefinition, this.defaultObject),
+            this, " cannot convert value=", this.defaultObject);
+    }
+
+    @Override
+    @SuppressWarnings({  "unchecked" })
+    public <T> T get(FA flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         T value;
         if ( !map.containsKey(flowPropertyDefinition) ) {
             convertable(flowPropertyDefinition);
-            value = (T) flowPropertyDefinition.getDataClassDefinition().deserialize(flowPropertyDefinition, this.defaultObject);
+            value = (T) flowPropertyDefinition.getDataClassDefinition().deserialize(flowPropertyProvider, flowPropertyDefinition, this.defaultObject);
             if ( value == null ) {
                 map.putIfAbsent(flowPropertyDefinition, NULL);
             } else {
@@ -66,20 +73,6 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
             value = null;
         }
         return value;
-    }
-    /**
-     * @param flowPropertyDefinition
-     */
-    public void convertable(FlowPropertyDefinition flowPropertyDefinition) {
-        if ( !flowPropertyDefinition.getDataClassDefinition().isDeserializable(flowPropertyDefinition, this.defaultObject)) {
-            throw new IllegalStateException(this + " cannot convert value="+ this.defaultObject);
-        }
-    }
-
-    @Override
-    @SuppressWarnings({ "unused", "unchecked" })
-    public <T> T get(FA flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
-        return (T) this.getDefaultValue(flowPropertyDefinition);
     }
     /**
      * @return the value as a string.

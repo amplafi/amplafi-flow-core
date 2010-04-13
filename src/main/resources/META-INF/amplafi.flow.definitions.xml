@@ -256,7 +256,7 @@
         <service id="EnumFlowTranslator"/>
     </contribution>
     
-    <service-point id="UriTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="UriTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.UriFlowTranslator">
             </construct>
@@ -267,61 +267,61 @@
             <construct class="org.amplafi.flow.translator.EnumFlowTranslator"/>
         </invoke-factory>
     </service-point>
-    <service-point id="CalendarFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="CalendarFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.CalendarFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>  
-    <service-point id="JsonSelfRendererFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="JsonSelfRendererFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.JsonSelfRendererFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>
-    <service-point id="JSONObjectFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="JSONObjectFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.JSONObjectFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>
-    <service-point id="LongFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="LongFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.LongFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>         
-    <service-point id="IntegerFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="IntegerFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.IntegerFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>     
-    <service-point id="BooleanFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="BooleanFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.BooleanFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>          
-    <service-point id="TimezoneFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="TimezoneFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.TimezoneFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>   
-    <service-point id="ListFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="ListFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.ListFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>      
-    <service-point id="SetFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="SetFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.SetFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>   
-    <service-point id="MapFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="MapFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.MapFlowTranslator">
                 <set-object property="translatedClass" value="class:java.util.Map"/>
@@ -329,7 +329,7 @@
             </construct>
         </invoke-factory>
     </service-point>        
-    <service-point id="NavigableMapFlowTranslator" interface="org.amplafi.flow.FlowTranslator">
+    <service-point id="NavigableMapFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.MapFlowTranslator">
                 <set-object property="translatedClass" value="class:java.util.NavigableMap"/>

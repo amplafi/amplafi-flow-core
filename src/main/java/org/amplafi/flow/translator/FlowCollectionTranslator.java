@@ -17,6 +17,7 @@ import java.util.Collection;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONArray;
@@ -41,7 +42,7 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
         this.addSerializedFormClasses(JSONArray.class);
     }
     @SuppressWarnings("unchecked")
-    protected void deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Collection<T> collection, Object serialized) {
+    protected void deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Collection<T> collection, Object serialized) {
         JSONArray jsonArray;
         if ( serialized instanceof JSONArray) {
             jsonArray = (JSONArray) serialized;
@@ -49,7 +50,7 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
             jsonArray = new JSONArray(ObjectUtils.toString(serialized, null));
         }
         for(Object o : jsonArray.asList()) {
-            T element= (T) dataClassDefinition.getElementDataClassDefinition().deserialize(flowPropertyDefinition, o);
+            T element= (T) dataClassDefinition.getElementDataClassDefinition().deserialize(flowPropertyProvider, flowPropertyDefinition, o);
             collection.add(element);
         }
     }
@@ -62,10 +63,10 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
         return jsonWriter.endArray();
     }
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
      */
     @Override
-    protected C doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
+    protected C doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         throw new UnsupportedOperationException();
     }
 

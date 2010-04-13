@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
@@ -57,6 +58,7 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testResolvingClassWithCollections() {
+        FlowPropertyProvider flowPropertyProvider = null;
 
         DataClassDefinitionImpl dataClassDefinition = new DataClassDefinitionImpl(Long.class, Set.class);
         getFlowTranslatorResolver().resolve("", dataClassDefinition, true);
@@ -70,7 +72,7 @@ public class TestFlowTranslatorResolver extends Assert {
         assertTrue(elementDataClassDefinition.getFlowTranslator() instanceof LongFlowTranslator, elementDataClassDefinition.getFlowTranslator().toString());
 
         // verify that the resolved result can do something useful
-        Set<Long> result = dataClassDefinition.deserialize(null, "[34,45,67]");
+        Set<Long> result = dataClassDefinition.deserialize(flowPropertyProvider, null, "[34,45,67]");
         assertTrue(result.containsAll(Arrays.asList(34L, 45L, 67L)));
         assertEquals(result.size(), 3);
 
@@ -79,6 +81,8 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testResolvingClassWithMaps() {
+        FlowPropertyProvider flowPropertyProvider = null;
+
         DataClassDefinitionImpl dataClassDefinition = DataClassDefinitionImpl.map(Long.class, String.class, List.class);
         getFlowTranslatorResolver().resolve("", dataClassDefinition, true);
 
@@ -111,7 +115,7 @@ public class TestFlowTranslatorResolver extends Assert {
 
         String serializedResult = (String) dataClassDefinition.serialize(null, map);
         assertEquals(serializedResult, "{\"34\":[\"foo34\",\"bar34\"],\"3\":[\"foo3\",\"bar3\"]}");
-        Map<Long, List<String>> reMap = dataClassDefinition.deserialize(null, serializedResult);
+        Map<Long, List<String>> reMap = dataClassDefinition.deserialize(flowPropertyProvider, null, serializedResult);
         assertEquals(reMap.size(), 2);
         List<String> set34 = reMap.get(new Long(34));
         List<String> set3 = reMap.get(new Long(3));
@@ -125,7 +129,9 @@ public class TestFlowTranslatorResolver extends Assert {
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV =definition.serialize(list);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
-        List<URI> result = definition.parse(strV);
+
+        FlowPropertyProvider flowPropertyProvider = null;
+        List<URI> result = definition.parse(flowPropertyProvider, strV);
         assertTrue(list.containsAll(result));
         assertTrue(result.containsAll(list));
     }
@@ -137,7 +143,8 @@ public class TestFlowTranslatorResolver extends Assert {
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV =definition.serialize(set);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
-        Set<URI> result =(Set<URI>) definition.parse(strV);
+        FlowPropertyProvider flowPropertyProvider = null;
+        Set<URI> result =(Set<URI>) definition.parse(flowPropertyProvider, strV);
         assertTrue(set.containsAll(result));
         assertTrue(set.containsAll(set));
     }
@@ -151,7 +158,8 @@ public class TestFlowTranslatorResolver extends Assert {
         map.put("second", new URI("http://gg.gov"));
         String strV =definition.serialize(map);
         assertEquals(strV, "{\"first\":\"http://foo.com\",\"second\":\"http://gg.gov\"}");
-        Map<String, URI> result = (Map<String,URI>) definition.parse(strV);
+        FlowPropertyProvider flowPropertyProvider = null;
+        Map<String, URI> result = (Map<String,URI>) definition.parse(flowPropertyProvider, strV);
         assertTrue(result.equals(map));
     }
 

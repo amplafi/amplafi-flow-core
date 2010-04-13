@@ -11,10 +11,13 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow;
+package org.amplafi.flow.translator;
 
 import java.util.List;
 
+import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowException;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
@@ -27,7 +30,7 @@ import org.amplafi.json.JsonRenderer;
 public interface FlowTranslator <T>{
     /**
      *
-     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
+     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyProvider , FlowPropertyDefinition , DataClassDefinition, Object)}.
      */
     Class<?> getTranslatedClass();
     /**
@@ -44,7 +47,7 @@ public interface FlowTranslator <T>{
      */
     IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object);
 
-    T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
+    T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
             throws FlowException;
 
     /**
@@ -64,7 +67,7 @@ public interface FlowTranslator <T>{
      * @param dataClassDefinition TODO
      * @param value
      * @return true if this object can be translated by the FlowTranslator to
-     * the class returned by {@link FlowTranslator#deserialize(FlowPropertyDefinition , DataClassDefinition , Object)}.
+     * the class returned by {@link FlowTranslator#deserialize(FlowPropertyProvider , FlowPropertyDefinition , DataClassDefinition, Object)}.
      */
     boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object value);
     /**

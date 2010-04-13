@@ -32,7 +32,7 @@ public class IntegerFlowTranslator extends AbstractFlowTranslator<Integer> {
     }
     @SuppressWarnings("unused")
     @Override
-    protected Integer doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
+    protected Integer doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         if ( serializedObject instanceof Number) {
             return new Integer(((Number)serializedObject).intValue());
         }

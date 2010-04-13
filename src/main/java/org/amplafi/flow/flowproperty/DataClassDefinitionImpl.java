@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
-import org.amplafi.flow.FlowTranslator;
+import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.IJsonWriter;
@@ -104,20 +104,16 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     public static DataClassDefinitionImpl map(Class<?> keyClass, DataClassDefinitionImpl elementDataClassDefinition) {
         return new DataClassDefinitionImpl(Map.class, new DataClassDefinitionImpl(keyClass), elementDataClassDefinition);
     }
-    /**
-     * @param <T>
-     * @param flowPropertyDefinition
-     * @param value
-     * @return deserialized value.
-     */
+    @Override
     @SuppressWarnings("unchecked")
-    public <T> T deserialize(FlowPropertyDefinition flowPropertyDefinition, Object value) {
+    public <T> T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object value) {
         if ( !this.isFlowTranslatorSet() && this.getDataClass().isInstance(value)) {
             // this is to handle case where no FlowTranslator is set but object is of the correct type (avoiding unnecessary errors )
             return (T) value;
         }
-        return (T) this.getFlowTranslator().deserialize(flowPropertyDefinition, this, value);
+        return (T) this.getFlowTranslator().deserialize(flowPropertyProvider, flowPropertyDefinition, this, value);
     }
+    @Override
     public <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value) {
         if ( value == null) {
             return null;
@@ -132,6 +128,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
             return strV;
         }
     }
+    @Override
     @SuppressWarnings("unchecked")
     public <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value) {
         return this.getFlowTranslator().serialize(flowPropertyDefinition, this, jsonWriter, value);
@@ -164,6 +161,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         }
         return original;
     }
+    @Override
     public boolean isMergable(DataClassDefinition dataClassDefinition) {
         if(equals(dataClassDefinition) || dataClassDefinition == null) {
             return true;

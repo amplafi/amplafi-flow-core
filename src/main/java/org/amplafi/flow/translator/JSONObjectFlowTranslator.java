@@ -17,6 +17,7 @@ import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 
 public class JSONObjectFlowTranslator extends AbstractFlowTranslator<JSONObject> {
@@ -40,8 +41,8 @@ public class JSONObjectFlowTranslator extends AbstractFlowTranslator<JSONObject>
 
     @Override
     @SuppressWarnings("unused")
-    protected JSONObject doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition,
-                                       Object serializedObject) throws FlowValidationException {
+    protected JSONObject doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition,
+                                       DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         return JSONObject.toJsonObject(serializedObject);
     }
 }

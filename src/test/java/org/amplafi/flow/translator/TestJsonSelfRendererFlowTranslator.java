@@ -2,7 +2,6 @@ package org.amplafi.flow.translator;
 
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
-import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.json.JsonSelfRenderer;
 import org.amplafi.json.IJsonWriter;

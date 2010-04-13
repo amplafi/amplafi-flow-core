@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static org.testng.Assert.*;
 
-import org.amplafi.flow.FlowTranslator;
 import org.amplafi.flow.translator.MapFlowTranslator;
 import org.apache.commons.collections.MapUtils;
 import org.testng.annotations.DataProvider;

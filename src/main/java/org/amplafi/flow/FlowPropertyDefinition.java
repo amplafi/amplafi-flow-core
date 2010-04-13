@@ -21,6 +21,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
+import org.amplafi.flow.translator.FlowTranslator;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or

@@ -11,15 +11,21 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
+package org.amplafi.flow;
 
-package org.amplafi.flow.translator;
-
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
- * {@link FlowTranslator}s that should be cloned before being used.
- * @param <T>
+ * Allows for complex validation.
+ *
+ * TODO:
+ * 1) mechanism to indicate which properties the validator depends on (so the previous success/fail flag can be invalidated )
+ * 2) mechanism to preserve result of validation result for duration of request.
+ *
+ * @author patmoore
  *
  */
-public interface InstanceSpecificFlowTranslator<T> extends FlowTranslator<T>{
-    <V> FlowTranslator<V> resolveFlowTranslator(Class<V> clazz);
+public interface FlowValidationResultProvider<FPP extends FlowPropertyProvider> {
+
+    FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider);
 }

@@ -15,6 +15,7 @@ package org.amplafi.flow.translator;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
@@ -32,7 +33,7 @@ public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {
     }
     @Override
     @SuppressWarnings({ "unchecked" })
-    public T deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
+    public T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         return (T) JSONObject.unquote(ObjectUtils.toString(serializedObject, null));
     }
 
@@ -48,12 +49,12 @@ public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {
     }
 
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
      */
     @Override
     @SuppressWarnings({ "unchecked" })
-    protected T doDeserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition,
-        Object serializedObject) throws FlowValidationException {
+    protected T doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition,
+        DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         return (T) JSONObject.unquote(serializedObject.toString());
     }
     @Override

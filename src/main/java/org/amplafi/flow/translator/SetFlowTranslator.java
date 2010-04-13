@@ -29,10 +29,10 @@ public class SetFlowTranslator<T> extends FlowCollectionTranslator<Set<? extends
         super(new IterableJsonOutputRenderer<Set<? extends T>>(false));
     }
     @Override
-    public Set<? extends T> deserialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serialized) {
+    public Set<? extends T> deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serialized) {
         if ( serialized != null) {
             Set<T> set = new LinkedHashSet<T>();
-            super.deserialize(flowPropertyDefinition, dataClassDefinition, set, serialized);
+            super.deserialize(flowPropertyProvider, flowPropertyDefinition, dataClassDefinition, set, serialized);
             return set;
         } else {
             return null;

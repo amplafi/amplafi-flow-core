@@ -979,7 +979,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         if ( result == null ) {
             getFlowManagement().wireDependencies(propertyDefinition);
             String value = getRawProperty(flowPropertyProvider, propertyDefinition);
-            result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(value);
+            result = (T) ((FlowPropertyDefinitionImplementor)propertyDefinition).parse(flowPropertyProvider, value);
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
                 // TODO: Maybe should be checking !isCacheOnly() ?
@@ -1004,7 +1004,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // handle case for when initializing from string values.
             // or some other raw format.
             stringValue = (String) value;
-            actual = propertyDefinition.parse(stringValue);
+            actual = propertyDefinition.parse(flowPropertyProvider, stringValue);
         } else {
             actual = value;
         }
