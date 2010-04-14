@@ -108,12 +108,12 @@ public class TransitionFlowActivity extends FlowActivityImpl {
         if (FlowConstants.FSNEXT_FLOW.equals(key)) {
             T value = (T) this.getNextFlowType();
             if (value == null) {
-                return (T) super.getProperty(key);
+                return super.getProperty(key, expected);
             } else {
                 return value;
             }
         } else {
-            return (T) super.getProperty(key);
+            return super.getProperty(key, expected);
         }
     }
 

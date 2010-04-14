@@ -983,6 +983,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
 
+                // TODO : should probably be isCacheOnly()
                 if ( propertyDefinition.isCopyBackOnFlowSuccess()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.

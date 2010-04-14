@@ -144,7 +144,7 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         if ( isBlank(linkTitle) ) {
             FlowPropertyProviderWithValues flowPropertyProvider = getFlowState();
             if ( flowPropertyProvider != null ) {
-                linkTitle = flowPropertyProvider.getProperty(FSLINK_TEXT);
+                linkTitle = flowPropertyProvider.getProperty(FSLINK_TEXT, String.class);
             }
             if ( isBlank(linkTitle) && this.flowManagement !=null) {
                 Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);

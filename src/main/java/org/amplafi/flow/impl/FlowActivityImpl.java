@@ -55,6 +55,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.ApplicationNullPointerException;
 
 
 /**
@@ -787,17 +788,16 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     /**
      * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.Class)
      */
-    @SuppressWarnings("unchecked")
-    public <T> T getProperty(Class<T> dataClass) {
-        return (T) getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass));
+    public <T> T getProperty(Class<? extends T> dataClass) {
+        return getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), dataClass);
     }
 
     public String getString(String key) {
-        return getProperty(key);
+        return getProperty(key, String.class);
     }
 
     public Boolean getBoolean(String key) {
-        return getProperty(key);
+        return getProperty(key, Boolean.class);
     }
 
     public boolean isTrue(String key) {
@@ -829,11 +829,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @see org.amplafi.flow.FlowActivity#setProperty(Object)
      */
     public <T> void setProperty(T value) {
-        if (value == null) {
-            throw new IllegalArgumentException("value must not be null");
-        } else {
-            setProperty(value.getClass(), value);
-        }
+        ApplicationNullPointerException.notNull(value, "value must not be null");
+        setProperty(value.getClass(), value);
     }
 
     /**

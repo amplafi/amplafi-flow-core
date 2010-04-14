@@ -144,7 +144,7 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      * @param dataClass type of property
      * @return the value converted to dataClass.
      */
-    <T> T getProperty(Class<T> dataClass);
+    <T> T getProperty(Class<? extends T> dataClass);
 
     /**
      * Convert value.getClass() to string using
