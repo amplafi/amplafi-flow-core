@@ -61,6 +61,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
+import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
 
 /**
@@ -301,9 +302,7 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Map<String, String> initialFlowState) {
         FS flowState = (FS) getFlowState(lookupKey);
-        if ( flowState == null) {
-            throw new IllegalArgumentException(lookupKey+": no flow with this lookupKey found");
-        }
+        ApplicationIllegalArgumentException.notNull(lookupKey,": no flow with this lookupKey found");
         if (MapUtils.isNotEmpty(initialFlowState)) {
             for(Map.Entry<String, String> entry: initialFlowState.entrySet()) {
                 // HACK this looks bad. At the very least shouldn't FlowUtils.copyState be used

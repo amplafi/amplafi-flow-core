@@ -1788,7 +1788,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @Override
     public String toString() {
-        return this.lookupKey + " [type:" + this.flowTypeName + "] flowStateMap="+this.flowValuesMap;
+        return this.lookupKey + " [type:" + this.flowTypeName + "]; current Activity="+this.getCurrentActivity()+"; flowStateMap="+this.flowValuesMap;
     }
 
 }

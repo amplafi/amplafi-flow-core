@@ -25,6 +25,11 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
+import org.apache.commons.collections.list.SetUniqueList;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
+import static com.sworddance.util.CUtilities.*;
 
 /**
  *
@@ -34,8 +39,8 @@ import org.amplafi.json.JsonRenderer;
  */
 public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     private FlowTranslatorResolver flowTranslatorResolver;
-    protected List<Class<?>> serializedFormClasses = new ArrayList<Class<?>>();
-    private List<Class<?>> deserializedFormClasses = new ArrayList<Class<?>>();
+    protected List<Class<?>> serializedFormClasses = SetUniqueList.decorate(new ArrayList<Class<?>>());
+    private List<Class<?>> deserializedFormClasses = SetUniqueList.decorate(new ArrayList<Class<?>>());
     private boolean flowTranslatorJsonRenderer;
     private JsonRenderer<T> jsonRenderer;
 
@@ -44,7 +49,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
 
     @SuppressWarnings("unchecked")
     protected AbstractFlowTranslator(AbstractFlowTranslator<?> flowTranslator) {
-        this.flowTranslatorResolver = flowTranslator.flowTranslatorResolver;
+        this.flowTranslatorResolver = flowTranslator.getFlowTranslatorResolver();
         this.deserializedFormClasses.addAll(flowTranslator.deserializedFormClasses);
         this.serializedFormClasses.addAll(flowTranslator.serializedFormClasses);
         this.flowTranslatorJsonRenderer = flowTranslator.flowTranslatorJsonRenderer;
@@ -168,7 +173,10 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
         return serializedFormClasses.contains(clazz);
     }
     public void setDeserializedFormClasses(List<Class<?>> deserializedFormClasses) {
-        this.deserializedFormClasses = deserializedFormClasses;
+        this.deserializedFormClasses.clear();
+        if ( isNotEmpty(deserializedFormClasses)) {
+            this.deserializedFormClasses.addAll(deserializedFormClasses);
+        }
     }
 
     @Override
@@ -194,9 +202,8 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
      * @return TODO
      */
     public IJsonWriter toJson(IJsonWriter jsonWriter, T object) {
-        if ( this == jsonRenderer) {
-            throw new IllegalStateException(this+":infinite loop jsonRenderer==this");
-        }
+        ApplicationIllegalArgumentException.valid(this != jsonRenderer, this,":infinite loop jsonRenderer==this");
+
         return jsonRenderer.toJson(jsonWriter, object);
     }
 
