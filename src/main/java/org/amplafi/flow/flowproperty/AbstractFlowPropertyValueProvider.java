@@ -13,8 +13,10 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -26,6 +28,8 @@ import org.apache.commons.collections.CollectionUtils;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
 
+import static com.sworddance.util.CUtilities.*;
+
 /**
  * @author patmoore
  * @param <FPP>
@@ -33,7 +37,9 @@ import com.sworddance.util.ApplicationNullPointerException;
  */
 public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
+    @Deprecated
     private Set<String> propertiesHandled;
+    private List<FlowPropertyDefinition> flowPropertyDefinitions;
     /**
      * TODO: in future should define the property requirements?
      * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
@@ -41,23 +47,29 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     private Set<String> requiredProperties;
     private Set<String> optionalProperties;
 
+    protected AbstractFlowPropertyValueProvider() {
+        this.propertiesHandled = new LinkedHashSet<String>();
+        this.requiredProperties = new LinkedHashSet<String>();
+        this.optionalProperties = new LinkedHashSet<String>();
+        this.flowPropertyProviderClass = initFlowPropertyProviderClass();
+    }
     /**
      * {@link #getFlowPropertyProviderClass()} will return {@link FlowPropertyProviderWithValues} if FPP extends that class. otherwise {@link FlowPropertyProvider}
      * @param propertiesHandled first property listed is property returned by
      */
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
-        this.propertiesHandled = new LinkedHashSet<String>();
-        this.requiredProperties = new LinkedHashSet<String>();
-        this.optionalProperties = new LinkedHashSet<String>();
+        this();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
-        Class<FPP> clazz;
-        // TODO: is there a way to find out the class of FPP - last I checked there wasn't
-        try {
-            clazz = (Class<FPP>) FlowPropertyProviderWithValues.class;
-        } catch (ClassCastException e) {
-            clazz = (Class<FPP>) FlowPropertyProvider.class;
+    }
+    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinition...flowPropertyDefinitions) {
+        this();
+        this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinition>();
+        if ( isNotEmpty(flowPropertyDefinitions)) {
+            CollectionUtils.addAll(this.flowPropertyDefinitions, flowPropertyDefinitions);
+            for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
+                this.propertiesHandled.add(flowPropertyDefinition.getName());
+            }
         }
-        this.flowPropertyProviderClass = clazz;
     }
     /**
     *
@@ -69,6 +81,20 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
        this.requiredProperties = new LinkedHashSet<String>();
        this.optionalProperties = new LinkedHashSet<String>();
        CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
+   }
+   /**
+    * @return
+    *
+    */
+   private Class<FPP> initFlowPropertyProviderClass() {
+       Class<FPP> clazz;
+       // TODO: is there a way to find out the class of FPP - last I checked there wasn't
+       try {
+           clazz = (Class<FPP>) FlowPropertyProviderWithValues.class;
+       } catch (ClassCastException e) {
+           clazz = (Class<FPP>) FlowPropertyProvider.class;
+       }
+       return clazz;
    }
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
