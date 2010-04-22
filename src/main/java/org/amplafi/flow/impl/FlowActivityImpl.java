@@ -277,6 +277,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                 FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
                 FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
                 if ( flowPropertyValuePersister != null) {
+                    getFlowManagement().wireDependencies(flowPropertyValuePersister);
                     flowPropertyValuePersister.saveChanges(this, flowPropertyDefinition);
                 }
             }
