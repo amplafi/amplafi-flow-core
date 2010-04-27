@@ -113,10 +113,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      */
     @SuppressWarnings("unchecked")
     protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+        return (T) getSafe(flowPropertyProvider, flowPropertyDefinition, propertyName, null);
+    }
+    protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected) {
         if ( flowPropertyDefinition.isNamed(propertyName)) {
             return null;
         } else {
-            return (T) flowPropertyProvider.getProperty(propertyName);
+            return flowPropertyProvider.getProperty(propertyName, expected);
         }
     }
     /**
@@ -129,13 +132,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      */
     @SuppressWarnings("unchecked")
     protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Object...messages) {
-        if ( flowPropertyDefinition.isNamed(propertyName)) {
-            throw new ApplicationIllegalArgumentException(propertyName);
-        } else {
-            T result = (T) flowPropertyProvider.getProperty(propertyName);
-            ApplicationNullPointerException.notNull(result, propertyName, messages);
-            return result;
-        }
+        return (T) this.getRequired(flowPropertyProvider, flowPropertyDefinition, propertyName, null, messages);
+    }
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected, Object...messages) {
+        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyName), propertyName);
+        T result = flowPropertyProvider.getProperty(propertyName, expected);
+        ApplicationNullPointerException.notNull(result, propertyName, messages);
+        return result;
     }
 
     public Collection<String> getPropertiesHandled() {
