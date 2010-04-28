@@ -38,20 +38,24 @@ import static com.sworddance.util.CUtilities.*;
 public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
     @Deprecated
-    private Set<String> propertiesHandled;
+    private Set<String> propertiesHandled = new LinkedHashSet<String>();
     private List<FlowPropertyDefinition> flowPropertyDefinitions;
     /**
      * TODO: in future should define the property requirements?
      * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
      */
-    private Set<String> requiredProperties;
-    private Set<String> optionalProperties;
+    private Set<String> requiredProperties = new LinkedHashSet<String>();
+    private Set<String> optionalProperties = new LinkedHashSet<String>();
 
     protected AbstractFlowPropertyValueProvider() {
-        this.propertiesHandled = new LinkedHashSet<String>();
-        this.requiredProperties = new LinkedHashSet<String>();
-        this.optionalProperties = new LinkedHashSet<String>();
         this.flowPropertyProviderClass = initFlowPropertyProviderClass();
+    }
+    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass) {
+        if ( flowPropertyProviderClass == null) {
+            this.flowPropertyProviderClass = initFlowPropertyProviderClass();
+        } else {
+            this.flowPropertyProviderClass = flowPropertyProviderClass;
+        }
     }
     /**
      * {@link #getFlowPropertyProviderClass()} will return {@link FlowPropertyProviderWithValues} if FPP extends that class. otherwise {@link FlowPropertyProvider}
@@ -61,8 +65,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         this();
         CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
     }
-    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinition...flowPropertyDefinitions) {
-        this();
+    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinition...flowPropertyDefinitions) {
+        this(flowPropertyProviderClass);
         this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinition>();
         if ( isNotEmpty(flowPropertyDefinitions)) {
             CollectionUtils.addAll(this.flowPropertyDefinitions, flowPropertyDefinitions);
@@ -71,21 +75,23 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             }
         }
     }
+
+    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinition...flowPropertyDefinitions) {
+        this((Class<FPP>)null, flowPropertyDefinitions);
+    }
     /**
     *
     * @param propertiesHandled first property listed is property returned by
     */
    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, String...propertiesHandled) {
-       this.flowPropertyProviderClass = flowPropertyProviderClass;
-       this.propertiesHandled = new LinkedHashSet<String>();
-       this.requiredProperties = new LinkedHashSet<String>();
-       this.optionalProperties = new LinkedHashSet<String>();
+       this(flowPropertyProviderClass);
        CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
    }
    /**
     * @return
     *
     */
+   @SuppressWarnings("unchecked")
    private Class<FPP> initFlowPropertyProviderClass() {
        Class<FPP> clazz;
        // TODO: is there a way to find out the class of FPP - last I checked there wasn't
@@ -177,7 +183,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @param flowPropertyProvider
      * @param flowPropertyDefinitions
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "hiding"})
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
         for(FlowPropertyDefinitionImpl flowPropertyDefinition: flowPropertyDefinitions) {
             if ( !flowPropertyDefinition.isDefaultAvailable()) {
