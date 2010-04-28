@@ -64,6 +64,11 @@ public interface FlowConstants {
      * Set on a per FlowActivity basis.
      */
     public static final String FAINVISIBLE = "faInvisible";
+    /**
+     * {@link #FSACTIVATABLE} for an activity.
+     */
+    public static final String FAACTIVATABLE = "faActivatable";
+
 
     /**
      * Used to override the default page name
