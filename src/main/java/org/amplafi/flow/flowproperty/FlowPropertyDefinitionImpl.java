@@ -234,7 +234,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             try {
                 value = propertyValueProvider.get(flowPropertyProvider, this);
             } catch(Exception e) {
-                throw new ApplicationIllegalStateException(this+" was trying to use "+propertyValueProvider, e);
+                throw new ApplicationIllegalStateException(this+": PropertyValueProvider threw an exception. propertyValueProvider="+propertyValueProvider, e);
             }
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
