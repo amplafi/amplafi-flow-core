@@ -554,13 +554,6 @@ public class FlowStateImpl implements FlowStateImplementor {
             this.setCurrentActivityIndex(next);
 
             currentActivity = getCurrentActivity();
-            if ( currentActivity instanceof FlowActivityImplementor) {
-                // TODO should really already be so...
-                if (!((FlowActivityImplementor)currentActivity).isActivatable()) {
-                    getLog().debug(currentActivity+": had to be forced to be activatable");
-                    ((FlowActivityImplementor)currentActivity).setActivatable(true);
-                }
-            }
             switch(flowStepDirection) {
             case forward:
                 next = nextIndex();
