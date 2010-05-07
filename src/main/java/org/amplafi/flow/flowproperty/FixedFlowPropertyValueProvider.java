@@ -51,7 +51,7 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
      * @param flowPropertyDefinition
      */
     public void convertable(FlowPropertyDefinition flowPropertyDefinition) {
-        ApplicationIllegalStateException.valid( flowPropertyDefinition.getDataClassDefinition().isDeserializable(flowPropertyDefinition, this.defaultObject),
+        ApplicationIllegalStateException.checkState( flowPropertyDefinition.getDataClassDefinition().isDeserializable(flowPropertyDefinition, this.defaultObject),
             this, " cannot convert value=", this.defaultObject);
     }
 

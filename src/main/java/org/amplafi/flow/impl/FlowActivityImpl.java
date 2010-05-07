@@ -364,7 +364,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @Override
     public void setFlowPropertyProviderName(String flowPropertyProviderName) {
         if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, flowPropertyProviderName)) {
-            ApplicationIllegalStateException.valid(this.flowPropertyProviderName == null || this.flow == null,
+            ApplicationIllegalStateException.checkState(this.flowPropertyProviderName == null || this.flow == null,
                 this,": cannot change flowPropertyProviderName once it is part of a flow. Tried to change to =",flowPropertyProviderName);
             this.flowPropertyProviderName = flowPropertyProviderName;
         }
