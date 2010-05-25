@@ -18,7 +18,6 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
@@ -33,6 +32,7 @@ import static org.amplafi.flow.flowproperty.PropertyScope.*;
 /**
  * A FlowActivity used to launch a new flow.
  */
+@Deprecated // TODO: start using FlowTransitionFlowPropertyValueProvider
 public class TransitionFlowActivity extends FlowActivityImpl {
 
     /**
@@ -105,7 +105,7 @@ public class TransitionFlowActivity extends FlowActivityImpl {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String key, Class<? extends T> expected) {
-        if (FlowConstants.FSNEXT_FLOW.equals(key)) {
+        if (FSNEXT_FLOW.equals(key)) {
             T value = (T) this.getNextFlowType();
             if (value == null) {
                 return super.getProperty(key, expected);
@@ -140,8 +140,8 @@ public class TransitionFlowActivity extends FlowActivityImpl {
                     String flowType = resolveIndirectReference(getNextFlowType());
                     if (isBlank(flowType)) {
                         // why clear the FSNEXT_FLOW ?
-                        flowType = getResolvedIndirectReferenceProperty(FlowConstants.FSNEXT_FLOW);
-                        setProperty(FlowConstants.FSNEXT_FLOW, null);
+                        flowType = getResolvedIndirectReferenceProperty(FSNEXT_FLOW);
+                        setProperty(FSNEXT_FLOW, null);
                     }
                     if (isNotBlank(flowType)) {
                         nextFlowState = this.createNewFlow(flowType);
