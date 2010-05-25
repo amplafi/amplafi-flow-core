@@ -25,8 +25,9 @@ import org.amplafi.flow.FlowStateProvider;
 public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, Resolvable, FlowStateProvider {
     /**
      * @param flowPropertyProviderName The flowPropertyProviderName to set.
+     * @throws IllegalStateException if the name has already been set.
      */
-    void setFlowPropertyProviderName(String flowPropertyProviderName);
+    void setFlowPropertyProviderName(String flowPropertyProviderName) throws IllegalStateException;
     void setPropertyDefinitions(Map<String, FlowPropertyDefinition> flowPropertyDefinitions);
 
     void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);

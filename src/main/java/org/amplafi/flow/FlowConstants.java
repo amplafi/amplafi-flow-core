@@ -181,6 +181,8 @@ public interface FlowConstants {
     public static final String FSSUGGESTED_NEXT_FLOW_TYPE = "fsSuggestedNextFlowType";
 
     /**
+     * ONLY WORKS IF {@link org.amplafi.flow.impl.TransitionFlowActivity} is in the flow!
+     * TODO: suck this up into the nascent FlowTransitionFlowPropertyValueProvider
      * the new flow type that should be started.
      * Used by {@link org.amplafi.flow.impl.TransitionFlowActivity}, seems like should be combined with {@link #FSFLOW_TRANSITIONS}
      * But need to handle "default" specified via xml?

@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 import org.amplafi.flow.FlowPropertyDefinition;
 import static org.amplafi.flow.FlowConstants.*;
 /**
+ * TODO: Take over the services provided by {@link org.amplafi.flow.impl.TransitionFlowActivity}
  * @author patmoore
  *
  */
