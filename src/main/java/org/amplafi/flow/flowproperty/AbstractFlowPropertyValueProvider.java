@@ -14,6 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,7 +24,6 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
-import org.apache.commons.collections.CollectionUtils;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
@@ -39,7 +39,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     private final Class<FPP> flowPropertyProviderClass;
     @Deprecated
     private Set<String> propertiesHandled = new LinkedHashSet<String>();
-    private List<FlowPropertyDefinition> flowPropertyDefinitions;
+    private List<FlowPropertyDefinitionImplementor> flowPropertyDefinitions;
     /**
      * TODO: in future should define the property requirements?
      * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
@@ -63,20 +63,20 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      */
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
         this();
-        CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
+        this.propertiesHandled.addAll(Arrays.asList(propertiesHandled));
     }
-    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinition...flowPropertyDefinitions) {
+    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this(flowPropertyProviderClass);
-        this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinition>();
+        this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
         if ( isNotEmpty(flowPropertyDefinitions)) {
-            CollectionUtils.addAll(this.flowPropertyDefinitions, flowPropertyDefinitions);
+            this.flowPropertyDefinitions.addAll(Arrays.asList(flowPropertyDefinitions));
             for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
                 this.propertiesHandled.add(flowPropertyDefinition.getName());
             }
         }
     }
 
-    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinition...flowPropertyDefinitions) {
+    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this((Class<FPP>)null, flowPropertyDefinitions);
     }
     /**
@@ -85,7 +85,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     */
    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, String...propertiesHandled) {
        this(flowPropertyProviderClass);
-       CollectionUtils.addAll(this.propertiesHandled, propertiesHandled);
+       this.propertiesHandled.addAll(Arrays.asList(propertiesHandled));
    }
    /**
     * @return
@@ -166,14 +166,14 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     }
     @SuppressWarnings("hiding")
     protected void addRequires(String...requiredProperties) {
-        CollectionUtils.addAll(this.requiredProperties, requiredProperties);
+        this.requiredProperties.addAll(Arrays.asList(requiredProperties));
     }
     public Collection<String> getRequiredProperties() {
         return this.requiredProperties;
     }
     @SuppressWarnings("hiding")
     protected void addOptional(String...optionalProperties) {
-        CollectionUtils.addAll(this.optionalProperties, optionalProperties);
+        this.optionalProperties.addAll(Arrays.asList(optionalProperties));
     }
     public Collection<String> getOptionalProperties() {
         return this.optionalProperties;
@@ -184,8 +184,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @param flowPropertyDefinitions
      */
     @SuppressWarnings({"unchecked", "hiding"})
-    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImpl...flowPropertyDefinitions ) {
-        for(FlowPropertyDefinitionImpl flowPropertyDefinition: flowPropertyDefinitions) {
+    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImplementor...flowPropertyDefinitions ) {
+        for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
             if ( !flowPropertyDefinition.isDefaultAvailable()) {
                 flowPropertyDefinition.initFlowPropertyValueProvider(this);
             }
@@ -206,6 +206,12 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
     }
 
+    /**
+     * @return the flowPropertyDefinitions
+     */
+    public List<FlowPropertyDefinitionImplementor> getFlowPropertyDefinitions() {
+        return flowPropertyDefinitions;
+    }
     protected <T extends CharSequence> T getAdditionalConfigParameter(FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters, Object key, T defaultValue) {
         T result;
         if ( additionalConfigurationParameters != null && additionalConfigurationParameters.containsKey(key)) {

@@ -69,7 +69,6 @@ public interface FlowPropertyDefinition {
      * @return the {@link FlowTranslator} used to serialize/deserialize the property value.
      */
     FlowTranslator<?> getTranslator();
-    <T extends FlowPropertyDefinition> T clone();
 
     /**
      * @return if property is local to the flow activity
@@ -158,4 +157,10 @@ public interface FlowPropertyDefinition {
      * @return true if the value should be copied back to an exported flow values map.
      */
     boolean isCopyBackOnFlowSuccess();
+
+    /**
+     * @return
+     */
+    boolean isDefaultAvailable();
+
 }

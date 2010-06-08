@@ -16,6 +16,7 @@ package org.amplafi.flow.impl;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -56,6 +57,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
+
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -635,13 +638,13 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                 // TODO we may want to see if we can merge up to the flow property as well. but this could cause problems with previous flowactivities that have already checked against the
                 // property ( the property might become more precise in a way that causes a conflict.)
                 // TODO: maybe in such cases if no FlowPropertyValueProvider the provider gets merged up?
-                pushPropertyDefinitionToFlow(definition);
+                pushPropertyDefinitionToFlow((FlowPropertyDefinitionImplementor)definition);
             }
         }
         getPropertyDefinitions().put(definition.getName(), definition);
     }
 
-    protected void pushPropertyDefinitionToFlow(FlowPropertyDefinition definition) {
+    protected void pushPropertyDefinitionToFlow(FlowPropertyDefinitionImplementor definition) {
         if (getFlow() != null && !definition.isLocal()) {
             FlowPropertyDefinitionImplementor flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
             if (flowProp == null ) {
@@ -659,9 +662,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     protected void pushPropertyDefinitionsToFlow() {
-        if (MapUtils.isNotEmpty(getPropertyDefinitions()) && getFlow() != null) {
-            for (FlowPropertyDefinition definition : getPropertyDefinitions().values()) {
-                pushPropertyDefinitionToFlow(definition);
+        if (isNotEmpty(getPropertyDefinitions()) && getFlow() != null) {
+            Collection<FlowPropertyDefinition> values = getPropertyDefinitions().values();
+            for (FlowPropertyDefinition definition : values) {
+                pushPropertyDefinitionToFlow((FlowPropertyDefinitionImplementor)definition);
             }
         }
     }

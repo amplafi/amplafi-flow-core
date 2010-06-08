@@ -29,6 +29,11 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinition initialize();
 
     void setPropertyRequired(FlowActivityPhase flowActivityPhase);
+
+    FlowPropertyDefinitionImplementor initFlowPropertyValuePersister(FlowPropertyValuePersister<?> flowPropertyValuePersister);
+
+    FlowPropertyDefinitionImplementor initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener);
+    FlowPropertyDefinitionImplementor initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
     <V> V parse(FlowPropertyProvider flowPropertyProvider, String value) throws FlowException;
@@ -36,4 +41,5 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     void setPropertyScope(PropertyScope propertyScope);
 
     void setPropertyUsage(PropertyUsage propertyUsage);
+    <T extends FlowPropertyDefinitionImplementor> T clone();
 }
