@@ -50,7 +50,6 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -241,7 +240,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     protected void saveBack() {
         Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
-        if ( MapUtils.isNotEmpty(definitions)) {
+        if ( isNotEmpty(definitions)) {
             for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
                 FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
                 if (!flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.isSaveBack()) {
@@ -275,7 +274,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         // would allow user to upgrade their permissions.
         // 2) should persistence be sequenced?
         Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
-        if ( MapUtils.isNotEmpty(definitions)) {
+        if ( isNotEmpty(definitions)) {
             for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
                 FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
                 FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
@@ -352,7 +351,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
         FlowValidationResult result = new ReportAllValidationResult();
         Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
-        if (MapUtils.isNotEmpty(propDefs)) {
+        if (isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
                 MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
                     (flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
@@ -540,7 +539,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     public boolean isPossiblyVisible() {
-        return StringUtils.isNotBlank(getComponentName()) || StringUtils.isNotBlank(getPageName());
+        return isNotBlank(getComponentName()) || isNotBlank(getPageName());
     }
 
     public void setPersistFlow(boolean persistFlow) {
