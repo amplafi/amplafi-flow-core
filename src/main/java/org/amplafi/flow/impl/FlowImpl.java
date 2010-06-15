@@ -89,7 +89,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     @Deprecated // use FlowPropertyDefinition
     private String flowDescriptionText;
 
-    private FlowState flowState;
+    private transient FlowState flowState;
 
     @Deprecated // use FlowPropertyDefinition
     private boolean activatable;
