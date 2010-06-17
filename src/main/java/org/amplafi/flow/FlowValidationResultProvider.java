@@ -23,9 +23,10 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  * 2) mechanism to preserve result of validation result for duration of request.
  *
  * @author patmoore
+ * @param <FPP>
  *
  */
 public interface FlowValidationResultProvider<FPP extends FlowPropertyProvider> {
 
-    FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider);
+    FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider, FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 }

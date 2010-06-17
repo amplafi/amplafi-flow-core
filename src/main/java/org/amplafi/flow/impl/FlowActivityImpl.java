@@ -47,7 +47,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -347,20 +346,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.FlowActivityPhase, FlowStepDirection)
      */
     public FlowValidationResult getFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
-        // TODO : Don't validate if user is going backwards.
-        // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
-        FlowValidationResult result = new ReportAllValidationResult();
-        Map<String, FlowPropertyDefinition> propDefs = getPropertyDefinitions();
-        if (isNotEmpty(propDefs)) {
-            for (FlowPropertyDefinition def : propDefs.values()) {
-                MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
-                    (flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
-                        && !isPropertySet(def.getName())
-                        && !def.isAutoCreate(),
-                        def.getUiComponentParameterName());
-            }
-        }
-        return result;
+        return FlowValidationResultProviderImpl.INSTANCE.getFlowValidationResult(this, flowActivityPhase, flowStepDirection);
     }
 
     @Override
