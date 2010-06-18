@@ -24,6 +24,6 @@ package org.amplafi.flow.validation;
  */
 public class ExceptionTracking extends SimpleValidationTracking {
     public ExceptionTracking(String property, Exception e) {
-        super(ExceptionTracking.class.getSimpleName(), property, e.getMessage());
+        super(ExceptionTracking.class.getSimpleName(), property, e.getMessage(), e);
     }
 }
