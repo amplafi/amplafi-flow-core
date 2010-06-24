@@ -116,6 +116,9 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     public String put(FlowValueMapKey key, String value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
+    // TODO: eclipse helios marks this as: 
+    // Name clash: The method put(Object, Object) of type DefaultFlowValuesMap has the same erasure as 
+    // put(K, V) of type Map<K,V> but does not override it 
     public String put(Object key, Object value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
