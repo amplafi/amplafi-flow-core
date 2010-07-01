@@ -25,6 +25,8 @@ import org.amplafi.json.JsonRenderer;
 /**
  * Translate object to/from the flow state.
  * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
+ *
+ * FlowTranslators have db transactions available.
  * @param <T> the type to translate.
  */
 public interface FlowTranslator <T>{
