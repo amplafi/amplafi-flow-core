@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.apache.commons.lang.ObjectUtils;
+import com.sworddance.util.ApplicationIllegalStateException;
 
 
 import static org.apache.commons.collections.CollectionUtils.*;
@@ -78,7 +78,6 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
 
     @Override
     public FlowState call() {
-        FlowState flowState;
         Map<String,String> launchMap;
         if(this.initialValues != null && !this.initialValues.isEmpty()) {
             launchMap = new LinkedHashMap<String, String>();
@@ -87,8 +86,12 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         } else {
             launchMap = getValuesMap();
         }
-        flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
-        return flowState;
+        try {
+            FlowState flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
+            return flowState;
+        } catch(Exception e) {
+            throw new ApplicationIllegalStateException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
+        }
     }
 
     @Deprecated // used only one place and that is questionable.
