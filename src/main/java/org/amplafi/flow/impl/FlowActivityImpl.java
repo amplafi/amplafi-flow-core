@@ -758,6 +758,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(String key, Class<? extends T> expected) {
+        // doing the FlowPropertyDefinition here so that the flow doesn't create a global property.
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
         T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
         return result;
@@ -925,6 +926,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     /**
+     * PAT : 14 jul 2010 : I forgot meaning of this comment :-P
+     *
+     * This handles the linking of {@link ChainedFlowPropertyValueProvider}.
+     *
      * HACK ... should only be called from  {@link #addStandardFlowPropertyDefinitions()} NOT {@link #initializeFlow()}
      * this is because adding to standard properties will not happen correctly ( the {@link org.amplafi.flow.FlowTranslatorResolver} is
      * visible.
