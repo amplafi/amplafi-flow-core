@@ -27,7 +27,7 @@ import com.sworddance.beans.ClassResolver;
 
 
 /**
- * implementation that provides session level FlowManagement.
+ * Implementations are stored in a user session. There will be one instance / user session.
  * @author Patrick Moore
  *
  */
