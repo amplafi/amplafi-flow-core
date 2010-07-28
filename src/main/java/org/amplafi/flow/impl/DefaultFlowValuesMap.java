@@ -119,7 +119,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     // TODO: eclipse helios marks this as: 
     // Name clash: The method put(Object, Object) of type DefaultFlowValuesMap has the same erasure as 
     // put(K, V) of type Map<K,V> but does not override it 
-    public String put(Object key, Object value) {
+    public String putAny(Object key, Object value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
     /**
@@ -163,7 +163,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     public void putAll(Map m) {
         Set<Map.Entry<Object, Object>> entrySet = m.entrySet();
         for(Map.Entry<Object, Object> entry: entrySet) {
-            this.put(entry.getKey(), entry.getValue());
+            this.putAny(entry.getKey(), entry.getValue());
         }
     }
     /**
