@@ -77,4 +77,5 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * @return false if property value is null or {@link Boolean#FALSE}
      */
     boolean isTrue(String key);
+    void clearCached(String namespace, String key);
 }

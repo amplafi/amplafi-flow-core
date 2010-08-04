@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.Collection;
+
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -42,4 +44,9 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
 
     void setPropertyUsage(PropertyUsage propertyUsage);
     <T extends FlowPropertyDefinitionImplementor> T clone();
+
+    /**
+     * @return collection of property that if chagned should invalidate this property.
+     */
+    Collection<String> getPropertiesDependentOn();
 }

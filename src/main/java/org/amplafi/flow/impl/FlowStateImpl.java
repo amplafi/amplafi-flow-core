@@ -14,6 +14,8 @@
 
 package org.amplafi.flow.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
+import org.amplafi.flow.flowproperty.InvalidatingFlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
@@ -117,7 +120,10 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     private FlowStateLifecycle flowStateLifecycle;
 
+    private List<FlowPropertyValueChangeListener> globalFlowPropertyValueChangeListeners = new ArrayList<FlowPropertyValueChangeListener>(Arrays.asList(new InvalidatingFlowPropertyValueChangeListener()));
+
     public FlowStateImpl() {
+
     }
 
     public FlowStateImpl(String flowTypeName, FlowManagement sessionFlowManagement,
@@ -1046,6 +1052,10 @@ public class FlowStateImpl implements FlowStateImplementor {
             if ( activity instanceof FlowPropertyValueChangeListener && activity != flowPropertyProvider) {
                 newValue = ((FlowPropertyValueChangeListener)activity).propertyChange(flowPropertyProvider, namespace, flowPropertyDefinition, newValue, oldValue);
             }
+
+            for(FlowPropertyValueChangeListener flowPropertyValueChangeListener: this.globalFlowPropertyValueChangeListeners) {
+                newValue = flowPropertyValueChangeListener.propertyChange(flowPropertyProvider, namespace, flowPropertyDefinition, newValue, oldValue);
+            }
             put(namespace, key, newValue);
             return true;
         } else {
@@ -1167,6 +1177,16 @@ public class FlowStateImpl implements FlowStateImplementor {
         } else {
             cachedValues.put(namespace, key, value);
         }
+    }
+
+
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#clearCached(String, java.lang.String)
+     */
+    @Override
+    public void clearCached(String namespace, String key) {
+        setCached(namespace, key, null);
     }
 
     @SuppressWarnings("unchecked")

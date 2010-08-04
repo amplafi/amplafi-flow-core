@@ -19,6 +19,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -97,6 +98,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     private DataClassDefinition dataClassDefinition;
 
     private Set<String> alternates;
+
+    private Set<String> propertiesDependentOn = new HashSet<String>();
 
     /**
      * data that should not be outputted or saved. for example, passwords.
@@ -737,6 +740,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return noMergeConflict;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public FlowPropertyDefinitionImpl clone() {
         return new FlowPropertyDefinitionImpl(this);
@@ -863,6 +867,25 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         if ( flowPropertyValueChangeListener != null) {
             this.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
         }
+        return this;
+    }
+
+    /**
+     * @param propertiesDependentOn the propertiesDependentOn to set
+     */
+    public void setPropertiesDependentOn(Set<String> propertiesDependentOn) {
+        this.propertiesDependentOn = propertiesDependentOn;
+    }
+
+    /**
+     * @return the propertiesDependentOn
+     */
+    public Set<String> getPropertiesDependentOn() {
+        return propertiesDependentOn;
+    }
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl initPropertiesDependentOn(Collection<String> propertiesDependentOn) {
+        this.propertiesDependentOn.addAll(propertiesDependentOn);
         return this;
     }
 

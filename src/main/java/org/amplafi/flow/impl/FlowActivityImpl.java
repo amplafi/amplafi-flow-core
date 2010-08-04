@@ -796,6 +796,17 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return b != null && b;
     }
 
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#clearCached(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void clearCached(String namespace, String key) {
+        if ( this.getFlowState() != null ) {
+            this.getFlowState().clearCached(namespace, key);
+        }
+    }
+
     /**
      *
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#setProperty(java.lang.String, java.lang.Object)
