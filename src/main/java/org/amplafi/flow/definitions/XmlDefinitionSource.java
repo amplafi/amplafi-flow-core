@@ -36,12 +36,12 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowGroupImpl;
 import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.TransitionFlowActivity;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import com.sworddance.util.ApplicationGeneralException;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 
@@ -49,6 +49,31 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
  * @author patmoore
  */
 public class XmlDefinitionSource implements DefinitionSource {
+
+    /**
+     *
+     */
+    private static final String TRANSITION = "transition";
+
+    /**
+     *
+     */
+    private static final String INVISIBLE = "invisible";
+
+    /**
+     *
+     */
+    private static final String FINISHING = "finishing";
+
+    /**
+     *
+     */
+    private static final String ACTIVITY = "activity";
+
+    /**
+     *
+     */
+    private static final String DEFINITION = "definition";
 
     /**
      *
@@ -184,6 +209,10 @@ public class XmlDefinitionSource implements DefinitionSource {
         for (int i = 0; i < moduleList.getLength(); i++) {
             FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
         }
+        moduleList = this.xmlDocument.getElementsByTagName("contribution");
+        for (int i = 0; i < moduleList.getLength(); i++) {
+            FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
+        }
     }
 
 
@@ -194,11 +223,14 @@ public class XmlDefinitionSource implements DefinitionSource {
             Node child = children.item(index);
             switch ( child.getNodeType()) {
             case Node.ELEMENT_NODE:
-                if (PROPERTY.equals(child.getNodeName())) {
+                String nodeName = child.getNodeName();
+                if (PROPERTY.equals(nodeName)) {
                     flowGroup.addPropertyDefinition(parseProperty(child));
-                } else if ("definition".equals(child.getNodeName())) {
+                } else if (DEFINITION.equals(nodeName)) {
                     FlowImplementor flow = parseFlow(child);
                     this.flows.put(flow.getFlowPropertyProviderName(), flow);
+                } else {
+//                    System.out.println(nodeName);
                 }
             }
         }
@@ -259,10 +291,13 @@ public class XmlDefinitionSource implements DefinitionSource {
             Node child = children.item(index);
             switch ( child.getNodeType()) {
             case Node.ELEMENT_NODE:
-                if (PROPERTY.equals(child.getNodeName())) {
+                String nodeName = child.getNodeName();
+                if (PROPERTY.equals(nodeName)) {
                     flow.addPropertyDefinition(parseProperty(child));
-                } else if ("activity".equals(child.getNodeName())) {
-                    flow.addActivity(parseStep(child));
+                } else if (ACTIVITY.equals(nodeName)) {
+                    flow.addActivity(parseStep(child, false));
+                } else if (TRANSITION.equals(nodeName)) {
+                    flow.addActivity(parseStep(child, true));
                 } else {
                     throw new IllegalArgumentException("element is unknown "+child);
                 }
@@ -299,31 +334,9 @@ public class XmlDefinitionSource implements DefinitionSource {
         return attributeValue;
     }
 
-    /**
-     * @param child
-     */
-    @SuppressWarnings("unchecked")
-    private FlowActivityImplementor parseStep(Node flowActivityImplementorNode) {
+    private FlowActivityImplementor parseStep(Node flowActivityImplementorNode, boolean transition) {
+        FlowActivityImplementor flowActivity = createFlowActivityImplementor(flowActivityImplementorNode, transition);
         NamedNodeMap attributes = flowActivityImplementorNode.getAttributes();
-        String name = getNameAttribute(attributes);
-        String className = getAttributeString(attributes, CLASS);
-        FlowActivityImplementor flowActivity;
-        if ( className == null ) {
-            flowActivity = new FlowActivityImpl(name);
-        } else {
-            Class<FlowActivityImplementor> clazz;
-            try {
-                clazz = (Class<FlowActivityImplementor>) Class.forName(className);
-                flowActivity = clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                throw new ApplicationGeneralException(e);
-            } catch (InstantiationException e) {
-                throw new ApplicationGeneralException(e);
-            } catch (IllegalAccessException e) {
-                throw new ApplicationGeneralException(e);
-            }
-            flowActivity.setFlowPropertyProviderName(name);
-        }
         for (int index = 0; index < attributes.getLength(); index++) {
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();
@@ -337,12 +350,14 @@ public class XmlDefinitionSource implements DefinitionSource {
                 flowActivity.setComponentName(nodeValue);
             } else if (LINK_TITLE.equals(nodeName)) {
                 flowActivity.setActivityTitle(nodeValue);
-            } else if ("finishing".equals(nodeName)) {
+            } else if (FINISHING.equals(nodeName)) {
                 flowActivity.setFinishingActivity(booleanValue);
-            } else if ("invisible".equals(nodeName)) {
+            } else if (INVISIBLE.equals(nodeName)) {
                 flowActivity.setInvisible(booleanValue);
             } else if ("persistFlow".equals(nodeName)) {
                 flowActivity.setPersistFlow(booleanValue);
+            } else if ( "nextFlow".equals(nodeName)) {
+                ((TransitionFlowActivity)flowActivity).setNextFlowType(nodeValue);
             } else {
                 throw new IllegalArgumentException("attribute is unknown "+attribute);
             }
@@ -373,6 +388,38 @@ public class XmlDefinitionSource implements DefinitionSource {
                 break;
             }
         }
+        return flowActivity;
+    }
+
+    /**
+     * @param transition TODO
+     * @param attributes
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private FlowActivityImplementor createFlowActivityImplementor(Node flowActivityImplementorNode, boolean transition) {
+        NamedNodeMap attributes = flowActivityImplementorNode.getAttributes();
+        String name = getNameAttribute(attributes);
+        String className = getAttributeString(attributes, CLASS);
+        FlowActivityImplementor flowActivity;
+        if ( isNotBlank(className)) {
+            Class<FlowActivityImplementor> clazz;
+            try {
+                clazz = (Class<FlowActivityImplementor>) Class.forName(className);
+                flowActivity = clazz.newInstance();
+            } catch (ClassNotFoundException e) {
+                throw new ApplicationGeneralException(e);
+            } catch (InstantiationException e) {
+                throw new ApplicationGeneralException(e);
+            } catch (IllegalAccessException e) {
+                throw new ApplicationGeneralException(e);
+            }
+        } else if(transition) {
+            flowActivity = new TransitionFlowActivity();
+        } else {
+            flowActivity = new FlowActivityImpl();
+        }
+        flowActivity.setFlowPropertyProviderName(name);
         return flowActivity;
     }
 

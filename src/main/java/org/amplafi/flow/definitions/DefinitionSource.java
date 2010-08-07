@@ -19,6 +19,9 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowImplementor;
 
 /**
+ * Implementers will provide Flow definitions.
+ *
+ * TODO should be namespace owner.
  * @author patmoore
  *
  */
