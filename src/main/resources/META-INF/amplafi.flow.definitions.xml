@@ -148,8 +148,7 @@
                     This allows the user to complete the flow in the future. (default:false)
                 </attribute>
                 <rules>
-                    <create-object
-                            class="org.amplafi.flow.impl.TransitionFlowActivity"/>
+                    <create-object class="org.amplafi.flow.impl.TransitionFlowActivity"/>
                     <read-attribute attribute="name" property="flowPropertyProviderName"/>
                     <read-attribute attribute="type" property="type"/>
                     <read-attribute attribute="finish-key" property="finishKey"/>
@@ -157,11 +156,9 @@
                     <read-attribute attribute="transition-label" property="fsFlowTransitionLabel"/>
                     <read-attribute attribute="persistFlow" property="persistFlow"/>
                     <read-attribute attribute="page-name" property="pageName"/>
-                    <read-attribute attribute="component-name"
-                                    property="componentName"/>
+                    <read-attribute attribute="component-name" property="componentName"/>
                     <read-attribute attribute="link-title" property="activityTitle"/>
-                    <read-attribute attribute="nextFlow"
-                                    property="nextFlowType"/>
+                    <read-attribute attribute="nextFlow" property="nextFlowType"/>
                     <read-attribute attribute="afterPage" property="afterPage"/>
                     <invoke-parent method="addActivity"/>
                 </rules>

@@ -37,6 +37,7 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowGroupImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.TransitionFlowActivity;
+import org.amplafi.flow.translator.FlowTranslator;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -49,6 +50,21 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
  * @author patmoore
  */
 public class XmlDefinitionSource implements DefinitionSource {
+
+    /**
+     *
+     */
+    private static final String ACTIVATABLE = "activatable";
+
+    /**
+     *
+     */
+    private static final String CONTINUE_LINK_TITLE = "continue-link-title";
+
+    /**
+     *
+     */
+    private static final String FLOW_TITLE = "flow-title";
 
     /**
      *
@@ -266,22 +282,23 @@ public class XmlDefinitionSource implements DefinitionSource {
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();
             String nodeValue = attribute.getNodeValue();
+            Boolean booleanValue = Boolean.parseBoolean(nodeValue);
             if ( CLASS.equals(nodeName) || NAME_ATTR.equals(nodeName)) {
                 continue;
             } else if (LINK_TITLE.equals(nodeName)) {
                 flow.setLinkTitle(nodeValue);
             } else if ("default-after-page".equals(nodeName)) {
                 flow.setDefaultAfterPage(nodeValue);
-            } else if ("flow-title".equals(nodeName)) {
+            } else if (FLOW_TITLE.equals(nodeName)) {
                 flow.setFlowTitle(nodeValue);
-            } else if ("continue-link-title".equals(nodeName)) {
+            } else if (CONTINUE_LINK_TITLE.equals(nodeName)) {
                 flow.setContinueFlowTitle(nodeValue);
             } else if (PAGE_NAME_ATTR.equals(nodeName)) {
                 flow.setPageName(nodeValue);
-            } else if ("activatable".equals(nodeName)) {
-                flow.setActivatable(Boolean.parseBoolean(nodeValue));
+            } else if (ACTIVATABLE.equals(nodeName)) {
+                flow.setActivatable(booleanValue);
             } else if ("not-current-allowed".equals(nodeName)) {
-                flow.setNotCurrentAllowed(Boolean.parseBoolean(nodeValue));
+                flow.setNotCurrentAllowed(booleanValue);
             } else {
                 throw new IllegalArgumentException("attribute is unknown "+attribute);
             }
@@ -341,7 +358,7 @@ public class XmlDefinitionSource implements DefinitionSource {
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();
             String nodeValue = attribute.getNodeValue();
-            Boolean booleanValue = Boolean.parseBoolean(nodeValue);
+            boolean booleanValue = Boolean.parseBoolean(nodeValue);
             if ( CLASS.equals(nodeName) || NAME_ATTR.equals(nodeName)) {
                 continue;
             } else if (PAGE_NAME_ATTR.equals(nodeName)) {
@@ -356,6 +373,14 @@ public class XmlDefinitionSource implements DefinitionSource {
                 flowActivity.setInvisible(booleanValue);
             } else if ("persistFlow".equals(nodeName)) {
                 flowActivity.setPersistFlow(booleanValue);
+            } else if ( !transition ) {
+                throw new IllegalArgumentException("attribute is unknown "+attribute);
+            } else if ( "finish-key".equals(nodeName)) {
+                ((TransitionFlowActivity)flowActivity).setFinishKey(nodeValue);
+            } else if ( "transition-label".equals(nodeName)) {
+                ((TransitionFlowActivity)flowActivity).setFinishKey(nodeValue);
+            } else if ( "type".equals(nodeName)) {
+                ((TransitionFlowActivity)flowActivity).setType(nodeValue);
             } else if ( "nextFlow".equals(nodeName)) {
                 ((TransitionFlowActivity)flowActivity).setNextFlowType(nodeValue);
             } else {
@@ -435,6 +460,10 @@ public class XmlDefinitionSource implements DefinitionSource {
                 flowPropertyDefinition.setInitial(nodeValue);
             } else if ("default".equals(nodeName)) {
                 flowPropertyDefinition.setDefaultObject(nodeValue);
+            } else if("translator".equals(nodeName)) {
+                // TODO: need to do flowTranslator injection.
+                FlowTranslator<?> flowTranslator = null;
+                flowPropertyDefinition.setTranslator(flowTranslator );
             } else if ("data-class".equals(nodeName)) {
 
                 Class<? extends Object> dataClass;
