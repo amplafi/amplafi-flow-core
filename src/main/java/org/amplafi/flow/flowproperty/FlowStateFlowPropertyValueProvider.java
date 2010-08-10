@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import static org.amplafi.flow.FlowConstants.*;
@@ -29,15 +30,6 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
 
-    @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap additionalConfigurationParameters) {
-        addPropertyDefinitions(flowPropertyProvider,
-            // TODO -- add a FLOW_STATE property ...
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
-            );
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
@@ -45,6 +37,19 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
         String lookupKey = flowStateImplementor.getRawProperty(flowPropertyProvider, flowPropertyDefinition);
         FlowState flowState = flowStateImplementor.getFlowManagement().getFlowState(lookupKey);
         return (T) flowState;
+    }
+
+    /**
+     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor, org.amplafi.flow.FlowValuesMap)
+     */
+    @Override
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,
+        FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters) {
+        addPropertyDefinitions(flowPropertyProvider,
+            // TODO -- add a FLOW_STATE property ...
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
+        );
     }
 
 }
