@@ -116,7 +116,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     public String put(FlowValueMapKey key, String value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
- 
+
     public String putAny(Object key, Object value) {
         return this.map.put(toKey(null, key), ObjectUtils.toString(value, null));
     }
@@ -164,6 +164,15 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
             this.putAny(entry.getKey(), entry.getValue());
         }
     }
+
+    public void putAll(Object namespace, Map<?,?> subMap) {
+        if (isNotEmpty(subMap)) {
+            for (Map.Entry<?, ?> entry : subMap.entrySet()) {
+                this.put(namespace, entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
     /**
      * @see java.util.Map#remove(java.lang.Object)
      */

@@ -47,7 +47,12 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      * @return the previous object at the (namespace,key) value.
      */
     V put(Object namespace, Object key, Object value);
-
+    /**
+    *
+    * @param namespace
+     * @param subMap
+    */
+    void putAll(Object namespace, Map<?,?>subMap);
     /**
      *
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
