@@ -16,7 +16,6 @@ package org.amplafi.flow.impl;
 import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
 import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
 import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import java.net.URI;
 import java.util.ArrayList;
@@ -55,7 +54,6 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,7 +61,7 @@ import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
-
+import static com.sworddance.util.CUtilities.*;
 /**
  * A basic implementation of FlowManagement.
  *
@@ -226,7 +224,7 @@ public class BaseFlowManagement implements FlowManagement {
         FlowState nextFlowState = null;
         Map<String, FlowTransition> transitions = flowState.getProperty(key, Map.class);
         String finishKey = flowState.getFinishKey();
-        if ( MapUtils.isNotEmpty(transitions) && isNotBlank(finishKey)) {
+        if ( isNotEmpty(transitions) && isNotBlank(finishKey)) {
             FlowTransition flowTransition = transitions.get(finishKey);
             if ( flowTransition != null ) {
                 FlowActivityImplementor currentActivity = flowState.getCurrentActivity();
@@ -303,7 +301,7 @@ public class BaseFlowManagement implements FlowManagement {
     public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Map<String, String> initialFlowState) {
         FS flowState = (FS) getFlowState(lookupKey);
         ApplicationIllegalArgumentException.notNull(lookupKey,": no flow with this lookupKey found");
-        if (MapUtils.isNotEmpty(initialFlowState)) {
+        if (isNotEmpty(initialFlowState)) {
             for(Map.Entry<String, String> entry: initialFlowState.entrySet()) {
                 // HACK this looks bad. At the very least shouldn't FlowUtils.copyState be used
                 // more likely PropertyUsage/PropertyScope
