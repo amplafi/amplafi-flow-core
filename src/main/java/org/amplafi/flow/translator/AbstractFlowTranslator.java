@@ -15,6 +15,7 @@ package org.amplafi.flow.translator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.amplafi.flow.DataClassDefinition;
@@ -163,7 +164,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
         this.serializedFormClasses.addAll(Arrays.asList(clazz));
     }
     protected void addDeserializedFormClasses(Class<?>... clazz) {
-        this.deserializedFormClasses.addAll(Arrays.asList(clazz));
+        Collections.addAll(this.deserializedFormClasses,clazz);
     }
     @Override
     public boolean isDeserializedForm(Class<?> clazz) {
