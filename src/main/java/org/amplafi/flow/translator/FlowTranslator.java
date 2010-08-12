@@ -24,6 +24,11 @@ import org.amplafi.json.JsonRenderer;
 
 /**
  * Translate object to/from the flow state.
+ *
+ * FlowTranslator are intended to be singletons and injected as a service.
+ *
+ * Sometimes it is desired to have a generic FlowTranslator that can customize at runtime for the specific class. Such FlowTranslator should extends {@link InstanceSpecificFlowTranslator}.
+ *
  * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
  *
  * FlowTranslators have db transactions available.
@@ -32,7 +37,7 @@ import org.amplafi.json.JsonRenderer;
 public interface FlowTranslator <T>{
     /**
      *
-     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyProvider , FlowPropertyDefinition , DataClassDefinition, Object)}.
+     * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyProvider, FlowPropertyDefinition, DataClassDefinition, Object)}
      */
     Class<?> getTranslatedClass();
     /**

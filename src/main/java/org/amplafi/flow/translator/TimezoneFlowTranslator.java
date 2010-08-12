@@ -25,6 +25,8 @@ import org.amplafi.json.JsonRenderer;
 
 
 /**
+ *
+ * Translate a TimeZone ID to and from a {@link TimeZone} object
  * @author patmoore
  *
  */
