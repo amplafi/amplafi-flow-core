@@ -14,6 +14,7 @@
 
 package org.amplafi.flow;
 
+
 /**
  * @author patmoore
  *
@@ -32,8 +33,8 @@ public enum FlowActivityPhase {
      * FlowProperty is required to be set before advancing beyond the {@link org.amplafi.flow.FlowActivity}.
      * This is used when *the* current FlowActivity is requesting the user to set the property to a value.
      *
-     * The FlowActivity must have the ability to let user set the property in this case.
-     * Do not use as a gatekeeper to 'protect' later FlowActivities.
+     * The FlowActivity must have the ability to let user set the property in this case ( i.e. proper UI component)
+     * Do not use as a gatekeeper to 'protect' later FlowActivities, those later FlowActivities will have
      */
     advance,
     /**
@@ -48,7 +49,8 @@ public enum FlowActivityPhase {
      */
     finish,
     /**
-     * The FlowActivity will create it.
+     * The {@link org.amplafi.flow.flowproperty.FlowPropertyProvider} will set this value.
+     * But seems like should be combined better with {@link org.amplafi.flow.flowproperty.PropertyUsage#creates}
      */
     @Deprecated
     creates
