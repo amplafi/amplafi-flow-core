@@ -209,6 +209,8 @@ public interface FlowConstants {
 
     /**
      * set this as a boolean flowState property when the flow is running as a api call.
+     * use flowAppearance : {@link org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider}
      */
+    @Deprecated // use FlowAppearanceFlowPropertyDefinitionProvider
     public static final String FSAPI_CALL = "fsApiCall";
 }
