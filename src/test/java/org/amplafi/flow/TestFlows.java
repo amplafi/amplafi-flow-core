@@ -42,13 +42,13 @@ public class TestFlows {
     private static final String PROPERTY1 = "property1";
     private static final String PROPERTY2 = "property2";
     private static final String FLOW_TYPE = "ftype1";
-    private static final boolean TEST_ENABLE = true;
+    private static final boolean TEST_ENABLED = true;
 
     /**
      * Test simple flow definitions and instances.
      *
      */
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testFlowDefinition() {
         FlowImpl flow = new FlowImpl();
         FlowActivity[] fas = new FlowActivity[3];
@@ -127,7 +127,7 @@ public class TestFlows {
     /**
      * Test for hasVisibleNext and hasVisiblePrevious of FlowState.
      */
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testVisiblePreviousNext() {
         FlowImpl flow = new FlowImpl(FLOW_TYPE);
         flow.addActivity(new FlowActivityImpl().initInvisible(false));
@@ -158,7 +158,7 @@ public class TestFlows {
      *
      * Also test when invisible is turned on/off during the flow.
      */
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testVisiblePreviousNextWithHidden() {
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(true);
@@ -184,7 +184,7 @@ public class TestFlows {
         assertFalse(fs.hasVisiblePrevious());
     }
 
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testInitialValuesOnFlow() {
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl(PROPERTY1);
@@ -221,7 +221,7 @@ public class TestFlows {
         flowState.clearCache();
     }
 
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testConversion() {
         String returnToFlowLookupKey = null;
         Map<String, String> initialFlowState = new HashMap<String, String>();
@@ -248,7 +248,7 @@ public class TestFlows {
     /**
      * Make sure that a FA changing its visibility does not cause other FAs to change their visibility.
      */
-    @Test(enabled=TEST_ENABLE)
+    @Test(enabled=TEST_ENABLED)
     public void testInvisibleFlowActivitiesInterferingWithVisibleFA() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         FlowActivityImplementor vis0 = new FlowActivityImpl("vis0").initInvisible(false);
@@ -270,30 +270,4 @@ public class TestFlows {
         assertEquals(visibleActivities.size(), 3,"visible activities="+visibleActivities);
     }
 
-    @Test(enabled=TEST_ENABLE)
-    public void testEnumHandling() {
-        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
-        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
-        flow.addPropertyDefinitions(definition);
-        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
-        definition = new FlowPropertyDefinitionImpl("fa1fp", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
-        fa1.addPropertyDefinitions(definition);
-        flow.addActivity(fa1);
-        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
-        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        String returnToFlowLookupKey = null;
-        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
-        SampleEnum type =flowState.getCurrentActivity().getProperty("foo");
-        assertEquals(type, SampleEnum.EXTERNAL, "(looking for property 'foo') FlowState="+flowState);
-        type =flowState.getProperty("fa1fp", SampleEnum.class);
-        assertEquals(type, SampleEnum.EMAIL);
-    }
-
-    private static enum SampleEnum {
-        EXTERNAL, EMAIL
-
-    }
 }
