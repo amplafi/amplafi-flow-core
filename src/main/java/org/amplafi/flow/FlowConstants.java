@@ -206,6 +206,7 @@ public interface FlowConstants {
     public static final String HTML = "html";
     public static final String JSON = "json";
     public static final String HANDLED = "handled";
+    public static final String JSON_DESCRIBE = "json/describe";
 
     /**
      * set this as a boolean flowState property when the flow is running as a api call.
