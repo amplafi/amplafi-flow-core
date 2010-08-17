@@ -17,10 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
-import org.amplafi.flow.flowproperty.PropertyScope;
-import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.translator.FlowTranslator;
 
 /**
@@ -30,8 +27,7 @@ import org.amplafi.flow.translator.FlowTranslator;
  *
  * TODO: split into 2 interfaces so that there can be immutable FlowPropertyDefinition
  */
-public interface FlowPropertyDefinition {
-    String getName();
+public interface FlowPropertyDefinition extends FlowPropertyExpectation {
 
     DataClassDefinition getDataClassDefinition();
 
@@ -81,8 +77,6 @@ public interface FlowPropertyDefinition {
 
     String getUiComponentParameterName();
 
-    FlowActivityPhase getPropertyRequired();
-
     boolean isSaveBack();
 
     String getInitial();
@@ -93,11 +87,6 @@ public interface FlowPropertyDefinition {
      */
     Set<String> getAllNames();
     Set<String> getAlternates();
-
-    /**
-     * @return how to use the property.
-     */
-    PropertyUsage getPropertyUsage();
 
     /**
      * The namespace used to retrieve this property while the flowState is actively running after the flowState's FlowValueMap has been initialized.
@@ -129,8 +118,6 @@ public interface FlowPropertyDefinition {
      */
     boolean isNamed(String possiblePropertyName);
 
-    PropertyScope getPropertyScope();
-
     /**
      * @return true if propertyScope has been explicitly set.
      */
@@ -140,11 +127,6 @@ public interface FlowPropertyDefinition {
      * @return true if propertyUsage has been explicitly set.
      */
     boolean isPropertyUsageSet();
-
-    /**
-     * @return listener to be notified when the property changes value.
-     */
-    List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
 
     /**
      * @return true if there are {@link #getFlowPropertyValueChangeListeners()} ( in future may have change listeners that
