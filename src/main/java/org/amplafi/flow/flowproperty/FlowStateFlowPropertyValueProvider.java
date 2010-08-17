@@ -30,6 +30,9 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
 
+    public FlowStateFlowPropertyValueProvider() {
+        super(FSRETURN_TO_FLOW, FSRETURN_TO_FLOW_TYPE, FSCONTINUE_WITH_FLOW);
+    }
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
@@ -48,6 +51,7 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
         addPropertyDefinitions(flowPropertyProvider,
             // TODO -- add a FLOW_STATE property ...
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE, String.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
         );
     }

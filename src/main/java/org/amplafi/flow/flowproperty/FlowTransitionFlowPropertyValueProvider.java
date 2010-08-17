@@ -24,7 +24,6 @@ public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropert
 
     public FlowTransitionFlowPropertyValueProvider() {
         super(FSFLOW_TRANSITION);
-        addRequires(FSFLOW_TRANSITIONS, FSALT_FINISHED);
     }
 
     @Override
