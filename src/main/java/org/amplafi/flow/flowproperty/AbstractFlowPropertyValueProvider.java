@@ -13,18 +13,13 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
-import org.amplafi.flow.FlowValueMapKey;
-import org.amplafi.flow.FlowValuesMap;
-
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
 
@@ -35,17 +30,11 @@ import static com.sworddance.util.CUtilities.*;
  * @param <FPP>
  *
  */
-public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> implements FlowPropertyValueProvider<FPP> {
+public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
     @Deprecated
     private Set<String> propertiesHandled = new LinkedHashSet<String>();
-    private List<FlowPropertyDefinitionImplementor> flowPropertyDefinitions;
-    /**
-     * TODO: in future should define the property requirements?
-     * TODO: also if some propertiesHandled may have different requirements. - so should be a Map<String,Set<String/ FlowPropertyDefinition>>
-     */
-    private Set<String> requiredProperties = new LinkedHashSet<String>();
-    private Set<String> optionalProperties = new LinkedHashSet<String>();
+
 
     protected AbstractFlowPropertyValueProvider() {
         this.flowPropertyProviderClass = initFlowPropertyProviderClass();
@@ -61,15 +50,15 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * {@link #getFlowPropertyProviderClass()} will return {@link FlowPropertyProviderWithValues} if FPP extends that class. otherwise {@link FlowPropertyProvider}
      * @param propertiesHandled first property listed is property returned by
      */
+    @Deprecated
     protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
         this();
-        this.propertiesHandled.addAll(Arrays.asList(propertiesHandled));
+        Collections.addAll(this.propertiesHandled, propertiesHandled);
     }
     protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this(flowPropertyProviderClass);
-        this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
+        setFlowPropertyDefinitions(flowPropertyDefinitions);
         if ( isNotEmpty(flowPropertyDefinitions)) {
-            this.flowPropertyDefinitions.addAll(Arrays.asList(flowPropertyDefinitions));
             for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
                 this.propertiesHandled.add(flowPropertyDefinition.getName());
             }
@@ -85,7 +74,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     */
    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, String...propertiesHandled) {
        this(flowPropertyProviderClass);
-       this.propertiesHandled.addAll(Arrays.asList(propertiesHandled));
+       Collections.addAll(this.propertiesHandled,propertiesHandled);
    }
    /**
     * @return
@@ -163,63 +152,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             }
         }
         return false;
-    }
-    @SuppressWarnings("hiding")
-    protected void addRequires(String...requiredProperties) {
-        this.requiredProperties.addAll(Arrays.asList(requiredProperties));
-    }
-    public Collection<String> getRequiredProperties() {
-        return this.requiredProperties;
-    }
-    @SuppressWarnings("hiding")
-    protected void addOptional(String...optionalProperties) {
-        this.optionalProperties.addAll(Arrays.asList(optionalProperties));
-    }
-    public Collection<String> getOptionalProperties() {
-        return this.optionalProperties;
-    }
-    /**
-     * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.
-     * @param flowPropertyProvider
-     * @param flowPropertyDefinitions
-     */
-    @SuppressWarnings({"unchecked", "hiding"})
-    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImplementor...flowPropertyDefinitions ) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
-            if ( !flowPropertyDefinition.isDefaultAvailable()) {
-                flowPropertyDefinition.initFlowPropertyValueProvider(this);
-            }
-            // TODO : also create a "read-only" v. writeable property mechanism.
-            if ( !flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.getFlowPropertyValuePersister() == null) {
-                FlowPropertyValuePersister<?> flowPropertyValuePersister = null;
-                if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
-                } else if ( this instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) this;
-                }
-                flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
-            }
-            if ( this instanceof FlowPropertyValueChangeListener ) {
-                flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
-            }
-        }
-        flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
-    }
-
-    /**
-     * @return the flowPropertyDefinitions
-     */
-    public List<FlowPropertyDefinitionImplementor> getFlowPropertyDefinitions() {
-        return flowPropertyDefinitions;
-    }
-    protected <T extends CharSequence> T getAdditionalConfigParameter(FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters, Object key, T defaultValue) {
-        T result;
-        if ( additionalConfigurationParameters != null && additionalConfigurationParameters.containsKey(key)) {
-            result = (T) additionalConfigurationParameters.get(key);
-        } else {
-            result = defaultValue;
-        }
-        return result;
     }
 
     /**
