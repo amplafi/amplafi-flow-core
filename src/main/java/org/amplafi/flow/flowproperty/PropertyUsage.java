@@ -14,6 +14,7 @@
 
 package org.amplafi.flow.flowproperty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,6 +70,8 @@ public enum PropertyUsage {
     private final boolean copyBackOnFlowSuccess;
     private final boolean externallySettable;
     private List<PropertyUsage> canbeChangedTo;
+
+    public static final PropertyUsage[] ALL_BUT_INTERNAL;
     static {
         // roughly trying to enforce that can become more strict but not less strict.
         // notice that this some changes take away behavior ( for example, use -> consume removes the property )
@@ -78,6 +81,9 @@ public enum PropertyUsage {
         creates.canbeChangedTo = Arrays.asList(initialize);
         consume.canbeChangedTo = Arrays.asList();
         initialize.canbeChangedTo = Arrays.asList();
+        List<PropertyUsage> allBut = new ArrayList<PropertyUsage>(Arrays.asList(values()));
+        allBut.remove(internalState);
+        ALL_BUT_INTERNAL = allBut.toArray(new PropertyUsage[allBut.size()]);
     }
 
     private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnFlowSuccess, boolean externallySettable) {

@@ -26,6 +26,7 @@ import static com.sworddance.util.CUtilities.*;
  *
  * EXPERIMENTAL -- I am exploring what/how scope should be used and is it really needed? Or does PropertyUsage do a good job?
  * Need more thinking and explicit explanation of how to use PropertyScope/ {@link PropertyUsage}.
+ * Using just PropertyUsage would avoid having to check for conflicts between PropertyScope allowedPropertyUsages?
  *
  * PropertyScope is really scope of visibility while the flow is active.
  *
@@ -35,7 +36,7 @@ import static com.sworddance.util.CUtilities.*;
  * However, once the flow exists, PropertyScope is used to determine where changes to the value should be copied.
  *
  * Do we really need PropertyScope?
- * how to handle initializing flowproperies when they are labeled as 'flowLocal' or 'activityLocal'
+ * how to handle initializing flow properties when they are labeled as 'flowLocal' or 'activityLocal'
    * how should 'flowLocal'/'activityLocal' be used?
    * reason for flowlocal/activity local is to allow a common set of properties names to be reused. this allows activities to be less aware of their flow.
    * an analogy might be parameter passing in Java?
@@ -101,7 +102,7 @@ public enum PropertyScope {
      * <li>with global flow states this could change the BP of the admin flow -- constant battle to make sure that no security hole opens.</li>
      * </ul>
      */
-    global(false, false, io, noRestrictions, false, PropertyUsage.values())
+    global(false, false, io, noRestrictions, false, ALL_BUT_INTERNAL)
     ;
     private final boolean localToFlow;
     private final boolean localToActivity;
