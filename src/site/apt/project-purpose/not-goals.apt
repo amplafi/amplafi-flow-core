@@ -26,7 +26,7 @@ NOT Goals
  
 * Never manage transactions
 
- Amplafi-Flow calls external code to trigger transaction boundaries. However, Amplafi-Flwo itself does not enforce transactions nor manage transactions.
+ Amplafi-Flow calls external code to trigger transaction boundaries. However, Amplafi-Flow itself does not enforce transactions nor manage transactions.
 Hibernate and other tools that layer on top of database accesses manage the transactions just fine.
 
 * Never be tightly integrated with Http Sessions

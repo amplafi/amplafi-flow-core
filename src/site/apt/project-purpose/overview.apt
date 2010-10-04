@@ -19,7 +19,7 @@ AmpFlow's existence.
 Purpose
 
  Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
-Amplafi-Flow provides a framework to manage the model. Amplafi-Flow's core compentancy is managing data that needs
+Amplafi-Flow provides a framework to manage the model. Amplafi-Flow's core competency is managing data that needs
 to exist across multiple (web usually) interactions before the changes are used to modify the persisted objects and 
 stored in the database. 
 

@@ -45,8 +45,8 @@ Problems with seam
 
   * means that the developer faces the real possibility of a 'partial' merge. which happens if multiple dbo's are changed
        and another user changes some of those dbos.
-  * no clear transaction boundary symantics.
- * conversation symantics encourages the anti-pattern of including dbos with potentially large object graphs in the session.
+  * no clear transaction boundary semantics.
+ * conversation semantics encourages the anti-pattern of including dbos with potentially large object graphs in the session.
   * this creates problems with large sessions that cannot be easily transfered between servers, nor cached to disk.
   * it also can easily result in session size ballooning uncontrollably. and even when the root case is known, 
         correcting the problem usually results in major code reworking.
