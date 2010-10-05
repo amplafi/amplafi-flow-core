@@ -55,17 +55,7 @@
             <scope>test</scope>
         </dependency>
         <!-- temporary only for configuration code. -->
-        <dependency>
-            <groupId>org.amplafi</groupId>
-            <artifactId>amplafi-hivemind</artifactId>
-            <version>${project.version}</version>
-            <optional>true</optional>
-        </dependency>     
-        <!-- 
-        	Other runtime dependencies (needed for configuration code) are:
-        	org.apache.hivemind:hivemind
-        	org.apache.hivemind:hivemind-lib
-        -->           
+          
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
