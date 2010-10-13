@@ -54,7 +54,6 @@
             <artifactId>easymockclassextension</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- temporary only for configuration code. -->
           
         <dependency>
             <groupId>org.testng</groupId>
