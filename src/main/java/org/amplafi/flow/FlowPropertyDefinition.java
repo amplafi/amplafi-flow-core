@@ -140,9 +140,5 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
      */
     boolean isCopyBackOnFlowSuccess();
 
-    /**
-     * @return
-     */
     boolean isDefaultAvailable();
-
 }

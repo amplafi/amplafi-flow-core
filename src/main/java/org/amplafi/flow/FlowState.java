@@ -300,4 +300,10 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return true if this flowState references possibleReferencedState
      */
     boolean isReferencing(FlowState possibleReferencedState);
+    /**
+     * Set a map of values. This allows proper handling of namespace issues and cache invalidation that does not happen
+     * if the FlowState's map is modified directly.
+     * @param map
+     */
+    public void setAllProperties(Map<?,?> map);
 }

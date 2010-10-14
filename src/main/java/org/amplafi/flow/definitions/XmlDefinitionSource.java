@@ -13,6 +13,27 @@
  */
 package org.amplafi.flow.definitions;
 
+import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowGroup;
+import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.PropertyUsage;
+import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowGroupImpl;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.TransitionFlowActivity;
+import org.amplafi.flow.translator.FlowTranslator;
+
+import com.sworddance.util.ApplicationGeneralException;
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,25 +47,6 @@ import static org.apache.commons.lang.StringUtils.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowGroup;
-import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
-import org.amplafi.flow.flowproperty.PropertyUsage;
-import org.amplafi.flow.impl.FlowActivityImpl;
-import org.amplafi.flow.impl.FlowGroupImpl;
-import org.amplafi.flow.impl.FlowImpl;
-import org.amplafi.flow.impl.TransitionFlowActivity;
-import org.amplafi.flow.translator.FlowTranslator;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import com.sworddance.util.ApplicationGeneralException;
-import com.sworddance.util.ApplicationIllegalArgumentException;
 
 /**
  * @author patmoore
@@ -221,10 +223,12 @@ public class XmlDefinitionSource implements DefinitionSource {
     }
 
     private void parseDocument() {
+        // TODO: remove module?
         NodeList moduleList = this.xmlDocument.getElementsByTagName("module");
         for (int i = 0; i < moduleList.getLength(); i++) {
             FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
         }
+        // TODO change element
         moduleList = this.xmlDocument.getElementsByTagName("contribution");
         for (int i = 0; i < moduleList.getLength(); i++) {
             FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
@@ -246,7 +250,7 @@ public class XmlDefinitionSource implements DefinitionSource {
                     FlowImplementor flow = parseFlow(child);
                     this.flows.put(flow.getFlowPropertyProviderName(), flow);
                 } else {
-//                    System.out.println(nodeName);
+                    //                    System.out.println(nodeName);
                 }
             }
         }
@@ -399,15 +403,15 @@ public class XmlDefinitionSource implements DefinitionSource {
                 }
                 break;
             case Node.TEXT_NODE:
-//                String text = flow.getFlowDescriptionText();
-//                String textContent = child.getTextContent();
-//                if ( isNotBlank(textContent)) {
-//                    if ( isBlank(text)) {
-//                        flowActivity.setFlowDescriptionText(textContent);
-//                    } else {
-//                        flowActivity.setFlowDescriptionText(text.trim()+" "+textContent);
-//                    }
-//                }
+                //                String text = flow.getFlowDescriptionText();
+                //                String textContent = child.getTextContent();
+                //                if ( isNotBlank(textContent)) {
+                //                    if ( isBlank(text)) {
+                //                        flowActivity.setFlowDescriptionText(textContent);
+                //                    } else {
+                //                        flowActivity.setFlowDescriptionText(text.trim()+" "+textContent);
+                //                    }
+                //                }
                 break;
             default:
                 break;

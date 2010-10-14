@@ -48,6 +48,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 
+import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
 import com.sworddance.util.perf.LapTimer;
 
@@ -339,7 +340,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @return the exported values
      */
     @SuppressWarnings("unchecked")
-    protected FlowValuesMap<FlowValueMapKey, CharSequence> exportProperties(boolean clearFrom) {
+    protected FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> exportProperties(boolean clearFrom) {
         FlowValuesMap exportValueMap = createFlowValuesMapCopy();
         Map<String, FlowPropertyDefinition> propertyDefinitions = this.getFlow().getPropertyDefinitions();
         if (propertyDefinitions != null) {
@@ -362,13 +363,15 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
     /**
-     * @param exportValueMap map to copy exported values to .
+     * @param exportValueMap map with namespaced properties. All properties should be copied back to the global namespace when done.
      * @param flowPropertyDefinition
      * @param flowActivity
-     * @param flowCompletingExport The FlowState is completing so all clean up actions on the FlowState can be performed as part of this export.
+     * @param flowCompletingExport
+     * The FlowState is completing so all clean up actions on the FlowState can be performed as part of this export.
+     * (TODO: pat 3 Oct 2010 removing state is a one time operation - maybe make it an explicit separate method call?)
      */
     @SuppressWarnings("unchecked")
-    public void exportFlowProperty(FlowValuesMap exportValueMap, FlowPropertyDefinition flowPropertyDefinition, FlowActivityImplementor flowActivity, boolean flowCompletingExport) {
+    protected void exportFlowProperty(FlowValuesMap exportValueMap, FlowPropertyDefinition flowPropertyDefinition, FlowActivityImplementor flowActivity, boolean flowCompletingExport) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.
         List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowActivity);
@@ -672,6 +675,12 @@ public class FlowStateImpl implements FlowStateImplementor {
                     getFlowManagement().dropFlowState(this);
                 }
             }
+            // pass on the return flow to the continuation flow.
+            // need to set before starting continuation flow because continuation flow may run to completion.
+            // HACK : seems like the continueFlow should have picked this up automatically
+            String returnToFlow = this.getProperty(FSRETURN_TO_FLOW);
+            this.setProperty(FSRETURN_TO_FLOW, null);
+
             // TODO: THIS block of code should be in the FlowManagement code.
             // TODO: Put this in a FlowPropertyValueProvider !!
             // OLD note but may still be valid:
@@ -683,16 +692,21 @@ public class FlowStateImpl implements FlowStateImplementor {
             // make sure that don't get into trouble by a finishFlow that
             // returns the current FlowState.
             if (continueWithFlow == null || continueWithFlow == this) {
+                /* need to explore this more.
+                   idea is that there should be some ability to copy back from the started flows.
+                   but this really should be under the control caller. So right now best mechanism seems to be
+                   to make caller pass in an object to be modified.
+                if ( nextFlowLifecycleState == successful && isNotBlank(returnToFlow)) {
+                    FlowState returnFlow = getFlowManagement().getFlowState(returnToFlow);
+                    Map exportedMap = this.getExportedValuesMap().getAsFlattenedStringMap();
+                    returnFlow.setAllProperties(exportedMap);
+                }
+                 */
                 pageName = getFlowManagement().completeFlowState(this, false, nextFlowLifecycleState);
             } else {
-                // pass on the return flow to the continuation flow.
-                // need to set before starting continuation flow because continuation flow may run to completion.
-                // HACK : seems like the continueFlow should have picked this up automatically
-                String returnToFlow = this.getProperty(FSRETURN_TO_FLOW);
                 if ( isNotBlank(returnToFlow)) {
                     continueWithFlow.setProperty(FSRETURN_TO_FLOW, returnToFlow);
                 }
-                this.setProperty(FSRETURN_TO_FLOW, null);
                 pageName = getFlowManagement().completeFlowState(this, true, nextFlowLifecycleState);
                 if (!continueWithFlow.isActive()) {
                     pageName = continueWithFlow.begin();
@@ -797,7 +811,8 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#setActiveFlowLabel(java.lang.String)
+     *
+     * @see org.amplafi.flow.impl.FlowStateImplementor#setActiveFlowLabel(java.lang.String)
      */
     @Override
     public void setActiveFlowLabel(String activeFlowLabel) {
@@ -1653,6 +1668,19 @@ public class FlowStateImpl implements FlowStateImplementor {
             flowPropertyDefinition = (T) this.getFlowManagement().getFlowPropertyDefinition(key);
         }
         return flowPropertyDefinition;
+    }
+
+
+    /**
+     * @see org.amplafi.flow.FlowState#setAllProperties(java.util.Map)
+     */
+    @Override
+    public void setAllProperties(Map<?, ?> exportedMap) {
+        for(Map.Entry<String, ?>entry : new NotNullIterator<Map.Entry<String, ?>>(exportedMap)) {
+            Object value = entry.getValue();
+            String key = entry.getKey();
+            setProperty(key, value);
+        }
     }
 
     /**

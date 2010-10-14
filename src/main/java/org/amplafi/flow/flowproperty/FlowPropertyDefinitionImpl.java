@@ -14,12 +14,11 @@
 
 package org.amplafi.flow.flowproperty;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,6 +35,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
+
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -347,7 +348,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * @return this
      */
     public FlowPropertyDefinitionImpl addAlternateNames(String... alternateNames) {
-        getAlternates().addAll(Arrays.asList(alternateNames));
+        Collections.addAll(getAlternates(),alternateNames);
         return this;
     }
 
@@ -880,12 +881,23 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     /**
      * @return the propertiesDependentOn
      */
+    @Override
     public Set<String> getPropertiesDependentOn() {
         return propertiesDependentOn;
     }
+
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initPropertiesDependentOn(Collection<String> propertiesDependentOn) {
-        this.propertiesDependentOn.addAll(propertiesDependentOn);
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<String> propertiesDependentOn) {
+        if ( isNotEmpty(propertiesDependentOn)) {
+            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
+        }
+        return this;
+    }
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(String... propertiesDependentOn) {
+        if ( isNotEmpty(propertiesDependentOn)) {
+            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
+        }
         return this;
     }
 

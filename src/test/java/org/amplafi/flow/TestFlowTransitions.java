@@ -23,6 +23,7 @@ import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
@@ -41,8 +42,13 @@ import static org.easymock.EasyMock.*;
  */
 public class TestFlowTransitions {
 
+    /**
+     *
+     */
+    private static final String A_VALUE_THAT_IS_COPIED_BACK = "a value that is copied back";
     private static final String FLOW_TYPE_1 = "ftype1";
     private static final String FLOW_TYPE_2 = "ftype2";
+    private static final String FLOW_TYPE_3 = "ftype3";
     private static final boolean TEST_ENABLED = true;
     @Test(enabled=TEST_ENABLED)
     public void testSimpleFlowTransitionMapChecking() {
@@ -63,41 +69,72 @@ public class TestFlowTransitions {
     }
 
     /**
-     * start one flow then a subflow, check to make sure the flow returns.
+     * start one flow then a subflow,
+     * set a value
+     * finish the subflow
+     * check to make sure the flow returns to the original flow
+     * check to make sure the altered value is returned to
      */
     @Test(enabled=TEST_ENABLED)
     public void testReturnToFlow() {
-        FlowImpl flow1 = new FlowImpl(FLOW_TYPE_1);
+        FlowImpl mainFlow = new FlowImpl(FLOW_TYPE_1);
         String defaultAfterPage1 = "default-after-page-for-"+FLOW_TYPE_1;
         String defaultPage1 = "page-of-"+FLOW_TYPE_1;
-        flow1.setPageName(defaultPage1);
-        flow1.setDefaultAfterPage(defaultAfterPage1);
+        mainFlow.setPageName(defaultPage1);
+        mainFlow.setDefaultAfterPage(defaultAfterPage1);
         FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
-        flow1.addActivity(fa1);
+        FlowPropertyDefinitionImpl copiedBackProperty = new FlowPropertyDefinitionImpl("copiedBackProperty").initAccess(PropertyScope.flowLocal, PropertyUsage.io);
+        fa1.addPropertyDefinition(copiedBackProperty);
+        mainFlow.addActivity(fa1);
 
-        FlowImpl flow2 = new FlowImpl(FLOW_TYPE_2);
+        FlowImpl subFlow = new FlowImpl(FLOW_TYPE_2);
         String defaultAfterPage2 = "default-after-page-for-"+FLOW_TYPE_2;
         String defaultPage2 = "page-of-"+FLOW_TYPE_2;
-        flow2.setPageName(defaultPage2);
-        flow2.setDefaultAfterPage(defaultAfterPage2);
+        subFlow.setPageName(defaultPage2);
+        subFlow.setDefaultAfterPage(defaultAfterPage2);
         FlowActivityImpl fa2_1 = new FlowActivityImpl().initInvisible(false);
-        flow2.addActivity(fa2_1);
+        fa2_1.addPropertyDefinition(copiedBackProperty.clone());
+        subFlow.addActivity(fa2_1);
+        subFlow.addActivity(new TransitionFlowActivity());
+
+        FlowImpl continuedFlow = new FlowImpl(FLOW_TYPE_3);
+        String defaultAfterPage3 = "default-after-page-for-"+FLOW_TYPE_3;
+        String defaultPage3 = "page-of-"+FLOW_TYPE_3;
+        continuedFlow.setPageName(defaultPage3);
+        continuedFlow.setDefaultAfterPage(defaultAfterPage3);
+        FlowActivityImpl fa3_1 = new FlowActivityImpl().initInvisible(false);
+        continuedFlow.addActivity(fa3_1);
+
         Object returnToFlowLookupKey = true;
-        FlowManagement baseFlowManagement = getFlowManagement(flow1, flow2);
+        FlowManagement baseFlowManagement = getFlowManagement(mainFlow, subFlow, continuedFlow);
         FlowState flowState1 = baseFlowManagement.startFlowState(FLOW_TYPE_1, true, null, returnToFlowLookupKey);
         assertEquals(flowState1.getCurrentPage(), defaultPage1);
         FlowState flowState2 = baseFlowManagement.startFlowState(FLOW_TYPE_2, true, null, true);
-        String lookupKey1 = flowState2.getProperty(FSRETURN_TO_FLOW);
+        flowState2.setProperty(copiedBackProperty.getName(), A_VALUE_THAT_IS_COPIED_BACK);
         assertEquals(flowState2.getCurrentPage(), defaultPage2);
+        String lookupKey1 = flowState2.getProperty(FSRETURN_TO_FLOW);
         assertEquals(flowState1.getLookupKey(), lookupKey1, "the child flow does not have the parent flow as the return-to-flow ");
+        flowState2.setProperty(FSNEXT_FLOW, FLOW_TYPE_3);
         String pageName = flowState2.finishFlow();
+
+        FlowState flowState3 = baseFlowManagement.getCurrentFlowState();
+        assertEquals(flowState3.getFlowTypeName(), FLOW_TYPE_3);
+        assertEquals(flowState3.getProperty(copiedBackProperty.getName()), A_VALUE_THAT_IS_COPIED_BACK);
+        assertEquals(pageName, defaultPage3, "the child flow when it completed did not redirect to the parent flow's page. flowState2="+flowState2);
+        lookupKey1 = flowState3.getProperty(FSRETURN_TO_FLOW);
+        assertEquals(flowState1.getLookupKey(), lookupKey1, "the child flow does not have the parent flow as the return-to-flow ");
+        pageName = flowState3.finishFlow();
+
         assertEquals(pageName, defaultPage1, "the child flow when it completed did not redirect to the parent flow's page. flowState2="+flowState2);
         FlowState flowState1_again = baseFlowManagement.getCurrentFlowState();
         assertEquals(flowState1_again.getLookupKey(), flowState1.getLookupKey());
+        // TODO: 3 Oct 2010 (pat) revisit copy back from callee in the future. Right now, too much chance for mischief from callee. Caller should select only the values desired.
+//        assertEquals(flowState1_again.getProperty(copiedBackProperty.getName()), A_VALUE_THAT_IS_COPIED_BACK);
         flowState1_again.finishFlow();
         FlowState nothing = baseFlowManagement.getCurrentFlowState();
         assertNull(nothing);
     }
+
     /**
      * Test to see how properties are cleared/copied during flow transitions.
      * <ul>
@@ -109,7 +146,7 @@ public class TestFlowTransitions {
     public void testAvoidConflictsOnFlowTransitions() {
         FlowActivityImpl flowActivity1 = new FlowActivityImpl().initInvisible(false);
         // initialized by "first" flow ignored by second flow.
-        String initializedByFirst = "initializedByFirst";
+        final String initializedByFirst = "initializedByFirst";
         flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionImpl(initializedByFirst).initPropertyUsage(PropertyUsage.initialize));
 
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();

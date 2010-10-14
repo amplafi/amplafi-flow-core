@@ -14,6 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,12 +29,18 @@ import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.*;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTestingUtils;
+import org.amplafi.flow.FlowUtils;
+import org.amplafi.flow.FlowValuesMap;
+
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
@@ -43,6 +50,8 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.*;
  * Tests {@link FlowPropertyDefinitionImpl}.
  */
 public class TestFlowPropertyDefinition {
+
+    private static final String FLOW_TYPE = "ftype1";
     private static final boolean TEST_ENABLED = true;
 //    @Test(enabled=TEST_ENABLED)
 //    public void testValidateWith_empty() {
@@ -360,6 +369,50 @@ public class TestFlowPropertyDefinition {
 
     }
 
+    /**
+     * explicit test to make sure that only properties that should be exported are exported.
+     * @param propertyUsage
+     * @param propertyScope
+     */
+    @Test(enabled=TEST_ENABLED, dataProvider="exportingPropertiesData")
+    public void testExportingProperties(PropertyUsage propertyUsage, PropertyScope propertyScope) {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        String key = "testProp";
+        FlowPropertyDefinition flowPropertyDefinition = new FlowPropertyDefinitionImpl(key, boolean.class).initAccess(propertyScope, propertyUsage);
+        FlowActivityImpl flowActivity =newFlowActivity();
+        flowActivity.addPropertyDefinitions(flowPropertyDefinition);
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity);
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
+            "outside-property", "out-1",
+            key, "false");
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState, null);
+        // TODO : decide how to handle undeclared properties - use case is when one flow is an intermediary between 2 flows.
+        flowState.setProperty("not-a-property", true);
+        flowState.setProperty(key, true);
+        flowState.finishFlow();
+        FlowValuesMap exportedMap = flowState.getExportedValuesMap();
+        assertTrue(exportedMap.containsKey("not-a-property"), exportedMap+" should contain ");
+        if ( flowPropertyDefinition.isCopyBackOnFlowSuccess()) {
+            assertEquals(exportedMap.get(key), "true");
+            assertEquals(exportedMap.size(), 3, "wrong size "+exportedMap);
+        } else {
+            assertEquals(exportedMap.get(key), "false");
+            assertEquals(exportedMap.size(), 3, "wrong size "+exportedMap);
+        }
+    }
+    @DataProvider(name="exportingPropertiesData")
+    protected Object[][] getExportingPropertiesData() {
+        List<Object[]> testCases = new ArrayList<Object[]>();
+
+        for(int i = 0; i < PropertyScope.values().length; i++) {
+            PropertyScope propertyScope = PropertyScope.values()[i];
+            Set<PropertyUsage> allowPropertyUsages = propertyScope.getAllowPropertyUsages();
+            for(PropertyUsage propertyUsage: allowPropertyUsages) {
+                testCases.add( new Object[] { propertyUsage, propertyScope });
+            }
+        }
+        return testCases.toArray(new Object[testCases.size()][]);
+    }
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionNamespace() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -536,6 +589,35 @@ public class TestFlowPropertyDefinition {
         return new FlowActivityImpl().initInvisible(false);
     }
 
+    /**
+     * Test to see that serialization/deserialization of enum's
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testEnumHandling() {
+        Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
+        FlowImplementor flow = new FlowImpl(FLOW_TYPE);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", SampleEnum.class);
+        flow.addPropertyDefinitions(definition);
+        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
+        definition = new FlowPropertyDefinitionImpl("fa1fp", SampleEnum.class).initInitial(SampleEnum.EMAIL.name());
+        fa1.addPropertyDefinitions(definition);
+        flow.addActivity(fa1);
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        String returnToFlowLookupKey = null;
+        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
+        SampleEnum type =flowState.getCurrentActivity().getProperty("foo");
+        assertEquals(type, SampleEnum.EXTERNAL, "(looking for property 'foo') FlowState="+flowState);
+        type =flowState.getProperty("fa1fp", SampleEnum.class);
+        assertEquals(type, SampleEnum.EMAIL);
+    }
+
+    private static enum SampleEnum {
+        EXTERNAL, EMAIL
+
+    }
     /**
      * Test to make sure property initialization is forced and that the initialization code does not expect a String.
      */
