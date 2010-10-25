@@ -374,7 +374,7 @@ public class TestFlowPropertyDefinition {
      * @param propertyUsage
      * @param propertyScope
      */
-    @Test(enabled=TEST_ENABLED, dataProvider="exportingPropertiesData")
+    @Test(enabled=false, dataProvider="exportingPropertiesData")
     public void testExportingProperties(PropertyUsage propertyUsage, PropertyScope propertyScope) {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String key = "testProp";
