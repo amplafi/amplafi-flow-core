@@ -81,12 +81,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      */
     FlowState finishFlow(FlowState currentNextFlowState);
 
-    /**
-     * @return the pageName.
-     */
-    String getPageName();
-
-    String getComponentName();
 
     FlowValidationResult getFlowValidationResult();
     /**
@@ -97,6 +91,16 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      * @return result of validation
      */
     FlowValidationResult getFlowValidationResult(FlowActivityPhase required, FlowStepDirection flowStepDirection);
+
+    // above is workflow-ish
+    // below is less-so or not at all.
+
+    /**
+     * @return the pageName.
+     */
+    String getPageName();
+
+    String getComponentName();
     /**
      *
      * @return true if the activity name has been explicitly set.
