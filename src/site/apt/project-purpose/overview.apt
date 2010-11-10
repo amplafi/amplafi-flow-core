@@ -5,24 +5,30 @@
                     ------
                     11 Feb 2009
                     ------
- 
+
 Need
+ * Session state
  
- Existing frameworks are primarily controller frameworks and offer rich mechanism for describing how the user can navigate a website.
-Existing frameworks assume many things about the users' method of interaction with the application. Trying to combine multiple frameworks,
+
+ * Problem with existing solutions
+
+  * Existing frameworks are primarily controller frameworks and offer rich mechanism for describing how the user can navigate a website.
+  * Existing frameworks assume many things about the users' method of interaction with the application. Trying to combine multiple frameworks,
 such as Tapestry with Spring results in a tug-of-war between frameworks over which framework will provide the base javax.servlet implementation.
+  * When adding new libraries to an existing code base, it is rarely possible to change which framework is controlling the servlet interaction. The corporate policy has standardized 
 
  As has been noted, numerous times Tapestry is missing an easy-to-use wizard mechanism.
 The wizard concept is fundamental to modern web design. Tapestry's failing here is the reason for
 AmpFlow's existence.
-
 Purpose
 
  Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
 Amplafi-Flow provides a framework to manage the model. Amplafi-Flow's core competency is managing data that needs
 to exist across multiple (web usually) interactions before the changes are used to modify the persisted objects and 
-stored in the database. 
+stored in the database.
 
+[Andy: workflow mention?]
+[Pat: really state manager]
  
 Goals
 
@@ -60,28 +66,29 @@ Goals
 What does Amplafi-Flow do
 
  * connects tapestry ui components to business logic.
- * segments session data allowing portions of the session to be garbage-collected.
+ * segments session data allowing portions of the session to be garbage-collected. [Andy: we need to talk about webframeworks]
  * seamless manages conversion of the serialized representation.
  * automatic API creation
    * provides a standard mechanism to invoke a flow directly with a browser call.
    * this means that as a developer defines a ui wizard flow they are defining a API call that does the same thing.
    * every step of a sequence of steps can be represented by a unique uri that is not tied to the session. 
    * provides a standard way of returning the result of the flow.
-
  * provides a standardize way of managing changes so that cancel operations are trivial to support.
-
-* various operations can be segmented into different  flows that can all be active at the same time. 
+ * various operations can be segmented into different  flows that can all be active at the same time. 
   [[ note: have a url query parameter to determine which flow is active?]      
 
 * Amplafi-Flow tracks which fields have changed. 
   * this makes it easy to merge changes when multiple users are making changes.
-  * it also makes it possible to discard changes and resotre the original values without 
+  * it also makes it possible to discard changes and restore the original values without 
      hitting the database. This preserve transaction isolation without involving the database resources.
       the cumulated changes should be applied. 
       
       This project manages program (usually web) flow and web page /web component generation. Currently this project is only integrated with Tapestry 4. However, the code is separated out and implementing different web UI frameworks should be possible. 
 
+Amplafi-Flow-Core
+ * has no dependencies on javax.servlet.* code
+ * Amplafi-flow-core should not have concept of active flow. Amplafi-flow-(web)* should have the concept of current flow ( if the concept exists ) 
 
-
- 
+ Existing workflows 
+  * security
  
