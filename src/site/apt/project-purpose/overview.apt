@@ -91,4 +91,12 @@ Amplafi-Flow-Core
 
  Existing workflows 
   * security
+
+High-level goals [Andy]
+
+ As seen from the user perspective, so perhaps parts of those could belong to
+ Amplafi-Flow-Web but let's assume that's irrelavent to the user.
+
+ * Be able to start multiple times the same flow for the same user (think multiple tabs)
+ * Ability to keep the current flow running when refreshing the page
  

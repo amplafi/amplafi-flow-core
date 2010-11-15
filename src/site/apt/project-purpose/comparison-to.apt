@@ -16,7 +16,7 @@ Important Note
  [[3]] Amplafi-flow does not support any conditionals in the xml flow definitions.
  [[4]] Amplafi-flow separates the edit/modification operations from the persist operations.
  
- Amplafi-Flow does not claimed to be a replacement for the control functionality provided by any of the frameworks
+ Amplafi-Flow does not claim to be a replacement for the control functionality provided by any of the frameworks
 described here. As noted in here [[ link to model-but-no-controller]] Amplafi-Flow manages just the state with limited controller
 functionality.
                     
