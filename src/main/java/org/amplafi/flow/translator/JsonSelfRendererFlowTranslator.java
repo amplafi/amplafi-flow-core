@@ -14,12 +14,14 @@
 
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
+
+import com.sworddance.util.ApplicationIllegalStateException;
 
 
 /**
@@ -48,12 +50,14 @@ public class JsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
     @Override
     protected Object doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
         try {
-            JsonSelfRenderer jsonSelfRenderer = (JsonSelfRenderer) dataClassDefinition.getDataClass().newInstance();
+            Class<?> dataClass = dataClassDefinition.getDataClass();
+            ApplicationIllegalStateException.checkState(!dataClass.isInterface()&&!dataClass.isEnum()&&!dataClass.isAnnotation(), dataClass,": Cannot create new instance of an interface, enum or annotation");
+            JsonSelfRenderer jsonSelfRenderer = (JsonSelfRenderer) dataClass.newInstance();
             return jsonSelfRenderer.fromJson(serializedObject);
         } catch (InstantiationException e) {
-            throw new IllegalStateException(e);
+            throw new ApplicationIllegalStateException(e);
         } catch (IllegalAccessException e) {
-            throw new IllegalStateException(e);
+            throw new ApplicationIllegalStateException(e);
         }
     }
 }
