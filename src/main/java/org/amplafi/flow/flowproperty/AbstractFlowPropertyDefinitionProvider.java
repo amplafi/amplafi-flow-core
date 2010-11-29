@@ -47,36 +47,47 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public List<FlowPropertyDefinitionImplementor> getFlowPropertyDefinitions() {
         return flowPropertyDefinitions;
     }
-    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<? extends FlowPropertyExpectation> additionalConfiguration) {
-        this.addPropertyDefinitions(flowPropertyProvider, flowPropertyDefinitions);
+    protected void addDefinedPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<? extends FlowPropertyExpectation> additionalConfiguration) {
+    	if ( this.flowPropertyDefinitions != null) {
+	        for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
+	            initPropertyDefinition(flowPropertyProvider, flowPropertyDefinition);
+	            flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinition.clone());
+	        }
+	    }
     }
     /**
      * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.
      * @param flowPropertyProvider
      * @param flowPropertyDefinitions
      */
-    @SuppressWarnings({"unchecked", "hiding"})
+    @SuppressWarnings({"hiding"})
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinitionImplementor...flowPropertyDefinitions ) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
-            if ( !flowPropertyDefinition.isDefaultAvailable() && this instanceof FlowPropertyValueProvider) {
-                flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider)this);
-            }
-            // TODO : also create a "read-only" v. writeable property mechanism.
-            if ( !flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.getFlowPropertyValuePersister() == null) {
-                FlowPropertyValuePersister<?> flowPropertyValuePersister = null;
-                if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
-                } else if ( this instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) this;
-                }
-                flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
-            }
-            if ( this instanceof FlowPropertyValueChangeListener ) {
-                flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
-            }
+            initPropertyDefinition(flowPropertyProvider, flowPropertyDefinition);
         }
         flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinitions);
     }
+    @SuppressWarnings({"unchecked"})
+	protected void initPropertyDefinition(
+			FlowPropertyProviderImplementor flowPropertyProvider,
+			FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+		if ( !flowPropertyDefinition.isDefaultAvailable() && this instanceof FlowPropertyValueProvider) {
+		    flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider)this);
+		}
+		// TODO : also create a "read-only" v. writeable property mechanism.
+		if ( !flowPropertyDefinition.isCacheOnly() && flowPropertyDefinition.getFlowPropertyValuePersister() == null) {
+		    FlowPropertyValuePersister<?> flowPropertyValuePersister = null;
+		    if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
+		        flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
+		    } else if ( this instanceof FlowPropertyValuePersister) {
+		        flowPropertyValuePersister = (FlowPropertyValuePersister<?>) this;
+		    }
+		    flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
+		}
+		if ( this instanceof FlowPropertyValueChangeListener ) {
+		    flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
+		}
+	}
     protected <T extends CharSequence> T getAdditionalConfigParameter(FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters, Object key, T defaultValue) {
         T result;
         if ( additionalConfigurationParameters != null && additionalConfigurationParameters.containsKey(key)) {
