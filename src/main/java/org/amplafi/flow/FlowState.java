@@ -106,6 +106,9 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     <T extends FlowActivity> T selectVisibleActivity(int visibleIndex)  throws FlowValidationException;
 
+    /**
+     * Usually called as part of the {@link #finishFlow()} processing. Maybe called earlier if the business logic decides that some changes need to be committed immediately.
+     */
     void saveChanges();
 
     /**
