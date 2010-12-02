@@ -32,6 +32,9 @@ import static com.sworddance.util.CUtilities.*;
  */
 public abstract class AbstractFlowPropertyDefinitionProvider {
     private List<FlowPropertyDefinitionImplementor> flowPropertyDefinitions;
+    protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
+        setFlowPropertyDefinitions(flowPropertyDefinitions);
+    }
     /**
      * @param flowPropertyDefinitions
      */
@@ -97,4 +100,12 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         }
         return result;
     }
+
+	public void defineFlowPropertyDefinitions(
+			FlowPropertyProviderImplementor flowPropertyProvider,
+			FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters) {
+		List<? extends FlowPropertyExpectation> additionalConfiguration = null;
+		this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfiguration );
+
+	}
 }

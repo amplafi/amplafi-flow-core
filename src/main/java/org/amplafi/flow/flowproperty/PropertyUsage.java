@@ -60,6 +60,8 @@ public enum PropertyUsage {
      *
      * TODO: does this mean eager initialization ( to allow for triggering of activities that take a while to initialize? ) OR do is a new propertyUsage better?
      * TODO: PropertyRequired setting will be used to determine when the initialization will be forced to happen. ( if it hasn't happened already )
+     * Use case:
+     * setting the user id and broadcastProvider for a flow
      */
     initialize(false, true, false);
 
