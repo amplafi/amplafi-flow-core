@@ -22,7 +22,7 @@ import org.amplafi.flow.definitions.DefinitionSource;
  *
  * @author Patrick Moore
  */
-public interface FlowDefinitionsManager extends DefinitionSource {
+public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor> {
 
     /**
      * @param key (usually) the {@link Flow#getFlowPropertyProviderName()}.

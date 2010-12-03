@@ -16,7 +16,6 @@ package org.amplafi.flow.definitions;
 import java.util.Map;
 
 import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowImplementor;
 
 /**
  * Implementers will provide Flow definitions.
@@ -25,14 +24,15 @@ import org.amplafi.flow.FlowImplementor;
  * @author patmoore
  *
  */
-public interface DefinitionSource {
+public interface DefinitionSource<F extends Flow> {
 
     /**
      * Returns the flow having the specified name.
+     * @param <F>
      * @param flowTypeName
      * @return the Flow definition. null if {@link #isFlowDefined(String)} returns false.
      */
-    FlowImplementor getFlowDefinition(String flowTypeName);
+    F getFlowDefinition(String flowTypeName);
     /**
      * does this DefinitionSource have a definition for a flow with supplied name.
      * @param flowTypeName
@@ -42,7 +42,8 @@ public interface DefinitionSource {
 
     /**
      * Returns all defined flows, keyed by their name.
+     * @param <F>
      * @return the map with all the currently defined flows indexed by (usually) the {@link Flow#getFlowPropertyProviderName()}.
      */
-    Map<String, FlowImplementor> getFlowDefinitions();
+    Map<String, F> getFlowDefinitions();
 }

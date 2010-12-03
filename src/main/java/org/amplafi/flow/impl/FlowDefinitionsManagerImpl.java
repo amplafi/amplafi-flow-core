@@ -27,7 +27,6 @@ import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 
@@ -44,13 +43,11 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
-    private Map<String, FlowPropertyDefinitionProvider> registeredFlowPropertyDefinitionProviders;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
-        registeredFlowPropertyDefinitionProviders = new ConcurrentHashMap<String, FlowPropertyDefinitionProvider>();
     }
 
     /**
@@ -77,7 +74,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
 
     @Override
     public void addDefinitions(DefinitionSource... definitionSources) {
-        for(DefinitionSource definitionSource: definitionSources) {
+        for(DefinitionSource<FlowImplementor> definitionSource: definitionSources) {
             Collection<FlowImplementor> flows = definitionSource.getFlowDefinitions().values();
             for(FlowImplementor flow: flows) {
                 addDefinition(flow.getFlowPropertyProviderName(), flow);

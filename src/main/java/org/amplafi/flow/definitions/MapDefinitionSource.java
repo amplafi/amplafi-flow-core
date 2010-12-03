@@ -14,15 +14,17 @@
 package org.amplafi.flow.definitions;
 
 import java.util.Map;
-import org.amplafi.flow.FlowImplementor;
+
+import org.amplafi.flow.Flow;
 
 /**
  * Simple Flow {@link DefinitionSource}
  * @author patmoore
+ * @param <F>
  *
  */
-public class MapDefinitionSource implements DefinitionSource {
-    private Map<String, FlowImplementor> flowDefinitions;
+public class MapDefinitionSource<F extends Flow> implements DefinitionSource<F> {
+    private Map<String, F> flowDefinitions;
 
     public MapDefinitionSource() {
 
@@ -30,14 +32,14 @@ public class MapDefinitionSource implements DefinitionSource {
     /**
      * @param flowDefinitions
      */
-    public MapDefinitionSource(Map<String, FlowImplementor> flowDefinitions) {
+    public MapDefinitionSource(Map<String, F> flowDefinitions) {
         this.flowDefinitions = flowDefinitions;
     }
     /**
      * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)
      */
     @Override
-    public FlowImplementor getFlowDefinition(String flowTypeName) {
+    public F getFlowDefinition(String flowTypeName) {
         return this.flowDefinitions != null? this.flowDefinitions.get(flowTypeName):null;
     }
 
@@ -54,7 +56,7 @@ public class MapDefinitionSource implements DefinitionSource {
     /**
      * @param flowDefinitions the flowDefinitions to set
      */
-    public void setFlowDefinitions(Map<String, FlowImplementor> flowDefinitions) {
+    public void setFlowDefinitions(Map<String, F> flowDefinitions) {
         this.flowDefinitions = flowDefinitions;
     }
 
@@ -62,7 +64,7 @@ public class MapDefinitionSource implements DefinitionSource {
     /**
      * @return the flowDefinitions
      */
-    public Map<String, FlowImplementor> getFlowDefinitions() {
+    public Map<String, F> getFlowDefinitions() {
         return flowDefinitions;
     }
 

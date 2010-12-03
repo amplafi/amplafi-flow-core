@@ -50,7 +50,14 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      * should be activated. One example are invisible activities. false should only be returned for FlowActivities that have a UI component
      */
     boolean activate(FlowStepDirection flowStepDirection);
-
+    /**
+     * Called before a flow is {@link #passivate(boolean, FlowStepDirection)} also called if the flow is not
+     * advancing but wants to inform the current FlowActivity that all the
+     * values from the UI have been refreshed so the FlowActivity can do any
+     * in-place updates. This can be used for the rare case when it is desirable
+     * to immediately commit a change to the database.
+     */
+    void refresh();
     /**
      * Passivate this flow activity. This method is invoked whenever the flow
      * activity is submitted (i.e. next, previous or finish is clicked on the
@@ -171,14 +178,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      */
     <T> void setProperty(Class<? extends T> dataClass, T value);
 
-    /**
-     * Called before a flow is {@link #passivate(boolean, FlowStepDirection)} also called if the flow is not
-     * advancing but wants to inform the current FlowActivity that all the
-     * values from the UI have been refreshed so the FlowActivity can do any
-     * in-place updates. This can be used for the rare case when it is desirable
-     * to immediately commit a change to the database.
-     */
-    void refresh();
     boolean isFinishingActivity();
 
     /**

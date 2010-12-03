@@ -23,15 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValueMapKey;
@@ -43,16 +45,16 @@ import org.amplafi.flow.flowproperty.InvalidatingFlowPropertyValueChangeListener
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
-import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
 
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
 import com.sworddance.util.perf.LapTimer;
 
-import static com.sworddance.util.CUtilities.*;
+import org.apache.commons.collections.map.MultiKeyMap;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.amplafi.flow.FlowUtils.*;
@@ -778,7 +780,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
     @Override
     public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
-        FlowActivity currentActivity = getCurrentActivity();
+        FlowActivityImplementor currentActivity = getCurrentActivity();
         if ( currentActivity != null ) {
             currentActivity.refresh();
             return currentActivity.passivate(verifyValues, flowStepDirection);

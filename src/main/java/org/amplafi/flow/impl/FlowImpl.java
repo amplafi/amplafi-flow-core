@@ -35,6 +35,7 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -377,7 +378,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     @Override
     public void refresh() {
         int activityIndex = flowState.getCurrentActivityIndex();
-        FlowActivity flowActivity = getActivity(activityIndex);
+        FlowActivityImplementor flowActivity = getActivity(activityIndex);
         if ( flowActivity != null ) {
             flowActivity.refresh();
         }

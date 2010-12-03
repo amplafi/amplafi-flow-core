@@ -29,7 +29,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
  */
 public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> implements FlowGroup, FlowPropertyProviderImplementor {
 
-    private DefinitionSource definitionSource = new MapDefinitionSource();
+    private DefinitionSource<FlowImplementor> definitionSource = new MapDefinitionSource();
 
     private FlowGroup primaryFlowGroup;
 
