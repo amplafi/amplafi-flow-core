@@ -22,13 +22,13 @@ import org.amplafi.flow.Flow;
  *
  * TODO should be namespace owner.
  * @author patmoore
+ * @param <F>
  *
  */
 public interface DefinitionSource<F extends Flow> {
 
     /**
      * Returns the flow having the specified name.
-     * @param <F>
      * @param flowTypeName
      * @return the Flow definition. null if {@link #isFlowDefined(String)} returns false.
      */
@@ -42,7 +42,6 @@ public interface DefinitionSource<F extends Flow> {
 
     /**
      * Returns all defined flows, keyed by their name.
-     * @param <F>
      * @return the map with all the currently defined flows indexed by (usually) the {@link Flow#getFlowPropertyProviderName()}.
      */
     Map<String, F> getFlowDefinitions();
