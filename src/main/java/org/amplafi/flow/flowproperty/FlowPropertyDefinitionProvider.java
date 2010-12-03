@@ -14,9 +14,10 @@
 package org.amplafi.flow.flowproperty;
 
 
+import java.util.Collection;
+
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowValueMapKey;
-import org.amplafi.flow.FlowValuesMap;
+import org.amplafi.flow.FlowPropertyExpectation;
 
 
 /**
@@ -35,11 +36,13 @@ public interface FlowPropertyDefinitionProvider {
      *
      * TODO: the wiring has not happened on this object when the define is called
      * @param flowPropertyProvider
-     * @param additionalConfigurationParameters some FlowPropertyDefinitionProvider need additional configuration parameters.
-     * TODO: Using {@link FlowValuesMap} prevents us from passing in actual objects, seems wrong.
-     * TODO: seems like a map to return the created FPDs is appropriate.
      */
-    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters);
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider);
 
-
+    /**
+     *
+     * @param flowPropertyProvider
+     * @param additionalConfigurationParameters
+     */
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, Collection<? extends FlowPropertyExpectation>additionalConfigurationParameters);
 }

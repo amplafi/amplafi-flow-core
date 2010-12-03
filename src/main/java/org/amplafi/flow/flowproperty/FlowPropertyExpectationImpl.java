@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
  * Used to help configure properties created by {@link FlowPropertyDefinitionProvider}s
@@ -31,6 +32,8 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private final FlowActivityPhase propertyRequired;
     private final PropertyScope propertyScope;
     private final PropertyUsage propertyUsage;
+
+	private final FlowPropertyValueProvider<?> flowPropertyValueProvider;
     /**
      * @param name
      * @param propertyRequired
@@ -40,11 +43,16 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
      */
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
         List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
-        this.name = name;
-        this.propertyRequired = propertyRequired;
-        this.propertyScope = propertyScope;
-        this.propertyUsage = propertyUsage;
-        this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
+    	this(name, propertyRequired, propertyScope, propertyUsage, null, flowPropertyValueChangeListeners);
+    }
+    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage, FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider,
+            List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
+    	this.name = name;
+    	this.propertyRequired = propertyRequired;
+    	this.propertyScope = propertyScope;
+    	this.propertyUsage = propertyUsage;
+    	this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
+    	this.flowPropertyValueProvider = flowPropertyValueProvider;
     }
     /**
      * @return the flowPropertyValueChangeListeners
@@ -58,7 +66,12 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public String getName() {
         return name;
     }
-    /**
+
+    @Override
+	public String getMapKey() {
+		return getName();
+	}
+	/**
      * @return the propertyRequired
      */
     public FlowActivityPhase getPropertyRequired() {
@@ -75,5 +88,8 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
      */
     public PropertyUsage getPropertyUsage() {
         return propertyUsage;
+    }
+    public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
+        return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
     }
 }

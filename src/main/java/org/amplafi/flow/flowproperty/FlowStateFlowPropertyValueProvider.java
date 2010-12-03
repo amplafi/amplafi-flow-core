@@ -16,9 +16,8 @@ package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowValueMapKey;
-import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.impl.FlowStateImplementor;
+
 import static org.amplafi.flow.FlowConstants.*;
 
 /**
@@ -31,7 +30,10 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
 
     public FlowStateFlowPropertyValueProvider() {
-        super(FSRETURN_TO_FLOW, FSRETURN_TO_FLOW_TYPE, FSCONTINUE_WITH_FLOW);
+        super(// TODO -- add a FLOW_STATE property ...
+                new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+                new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE, String.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+                new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io));
     }
     @SuppressWarnings("unchecked")
     @Override
@@ -41,19 +43,4 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
         FlowState flowState = flowStateImplementor.getFlowManagement().getFlowState(lookupKey);
         return (T) flowState;
     }
-
-    /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor, org.amplafi.flow.FlowValuesMap)
-     */
-    @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,
-        FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters) {
-        addPropertyDefinitions(flowPropertyProvider,
-            // TODO -- add a FLOW_STATE property ...
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE, String.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io)
-        );
-    }
-
 }

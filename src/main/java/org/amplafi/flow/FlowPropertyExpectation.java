@@ -15,15 +15,18 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
+
+import com.sworddance.util.MapKeyed;
 
 /**
  * @author patmoore
  *
  */
-public interface FlowPropertyExpectation {
+public interface FlowPropertyExpectation extends MapKeyed<String> {
     String getName();
 
     /**
@@ -33,10 +36,15 @@ public interface FlowPropertyExpectation {
 
     PropertyScope getPropertyScope();
 
+    <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
+    /**
+     *
+     * @return the {@link FlowActivityPhase} when the property be required to be available.
+     */
     FlowActivityPhase getPropertyRequired();
 
     /**
-     * @return listener to be notified when the property changes value.
+     * @return listeners to be notified when the property changes value.
      */
     List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
 }

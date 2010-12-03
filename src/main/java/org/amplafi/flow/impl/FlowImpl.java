@@ -139,7 +139,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
 
         );
-        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this, null);
+        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this);
     }
 
     /**

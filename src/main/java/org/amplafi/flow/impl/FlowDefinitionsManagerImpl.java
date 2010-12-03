@@ -21,14 +21,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
-import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowImplementor;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,11 +44,13 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
+    private Map<String, FlowPropertyDefinitionProvider> registeredFlowPropertyDefinitionProviders;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
+        registeredFlowPropertyDefinitionProviders = new ConcurrentHashMap<String, FlowPropertyDefinitionProvider>();
     }
 
     /**

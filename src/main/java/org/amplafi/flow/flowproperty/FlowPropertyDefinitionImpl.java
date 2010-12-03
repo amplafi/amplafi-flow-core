@@ -14,8 +14,6 @@
 
 package org.amplafi.flow.flowproperty;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,17 +23,29 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.amplafi.flow.*;
+import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowActivity;
+import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowException;
+import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.JsonSelfRenderer;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+
+import static org.apache.commons.lang.StringUtils.*;
 import static com.sworddance.util.CUtilities.*;
 
 
@@ -51,7 +61,7 @@ import static com.sworddance.util.CUtilities.*;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImplementor, FlowPropertyDefinitionProvider {
+public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionImplementor/*, FlowPropertyDefinitionProvider*/ {
 
     /**
      * Name of the property as used in the flow code.
@@ -290,7 +300,12 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         return name;
     }
 
-    public String getValidators() {
+    @Override
+	public String getMapKey() {
+		return getName();
+	}
+
+	public String getValidators() {
         return validators;
     }
 
@@ -1116,11 +1131,10 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
 
     /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider#defineFlowPropertyDefinitions(org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor, org.amplafi.flow.FlowValuesMap)
+     *
      */
     @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,
-        FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> additionalConfigurationParameters) {
+	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, Collection<? extends FlowPropertyExpectation>additionalConfigurationParameters) {
         flowPropertyProvider.addPropertyDefinition(this);
     }
 
