@@ -59,4 +59,13 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, 
     void setPageName(String pageName);
 
     void setDefaultAfterPage(String defaultAfterPage);
+
+    void setActivatable(boolean activatable);
+    /**
+     * This flow doesn't have to be the current flow in order to be active.
+     * @return false means this flowStates of this type should be dropped if they are
+     * no longer the current flow.
+     */
+    boolean isNotCurrentAllowed();
+    void setNotCurrentAllowed(boolean notCurrentAllowed);
 }

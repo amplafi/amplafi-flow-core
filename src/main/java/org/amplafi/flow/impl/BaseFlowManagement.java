@@ -13,10 +13,6 @@
  */
 package org.amplafi.flow.impl;
 
-import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
-import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
-import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.sworddance.util.CUtilities.*;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -53,15 +51,18 @@ import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.web.PageProvider;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
-import static com.sworddance.util.CUtilities.*;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static org.amplafi.flow.FlowConstants.*;
+import static org.apache.commons.lang.StringUtils.*;
 /**
  * A basic implementation of FlowManagement.
  *
@@ -84,6 +85,11 @@ public class BaseFlowManagement implements FlowManagement {
 
     private transient ClassResolver classResolver;
 
+    private URI defaultHomePage;
+
+    public BaseFlowManagement() {
+
+    }
     /**
      * @see org.amplafi.flow.FlowManagement#getFlowStates()
      */
@@ -574,9 +580,14 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @Override
     public URI getDefaultHomePage() {
-        return this.getFlowManager().getDefaultHomePage();
+        return this.defaultHomePage;
     }
-
+    /**
+     * @param defaultHomePage the defaultHomePage to set
+     */
+    public void setDefaultHomePage(URI defaultHomePage) {
+        this.defaultHomePage = defaultHomePage;
+    }
     /**
      * @see org.amplafi.flow.FlowManagement#addFlowStateListener(org.amplafi.flow.FlowStateListener)
      */
@@ -661,4 +672,5 @@ public class BaseFlowManagement implements FlowManagement {
     public ClassResolver getClassResolver() {
         return classResolver;
     }
+
 }

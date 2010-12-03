@@ -14,6 +14,7 @@
 package org.amplafi.flow;
 
 import java.util.List;
+
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
@@ -90,16 +91,6 @@ public interface Flow extends FlowPropertyProvider, FlowProvider {
 
     int indexOf(FlowActivity activity);
 
-    void setActivatable(boolean activatable);
-
     boolean isActivatable();
 
-    void setNotCurrentAllowed(boolean notCurrentAllowed);
-
-    /**
-     * This flow doesn't have to be the current flow in order to be active.
-     * @return false means this flowStates of this type should be dropped if they are
-     * no longer the current flow.
-     */
-    boolean isNotCurrentAllowed();
 }

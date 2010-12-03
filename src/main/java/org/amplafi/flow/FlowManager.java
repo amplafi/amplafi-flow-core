@@ -14,7 +14,6 @@
 
 package org.amplafi.flow;
 
-import java.net.URI;
 
 
 /**
@@ -41,18 +40,4 @@ public interface FlowManager {
      * @return (possibly new) FlowManagement object.
      */
     <FM extends FlowManagement> FM getFlowManagement();
-
-    /**
-     * @param flowTranslatorResolver
-     */
-    void setFlowTranslatorResolver(FlowTranslatorResolver flowTranslatorResolver);
-
-    FlowTranslatorResolver getFlowTranslatorResolver();
-
-    /**
-     * If the URI is relative, then the URI is to refer to a local page. This is usually a static setting.
-     * @see FlowManagement#getDefaultHomePage()
-     * @return the default home to use when a flow ends and there is no other place to return.
-     */
-    URI getDefaultHomePage();
 }

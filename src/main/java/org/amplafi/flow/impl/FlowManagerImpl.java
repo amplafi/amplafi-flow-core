@@ -18,17 +18,19 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import static org.apache.commons.collections.CollectionUtils.*;
 
-import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.FlowStateListener;
-import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
+import org.amplafi.flow.FlowStateListener;
+import org.amplafi.flow.FlowTranslatorResolver;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
  *
@@ -69,6 +71,7 @@ public class FlowManagerImpl implements FlowManager {
     public FlowManagement getFlowManagement() {
         BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
         baseFlowManagement.setFlowManager(this);
+        baseFlowManagement.setDefaultHomePage(this.getDefaultHomePage());
         baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
         return baseFlowManagement;
     }
@@ -121,7 +124,9 @@ public class FlowManagerImpl implements FlowManager {
     }
 
     /**
-     * @return the defaultHomePage
+     * If the URI is relative, then the URI is to refer to a local page. This is usually a static setting.
+     * @see FlowManagement#getDefaultHomePage()
+     * @return the default home to use when a flow ends and there is no other place to return.
      */
     public URI getDefaultHomePage() {
         return defaultHomePage;

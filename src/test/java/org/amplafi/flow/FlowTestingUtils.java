@@ -16,13 +16,14 @@ package org.amplafi.flow;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.impl.FlowImpl;
-import org.amplafi.flow.impl.BaseFlowManagement;
 import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.easymock.IAnswer;
@@ -62,7 +63,9 @@ public class FlowTestingUtils {
         if(flowTranslatorResolver.getLog() == null) {
             flowTranslatorResolver.setLog(log);
         }
-        this.flowManagement = new BaseFlowManagement();
+        BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
+        this.flowManagement = baseFlowManagement;
+        baseFlowManagement.setDefaultHomePage(flowManager.getDefaultHomePage());
         this.flowManager = flowManager;
         flowManager.setFlowTranslatorResolver(flowTranslatorResolver);
         flowManager.setFlowDefinitionsManager(flowDefinitionsManager);
