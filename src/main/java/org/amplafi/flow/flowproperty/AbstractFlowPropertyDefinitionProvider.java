@@ -18,12 +18,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 import com.sworddance.util.NotNullIterator;
-
-import static com.sworddance.util.CUtilities.*;
 
 /**
  * support methods for {@link FlowPropertyDefinitionProvider} implementations.
@@ -99,7 +99,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
 	}
     protected List<? extends FlowPropertyExpectation> getAdditionalConfigParameter(Collection<? extends FlowPropertyExpectation> additionalConfigurationParameters, String key) {
     	List<FlowPropertyExpectation> result = new ArrayList<FlowPropertyExpectation>();
-    	for(FlowPropertyExpectation flowPropertyExpectation: new NotNullIterator<FlowPropertyExpectation>(additionalConfigurationParameters)) {
+    	for(FlowPropertyExpectation flowPropertyExpectation: NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(additionalConfigurationParameters)) {
     		if ( key.equals(flowPropertyExpectation.getName())) {
     			result.add(flowPropertyExpectation);
     		}

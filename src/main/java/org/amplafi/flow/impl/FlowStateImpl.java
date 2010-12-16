@@ -1678,7 +1678,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void setAllProperties(Map<?, ?> exportedMap) {
-        for(Map.Entry<String, ?>entry : new NotNullIterator<Map.Entry<String, ?>>(exportedMap)) {
+        for(Map.Entry<String, ?>entry : NotNullIterator.<Map.Entry<String, ?>>newNotNullIterator(exportedMap)) {
             Object value = entry.getValue();
             String key = entry.getKey();
             setProperty(key, value);
