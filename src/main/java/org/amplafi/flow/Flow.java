@@ -15,6 +15,7 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.definitions.FlowDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
@@ -38,7 +39,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  * FlowActivity is shared amongst Flow instances.
  * </p>
  */
-public interface Flow extends FlowPropertyProvider, FlowProvider {
+public interface Flow extends FlowDefinition, FlowPropertyProvider, FlowProvider {
 
     /**
      * @param <T>
@@ -48,49 +49,5 @@ public interface Flow extends FlowPropertyProvider, FlowProvider {
 
     <T extends FlowActivity> T getActivity(int activityIndex);
 
-    /**
-     * @return Returns the definition.
-     */
-    boolean isInstance();
-
     <T extends FlowActivity> List<T> getVisibleActivities();
-
-    /**
-     * @return get the flow name as it should appear in the flowentry and the
-     *         titlebar.
-     */
-    String getFlowTitle();
-
-    /**
-     * @return Used if this is a secondary flow that will be started as the next
-     *         flow.
-     */
-    String getContinueFlowTitle();
-
-    String getLinkTitle();
-
-    /**
-     *
-     * @return display this text on a mouseover hover on the entry point.
-     */
-    String getMouseoverEntryPointText();
-
-    /**
-     * @return Explanatory text about what the purpose of this flow is.
-     */
-    String getFlowDescriptionText();
-
-    String getPageName();
-
-    String getDefaultAfterPage();
-
-    /**
-     * retrieve the activity, and execute it's {@link FlowActivity#refresh()} method.
-     */
-    void refresh();
-
-    int indexOf(FlowActivity activity);
-
-    boolean isActivatable();
-
 }

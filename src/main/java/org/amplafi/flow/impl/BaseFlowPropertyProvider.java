@@ -63,12 +63,12 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         this.propertyDefinitions = properties;
     }
 
-    public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
+    public <FD extends FlowPropertyDefinition> Map<String, FD> getPropertyDefinitions() {
         if ( propertyDefinitions == null && this.isInstance() ) {
             // as is usually the case for instance flow activities.
             return this.definition.getPropertyDefinitions();
         }
-        return propertyDefinitions;
+        return (Map<String, FD>) propertyDefinitions;
     }
     /**
      * method used by hivemind to add in properties

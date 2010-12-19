@@ -22,11 +22,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.flowproperty.PropertyUsage.*;
-import static org.apache.commons.lang.StringUtils.*;
-
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
@@ -49,13 +44,18 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
+import static org.apache.commons.lang.StringUtils.*;
 import static com.sworddance.util.CUtilities.*;
 
 
@@ -184,7 +184,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     public void initializeFlow() {
         //TODO: this needs to be the same as FlowImpl's initializeFlow() code
-        Map<String, FlowPropertyDefinition> props = this.getPropertyDefinitions();
+        Map<String, FlowPropertyDefinitionImplementor> props = this.getPropertyDefinitions();
         if (props != null) {
             getFlowStateImplementor().initializeFlowProperties(this, props.values());
         }
@@ -759,7 +759,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @Override
     public <T> T getProperty(String key, Class<? extends T> expected) {
         // doing the FlowPropertyDefinition here so that the flow doesn't create a global property.
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
         T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
         return result;
     }
@@ -853,7 +853,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @Deprecated // should look at initCacheOnly()
     protected <T> T cache(String key, T value) {
-        getFlowStateImplementor().setCached(getFlowPropertyDefinition(key), this, value);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinition(key);
+		getFlowStateImplementor().setCached(flowPropertyDefinition, this, value);
         return value;
     }
 
@@ -861,7 +862,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @SuppressWarnings("unchecked")
     protected <T> T getCached(String key) {
         FlowStateImplementor flowState = getFlowStateImplementor();
-        return flowState == null ? null : (T) flowState.getCached(getFlowPropertyDefinition(key), this);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinition(key);
+		return flowState == null ? null : (T) flowState.getCached(flowPropertyDefinition, this);
     }
 
     @Override

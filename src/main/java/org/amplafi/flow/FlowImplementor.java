@@ -68,4 +68,13 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, 
      */
     boolean isNotCurrentAllowed();
     void setNotCurrentAllowed(boolean notCurrentAllowed);
+    boolean isInstance();
+
+    String getPageName();
+
+    String getDefaultAfterPage();
+
+    int indexOf(FlowActivity activity);
+    void refresh();
+    boolean isActivatable();
 }

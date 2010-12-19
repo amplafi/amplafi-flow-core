@@ -36,8 +36,8 @@ public interface FlowPropertyProvider {
      */
     String getFlowPropertyProviderFullName();
 
-    Map<String, FlowPropertyDefinition> getPropertyDefinitions();
+    <FD extends FlowPropertyDefinition> Map<String, FD> getPropertyDefinitions();
 
-    <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
+    <FD extends FlowPropertyDefinition> FD getFlowPropertyDefinition(String key);
 
 }

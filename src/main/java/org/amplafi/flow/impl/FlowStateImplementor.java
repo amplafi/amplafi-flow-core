@@ -14,10 +14,10 @@
 package org.amplafi.flow.impl;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -28,7 +28,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 public interface FlowStateImplementor extends FlowState {
     <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition, T value);
 
-    <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
+    <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition);
 
     String getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
@@ -51,9 +51,9 @@ public interface FlowStateImplementor extends FlowState {
      * @param flowPropertyProvider
      * @param flowPropertyDefinition
      */
-    void initializeFlowProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
+    void initializeFlowProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition);
 
-    void initializeFlowProperties(FlowPropertyProvider flowPropertyProvider, Iterable<FlowPropertyDefinition> flowPropertyDefinitions);
+    void initializeFlowProperties(FlowPropertyProvider flowPropertyProvider, Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions);
 
     /**
      * get FlowActivity by position. It is preferred to use {@link #getActivity(String)}
@@ -91,7 +91,7 @@ public interface FlowStateImplementor extends FlowState {
     void clearCache();
 
     void setCached(String namespace, String key, Object value);
-    void setCached(FlowPropertyDefinition flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider, Object value);
+    void setCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider, Object value);
 
     <T> T getCached(String namespace, String key);
 
@@ -108,5 +108,5 @@ public interface FlowStateImplementor extends FlowState {
      * @param flowPropertyProvider
      * @return cached value
      */
-    <T> T getCached(FlowPropertyDefinition flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider);
+    <T> T getCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider);
 }
