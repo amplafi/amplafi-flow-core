@@ -263,7 +263,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(this, key, expected, sampleValue);
+            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition((FlowImplementor)getFlow(), key, expected, sampleValue);
         }
         return flowPropertyDefinition;
     }

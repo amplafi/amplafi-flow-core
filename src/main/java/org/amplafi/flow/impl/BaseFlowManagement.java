@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.sworddance.util.CUtilities.*;
-
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
@@ -63,6 +61,7 @@ import org.apache.commons.logging.LogFactory;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.apache.commons.lang.StringUtils.*;
+import static com.sworddance.util.CUtilities.*;
 /**
  * A basic implementation of FlowManagement.
  *
@@ -511,10 +510,11 @@ public class BaseFlowManagement implements FlowManagement {
             propertyDefinition.setDataClass(expectedClass);
             if ( sampleValue != null) {
                 // actually going to be setting this property
+            	getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+"(expected class="+expected+") might want to check situation. FlowState="+flowPropertyProvider );
                 flowPropertyProvider.addPropertyDefinitions(propertyDefinition);
             }
         }
-        getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+"(expected class="+expected+") might want to check situation. FlowState="+flowPropertyProvider );
+        // HACK : don't think this should be a 'toString()' maybe flowProvidername ?
         getFlowTranslatorResolver().resolve(flowPropertyProvider.toString(), propertyDefinition);
         return propertyDefinition;
     }
