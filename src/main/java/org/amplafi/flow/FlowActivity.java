@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
+import org.amplafi.flow.validation.FlowValidationResult;
 
 /*
  * @author patmoore

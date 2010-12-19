@@ -11,9 +11,12 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow;
+package org.amplafi.flow.validation;
 
+import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.validation.FlowValidationResult;
 
 /**
  * Allows for complex validation.

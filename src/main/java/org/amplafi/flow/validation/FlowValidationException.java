@@ -16,9 +16,8 @@ package org.amplafi.flow.validation;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowValidationResult;
-import org.amplafi.flow.FlowValidationTracking;
 import org.amplafi.flow.FlowException;
+
 import org.apache.commons.lang.StringUtils;
 
 
@@ -62,7 +61,7 @@ public class FlowValidationException extends FlowException {
         return this.flowValidationResult.getTrackings();
     }
     @Override
-    public FlowValidationException initCause(Throwable cause) {
+    public synchronized FlowValidationException initCause(Throwable cause) {
         super.initCause(cause);
         setStackTrace(cause.getStackTrace());
         return this;

@@ -33,7 +33,6 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowStepDirection;
-import org.amplafi.flow.FlowValidationResult;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
@@ -42,6 +41,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.InvalidatingFlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 
 import com.sworddance.util.NotNullIterator;

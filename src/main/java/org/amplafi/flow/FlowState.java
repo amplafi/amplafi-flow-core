@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.validation.FlowValidationResult;
 
 
 

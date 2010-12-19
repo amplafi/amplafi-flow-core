@@ -13,10 +13,9 @@
  */
 package org.amplafi.flow.validation;
 
-import org.amplafi.flow.FlowValidationResult;
 
 /**
- * {@link org.amplafi.flow.FlowValidationTracking Tracking} for missing required values.
+ * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for missing required values.
  * <p/>
  * A required field has a null value.
  * <p/>

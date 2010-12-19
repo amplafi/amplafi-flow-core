@@ -18,9 +18,9 @@ import java.util.Map;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowStepDirection;
-import org.amplafi.flow.FlowValidationResult;
-import org.amplafi.flow.FlowValidationResultProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
+import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 
@@ -36,7 +36,7 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
     // TODO: should be singleton service?
     public static final FlowValidationResultProviderImpl<FlowPropertyProviderWithValues> INSTANCE = new FlowValidationResultProviderImpl<FlowPropertyProviderWithValues>();
     /**
-     * @see org.amplafi.flow.FlowValidationResultProvider#getFlowValidationResult(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowActivityPhase, org.amplafi.flow.FlowStepDirection)
+     * @see org.amplafi.flow.validation.FlowValidationResultProvider#getFlowValidationResult(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowActivityPhase, org.amplafi.flow.FlowStepDirection)
      */
     @Override
     public FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider, FlowActivityPhase flowActivityPhase,

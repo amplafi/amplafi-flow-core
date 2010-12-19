@@ -14,7 +14,7 @@
 package org.amplafi.flow.validation;
 
 /**
- * {@link org.amplafi.flow.FlowValidationTracking Tracking} for
+ * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for
  * mismatching values between two objects.<p/>
  * This is typically used when two fields should be equal (like password and
  * password confirmation) but they're found not to be. In that case, just use:<p/>
