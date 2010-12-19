@@ -21,9 +21,10 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
-import org.apache.commons.logging.Log;
 
 import com.sworddance.beans.ClassResolver;
+
+import org.apache.commons.logging.Log;
 
 
 /**
@@ -142,8 +143,6 @@ public interface FlowManagement extends FlowStateListener {
      * @return the page name to land on.
      */
     String dropFlowStateByLookupKey(String lookupKey);
-
-    FlowActivity getCurrentActivity();
 
     FlowImplementor getInstanceFromDefinition(String flowTypeName);
 

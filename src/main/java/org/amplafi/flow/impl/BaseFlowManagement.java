@@ -122,17 +122,17 @@ public class BaseFlowManagement implements FlowManagement {
     public <FS extends FlowState> FS getCurrentFlowState() {
         return (FS) sessionFlows.getFirst();
     }
-    /**
-     * @see org.amplafi.flow.FlowManagement#getCurrentActivity()
-     */
-    public FlowActivity getCurrentActivity() {
-        FlowState current = getCurrentFlowState();
-        if ( current != null ) {
-            return current.getCurrentActivity();
-        } else {
-            return null;
-        }
-    }
+//    /**
+//     * @see org.amplafi.flow.FlowManagement#getCurrentActivity()
+//     */
+//    public FlowActivity getCurrentActivity() {
+//        FlowState current = getCurrentFlowState();
+//        if ( current != null ) {
+//            return current.getCurrentActivity();
+//        } else {
+//            return null;
+//        }
+//    }
 
     /**
      * @see org.amplafi.flow.FlowManagement#getActiveFlowStatesByType(java.lang.String...)
