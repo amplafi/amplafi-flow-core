@@ -16,8 +16,9 @@
     <name>Amplafi Flow - Core</name>
     <description>Flow core services (including data objects)</description>
     <scm>
-        <developerConnection>scm:svn:${svn-base}/${project.artifactId}/trunk</developerConnection>
-    </scm>    
+        <developerConnection>scm:git:${github-base}${project.artifactId}.git</developerConnection>
+    </scm>
+
     <build>
         <defaultGoal>deploy</defaultGoal>
     </build>
