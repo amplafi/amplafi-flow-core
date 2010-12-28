@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,20 +25,17 @@ import java.util.Set;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
-import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.ListFlowTranslator;
 import org.amplafi.flow.translator.LongFlowTranslator;
 import org.amplafi.flow.translator.MapFlowTranslator;
 import org.amplafi.flow.translator.SetFlowTranslator;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static org.amplafi.flow.FlowConstants.*;
-
-import java.util.Arrays;
 
 /**
  * @author patmoore
@@ -109,16 +107,16 @@ public class TestFlowTranslatorResolver extends Assert {
         // verify that the result can be used.
         Map<Long, List<String>> map = new LinkedHashMap<Long, List<String>>();
         List<String> expected34 = Arrays.asList("foo34", "bar34");
-        map.put(new Long(34), expected34);
+        map.put(Long.valueOf(34), expected34);
         List<String> expected3 = Arrays.asList("foo3", "bar3");
-        map.put(new Long(3), expected3);
+        map.put(Long.valueOf(3), expected3);
 
         String serializedResult = (String) dataClassDefinition.serialize(null, map);
         assertEquals(serializedResult, "{\"34\":[\"foo34\",\"bar34\"],\"3\":[\"foo3\",\"bar3\"]}");
         Map<Long, List<String>> reMap = dataClassDefinition.deserialize(flowPropertyProvider, null, serializedResult);
         assertEquals(reMap.size(), 2);
-        List<String> set34 = reMap.get(new Long(34));
-        List<String> set3 = reMap.get(new Long(3));
+        List<String> set34 = reMap.get(Long.valueOf(34));
+        List<String> set3 = reMap.get(Long.valueOf(3));
         assertTrue(set34.containsAll(expected34));
         assertTrue(set3.containsAll(expected3));
     }

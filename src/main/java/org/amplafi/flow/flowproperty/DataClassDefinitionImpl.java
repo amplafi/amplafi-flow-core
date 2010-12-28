@@ -19,14 +19,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NavigableMap;
 
+import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.json.IJsonWriter;
-import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.sworddance.beans.PropertyDefinitionImpl;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements DataClassDefinition {
     @SuppressWarnings("unchecked")
@@ -141,7 +142,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         if ( dataClassDefinition == null ) {
             return;
         }
-        if ( getDataClassReplaced(dataClassDefinition) == Boolean.TRUE) {
+        if ( Boolean.TRUE.equals(getDataClassReplaced(dataClassDefinition))) {
             this.setPropertyClass(dataClassDefinition.getPropertyClass());
         }
         this.setElementDataClassDefinition(mergeIt(this.getElementPropertyDefinition(), dataClassDefinition.getElementPropertyDefinition()));
