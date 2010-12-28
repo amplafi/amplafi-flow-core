@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
@@ -57,7 +59,6 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.amplafi.flow.FlowUtils.*;
 import static org.apache.commons.lang.StringUtils.*;
-import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -1240,7 +1241,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         return flowManagement;
     }
 
-    public synchronized void setFlowTypeName(String flowTypeName) {
+    public void setFlowTypeName(String flowTypeName) {
         this.flowTypeName = flowTypeName;
         this.flow = null;
     }

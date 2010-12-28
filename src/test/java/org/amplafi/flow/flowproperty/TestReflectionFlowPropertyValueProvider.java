@@ -14,6 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import org.testng.annotations.Test;
+
 import static org.testng.Assert.*;
 
 /**
@@ -49,7 +50,7 @@ public class TestReflectionFlowPropertyValueProvider {
         return (T)new ReflectionFlowPropertyValueProvider(object, properties).get(null, null);
     }
 
-    public class User {
+    public static class User {
         private String name;
         private int age;
         private User friend;

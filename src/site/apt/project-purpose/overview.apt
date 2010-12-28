@@ -8,7 +8,9 @@
 
 Need
  * Session state
- 
+   * Difficult to know when a value can be cleared from the session state.
+ * APIs are second class citizens
+   * APIs typically 
 
  * Problem with existing solutions
 
@@ -17,9 +19,6 @@ Need
 such as Tapestry with Spring results in a tug-of-war between frameworks over which framework will provide the base javax.servlet implementation.
   * When adding new libraries to an existing code base, it is rarely possible to change which framework is controlling the servlet interaction. The corporate policy has standardized 
 
- As has been noted, numerous times Tapestry is missing an easy-to-use wizard mechanism.
-The wizard concept is fundamental to modern web design. Tapestry's failing here is the reason for
-AmpFlow's existence.
 Purpose
 
  Amplafi-Flow provides a focused solution to the problem of managing state with applications (usually web).
@@ -28,7 +27,9 @@ to exist across multiple (web usually) interactions before the changes are used 
 stored in the database.
 
 [Andy: workflow mention?]
-[Pat: really state manager]
+[Pat: really state manager] - Easily confused with http session state within tapestry? ]
+
+[Andy:Beanflow - definition for each state ? ]
  
 Goals
 
@@ -61,7 +62,11 @@ Goals
  
  * Enable automatic test generation of the flows. 
  
- * API support
+ * API support - [Andy: "API support" does not seem to fit with "Session State Manager" - API support seems "active". "session state manager" seems "passive" ]
+ [Andy: if "workflow" then feel "threatened" by http://www.activiti.org/, seam, etc. but if "session state manager" then do not feel threatened by BPM tools. ]
+   
+
+ * [Pat: more like Finite State Machine, rather than BPM / workflow engines ]
 
 What does Amplafi-Flow do
 
@@ -91,6 +96,8 @@ Amplafi-Flow-Core
 
  Existing workflows 
   * security
+  * branching rules. ( amplafi-flow has no rules defined in the xml )
+
 
 High-level goals [Andy]
 
@@ -99,4 +106,3 @@ High-level goals [Andy]
 
  * Be able to start multiple times the same flow for the same user (think multiple tabs)
  * Ability to keep the current flow running when refreshing the page
- 

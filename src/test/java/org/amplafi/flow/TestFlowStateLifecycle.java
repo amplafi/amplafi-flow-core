@@ -16,8 +16,10 @@ package org.amplafi.flow;
 
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImplementor;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.testng.Assert.*;
 
@@ -58,7 +60,7 @@ public class TestFlowStateLifecycle {
         flowState.finishFlow();
         assertEquals(flowLifecycleStateListener.current, successful);
     }
-    class FlowStateLifecycleListenerImpl implements FlowStateListener {
+    static class FlowStateLifecycleListenerImpl implements FlowStateListener {
         FlowStateLifecycle last;
         FlowStateLifecycle current;
         @Override

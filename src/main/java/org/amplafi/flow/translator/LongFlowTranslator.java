@@ -13,8 +13,8 @@
  */
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
@@ -35,7 +35,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
         if (serializedObject == null ){
             return null;
         } else if ( serializedObject instanceof Number) {
-            return new Long(((Number)serializedObject).longValue());
+            return Long.valueOf(((Number)serializedObject).longValue());
         }
         String s = serializedObject.toString();
         try {

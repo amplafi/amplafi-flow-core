@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import org.amplafi.flow.FlowState;
+
+import static org.apache.commons.lang.StringUtils.*;
 
 public class SessionFlows implements Iterable<FlowStateImplementor>{
     private LinkedList<FlowStateImplementor> activeFlows = new LinkedList<FlowStateImplementor>();
@@ -58,7 +58,7 @@ public class SessionFlows implements Iterable<FlowStateImplementor>{
     public synchronized void makeFirst(FlowStateImplementor flowState) {
         if ( getFirst() == flowState) {
             return;
-        } else if ( activeFlowsMap.containsKey(flowState)) {
+        } else if ( activeFlowsMap.containsKey(flowState.getLookupKey())) {
             activeFlows.remove(flowState);
         }
         activeFlowsMap.put(flowState.getLookupKey(), flowState);

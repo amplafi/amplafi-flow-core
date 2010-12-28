@@ -13,8 +13,8 @@
  */
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
@@ -30,18 +30,16 @@ public class IntegerFlowTranslator extends AbstractFlowTranslator<Integer> {
         this.addSerializedFormClasses(Number.class, int.class, long.class, short.class, Integer.class);
         this.addDeserializedFormClasses(int.class);
     }
-    @SuppressWarnings("unused")
     @Override
     protected Integer doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         if ( serializedObject instanceof Number) {
-            return new Integer(((Number)serializedObject).intValue());
+            return Integer.valueOf(((Number)serializedObject).intValue());
         }
         String s = serializedObject.toString();
         try {
             return new Integer(s);
         } catch(NumberFormatException e) {
-            throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
-                    s, ": contains non-numerics"));
+            throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed", s, ": contains non-numerics"));
         }
     }
 
