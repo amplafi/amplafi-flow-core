@@ -20,7 +20,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 
-import com.sworddance.util.MapKeyed;
+import com.sworddance.util.map.MapKeyed;
 
 /**
  * @author patmoore

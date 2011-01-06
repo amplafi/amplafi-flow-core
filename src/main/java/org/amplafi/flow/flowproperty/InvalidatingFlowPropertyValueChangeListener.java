@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.apache.commons.collections.CollectionUtils;
 
-import com.sworddance.util.ConcurrentInitializedMap;
+import com.sworddance.util.map.ConcurrentInitializedMap;
 
 import static com.sworddance.util.CUtilities.*;
 

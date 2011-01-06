@@ -25,7 +25,7 @@ import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JsonSelfRenderer;
 import org.amplafi.json.renderers.MapJsonRenderer;
 
-import com.sworddance.util.MapKeyed;
+import com.sworddance.util.map.MapKeyed;
 
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -154,7 +154,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     }
 
     /**
-     * @see com.sworddance.util.MapKeyed#getMapKey()
+     * @see com.sworddance.util.map.MapKeyed#getMapKey()
      */
     @Override
     public String getMapKey() {
