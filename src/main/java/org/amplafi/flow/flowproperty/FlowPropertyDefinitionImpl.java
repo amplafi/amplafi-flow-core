@@ -78,10 +78,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
-    private FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
-    private FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
-    private FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
-    private List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
+    private transient FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
+    private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
+    private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
+    private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
     /**
      * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
      * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
