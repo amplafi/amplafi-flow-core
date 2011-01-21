@@ -357,9 +357,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         this.pageName = pageName;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#getPageName()
-     */
     @Override
     public String getPageName() {
         return isInstance()&& pageName == null? getDefinition().getPageName() : pageName;
@@ -395,9 +392,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return (FS) this.flowState;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#indexOf(org.amplafi.flow.FlowActivity)
-     */
     @Override
     public int indexOf(FlowActivity activity) {
         return this.activities.indexOf(activity);
@@ -411,25 +405,16 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         this.activatable = activatable;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#isActivatable()
-     */
     @Override
     public boolean isActivatable() {
         return activatable;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setNotCurrentAllowed(boolean)
-     */
     @Override
     public void setNotCurrentAllowed(boolean notCurrentAllowed) {
         this.notCurrentAllowed = notCurrentAllowed;
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#isNotCurrentAllowed()
-     */
     public boolean isNotCurrentAllowed() {
         return notCurrentAllowed;
     }

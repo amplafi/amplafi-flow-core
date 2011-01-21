@@ -205,9 +205,8 @@ public interface FlowManagement extends FlowStateListener {
     <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
 
     /**
-     * similar to {@link FlowManager#getDefaultHomePage()}. However, because {@link FlowManagement} is a session
-     * object the value returned by this method may be customized to the session settings and may not be
-     * {@link FlowManager#getDefaultHomePage()}.
+     * {@link FlowManagement} is a session
+     * object the value returned by this method may be customized to the session setting. 
      * @return the default home to use when a flow ends and there is no other place to return.
      */
     URI getDefaultHomePage();
