@@ -39,7 +39,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
         }
         String s = serializedObject.toString();
         try {
-            return new Long(s);
+            return Long.valueOf(s);
         } catch(NumberFormatException e) {
             throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
                     s,": contains non-numerics"));

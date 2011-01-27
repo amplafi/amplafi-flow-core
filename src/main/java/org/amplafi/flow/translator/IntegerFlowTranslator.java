@@ -37,7 +37,7 @@ public class IntegerFlowTranslator extends AbstractFlowTranslator<Integer> {
         }
         String s = serializedObject.toString();
         try {
-            return new Integer(s);
+            return Integer.valueOf(s);
         } catch(NumberFormatException e) {
             throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed", s, ": contains non-numerics"));
         }
