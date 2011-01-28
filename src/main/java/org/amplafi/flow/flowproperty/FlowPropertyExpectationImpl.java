@@ -13,6 +13,7 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
@@ -34,6 +35,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private final PropertyUsage propertyUsage;
 
 	private final FlowPropertyValueProvider<?> flowPropertyValueProvider;
+	private final FlowPropertyValuePersister flowPropertyValuePersister;
     /**
      * @param name
      * @param propertyRequired
@@ -43,16 +45,21 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
      */
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
         List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
-    	this(name, propertyRequired, propertyScope, propertyUsage, null, flowPropertyValueChangeListeners);
+    	this(name, propertyRequired, propertyScope, propertyUsage, null, null, flowPropertyValueChangeListeners);
+    }
+    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
+    		FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+    	this(name, propertyRequired, propertyScope, propertyUsage, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage, FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider,
-            List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
+            FlowPropertyValuePersister flowPropertyValuePersister, List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
     	this.name = name;
     	this.propertyRequired = propertyRequired;
     	this.propertyScope = propertyScope;
     	this.propertyUsage = propertyUsage;
     	this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
     	this.flowPropertyValueProvider = flowPropertyValueProvider;
+    	this.flowPropertyValuePersister = flowPropertyValuePersister;
     }
     /**
      * @return the flowPropertyValueChangeListeners
@@ -89,7 +96,17 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public PropertyUsage getPropertyUsage() {
         return propertyUsage;
     }
-    public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
+    @SuppressWarnings("unchecked")
+	public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
         return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
     }
+
+    @Override
+    public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+    	return flowPropertyDefinition.isNamed(getName());
+    }
+	public FlowPropertyValuePersister getFlowPropertyValuePersister() {
+		return flowPropertyValuePersister;
+	}
+
 }

@@ -14,7 +14,8 @@
 package org.amplafi.flow.flowproperty;
 
 
-import java.util.Collection;
+
+import java.util.List;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
@@ -44,5 +45,5 @@ public interface FlowPropertyDefinitionProvider {
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters
      */
-    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, Collection<? extends FlowPropertyExpectation>additionalConfigurationParameters);
+    void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters);
 }

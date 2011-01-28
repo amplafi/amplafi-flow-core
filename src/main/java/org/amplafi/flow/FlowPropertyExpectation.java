@@ -15,8 +15,10 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
+import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 
@@ -47,4 +49,10 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
      * @return listeners to be notified when the property changes value.
      */
     List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
+
+    boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition);
+
+    // Kostya: switch the definitions here:
+    <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
+//    FlowPropertyValuePersister<?> getFlowPropertyValuePersister();
 }

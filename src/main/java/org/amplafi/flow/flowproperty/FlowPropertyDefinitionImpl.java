@@ -15,6 +15,7 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -61,7 +62,7 @@ import static com.sworddance.util.CUtilities.*;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionImplementor/*, FlowPropertyDefinitionProvider*/ {
+public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionImplementor, Cloneable/*, FlowPropertyDefinitionProvider*/ {
 
     /**
      * Name of the property as used in the flow code.
@@ -859,7 +860,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return this
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister) {
+    @Override
+    public <FPP extends FlowPropertyProvider> FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<FPP> flowPropertyValuePersister) {
         setFlowPropertyValuePersister(flowPropertyValuePersister);
         return this;
     }
@@ -885,7 +887,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         return this;
     }
-
+    public FlowPropertyDefinitionImpl addFlowPropertyValueChangeListeners(Collection<FlowPropertyValueChangeListener> additionalFlowPropertyValueChangeListeners) {
+        addAllNotNull(this.flowPropertyValueChangeListeners, additionalFlowPropertyValueChangeListeners);
+        return this;
+    }
     /**
      * @param propertiesDependentOn the propertiesDependentOn to set
      */
@@ -973,7 +978,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
     }
 
-    /**
+    @Override
+	public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+		return this.isNamed(flowPropertyDefinition.getName());
+	}
+
+	/**
      * Ideally we have a hierarchy of namespaces that can be checked for values. This works o.k. for searching for a value.
      * But problem is once the value is found, should the old value be replaced in whatever name space? should the found value be moved to the more exact namespace?
      *
@@ -1134,8 +1144,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      *
      */
     @Override
-	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, Collection<? extends FlowPropertyExpectation>additionalConfigurationParameters) {
-        flowPropertyProvider.addPropertyDefinition(this);
+	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+        List<FlowPropertyDefinitionImplementor> clonedSelf = Arrays.asList((FlowPropertyDefinitionImplementor)this.clone());
+		super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
 
 }

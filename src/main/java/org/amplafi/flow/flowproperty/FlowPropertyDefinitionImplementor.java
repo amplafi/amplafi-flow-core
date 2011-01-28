@@ -34,9 +34,10 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
 
     void setPropertyRequired(FlowActivityPhase flowActivityPhase);
 
-    FlowPropertyDefinitionImplementor initFlowPropertyValuePersister(FlowPropertyValuePersister<?> flowPropertyValuePersister);
+    <FPP extends FlowPropertyProvider> FlowPropertyDefinitionImplementor initFlowPropertyValuePersister(FlowPropertyValuePersister<FPP> flowPropertyValuePersister);
 
     FlowPropertyDefinitionImplementor initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener);
+    FlowPropertyDefinitionImplementor addFlowPropertyValueChangeListeners(Collection<FlowPropertyValueChangeListener> additionalFlowPropertyValueChangeListeners);
     FlowPropertyDefinitionImplementor initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
