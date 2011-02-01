@@ -25,7 +25,7 @@ public class ServicesConstants {
     // as of 3 Jan 2009 doesn't look like the this constant's value is used directly in javascript.
     @Deprecated
     public static final String FLOW_TYPE = "flow";
-    @Deprecated // don't really see the advantage / need for this.
+    // Used for callback registration
     public static final String FLOW_SERVICE_LISTENER = "fs";
     /**
      *
