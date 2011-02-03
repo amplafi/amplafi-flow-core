@@ -66,7 +66,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         JSONWriter jsonWriter = new JSONStringer();
         jsonWriter.addRenderer(FlowValidationResultJsonRenderer.INSTANCE);
         jsonWriter.addRenderer(FlowValidationTrackingJsonRenderer.INSTANCE);
-        jsonWriter.addRenderer(new FlowStateJsonRenderer(true));
+        jsonWriter.addRenderer(new FlowStateJsonRenderer());
         jsonWriter.addRenderer(mapJsonRenderer);
         return jsonWriter;
     }

@@ -31,6 +31,7 @@ import org.amplafi.flow.FlowState;
 public interface FlowLauncher extends Callable<FlowState> {
     public static final String FLOW_ID = "fid";
     public static final String ADVANCE_TO_END = "advance";
+
     public static final String AS_FAR_AS_POSSIBLE = "afap";
     /**
      * advance through the flow until either the flow completes or

@@ -31,11 +31,8 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
     public static final String FS_COMPLETE = "fsComplete";
 
-    private boolean complete;
     private FlowManagement flowManagement;
-    public FlowStateJsonRenderer(boolean complete) {
-        this.complete =complete;
-    }
+
     @Override
     public Class<FlowState> getClassToRender() {
         return FlowState.class;
@@ -50,8 +47,12 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         }
         jsonWriter.keyValueIfNotBlankValue(FS_LOOKUP_KEY, flowState.getLookupKey());
 
-        jsonWriter.key(FS_PARAMETERS).value(flowState.getExportedValuesMap());
+        renderState(jsonWriter, flowState);
         return jsonWriter.endObject();
+    }
+
+    protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
+        jsonWriter.key(FS_PARAMETERS).value(flowState.getExportedValuesMap());
     }
 
     /**
@@ -66,12 +67,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         FlowState flowState = getFlowManagement().getFlowState(lookupKey);
         return (K) flowState;
     }
-    /**
-     * @return if true, then complete state is rendered. false then the
-     */
-    public boolean isComplete() {
-        return complete;
-    }
+
     /**
      * @param flowManagement the flowManagement to set
      */
