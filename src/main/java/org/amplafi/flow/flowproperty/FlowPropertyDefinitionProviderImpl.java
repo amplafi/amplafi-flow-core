@@ -9,17 +9,17 @@ import org.amplafi.flow.FlowActivityPhase;
  *
  */
 public class FlowPropertyDefinitionProviderImpl extends AbstractFlowPropertyDefinitionProvider implements
-		FlowPropertyDefinitionProvider {
+        FlowPropertyDefinitionProvider {
 
-	public FlowPropertyDefinitionProviderImpl(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
-		super(flowPropertyDefinitions);
-	}
-	public FlowPropertyDefinitionProviderImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase flowActivityPhase, Class<?>... collectionClasses) {
-		this(new FlowPropertyDefinitionImpl(name, dataClass, flowActivityPhase, collectionClasses));
-	}
+    public FlowPropertyDefinitionProviderImpl(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
+        super(flowPropertyDefinitions);
+    }
+    public FlowPropertyDefinitionProviderImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase flowActivityPhase, Class<?>... collectionClasses) {
+        this(new FlowPropertyDefinitionImpl(name, dataClass, flowActivityPhase, collectionClasses));
+    }
 
-	public FlowPropertyDefinitionProviderImpl(String name, Class<? extends Object> dataClass) {
-		this(new FlowPropertyDefinitionImpl(name, dataClass));
-	}
+    public FlowPropertyDefinitionProviderImpl(String name, Class<? extends Object> dataClass) {
+        this(new FlowPropertyDefinitionImpl(name, dataClass));
+    }
 
 }
