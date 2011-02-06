@@ -596,7 +596,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                                         + " has a new FlowPropertyDefinition '"
                                         + definition
                                         + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +
-                                        		". Previous definition discarded.");
+                                                ". Previous definition discarded.");
             }
             getPropertyDefinitions().remove(currentLocal.getName());
         }
@@ -854,7 +854,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     @Deprecated // should look at initCacheOnly()
     protected <T> T cache(String key, T value) {
         FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinition(key);
-		getFlowStateImplementor().setCached(flowPropertyDefinition, this, value);
+        getFlowStateImplementor().setCached(flowPropertyDefinition, this, value);
         return value;
     }
 
@@ -863,7 +863,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     protected <T> T getCached(String key) {
         FlowStateImplementor flowState = getFlowStateImplementor();
         FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinition(key);
-		return flowState == null ? null : (T) flowState.getCached(flowPropertyDefinition, this);
+        return flowState == null ? null : (T) flowState.getCached(flowPropertyDefinition, this);
     }
 
     @Override
