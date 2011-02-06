@@ -55,6 +55,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
      * @return true if {@link #getDefaultObject(FlowPropertyProvider)} will return a value
      */
     boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider);
+    // TODO: define circumstances where this is used as opposed to just not having a persister.
     boolean isCacheOnly();
 
     <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
