@@ -102,7 +102,7 @@ public enum FlowStateLifecycle implements FiniteState<FlowStateLifecycle> {
         return STATE_CHECKER.isTerminalState(this);
     }
     /**
-     * @return true if this FlowLifecycleState permits verifying values.
+     * @return true if entering this FlowLifecycleState requires verifying properties.
      */
     public boolean isVerifyValues() {
         return verifyValues;
