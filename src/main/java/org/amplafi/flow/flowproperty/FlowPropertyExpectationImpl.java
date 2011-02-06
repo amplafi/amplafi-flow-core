@@ -34,32 +34,37 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private final PropertyScope propertyScope;
     private final PropertyUsage propertyUsage;
 
-	private final FlowPropertyValueProvider<?> flowPropertyValueProvider;
-	private final FlowPropertyValuePersister flowPropertyValuePersister;
+    private final FlowPropertyValueProvider<?> flowPropertyValueProvider;
+    private final FlowPropertyValuePersister flowPropertyValuePersister;
+
+    private final PropertySecurity propertySecurity;
+
     /**
-     * @param name
-     * @param propertyRequired
-     * @param propertyScope
-     * @param propertyUsage
-     * @param flowPropertyValueChangeListeners
+     * All properties should have the
+     * @param flowActivityPhase
      */
-    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
-        List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
-    	this(name, propertyRequired, propertyScope, propertyUsage, null, null, flowPropertyValueChangeListeners);
+    public FlowPropertyExpectationImpl(FlowActivityPhase flowActivityPhase) {
+        this(null, flowActivityPhase, null, null, null, null, null, null);
+    }
+    public FlowPropertyExpectationImpl(String name, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        this(name, null, null, null, null, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
-    		FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-    	this(name, propertyRequired, propertyScope, propertyUsage, null, null, Arrays.asList(flowPropertyValueChangeListener));
+            PropertySecurity propertySecurity, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        this(name, propertyRequired, propertyScope, propertyUsage, propertySecurity, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
-    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage, FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider,
-            FlowPropertyValuePersister flowPropertyValuePersister, List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
-    	this.name = name;
-    	this.propertyRequired = propertyRequired;
-    	this.propertyScope = propertyScope;
-    	this.propertyUsage = propertyUsage;
-    	this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
-    	this.flowPropertyValueProvider = flowPropertyValueProvider;
-    	this.flowPropertyValuePersister = flowPropertyValuePersister;
+
+    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
+            PropertySecurity propertySecurity,
+            FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, FlowPropertyValuePersister flowPropertyValuePersister, List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
+        this.name = name;
+        this.propertyRequired = propertyRequired;
+        this.propertyScope = propertyScope;
+        this.propertyUsage = propertyUsage;
+        this.propertySecurity = propertySecurity;
+        this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
+        this.flowPropertyValueProvider = flowPropertyValueProvider;
+        this.flowPropertyValuePersister = flowPropertyValuePersister;
     }
     /**
      * @return the flowPropertyValueChangeListeners
@@ -75,10 +80,10 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
 
     @Override
-	public String getMapKey() {
-		return getName();
-	}
-	/**
+    public String getMapKey() {
+        return getName();
+    }
+    /**
      * @return the propertyRequired
      */
     public FlowActivityPhase getPropertyRequired() {
@@ -97,16 +102,19 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         return propertyUsage;
     }
     @SuppressWarnings("unchecked")
-	public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
+    public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
         return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
     }
 
     @Override
     public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-    	return flowPropertyDefinition.isNamed(getName());
+        return getName() == null || flowPropertyDefinition.isNamed(getName());
     }
-	public FlowPropertyValuePersister getFlowPropertyValuePersister() {
-		return flowPropertyValuePersister;
-	}
+    public FlowPropertyValuePersister getFlowPropertyValuePersister() {
+        return flowPropertyValuePersister;
+    }
+    public PropertySecurity getPropertySecurity() {
+        return propertySecurity;
+    }
 
 }
