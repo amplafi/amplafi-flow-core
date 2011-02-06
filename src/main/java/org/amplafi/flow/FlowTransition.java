@@ -23,6 +23,7 @@ import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JsonSelfRenderer;
+import org.amplafi.json.renderers.EnumJsonRenderer;
 import org.amplafi.json.renderers.MapJsonRenderer;
 
 import com.sworddance.util.map.MapKeyed;
@@ -132,7 +133,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         this.label = json.optString(LABEL);
         this.nextFlow = json.optString(NEXT_FLOW);
         this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
-        this.transitionType = json.opt(TRANSITION_TYPE);
+        this.transitionType = (TransitionType) EnumJsonRenderer.INSTANCE.fromJson(TransitionType.class, json.opt(TRANSITION_TYPE));
         this.transitionCompletionMessage = json.optString(TRANSITION_COMPLETION_MESSAGE);
         this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
         return (T) this;
