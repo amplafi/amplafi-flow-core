@@ -33,10 +33,10 @@ public class TestFlowStateJsonRenderer extends Assert {
     @Test
     public void testSimpleFlowState() {
         FlowStateImpl flowState = newFlowState();
-        flowState.clearLookupKey();
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\"" +
+        		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
                 FlowStateJsonRenderer.FS_PARAMETERS+"\":{}" +
         		"}}");
 
@@ -46,10 +46,10 @@ public class TestFlowStateJsonRenderer extends Assert {
         FlowStateImpl flowState = newFlowState();
         flowState.setRawProperty("property1", "value1");
         flowState.setRawProperty("property2", "value2");
-        flowState.clearLookupKey();
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+
+        		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
                 FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"property1\":\"value1\",\"property2\":\"value2\"}}}");
     }
 
