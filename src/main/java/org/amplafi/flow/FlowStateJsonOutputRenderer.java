@@ -7,12 +7,12 @@ import org.amplafi.json.IJsonWriter;
 /**
  * Unlike {@link FlowStateJsonRenderer} doesn't renders flow state as strings map. Uses specific
  * renderers provided by writer.
- * 
+ *
  * @author Konstantin Burov (aectann@gmail.com)
  */
 public class FlowStateJsonOutputRenderer extends FlowStateJsonRenderer {
 
-    public final FlowStateJsonOutputRenderer INSTANCE = new FlowStateJsonOutputRenderer();
+    public final static FlowStateJsonOutputRenderer INSTANCE = new FlowStateJsonOutputRenderer();
 
     @Override
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
