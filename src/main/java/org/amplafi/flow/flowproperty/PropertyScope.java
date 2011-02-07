@@ -23,23 +23,12 @@ import java.util.Set;
 import static com.sworddance.util.CUtilities.*;
 
 /**
+ * PropertyScope is scope of visibility while the flow is active.
  *
- * EXPERIMENTAL -- I am exploring what/how scope should be used and is it really needed? Or does PropertyUsage do a good job?
- * Need more thinking and explicit explanation of how to use PropertyScope/ {@link PropertyUsage}.
- * Using just PropertyUsage would avoid having to check for conflicts between PropertyScope allowedPropertyUsages?
+ * Property scope is used to determine namespace of property while the flow is active and the namespace list when
+ * initializing the flow. While active the namespace used is the most narrow namespace.
  *
- * PropertyScope is really scope of visibility while the flow is active.
- *
- * So property scope should NOT(? what about activityLocal? be used to determine namespace of property while the flow is active. (while active should always be in
- * the most narrow namespace?)
- *
- * However, once the flow exists, PropertyScope is used to determine where changes to the value should be copied.
- *
- * Do we really need PropertyScope?
- * how to handle initializing flow properties when they are labeled as 'flowLocal' or 'activityLocal'
-   * how should 'flowLocal'/'activityLocal' be used?
-   * reason for flowlocal/activity local is to allow a common set of properties names to be reused. this allows activities to be less aware of their flow.
-   * an analogy might be parameter passing in Java?
+ * Once the flow completes, PropertyScope is used to determine where changes to the value should be copied.
  *
  * @author patmoore
  *
@@ -69,10 +58,8 @@ public enum PropertyScope {
      */
     activityLocal(true, true, use, noRestrictions, false, PropertyUsage.values()),
     /**
-     * EXPERIMENTAL -- NOT IMPLEMENTED -- playing with this idea.
-     *
-     * can this be used instead of a separate cached-only?
-     * request would be a {@link #flowLocal} that is cleared when current transaction completes.
+     * The property is not saved into the flowState map. It is available for the current request only
+     * and is cleared when current transaction completes. It has the same scope as flowLocal
      *
      * I am not a big fan of 'flash' persistence which clears a value on the completion of the next transaction. Typically used for telling user
      * that the requested action was completed.
@@ -84,13 +71,27 @@ public enum PropertyScope {
      * <li>If user clicks another action, sees the 'flash' message pop-up. There is no 'go back' support for seeing the flash message.</li>
      * <li>A history tracker is better</li>
      * </ul>
+     * 
+     * Note: TODO: currently, a requestFlowLocal property must not have a {@link org.amplafi.flow.FlowActivityPhase} requirement because the
+     * {@link org.amplafi.flow.FlowActivityPhase} requirement is done by checking to see if the property is set. We cannot just check to see if there is a {@link org.amplafi.flow.FlowPropertyValueProvider}
+     * because a {@link org.amplafi.flow.FlowPropertyValueProvider} may not actually set a value.
      */
     requestFlowLocal(true, false, internalState, noAccess, true),
     /**
-     * Global handles the case when a flow is having a property being set that it has no definition for. Since the flow does not understand the property,
-     * it shouldn't try to manage it.
-     *
-     * TODO: Question: does this make since in the context of morphing? where the flow being morphed to / from may understand it .
+     * A global property represents a property that the current flow has no knowledge of. 
+     * 
+     * Use cases:
+     * 1) a value that is set by called subflow that will be made available to subsequent flows.
+     * 2) a flow may be morphed into another flow and that value is meaningful to the other flow.
+     * 3) any alteration of a global is in the un-namespaced part of the FlowState map, therefore PropertyUsage that depends on a
+     * flow local copy of the property does not apply: ( {@link PropertyUsage#internalState}, {@link PropertyUsage#use}, {@link PropertyUsage#consume} ) 
+     * (special note on {@link PropertyUsage#consume}: consume does its clearing when the flow is initialized - so the value is lost no matter how the flow
+     * exits. This means that global/consumes is not an option because the global/consumes value will not be available for the flow itself. )
+     * 
+     * Since the flow does not understand the property, it shouldn't try to manage it. However, this does leave the question about 
+     * how to clean out these orphaned values.
+     * 
+     * Therefore, global is deprecated to see if we can avoid using it.
      *
      * EXPERIMENTAL -- does global mean that any changes the flow makes are supposed to be 'universally visible'/instantly visible outside of flow?
      * How is this different than saveImmediate? Why not just have flowLocal with PropertyUsage be {@link PropertyUsage#io}?
@@ -101,8 +102,10 @@ public enum PropertyScope {
      * <li>change their active BP to one in which they are much lower</li>
      * <li>with global flow states this could change the BP of the admin flow -- constant battle to make sure that no security hole opens.</li>
      * </ul>
+     * Notes on excluded 
      */
-    global(false, false, io, noRestrictions, false, ALL_BUT_INTERNAL)
+    @Deprecated
+    global(false, false, io, noRestrictions, false, new PropertyUsage[] { suppliesIfMissing, initialize, io })
     ;
     private final boolean localToFlow;
     private final boolean localToActivity;

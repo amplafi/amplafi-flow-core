@@ -16,6 +16,6 @@ public class FlowAppearanceFlowPropertyDefinitionProvider extends AbstractFlowPr
     public static final FlowAppearanceFlowPropertyDefinitionProvider INSTANCE = new FlowAppearanceFlowPropertyDefinitionProvider();
 
     public FlowAppearanceFlowPropertyDefinitionProvider() {
-        super(new FlowPropertyDefinitionImpl(FLOW_APPEARANCE, FlowAppearance.class).initDefaultObject(normal).initAccess(flowLocal, creates));
+        super(new FlowPropertyDefinitionImpl(FLOW_APPEARANCE, FlowAppearance.class).initDefaultObject(normal).initAccess(flowLocal, suppliesIfMissing));
     }
 }

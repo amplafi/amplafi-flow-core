@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationResult;
@@ -24,9 +25,17 @@ import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import static com.sworddance.util.CUtilities.*;
 
 /**
+ * This service validates that all the required properties have a value.
+ *
+ * NOTE: This check has been tightened up. It used to be enough that the flowPropertyDefinition had a {@link FlowPropertyValueProvider}.
+ * However, this is not adequate for many cases, in particular security properties. It is not enough that a user property have a
+ * provider if the security check fails then the User property will not have a value and allowing the validation check should not pass.
+ *
  * TODO: should be singleton service?
  * @author patmoore
  *
@@ -44,14 +53,26 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
         // TODO : Don't validate if user is going backwards.
         // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
         FlowValidationResult result = new ReportAllValidationResult();
+        ApplicationIllegalArgumentException.notNull(flowActivityPhase, "FlowActivityPhase must be set.");
         Map<String, FlowPropertyDefinition> propDefs = flowPropertyProvider.getPropertyDefinitions();
         if (isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
-                MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
-                    (flowActivityPhase != null && def.getPropertyRequired() == flowActivityPhase)
-                        && !flowPropertyProvider.isPropertySet(def.getName())
-                        && !def.isAutoCreate(),
-                        def.getUiComponentParameterName());
+                FlowActivityPhase propertyRequired = def.getPropertyRequired();
+				if (propertyRequired != null && propertyRequired == flowActivityPhase) {
+                    if (!flowPropertyProvider.isPropertySet(def.getName())) {
+                        // the property is not set
+                        // It does make sense for PropertyUsage.consumes.getSetsValue() == Boolean.TRUE because this indicates
+                        // that if the property is required, then the property must be available to be consumed at the specified point.
+                        if ( def.isAutoCreate()) {
+                            // this property is expected to be created at this point. see if we can force the value to be created
+                        	// Note: This actually enforces the expectation that the property can in fact be supplied.
+                            flowPropertyProvider.getProperty(def.getName());
+                        }
+                        MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
+                                !flowPropertyProvider.isPropertySet(def.getName()),
+                                def.getUiComponentParameterName());
+                    }
+                }
             }
         }
         return result;

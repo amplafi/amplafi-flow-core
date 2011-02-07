@@ -72,6 +72,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     /**
      * when a flow starts this should be the initial value set unless there is
      * already a value.
+     * This is different than the idea of "defaultObject" because the 'initial' check-and-set only happens when the flow is initializing.
+     * whereas the 'defaultObject" happens every time there is null for a value.
+     *
+     * Initial is stored in the FlowState map and defaultObject is not.
      */
     private String initial;
 
@@ -98,6 +102,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * saved. Necessary for cases when setProperty() is not used to save value
      * changes, because the object stored in the property is being modified not
      * the usual case of where a new object is saved.
+     *
+     * Use case: Any collections. Maybe collection properties should automatically have saveBack set?
      */
     private Boolean saveBack;
 
@@ -187,10 +193,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Creates a string property of the given requirements.
      *
      * @param name
-     * @param required
+     * @param requiredFlowActivityPhase
      */
-    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase required) {
-        this(name, null, required);
+    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase requiredFlowActivityPhase) {
+        this(name, null, requiredFlowActivityPhase);
     }
 
     /**
@@ -198,21 +204,22 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      *
      * @param name
      * @param dataClass the underlying class that all the collection classes are wrapping.
-     * @param required how required is this property?
+     * @param requiredFlowActivityPhase when is this property required to be set
      * @param collectionClasses
      */
-    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase required, Class<?>...collectionClasses) {
-        this(name, required, new DataClassDefinitionImpl(dataClass, collectionClasses));
+    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase requiredFlowActivityPhase, Class<?>...collectionClasses) {
+        this(name, requiredFlowActivityPhase, new DataClassDefinitionImpl(dataClass, collectionClasses));
     }
     public FlowPropertyDefinitionImpl(String name, DataClassDefinitionImpl dataClassDefinition) {
         this(name, FlowActivityPhase.optional, dataClassDefinition);
     }
-    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase required, DataClassDefinitionImpl dataClassDefinition) {
+    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase requiredFlowActivityPhase, DataClassDefinitionImpl dataClassDefinition) {
         this.setName(name);
-        this.flowActivityPhase = required;
+        this.flowActivityPhase = requiredFlowActivityPhase;
         this.dataClassDefinition = dataClassDefinition;
     }
 
+    @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
@@ -287,6 +294,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
     }
 
+    @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, defaultObject);
         flowPropertyDefinition.setDefaultObject(defaultObject);
@@ -302,11 +310,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     @Override
-	public String getMapKey() {
-		return getName();
-	}
+    public String getMapKey() {
+        return getName();
+    }
 
-	public String getValidators() {
+    public String getValidators() {
         return validators;
     }
 
@@ -541,9 +549,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
-        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage);
+        return initAccess(propertyScope,propertyUsage,propertySecurity.noRestrictions);
     }
-
+    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, PropertySecurity propertySecurity) {
+        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage).initPropertySecurity(propertySecurity);
+    }
     /**
      * affects isEntity()
      *
@@ -618,7 +628,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public PropertySecurity getPropertySecurity() {
         return propertySecurity != null?propertySecurity:getPropertyScope().getDefaultPropertySecurity();
     }
-
+    public FlowPropertyDefinitionImpl initPropertySecurity(PropertySecurity propertySecurity) {
+        this.setPropertySecurity(propertySecurity);
+        return this;
+    }
     public FlowPropertyDefinitionImpl initSensitive() {
         setPropertySecurity(PropertySecurity.noAccess);
         return this;
@@ -628,6 +641,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return !getPropertySecurity().isExternalReadAccessAllowed();
     }
     /**
+     * TODO: USE!
      * not a reversible process.
      */
     public void setTemplateFlowPropertyDefinition() {
@@ -959,6 +973,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
             .append(this.getPropertyScope(), flowPropertyDefinition.getPropertyScope())
+            .append(this.getPropertySecurity(), flowPropertyDefinition.getPropertySecurity())
             .append(this.saveBack, flowPropertyDefinition.saveBack)
             .append(this.propertySecurity, flowPropertyDefinition.propertySecurity)
             .append(this.validators, flowPropertyDefinition.validators);
@@ -979,70 +994,20 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     @Override
-	public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-		return this.isNamed(flowPropertyDefinition.getName());
-	}
-
-	/**
-     * Ideally we have a hierarchy of namespaces that can be checked for values. This works o.k. for searching for a value.
-     * But problem is once the value is found, should the old value be replaced in whatever name space? should the found value be moved to the more exact namespace?
-     *
-     * Example, if a activityLocal can look at namespaces={flowstate.lookupKey+activity.activityName, flow.typename+activity.activityname, etc.} should any found value
-     * be moved to flowstate.lookupKey+activity.activityName?
-     *
-     * What about morphing which would change the flowtype and thus the flowtype+activity.activityName namespace value. Morphing would result in loosing activity local values.
-     *
-     * right now flow morph does loose flowLocal values.
-     *
-     * Maybe when a flow is created the name space gets set for all flowLocal and activityLocal based on the flowstate lookup key?
-     *
-     * More thought definitely needed.
-     *
-     * Seems like the namespace list should vary depending on if we are initializing a flow from external parameters. An external setting would not like
-     * to have to worry about using a flowState's lookupKey to set the namespace. Would prefer to just use the key with no namespace, or maybe a more generic
-     * namespace like FlowTypeName or ActivityName.
-     * @param flowActivity
-     * @return list of namespaces to search in order
-     */
-    private List<String> getNamespaceKeySearchList(FlowActivity flowActivity) {
-        //TODO have hierarchy of namespaces
-        List<String> list = new ArrayList<String>();
-        list.add(getNamespaceKey(flowActivity));
-        if ( this.getPropertyUsage().isExternallySettable()) {
-            switch(this.getPropertyScope()) {
-            case activityLocal:
-                // TODO should really be ? but what about morphing??
-                list.add(flowActivity.getFlowPropertyProviderFullName());
-                list.add(flowActivity.getFlowPropertyProviderName());
-            case flowLocal:
-            case requestFlowLocal:
-                list.add(flowActivity.getFlow().getFlowPropertyProviderName());
-                list.add(null);
-            case global:
-                break;
-            default:
-                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
-            }
-        }
-        return list;
+    public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+        return this.isNamed(flowPropertyDefinition.getName());
     }
-    private List<String> getNamespaceKeySearchList(FlowImplementor flow) {
-        //TODO have hierarchy of namespaces
-        List<String> list = new ArrayList<String>();
-        list.add(getNamespaceKey(flow));
-        if ( this.getPropertyUsage().isExternallySettable()) {
-            switch(this.getPropertyScope()) {
-            case flowLocal:
-            case requestFlowLocal:
-                list.add(flow.getFlowPropertyProviderName());
-                list.add(null);
-            case global:
-                break;
-            default:
-                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
-            }
+    public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
+        if( flowPropertyProvider == null) {
+            return this.getNamespaceKey(flowState);
+        } else if ( flowPropertyProvider instanceof FlowActivity) {
+            return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
+        } else if ( flowPropertyProvider instanceof FlowState) {
+            FlowImplementor flow = ((FlowState)flowPropertyProvider).getFlow();
+            return this.getNamespaceKey(flow);
+        } else {
+            return this.getNamespaceKey((FlowImplementor)flowPropertyProvider);
         }
-        return list;
     }
     private String getNamespaceKey(FlowActivity flowActivity) {
         switch ( this.getPropertyScope()) {
@@ -1089,12 +1054,51 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             throw new IllegalStateException(this.getPropertyScope() + ": don't know namespace.");
         }
     }
+
+    public List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider, boolean forceAll) {
+        if( flowPropertyProvider == null) {
+            return this.getNamespaceKeySearchList(flowState, forceAll);
+        } else if ( flowPropertyProvider instanceof FlowActivity) {
+            return this.getNamespaceKeySearchList((FlowActivity)flowPropertyProvider, forceAll);
+        } else {
+            FlowImplementor flow;
+            if ( flowPropertyProvider instanceof FlowState) {
+                flow = ((FlowState)flowPropertyProvider).getFlow();
+            } else if ( flowPropertyProvider instanceof FlowImplementor) {
+                flow = (FlowImplementor)flowPropertyProvider;
+            } else {
+                throw ApplicationIllegalArgumentException.fail(flowPropertyProvider, " is not a FlowState or FlowImplementor");
+            }
+            return this.getNamespaceKeySearchList(flow, forceAll);
+        }
+    }
+
+    private List<String> getNamespaceKeySearchList(FlowImplementor flow, boolean forceAll) {
+        //TODO have hierarchy of namespaces
+        List<String> list = new ArrayList<String>();
+        list.add(getNamespaceKey(flow));
+        if ( getPropertyUsage().isExternallySettable() || forceAll) {
+            switch(this.getPropertyScope()) {
+            case flowLocal:
+            case requestFlowLocal:
+                list.add(flow.getFlowPropertyProviderName());
+                list.add(null);
+            case global:
+                break;
+            default:
+                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
+            }
+        }
+        return list;
+    }
     /**
-     * see notes on {@link #getNamespaceKeySearchList(FlowActivity)}
+     * see notes on {@link #getNamespaceKeySearchList(FlowActivity, boolean)}
      * @param flowState
+     * @param forceAll TODO
+     * @param forExport TODO
      * @return list of namespace to search in order
      */
-    private List<String> getNamespaceKeySearchList(FlowState flowState) {
+    private List<String> getNamespaceKeySearchList(FlowState flowState, boolean forceAll) {
         //TODO have hierarchy of namespaces
         List<String> list = new ArrayList<String>();
         list.add(getNamespaceKey(flowState));
@@ -1104,7 +1108,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         case flowLocal:
         case requestFlowLocal:
             list.add(flowState.getFlow().getFlowPropertyProviderName());
-            if ( getPropertyUsage().isExternallySettable()) {
+            if (getPropertyUsage().isExternallySettable() || forceAll) {
                 list.add(null);
             }
         case global:
@@ -1114,39 +1118,58 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         return list;
     }
-
-    public List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
-        if( flowPropertyProvider == null) {
-            return this.getNamespaceKeySearchList(flowState);
-        } else if ( flowPropertyProvider instanceof FlowActivity) {
-            return this.getNamespaceKeySearchList((FlowActivity)flowPropertyProvider);
-        } else if ( flowPropertyProvider instanceof FlowState) {
-            FlowImplementor flow = ((FlowState)flowPropertyProvider).getFlow();
-            return this.getNamespaceKeySearchList(flow);
-        } else {
-            return this.getNamespaceKeySearchList((FlowImplementor)flowPropertyProvider);
+    /**
+     * Ideally we have a hierarchy of namespaces that can be checked for values. This works o.k. for searching for a value.
+     * But problem is once the value is found, should the old value be replaced in whatever name space? should the found value be moved to the more exact namespace?
+     *
+     * Example, if a activityLocal can look at namespaces={flowstate.lookupKey+activity.activityName, flow.typename+activity.activityname, etc.} should any found value
+     * be moved to flowstate.lookupKey+activity.activityName?
+     *
+     * What about morphing which would change the flowtype and thus the flowtype+activity.activityName namespace value. Morphing would result in loosing activity local values.
+     *
+     * right now flow morph does loose flowLocal values.
+     *
+     * Maybe when a flow is created the name space gets set for all flowLocal and activityLocal based on the flowstate lookup key?
+     *
+     * More thought definitely needed.
+     *
+     * Seems like the namespace list should vary depending on if we are initializing a flow from external parameters. An external setting would not like
+     * to have to worry about using a flowState's lookupKey to set the namespace. Would prefer to just use the key with no namespace, or maybe a more generic
+     * namespace like FlowTypeName or ActivityName.
+     * @param flowActivity
+     * @param forceAll TODO
+     * @return list of namespaces to search in order
+     */
+    private List<String> getNamespaceKeySearchList(FlowActivity flowActivity, boolean forceAll) {
+        //TODO have hierarchy of namespaces
+        List<String> list = new ArrayList<String>();
+        list.add(getNamespaceKey(flowActivity));
+        if ( getPropertyUsage().isExternallySettable() || forceAll) {
+            switch(this.getPropertyScope()) {
+            case activityLocal:
+                // TODO should really be ? but what about morphing??
+                list.add(flowActivity.getFlowPropertyProviderFullName());
+                list.add(flowActivity.getFlowPropertyProviderName());
+            case flowLocal:
+            case requestFlowLocal:
+                list.add(flowActivity.getFlow().getFlowPropertyProviderName());
+                list.add(null);
+            case global:
+                break;
+            default:
+                throw new IllegalStateException(this.getPropertyScope()+": don't know namespace.");
+            }
         }
-    }
-    public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
-        if( flowPropertyProvider == null) {
-            return this.getNamespaceKey(flowState);
-        } else if ( flowPropertyProvider instanceof FlowActivity) {
-            return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
-        } else if ( flowPropertyProvider instanceof FlowState) {
-            FlowImplementor flow = ((FlowState)flowPropertyProvider).getFlow();
-            return this.getNamespaceKey(flow);
-        } else {
-            return this.getNamespaceKey((FlowImplementor)flowPropertyProvider);
-        }
+        return list;
     }
 
     /**
      *
      */
     @Override
-	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         List<FlowPropertyDefinitionImplementor> clonedSelf = Arrays.asList((FlowPropertyDefinitionImplementor)this.clone());
-		super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
+        super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
 
 }

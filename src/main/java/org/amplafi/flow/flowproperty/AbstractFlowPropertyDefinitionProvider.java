@@ -22,8 +22,6 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
-import com.sworddance.util.NotNullIterator;
-
 import static com.sworddance.util.CUtilities.*;
 
 /**
@@ -90,14 +88,17 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected void initPropertyDefinition(
         FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionImplementor flowPropertyDefinition, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        applyFlowPropertyExpectations(flowPropertyDefinition, additionalConfigurationParameters);
+        new FlowPropertyDefinitionBuilder(flowPropertyDefinition).applyFlowPropertyExpectations(additionalConfigurationParameters)
+        	.applyDefaultProviders(flowPropertyProvider, this);
         if ( !flowPropertyDefinition.isDefaultAvailable() && this instanceof FlowPropertyValueProvider) {
             flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider)this);
         }
         // TODO : also create a "read-only" v. writeable property mechanism.
         if ( !flowPropertyDefinition.isCacheOnly()) {
+        	// only set persisters on non-cache-only objects.
             FlowPropertyValuePersister<?> flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
             if ( flowPropertyValuePersister == null) {
+            	// set default persister
                 if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
                     flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
                 } else if ( this instanceof FlowPropertyValuePersister) {
@@ -112,38 +113,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         if ( this instanceof FlowPropertyValueChangeListener ) {
             flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
         }
-    }
-    /**
-     * scans through all the {@link FlowPropertyExpectation}s looking for expectations that {@link FlowPropertyExpectation#isApplicable(FlowPropertyDefinitionImplementor)}
-     * those expectations have their values applied to flowPropertyDefinition in the order they are encountered.
-     * @param flowPropertyDefinition
-     * @param additionalConfigurationParameters a list because order matters.
-     */
-    private void applyFlowPropertyExpectations(FlowPropertyDefinitionImplementor flowPropertyDefinition,
-            List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        for(FlowPropertyExpectation flowPropertyExpectation: NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(additionalConfigurationParameters)) {
-            if(flowPropertyExpectation.isApplicable(flowPropertyDefinition)) {
-                // FlowPropertyExpectation expectation applies
-                flowPropertyDefinition.addFlowPropertyValueChangeListeners(flowPropertyExpectation.getFlowPropertyValueChangeListeners());
-                FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = flowPropertyExpectation.getFlowPropertyValueProvider();
-                if ( flowPropertyValueProvider != null) {
-                    flowPropertyDefinition.initFlowPropertyValueProvider(flowPropertyValueProvider);
-                }
-                FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
-                if ( flowPropertyValuePersister != null) {
-                    flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
-                }
-            }
-        }
-    }
-    protected List<? extends FlowPropertyExpectation> getAdditionalConfigParameter(Collection<? extends FlowPropertyExpectation> additionalConfigurationParameters, String key) {
-        List<FlowPropertyExpectation> result = new ArrayList<FlowPropertyExpectation>();
-        for(FlowPropertyExpectation flowPropertyExpectation: NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(additionalConfigurationParameters)) {
-            if ( key.equals(flowPropertyExpectation.getName())) {
-                result.add(flowPropertyExpectation);
-            }
-        }
-        return result;
     }
 
     /**

@@ -13,20 +13,30 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 
 /**
- * Controls visibility and access to the property while the flow is active.
+ * Controls visibility and external access to the property while the flow is active.
+ * 
+ * TODO: rename to PropertyAccess
+ * 
+ * PropertySecurity determines if setProperty() or getProperty() are allowed.
+ * PropertySecurity does not affect {@link FlowPropertyValueProvider} setting a value
  * This differs from how the property is initialized and exported ( {@link PropertyUsage} ) and how
  * broad any changes to the property are spread. ( PropertyScope )
+ * but this may overlap with {@link PropertyUsage#isExternallySettable()}
+ * 
+ * TODO: what about security levels based on if the data is provided by a potentially tainted source (clients) vs. another flow?
+ * so "external" means another flow and "client" means to a browser client or api client.
  *
- * Still experimental - not completely implemented.
+ * Still experimental - not implemented.
  * @author patmoore
  *
  */
 public enum PropertySecurity {
     /**
-     * can be accessed externally both for modification and viewing
+     * can be accessed externally both for modification, viewing
      */
     noRestrictions(true, true),
     /**
@@ -36,7 +46,9 @@ public enum PropertySecurity {
     readonly(true, false),
     /**
      * this is typically used for passwords (or any other security credential )
-     * User is allowed to send in the password but not allowed to see stored passwords
+     * User is allowed to send in the password but not allowed to see stored passwords.
+     * 
+     * This does not affect internal flow code which is always permitted get/set access.
      */
     writeonly(false, true),
     /**
@@ -70,5 +82,8 @@ public enum PropertySecurity {
      */
     public boolean isExternalWriteAccessAllowed() {
         return externalWriteAccessAllowed;
+    }
+    public boolean isDocumented() {
+        return isExternalReadAccessAllowed() || isExternalWriteAccessAllowed();
     }
 }

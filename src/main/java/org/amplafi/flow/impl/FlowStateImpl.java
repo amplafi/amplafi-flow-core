@@ -147,13 +147,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     private String createLookupKey() {
         return this.flowTypeName +"_"+ new RandomKeyGenerator(8).nextKey().toString();
     }
-    /**
-     * for tests only
-     */
-    @Deprecated
-    public void clearLookupKey() {
-        this.lookupKey = null;
-    }
 
     @Override
     public String begin() {
@@ -253,13 +246,15 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
     /**
+     * Look through the FlowState map to find all values with a valid key. ( see {@link FlowPropertyDefinitionImplementor#getNamespaceKeySearchList(FlowState, FlowPropertyProvider, boolean)} )
+     * The first match found is used.
      * @param flowPropertyProvider
      * @param flowPropertyDefinition
      */
     public void initializeFlowProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.
-        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowPropertyProvider);
+        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowPropertyProvider, true);
         String value = null;
         boolean valueSet = false;
         PropertyUsage propertyUsage = flowPropertyDefinition.getPropertyUsage();
@@ -273,28 +268,35 @@ public class FlowStateImpl implements FlowStateImplementor {
                     if ( propertyUsage.isCleanOnInitialization()) {
                         // if clearing then we need to clear all possible matches - so we continue with loop.
                         remove(namespace, alternateName);
-                    } else {
+                    } else if ( valueSet ) {
                         break;
                     }
                 }
             }
         }
-        if ( !valueSet || !propertyUsage.isExternallySettable()) {
-            // if property is not set  OR
-            // if the property is not allowed to be overridden then
-            // initialize it.
-            // TODO set valueSet if flowPropertyDefinition.isInitialSet() -- can't check for null because null may be initial value ( see note about PropertyUsage#initialize )
-            value = flowPropertyDefinition.getInitial();
-            // TODO: what about flowPropertyValueProviders -- but need to handle lazy initialization + and better handling of initializing to null.
-            // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
-            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowPropertyProvider != null) {
-                // trigger property
-                @SuppressWarnings("unused")
-                Object v = getPropertyWithDefinition(flowPropertyProvider, flowPropertyDefinition);
-                // HACK we should? flow through?
-                return;
-            }
-        }
+      if ( valueSet && !propertyUsage.isExternallySettable()) {
+          valueSet = false;
+      }
+      if ( !valueSet) {
+          value = flowPropertyDefinition.getInitial();
+      }
+//    if ( !valueSet || !propertyUsage.isExternallySettable()) {
+//        if ( !valueSet || !propertyUsage.isExternallySettable()) {
+//            // if property is not set  OR
+//            // if the property is not allowed to be overridden then
+//            // initialize it.
+//            // TODO set valueSet if flowPropertyDefinition.isInitialSet() -- can't check for null because null may be initial value ( see note about PropertyUsage#initialize )
+//            value = flowPropertyDefinition.getInitial();
+//            // TODO: what about flowPropertyValueProviders -- but need to handle lazy initialization + and better handling of initializing to null.
+//            // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
+//            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowPropertyProvider != null) {
+//                // trigger property
+//                @SuppressWarnings("unused")
+//                Object v = getPropertyWithDefinition(flowPropertyProvider, flowPropertyDefinition);
+//                // HACK we should? flow through?
+//                return;
+//            }
+//        }
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String currentValue = getRawProperty(namespace, flowPropertyDefinition.getName());
         if (!StringUtils.equals(value, currentValue)) {
@@ -354,7 +356,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < size; i++) {
             FlowActivityImplementor activity = getActivity(i);
             Map<String, FlowPropertyDefinitionImplementor> activityFlowPropertyDefinitions = activity.getPropertyDefinitions();
-			exportProperties(exportValueMap, activityFlowPropertyDefinitions.values(), activity, clearFrom);
+            exportProperties(exportValueMap, activityFlowPropertyDefinitions.values(), activity, clearFrom);
         }
         // TODO should we clear all non-global namespace values? We have slight leak through when undefined properties are set on a flow.
         return exportValueMap;
@@ -377,10 +379,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     protected void exportFlowProperty(FlowValuesMap exportValueMap, FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowActivityImplementor flowActivity, boolean flowCompletingExport) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.
-        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowActivity);
         String value = null;
         boolean valueSet = false;
-        for(String namespace: namespaces) {
+        List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowActivity, false);
+        for(String namespace: namespaces ) {
             for (String key : flowPropertyDefinition.getAllNames()) {
                 if ( getFlowValuesMap().containsKey(namespace, key)) {
                     if ( !valueSet ) {
@@ -401,11 +403,11 @@ public class FlowStateImpl implements FlowStateImplementor {
         if ( valueSet ) {
             // TODO HANDLE case where we need a to copy from caller to callee. This situation suggests that if PropertyUsage != internalState then the property should be exposed.
             // but need to know the situation: copy to callee or back to caller?
-            String namespace = null;
             if ( flowPropertyDefinition.isCopyBackOnFlowSuccess()) {
+                // HACK
                 // HACK: investigate. Any use of getExportedValuesMap() will trigger this copyback to the FlowState's default namespace.
-                put(namespace, flowPropertyDefinition.getName(), value);
-                exportValueMap.put(namespace, flowPropertyDefinition.getName(), value);
+                put(null, flowPropertyDefinition.getName(), value);
+                exportValueMap.put(null, flowPropertyDefinition.getName(), value);
             }
         }
     }
@@ -697,7 +699,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (continueWithFlow == null || continueWithFlow == this) {
                 /* need to explore this more.
                    idea is that there should be some ability to copy back from the started flows.
-                   but this really should be under the control caller. So right now best mechanism seems to be
+                   but this really should be under the control of the caller. So right now best mechanism seems to be
                    to make caller pass in an object to be modified.
                 if ( nextFlowLifecycleState == successful && isNotBlank(returnToFlow)) {
                     FlowState returnFlow = getFlowManagement().getFlowState(returnToFlow);
@@ -1000,8 +1002,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             if (result == null && propertyDefinition.isAutoCreate()) {
                 result =  (T) propertyDefinition.getDefaultObject(flowPropertyProvider);
 
-                // TODO : should probably be isCacheOnly()
-                if ( propertyDefinition.isCopyBackOnFlowSuccess()) {
+                if ( !propertyDefinition.isCacheOnly()) {
                     // so the flowState has the generated value.
                     // this will make visible to json exporting.
                     // also triggers FlowPropertyValueChangeListeners on the initial set.
@@ -1589,6 +1590,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.flowStateLifecycle != null && this.flowStateLifecycle.isTerminalState();
     }
 
+    /**
+     * TODO: note that there exists an issue: if a property for the current FA is PropertyUsage.initialize,
+     * because PropertyUsage.initialize does not clear out the old values but just ignores them.
+     */
     public boolean isPropertySet(String key) {
         // HACK : too problematic need better way to ask if a FlowPropertyValueProvider can actually return a value.
 //        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
