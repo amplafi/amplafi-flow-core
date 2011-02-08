@@ -229,16 +229,13 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
         for (int i = 0; i < moduleList.getLength(); i++) {
             FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
         }
-        // TODO change element
-        moduleList = this.xmlDocument.getElementsByTagName("contribution");
-        for (int i = 0; i < moduleList.getLength(); i++) {
-            FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
-        }
     }
 
 
     private FlowGroup parseFlowGroup(Node flowGroupNode) {
-        FlowGroupImpl flowGroup = new FlowGroupImpl();
+    	NamedNodeMap attributes = flowGroupNode.getAttributes();
+    	String flowGroupId = getNameAttribute(attributes);
+        FlowGroupImpl flowGroup = new FlowGroupImpl(flowGroupId);
         NodeList children = flowGroupNode.getChildNodes();
         for (int index = 0; index < children.getLength(); index++) {
             Node child = children.item(index);

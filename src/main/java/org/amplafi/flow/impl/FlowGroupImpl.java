@@ -33,12 +33,21 @@ public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> imp
 
     private FlowGroup primaryFlowGroup;
 
+	private String name;
+
     /**
      *
      */
     public FlowGroupImpl() {
         super();
     }
+    /**
+    *
+    */
+   public FlowGroupImpl(String name) {
+       super();
+       this.name = name;
+   }
 
     /**
      * @param definition
