@@ -22,9 +22,9 @@ import org.amplafi.flow.FlowActivityPhase;
 /**
  * Describes how a property may be initialized and how visible the property changes are external to flow after the flow terminates.
  * While a flow is in progress no changes are visible to other flows ( except those invoked in a caller/callee relationship )
- * 
+ *
  * TODO: How to handle caller/callee situations? Seems like internalState should be made available.
- * 
+ *
  *
  * @author patmoore
  */
@@ -33,7 +33,7 @@ public enum PropertyUsage {
      * ignores outside namespaces. Does not initialize from them nor does is property copied back to the outside namespaces.
      *
      * These properties are considered invisible properties that should not be documented to external users.
-     * 
+     *
      * Because this property does not look at the externally set values, the state of a property with the same name
      * as this internal state property is not affected.
      *
@@ -50,30 +50,64 @@ public enum PropertyUsage {
     io(false, true, true, null),
     /**
      * Like {@link #io} except the property will be assigned a value if there is none and the created value will be visible externally.
-     * This is enforced 
+     * The object in question must exist already.
+     *
+     * The value returned must be a derived value.
      *
      */
     suppliesIfMissing(false, true, true),
+    /**
+     * EXPERIMENTAL -- do not use yet.
+     * Similar to {@link #suppliesIfMissing} except that the property may be created.
+     * Use case: edit or create flows where the flow is modifying an existing object or creating an new object.
+     *
+     * A {@link FlowPropertyValuePersister} must be attached to the property definition.
+     */
+    createsIfMissing(false, true, true),
     /**
      * Like {@link #use} except the value will not be visible to any later flows.
      * the property can be initialized externally ( using the global namespace - null ). The initialization value will be moved into the flow/activity namespace
      * Any changes the flow makes are not visible after flow completes.
      * setsValue = true because it sets value to null!
-     * 
+     *
      * Note: consume will set a NULL when completing the flow, so it sets a value but not the value in the flowstate.
      */
     consume(true, false, true, Boolean.TRUE),
 
     /**
      * Like {@link #suppliesIfMissing} except that any previous value will be cleared AND ignored.
+     *
+     * In general limit the usage of {@link #initialize} to those case where a fresh value is mandatory.
+     * Consider if {@link #suppliesIfMissing} is adequate as {@link #initialize} forces a database access or other expensive initialization
+     * and prevents the flow from being passed the property value by a caller flow.
+     *
      * If the property has a FlowPropertyValueProvider, the FlowPropertyValueProvider will be called on {@link org.amplafi.flow.impl.FlowStateImplementor#initializeFlow()}.
      *
      * TODO: does this mean eager initialization ( to allow for triggering of activities that take a while to initialize? ) OR do is a new propertyUsage better?
      * TODO: PropertyRequired setting will be used to determine when the initialization will be forced to happen. ( if it hasn't happened already )
      * Use case:
      * setting the user id and broadcastProvider for a flow
+     *
+     * If the property returns a database object, the object must already exist. If the property returned is a derived property or a value that is stored
+     * as part of another database object then {@link #initialize} should be used.
+     *
+     * If the property's object is a database object then {@link #createAlways} must be used.
+     *
+     * For example, FIRST_NAME would be {@link #initialize} but never {@link #createAlways} because FIRST_NAME is a
      */
-    initialize(true, true, false);
+    initialize(true, true, false),
+    /**
+     * EXPERIMENTAL -- do not use yet.
+     *
+     * Like {@link #initialize} except that the object is always created.
+     *
+     * In general limit the usage of {@link #createAlways} to those case where a fresh value is mandatory.
+     * Consider if {@link #createsIfMissing} is adequate as {@link #createAlways} prevents the flow from being a
+     * edit/or create flow.
+     *
+     * A {@link FlowPropertyValuePersister} must be attached to the property definition.
+     */
+    createAlways(true, true, false);
 
     /**
      * clear from global namespaces when copied to local flow state's namespace. Namespaces in question are determined by PropertyScope??
@@ -88,7 +122,7 @@ public enum PropertyUsage {
      */
     private final Boolean setsValue;
     private List<PropertyUsage> canbeChangedTo;
-    
+
     static {
         // roughly trying to enforce that can become more strict but not less strict.
         // notice that this some changes take away behavior ( for example, use -> consume removes the property )
@@ -122,11 +156,11 @@ public enum PropertyUsage {
     }
 
     /**
-     * True means the property can be set externally. 
+     * True means the property can be set externally.
      * TODO: {@link PropertySecurity} should be used?
      * @return true means the property can be initialized externally by previous flows or from clients.
-     * false means the property is always set by the flow itself. ( Use case: security parameters ) 
-     * 
+     * false means the property is always set by the flow itself. ( Use case: security parameters )
+     *
      */
     public boolean isExternallySettable() {
         return externallySettable;

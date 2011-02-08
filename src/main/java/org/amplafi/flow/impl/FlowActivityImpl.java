@@ -592,7 +592,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                 getLog().warn(this.getFlowPropertyProviderFullName()+": has new (overriding) definition '"+definition+
                     "' with different data type than the previous definition '"+currentLocal+"'. The overriding definition will be used.");
             } else if (!definition.merge(currentLocal)) {
-                getLog().debug(this.getFlowPropertyProviderFullName()
+                getLog().warn(this.getFlowPropertyProviderFullName()
                                         + " has a new FlowPropertyDefinition '"
                                         + definition
                                         + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +

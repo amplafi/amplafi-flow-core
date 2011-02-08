@@ -30,6 +30,7 @@ import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowGroupImpl;
@@ -245,7 +246,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
             case Node.ELEMENT_NODE:
                 String nodeName = child.getNodeName();
                 if (PROPERTY.equals(nodeName)) {
-                    flowGroup.addPropertyDefinition(parseProperty(child));
+                    flowGroup.addPropertyDefinition(parseProperty(child, PropertyScope.global));
                 } else if (DEFINITION.equals(nodeName)) {
                     FlowImplementor flow = parseFlow(child);
                     this.flows.put(flow.getFlowPropertyProviderName(), flow);
@@ -314,7 +315,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
             case Node.ELEMENT_NODE:
                 String nodeName = child.getNodeName();
                 if (PROPERTY.equals(nodeName)) {
-                    flow.addPropertyDefinition(parseProperty(child));
+                    flow.addPropertyDefinition(parseProperty(child, PropertyScope.flowLocal));
                 } else if (ACTIVITY.equals(nodeName)) {
                     flow.addActivity(parseStep(child, false));
                 } else if (TRANSITION.equals(nodeName)) {
@@ -397,7 +398,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
             switch(child.getNodeType()) {
             case Node.ELEMENT_NODE:
                 if (PROPERTY.equals(child.getNodeName())) {
-                    flowActivity.addPropertyDefinition(parseProperty(child));
+                    flowActivity.addPropertyDefinition(parseProperty(child, PropertyScope.activityLocal));
                 } else {
                     throw new IllegalArgumentException("element is unknown "+child);
                 }
@@ -452,10 +453,10 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
         return flowActivity;
     }
 
-    private FlowPropertyDefinitionImplementor parseProperty(Node flowPropertyDefinitionNode) {
+    private FlowPropertyDefinitionImplementor parseProperty(Node flowPropertyDefinitionNode, PropertyScope propertyScope) {
         NamedNodeMap attributes = flowPropertyDefinitionNode.getAttributes();
         String name = getNameAttribute(attributes);
-        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(name);
+        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initPropertyScope(propertyScope);
         for (int index = 0; index < attributes.getLength(); index++) {
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();

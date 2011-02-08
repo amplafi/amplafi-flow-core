@@ -49,6 +49,9 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyExpectationImpl(String name, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this(name, null, null, null, null, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
+    public FlowPropertyExpectationImpl(String name, FlowPropertyValueProvider flowPropertyValueProvider) {
+        this(name, null, null, null, null, flowPropertyValueProvider, null, null);
+    }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
             PropertySecurity propertySecurity, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this(name, propertyRequired, propertyScope, propertyUsage, propertySecurity, null, null, Arrays.asList(flowPropertyValueChangeListener));
@@ -117,4 +120,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         return propertySecurity;
     }
 
+    public static FlowPropertyExpectationImpl createDefaultExpectation(String name, Object defaultObject) {
+    	return new FlowPropertyExpectationImpl(name, new FixedFlowPropertyValueProvider<FlowPropertyProvider>(defaultObject));
+    }
 }

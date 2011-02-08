@@ -16,7 +16,12 @@ package org.amplafi.flow.flowproperty;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
- * Implementors know how to save the FlowProperty in persistent storage.
+ * Implementors know how to save changes to the object represented by the FlowProperty in persistent storage.
+ *
+ * This may including creating a brand new object, or the persister may be restricted to only changing an existing object.
+ *
+ * Use case: Changing a user's first name/last name is completely different than creating a new user. Creating a new user must be more deliberate.
+ * Not all objects need to be so carefully considered.
  * @see org.amplafi.flow.FlowPropertyValueProvider
  * @author patmoore
  * @param <T>
