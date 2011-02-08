@@ -1,5 +1,6 @@
 package org.amplafi.flow.flowproperty;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
@@ -29,7 +30,6 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * A property that is not allowed to be altered. (no set is allowed) But the property is not immutable because a FPVP could supply different values.
      * Use case: User id
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -43,7 +43,6 @@ public class FlowPropertyDefinitionBuilder {
     }
     /**
      * Expectation is that {@link FlowPropertyValueProvider} will be supplied later.
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param whenMustBeAvailable
@@ -69,7 +68,6 @@ public class FlowPropertyDefinitionBuilder {
      * {@link #createInternalStateFlowPropertyDefinitionWithDefault(String, Class, Class...)} to create a property that is not
      * visible for exporting.
      *
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param flowPropertyValueProvider
@@ -84,7 +82,6 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * A security property
      * Use case: a password
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -99,7 +96,6 @@ public class FlowPropertyDefinitionBuilder {
 
     /**
      * Used to create a value that must be available by the time the flow completes.
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -115,7 +111,6 @@ public class FlowPropertyDefinitionBuilder {
      * create a {@link FlowPropertyDefinition} for a property whose value is recomputed for every request.
      *
      * Use case: very dynamic properties for example, a status message.
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -132,7 +127,6 @@ public class FlowPropertyDefinitionBuilder {
      *
      * Use case:
      * create a new user.
-     * @param <FPD>
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -233,8 +227,21 @@ public class FlowPropertyDefinitionBuilder {
 		return this;
 	}
     public void applyDefaultProviders(Object... defaultProviders) {
-    	// TODO Auto-generated method stub
-
+    	boolean needPersister = flowPropertyDefinition.getFlowPropertyValuePersister() == null;
+    	boolean needProvider = flowPropertyDefinition.getFlowPropertyValueProvider() == null;
+    	for(Object provider : NotNullIterator.<Object>newNotNullIterator(defaultProviders)) {
+    		if (needPersister && (provider instanceof FlowPropertyValuePersister )) {
+    			flowPropertyDefinition = flowPropertyDefinition.initFlowPropertyValuePersister((FlowPropertyValuePersister<FlowPropertyProvider>)provider);
+    			needPersister = false;
+    		}
+    		if ( needProvider && (provider instanceof FlowPropertyValueProvider)) {
+    			flowPropertyDefinition = flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider<FlowPropertyProvider>)provider);
+    			needProvider = false;
+    		}
+    		if ( provider instanceof FlowPropertyValueChangeListener) {
+    			flowPropertyDefinition.addFlowPropertyValueChangeListeners(Arrays.asList((FlowPropertyValueChangeListener)provider));
+    		}
+    	}
     }
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
     	return (FPD) this.flowPropertyDefinition;
