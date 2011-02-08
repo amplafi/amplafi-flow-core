@@ -27,12 +27,17 @@ import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.sworddance.util.ApplicationIllegalStateException;
 
 /**
  * Basic implementation for managing Flow definitions. Provides no persistence mechanism.
@@ -43,6 +48,10 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
+    /**
+     * This map is used to connect a standard property name "user" to a standard class.
+     */
+    private Map<String, FlowPropertyDefinitionImplementor> standardPropertyNameToDefinition;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
@@ -129,6 +138,19 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.log;
     }
 
+    public void addStandardPropertyDefinition(String propertyName, Class<?> standardDefinitionClass) {
+    	ApplicationIllegalStateException.checkState(!this.standardPropertyNameToDefinition.containsKey(propertyName), propertyName, " already defined as a standard property.");
+    	this.standardPropertyNameToDefinition.put(propertyName, new FlowPropertyDefinitionImpl(propertyName, standardDefinitionClass));
+    }
+
+    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> standardDefinitionClass) {
+    	FlowPropertyDefinitionImplementor standardDefinition = this.standardPropertyNameToDefinition.get(propertyName);
+    	if ( standardDefinition == null ) {
+    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, standardDefinitionClass, null);
+    	} else {
+    		return new FlowPropertyDefinitionBuilder(standardDefinition);
+    	}
+    }
     /**
      * @see org.amplafi.flow.FlowDefinitionsManager#isFlowDefined(java.lang.String)
      */

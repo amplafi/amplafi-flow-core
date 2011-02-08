@@ -130,8 +130,10 @@ public enum PropertyUsage {
         use.canbeChangedTo = Arrays.asList(io, suppliesIfMissing, consume, initialize);
         io.canbeChangedTo = Arrays.asList(suppliesIfMissing, consume, initialize);
         suppliesIfMissing.canbeChangedTo = Arrays.asList(initialize);
+        createsIfMissing.canbeChangedTo = Arrays.asList(initialize);
         consume.canbeChangedTo = Arrays.asList();
         initialize.canbeChangedTo = Arrays.asList();
+        createAlways.canbeChangedTo = Arrays.asList();
     }
 
     private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnFlowSuccess, boolean externallySettable) {
