@@ -138,6 +138,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     private boolean templateFlowPropertyDefinition;
 
+    private boolean forceFactoryProvider;
+
     /**
      * Creates an unnamed String property.
      */
@@ -154,6 +156,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         autoCreate = clone.autoCreate;
         this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
+        this.forceFactoryProvider = clone.forceFactoryProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
@@ -222,6 +225,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
+        forceFactoryProvider = defaultObject != null;
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
             FixedFlowPropertyValueProvider<FlowPropertyProvider> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowPropertyProvider>(defaultObject);
             fixedFlowPropertyValueProvider.convertable(this);
@@ -248,7 +252,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         Object value = null;
         ApplicationNullPointerException.notNull(flowPropertyProvider,this,"flowPropertyProvider cannot be null");
-        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
+        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             ApplicationIllegalArgumentException.valid(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()),
@@ -269,7 +273,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider) {
-        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getFlowPropertyValueProviderToUse();
+        FlowPropertyValueProvider<FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             Class<FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             if (  expected.isAssignableFrom(flowPropertyProvider.getClass())) {
@@ -286,8 +290,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     /**
      * @return
      */
-    private FlowPropertyValueProvider<FlowPropertyProvider> getFlowPropertyValueProviderToUse() {
-        if ( this.flowPropertyValueProvider != null) {
+    private FlowPropertyValueProvider<FlowPropertyProvider> getDefaultFlowPropertyValueProviderToUse() {
+        if (this.flowPropertyValueProvider != null && !forceFactoryProvider) {
             return this.flowPropertyValueProvider;
         } else {
             return this.factoryFlowPropertyValueProvider;
@@ -440,7 +444,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return false;
     }
     public boolean isDefaultAvailable() {
-        return this.getFlowPropertyValueProviderToUse() != null;
+        return this.getDefaultFlowPropertyValueProviderToUse() != null;
     }
 
     @Override
