@@ -28,10 +28,11 @@ import static org.apache.commons.lang.StringUtils.*;
  *
  */
 public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivityImplementor> implements FlowPropertyDefinitionProvider {
-    public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
+    public static final FlowPropertyDefinitionImpl CANCEL_TEXT = new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initAccess(flowLocal, use);
+	public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
 
     public CancelTextFlowPropertyValueProvider() {
-        super(FlowActivityImplementor.class,new FlowPropertyDefinitionImpl(FSCANCEL_TEXT).initAccess(flowLocal, use));
+        super(FlowActivityImplementor.class,CANCEL_TEXT);
     }
     /**
      *

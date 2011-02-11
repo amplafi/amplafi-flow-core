@@ -109,10 +109,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public FlowImpl() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
-            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             // io -- for now because need to communicate the next page to be displayed
             // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
@@ -137,10 +137,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
-
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
+            CancelTextFlowPropertyValueProvider.CANCEL_TEXT.clone().initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE)
         );
-        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this);
+//        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this);
     }
 
     /**

@@ -93,7 +93,7 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         FlowPropertyDefinition current = this.propertyDefinitions.get(flowPropertyDefinition.getName());
         if ( current != null ) {
             if ( !flowPropertyDefinition.merge(current) ) {
-                throw new ApplicationIllegalArgumentException(flowPropertyDefinition,": cannot be merged with ",current);
+                throw new ApplicationIllegalArgumentException(this,".",flowPropertyDefinition,": cannot be merged with ",current);
             }
         }
         this.propertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
