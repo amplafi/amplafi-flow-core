@@ -18,11 +18,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
-
-import static com.sworddance.util.CUtilities.*;
 
 /**
  * support methods for {@link FlowPropertyDefinitionProvider} implementations.
@@ -122,7 +122,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         this.defineFlowPropertyDefinitions(flowPropertyProvider, null);
     }
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters );
     }
 }

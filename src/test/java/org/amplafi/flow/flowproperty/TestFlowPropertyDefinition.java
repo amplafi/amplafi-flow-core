@@ -13,21 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import static org.amplafi.flow.flowproperty.PropertyScope.activityLocal;
-import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
-import static org.amplafi.flow.flowproperty.PropertyScope.global;
-import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
-import static org.amplafi.flow.flowproperty.PropertyUsage.initialize;
-import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
-import static org.amplafi.flow.flowproperty.PropertyUsage.io;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertSame;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,8 +38,13 @@ import org.amplafi.flow.TestFlowTransitions;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
+import static org.amplafi.flow.flowproperty.PropertyUsage.*;
+import static org.testng.Assert.*;
 
 /**
  * Tests {@link FlowPropertyDefinitionImpl}.
@@ -136,7 +126,7 @@ public class TestFlowPropertyDefinition {
         // check behavior if everything is not defined in the Ctor call
         // (i.e. like the definition is being defined in the hivemind.xml)
         definition = new FlowPropertyDefinitionImpl("foo");
-        definition.setDefaultObject("true");
+        definition.initDefaultObject("true");
         definition.setDataClass(Boolean.class);
         new FlowTestingUtils().resolveAndInit(definition);
         t = (Boolean) definition.parse(flowPropertyProvider, null);
@@ -676,6 +666,30 @@ public class TestFlowPropertyDefinition {
     private static enum SampleEnum {
         EXTERNAL, EMAIL
 
+    }
+
+    @Test(enabled=TEST_ENABLED)
+    public void testDefaultProviderInitialization() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        final FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE);
+        FixedFlowPropertyValueProvider<FlowPropertyProvider> originalProvider = (FixedFlowPropertyValueProvider<FlowPropertyProvider>) flowPropertyDefinition.getFlowPropertyValueProvider();
+        FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>(flowPropertyDefinition) {
+
+            @Override
+            public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+                throw new UnsupportedOperationException("should not be called.");
+            }
+        };
+        FlowActivityImpl flowActivity0 = newFlowActivity();
+        flowActivity0.setFlowPropertyProviderName("activity0");
+        flowActivity0.addPropertyDefinitions(flowPropertyDefinition);
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null , null);
+        assertEquals(flowState.getProperty("hasdefault"), Boolean.TRUE);
+        FlowPropertyDefinition actual = flowState.getFlowPropertyDefinition("hasdefault");
+        assertTrue(actual.getFlowPropertyValueProvider() instanceof FixedFlowPropertyValueProvider);
+        assertSame(actual.getFlowPropertyValueProvider(), originalProvider);
     }
     /**
      * Test to make sure property initialization is forced and that the initialization code does not expect a String.

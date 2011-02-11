@@ -397,9 +397,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         return this.activities.indexOf(activity);
     }
 
-    /**
-     * @see org.amplafi.flow.Flow#setActivatable(boolean)
-     */
     @Override
     public void setActivatable(boolean activatable) {
         this.activatable = activatable;

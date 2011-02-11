@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -47,7 +49,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import static org.apache.commons.lang.StringUtils.*;
-import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -79,11 +80,13 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     private String initial;
 
-    /**
-     * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
-     * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
-     */
-    private transient FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
+//    /**
+//     * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
+//     * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
+//     */
+//    private transient FlowPropertyValueProvider<FlowPropertyProvider> factoryFlowPropertyValueProvider;
+
+//    private boolean forceFactoryProvider;
     private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
     private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
@@ -138,8 +141,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     private boolean templateFlowPropertyDefinition;
 
-    private boolean forceFactoryProvider;
-
     /**
      * Creates an unnamed String property.
      */
@@ -155,8 +156,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             alternates.addAll(clone.alternates);
         }
         autoCreate = clone.autoCreate;
-        this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
-        this.forceFactoryProvider = clone.forceFactoryProvider;
+//        this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
+//        this.forceFactoryProvider = clone.forceFactoryProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
@@ -225,21 +226,14 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
-        forceFactoryProvider = defaultObject != null;
+//        forceFactoryProvider = defaultObject != null;
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
-            FixedFlowPropertyValueProvider<FlowPropertyProvider> fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FlowPropertyProvider>(defaultObject);
-            fixedFlowPropertyValueProvider.convertable(this);
-            if (getDataClassDefinition().isDataClassDefined()) {
-                if (!this.getDataClass().isPrimitive()) {
-                    // really need to handle the autobox issue better.
-                    this.getDataClass().cast(defaultObject);
-                }
-            } else if (defaultObject.getClass() != String.class) {
-                setDataClass(defaultObject.getClass());
-            }
-            this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
+            FixedFlowPropertyValueProvider<FlowPropertyProvider> fixedFlowPropertyValueProvider = FixedFlowPropertyValueProvider.<FlowPropertyProvider>newFixedFlowPropertyValueProvider(defaultObject, this, true);
+//            this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
+            this.flowPropertyValueProvider = fixedFlowPropertyValueProvider;
         } else {
-            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
+//            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
+            this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
         }
     }
 
@@ -291,16 +285,17 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return
      */
     private FlowPropertyValueProvider<FlowPropertyProvider> getDefaultFlowPropertyValueProviderToUse() {
-        if (this.flowPropertyValueProvider != null && !forceFactoryProvider) {
+//        if (this.flowPropertyValueProvider != null && !forceFactoryProvider) {
             return this.flowPropertyValueProvider;
-        } else {
-            return this.factoryFlowPropertyValueProvider;
-        }
+//        } else {
+//            return this.factoryFlowPropertyValueProvider;
+//        }
     }
 
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, defaultObject);
+//        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, defaultObject);
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValueProvider, defaultObject);
         flowPropertyDefinition.setDefaultObject(defaultObject);
         return flowPropertyDefinition;
     }
@@ -564,9 +559,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @param dataClass
      */
     public void setDataClass(Class<? extends Object> dataClass) {
-        if (dataClass == String.class) {
-            dataClass = null;
-        }
         this.getDataClassDefinition().setDataClass(dataClass);
     }
 
@@ -742,9 +734,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         if ( flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
             this.setFlowPropertyValuePersister(source.flowPropertyValuePersister);
         }
-        if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
-            this.setDefaultObject(source.factoryFlowPropertyValueProvider);
-        }
+//        if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
+//            this.setDefaultObject(source.factoryFlowPropertyValueProvider);
+//        }
         // TODO: merging should handling chained notification.
         if ( flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
             this.setFlowPropertyValueChangeListeners(source.flowPropertyValueChangeListeners);

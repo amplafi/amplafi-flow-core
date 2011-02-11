@@ -461,7 +461,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
             if ("initial".equals(nodeName)) {
                 flowPropertyDefinition.setInitial(nodeValue);
             } else if ("default".equals(nodeName)) {
-                flowPropertyDefinition.setDefaultObject(nodeValue);
+                flowPropertyDefinition.initDefaultObject(nodeValue);
             } else if("translator".equals(nodeName)) {
                 // TODO: need to do flowTranslator injection.
                 FlowTranslator<?> flowTranslator = null;

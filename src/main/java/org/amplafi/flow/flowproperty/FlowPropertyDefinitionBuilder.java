@@ -33,7 +33,7 @@ public class FlowPropertyDefinitionBuilder {
      * @param name
      * @param dataClass
      * @param collectionClasses
-     * @return
+     * @return this
      */
     @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createNonalterableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowPropertyValueProvider flowPropertyValueProvider, Class<?>...collectionClasses) {
@@ -47,7 +47,7 @@ public class FlowPropertyDefinitionBuilder {
      * @param dataClass
      * @param whenMustBeAvailable
      * @param collectionClasses
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder createNonalterableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenMustBeAvailable, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenMustBeAvailable, collectionClasses).
@@ -72,7 +72,7 @@ public class FlowPropertyDefinitionBuilder {
      * @param dataClass
      * @param flowPropertyValueProvider
      * @param collectionClasses
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder createNonconfigurableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowPropertyValueProvider flowPropertyValueProvider, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).
@@ -85,9 +85,8 @@ public class FlowPropertyDefinitionBuilder {
      * @param name
      * @param dataClass
      * @param collectionClasses
-     * @return
+     * @return this
      */
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createPasswordFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, FlowActivityPhase.activate, collectionClasses).
             initAccess(PropertyScope.flowLocal, PropertyUsage.consume, PropertySecurity.writeonly);
@@ -99,9 +98,8 @@ public class FlowPropertyDefinitionBuilder {
      * @param name
      * @param dataClass
      * @param collectionClasses
-     * @return
+     * @return this
      */
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createApiReturnValueFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, FlowActivityPhase.finish, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.suppliesIfMissing);
@@ -114,9 +112,8 @@ public class FlowPropertyDefinitionBuilder {
      * @param name
      * @param dataClass
      * @param collectionClasses
-     * @return
+     * @return this
      */
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createCurrentRequestOnlyFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, FlowActivityPhase.optional, collectionClasses).
         initAccess(PropertyScope.requestFlowLocal, PropertyUsage.suppliesIfMissing);
@@ -130,22 +127,20 @@ public class FlowPropertyDefinitionBuilder {
      * @param name
      * @param dataClass
      * @param collectionClasses
-     * @return
+     * @return this
      */
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createCreatingFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenCreated, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenCreated, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.suppliesIfMissing);
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenRequired, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenRequired, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.io);
         return this;
     }
-    @SuppressWarnings("unchecked")
+
     public FlowPropertyDefinitionBuilder createFlowPropertyDefinitionWithDefault(String name, Class<? extends Object> dataClass, Object defaultObject, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.io).initDefaultObject(defaultObject);
@@ -185,8 +180,8 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * scans through all the {@link FlowPropertyExpectation}s looking for expectations that {@link FlowPropertyExpectation#isApplicable(FlowPropertyDefinitionImplementor)}
      * those expectations have their values applied to flowPropertyDefinition in the order they are encountered.
-     * @param flowPropertyDefinition TODO: should be part of the builder.
      * @param additionalConfigurationParameters a list because order matters.
+     * @return this
      */
     public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(
             List<FlowPropertyExpectation> additionalConfigurationParameters) {
