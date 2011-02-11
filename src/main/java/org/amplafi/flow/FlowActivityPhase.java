@@ -47,11 +47,5 @@ public enum FlowActivityPhase {
     /**
      * FlowProperty is required to be set prior to calling the {@link org.amplafi.flow.FlowActivity#finishFlow(org.amplafi.flow.FlowState)}.
      */
-    finish,
-    /**
-     * The {@link org.amplafi.flow.flowproperty.FlowPropertyProvider} will set this value.
-     * But seems like should be combined better with {@link org.amplafi.flow.flowproperty.PropertyUsage#creates}
-     */
-    @Deprecated
-    creates
+    finish
 }
