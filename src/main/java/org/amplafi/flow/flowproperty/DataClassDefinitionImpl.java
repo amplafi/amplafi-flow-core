@@ -26,6 +26,7 @@ import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.IJsonWriter;
 
 import com.sworddance.beans.PropertyDefinitionImpl;
+import com.sworddance.util.CUtilities;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -65,12 +66,15 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     }
     // don't use yet.
     public DataClassDefinitionImpl(Class<?> element, Class<?>... collections) {
-        if ( collections.length == 0 ) {
+        switch ( CUtilities.size(collections)) {
+        case 0:
             this.setDataClass(element);
-        } else if ( collections.length == 1 ) {
+            break;
+        case 1:
             this.setDataClass(collections[0]);
             this.setElementDataClassDefinition(new DataClassDefinitionImpl(element));
-        } else {
+            break;
+        default:
             this.setDataClass(collections[0]);
             this.setElementDataClassDefinition(new DataClassDefinitionImpl(element, Arrays.copyOfRange(collections, 1, collections.length)));
         }
@@ -180,8 +184,10 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     }
 
     /**
+     *
      * @param dataClassDefinition
-     * @return
+     * @return true if this should and can have its data class to match the dataclass supplied by dataClassDefinition. this will only happen if
+     * this.isDataClassDefined() == false or isAssignable() returns true.
      */
     private Boolean getDataClassReplaced(DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition == null || this.isSameDataClass(dataClassDefinition) || !dataClassDefinition.isDataClassDefined()) {
