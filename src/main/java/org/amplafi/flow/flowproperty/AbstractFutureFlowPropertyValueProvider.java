@@ -22,8 +22,4 @@ package org.amplafi.flow.flowproperty;
 public abstract class AbstractFutureFlowPropertyValueProvider<FPP extends FlowPropertyProvider, V> extends  AbstractFlowPropertyValueProvider<FPP>
     implements FutureFlowPropertyValueProvider<FPP, V> {
 
-    public AbstractFutureFlowPropertyValueProvider(Class<FPP> flowPropertyProviderClass, String... propertiesHandled) {
-        super(flowPropertyProviderClass, propertiesHandled);
-    }
-
 }
