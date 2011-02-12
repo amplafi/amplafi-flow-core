@@ -53,4 +53,11 @@ public class AddToListFlowPropertyValueProvider<V> extends AbstractChainedFlowPr
         }
         return (T) result;
     }
+
+	@Override
+	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+		// not checking so sure.
+		return true;
+	}
+
 }

@@ -49,13 +49,16 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
     /**
-     * This map is used to connect a standard property name "user" to a standard class.
+     * This map is used to connect a standard property name "user" to a standard class (UserImpl)
+     * This map solves the problem where a flowProperty*Provider or changelistener needs (or would like) to have a property available but does not
+     * define it.
      */
     private Map<String, FlowPropertyDefinitionImplementor> standardPropertyNameToDefinition;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
+        this.standardPropertyNameToDefinition = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
     }
 
@@ -138,15 +141,38 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.log;
     }
 
+    /**
+     *
+     * @param propertyName
+     * @param standardDefinitionClass
+     */
     public void addStandardPropertyDefinition(String propertyName, Class<?> standardDefinitionClass) {
-    	ApplicationIllegalStateException.checkState(!this.standardPropertyNameToDefinition.containsKey(propertyName), propertyName, " already defined as a standard property.");
-    	this.standardPropertyNameToDefinition.put(propertyName, new FlowPropertyDefinitionImpl(propertyName, standardDefinitionClass));
+    	FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(propertyName, standardDefinitionClass);
+    	addStandardPropertyDefinition(flowPropertyDefinition);
     }
 
-    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> standardDefinitionClass) {
+    /**
+     * This property should be minimal.
+     * @param flowPropertyDefinition supply the default property.
+     */
+    public void addStandardPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+    	String propertyName = flowPropertyDefinition.getName();
+    	ApplicationIllegalStateException.checkState(!this.standardPropertyNameToDefinition.containsKey(propertyName), propertyName, " already defined as a standard property.");
+    	flowPropertyDefinition.setTemplateFlowPropertyDefinition();
+    	this.standardPropertyNameToDefinition.put(propertyName, flowPropertyDefinition);
+    	// Note: alternate names are not automatically added.
+    }
+
+    /**
+     * Used as the way to get a property
+     * @param propertyName
+     * @param standardDefinitionClass
+     * @return
+     */
+    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
     	FlowPropertyDefinitionImplementor standardDefinition = this.standardPropertyNameToDefinition.get(propertyName);
-    	if ( standardDefinition == null ) {
-    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, standardDefinitionClass, null);
+    	if ( standardDefinition == null || (dataClass != null && !standardDefinition.isAssignableFrom(dataClass))) {
+    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, dataClass, null);
     	} else {
     		return new FlowPropertyDefinitionBuilder(standardDefinition);
     	}

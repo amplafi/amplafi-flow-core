@@ -12,6 +12,10 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.NotNullIterator;
 
 /**
+ * Designed to handle the problems of extending standard definitions.
+ *
+ * TODO: ? add a way to make an attempt to read an unset property fail rather than return null?
+ * Useful for {@link PropertyUsage#getSetsValue()} == TRUE
  * TODO: should really be a builder ( 1 per FPD )
  * TODO: remove initDefaultObject()
  * Handles some common use cases
@@ -136,8 +140,13 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenRequired, Class<?>...collectionClasses) {
-    	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenRequired, collectionClasses).
+    	createFlowPropertyDefinition(name, dataClass, collectionClasses);
         initAccess(PropertyScope.flowLocal, PropertyUsage.io);
+        return this;
+    }
+
+	public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>...collectionClasses) {
+    	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
         return this;
     }
 
@@ -147,11 +156,9 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinitionWithDefault(String name, Class<? extends Object> dataClass, Class<?>...collectionClasses) {
     	return createInternalStateFlowPropertyDefinitionWithDefault(name, dataClass, PropertyScope.flowLocal, collectionClasses);
     }
-    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinitionWithDefault(String name, Class<? extends Object> dataClass, PropertyScope propertyScope, Class<?>...collectionClasses) {
         ApplicationIllegalArgumentException.valid(propertyScope != PropertyScope.global, "internalState cannot be global");
         this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).
@@ -183,8 +190,7 @@ public class FlowPropertyDefinitionBuilder {
      * @param additionalConfigurationParameters a list because order matters.
      * @return this
      */
-    public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(
-            List<FlowPropertyExpectation> additionalConfigurationParameters) {
+    public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(List<FlowPropertyExpectation> additionalConfigurationParameters) {
         for(FlowPropertyExpectation flowPropertyExpectation: NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(additionalConfigurationParameters)) {
             if(flowPropertyExpectation.isApplicable(flowPropertyDefinition)) {
                 // FlowPropertyExpectation expectation applies
@@ -194,49 +200,82 @@ public class FlowPropertyDefinitionBuilder {
                 FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = flowPropertyExpectation.getFlowPropertyValueProvider();
                 if ( flowPropertyValueProvider != null) {
                     // forces a new valueProvider
-                    flowPropertyDefinition.setFlowPropertyValueProvider(flowPropertyValueProvider);
+                    initFlowPropertyValueProvider(flowPropertyValueProvider);
                 }
                 FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
                 if ( flowPropertyValuePersister != null) {
                     // forces a new flowPropertyValuePersister
-                    flowPropertyDefinition.setFlowPropertyValuePersister(flowPropertyValuePersister);
+                	initFlowPropertyValuePersister(flowPropertyValuePersister);
                 }
+
+                // TODO: Need to do test and clone!!
                 FlowActivityPhase flowActivityPhase = flowPropertyExpectation.getPropertyRequired();
                 if ( flowActivityPhase != null ) {
-                	flowPropertyDefinition.setPropertyRequired(flowActivityPhase);
+                    flowPropertyDefinition = flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
                 }
                 PropertyScope propertyScope = flowPropertyExpectation.getPropertyScope();
                 if ( propertyScope != null) {
-                	flowPropertyDefinition.setPropertyScope(propertyScope);
+                    flowPropertyDefinition = flowPropertyDefinition.initPropertyScope(propertyScope);
                 }
                 PropertyUsage propertyUsage = flowPropertyExpectation.getPropertyUsage();
                 if ( propertyUsage != null ) {
-                	flowPropertyDefinition.setPropertyScope(propertyScope);
+                    flowPropertyDefinition = flowPropertyDefinition.initPropertyUsage(propertyUsage);
                 }
             }
         }
         return this;
     }
-	public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
-		this.flowPropertyDefinition.initFlowPropertyValueProvider(flowPropertyValueProvider);
+	public FlowPropertyDefinitionBuilder initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister) {
+		return initFlowPropertyValuePersister(flowPropertyValuePersister, true);
+	}
+	public FlowPropertyDefinitionBuilder initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister, boolean failOnNotHandling) {
+		_initFlowPropertyValuePersister(flowPropertyValuePersister, failOnNotHandling);
 		return this;
 	}
-    public void applyDefaultProviders(Object... defaultProviders) {
-    	boolean needPersister = flowPropertyDefinition.getFlowPropertyValuePersister() == null;
-    	boolean needProvider = flowPropertyDefinition.getFlowPropertyValueProvider() == null;
+	private boolean _initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister, boolean failOnNotHandling) {
+		if ( flowPropertyValuePersister.isHandling(flowPropertyDefinition)) {
+			this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
+			return true;
+		} else {
+			ApplicationIllegalArgumentException.valid(!failOnNotHandling, flowPropertyValuePersister+" not handling "+this.flowPropertyDefinition);
+			return false;
+		}
+	}
+	public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
+		return initFlowPropertyValueProvider(flowPropertyValueProvider, true);
+	}
+	public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) {
+		_initFlowPropertyValueProvider(flowPropertyValueProvider, failOnNotHandling);
+		return this;
+	}
+	private boolean _initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) {
+		if ( flowPropertyValueProvider.isHandling(flowPropertyDefinition)) {
+			this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValueProvider(flowPropertyValueProvider);
+			return true;
+		} else {
+			ApplicationIllegalArgumentException.valid(!failOnNotHandling, flowPropertyValueProvider+" not handling "+this.flowPropertyDefinition);
+			return false;
+		}
+	}
+    public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
+    	this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage);
+		return this;
+	}
+    public FlowPropertyDefinitionBuilder applyDefaultProviders(Object... defaultProviders) {
+    	boolean needPersister = flowPropertyDefinition.getFlowPropertyValuePersister() == null && !flowPropertyDefinition.isCacheOnly();
+    	boolean needProvider = !flowPropertyDefinition.isDefaultAvailable();
     	for(Object provider : NotNullIterator.<Object>newNotNullIterator(defaultProviders)) {
     		if (needPersister && (provider instanceof FlowPropertyValuePersister )) {
-    			flowPropertyDefinition = flowPropertyDefinition.initFlowPropertyValuePersister((FlowPropertyValuePersister<FlowPropertyProvider>)provider);
-    			needPersister = false;
+    			needPersister= !_initFlowPropertyValuePersister((FlowPropertyValuePersister<FlowPropertyProvider>)provider, false);
     		}
     		if ( needProvider && (provider instanceof FlowPropertyValueProvider)) {
-    			flowPropertyDefinition = flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider<FlowPropertyProvider>)provider);
-    			needProvider = false;
+    			needProvider= !_initFlowPropertyValueProvider((FlowPropertyValueProvider<? extends FlowPropertyProvider>)provider, false);
     		}
     		if ( provider instanceof FlowPropertyValueChangeListener) {
     			flowPropertyDefinition.addFlowPropertyValueChangeListeners(Arrays.asList((FlowPropertyValueChangeListener)provider));
     		}
     	}
+		return this;
     }
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
     	return (FPD) this.flowPropertyDefinition;

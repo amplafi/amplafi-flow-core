@@ -69,5 +69,10 @@ public class AddToMapFlowPropertyValueProvider<FPP extends FlowPropertyProvider,
     public String toString() {
         return getClass()+": adding "+values + " chain: ["+this.getPrevious()+"]";
     }
-
+    @Override
+    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        // not checking so sure.
+        // TODO: maybe in future check the map keys?
+        return true;
+    }
 }

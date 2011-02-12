@@ -86,7 +86,15 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
         return FlowPropertyProvider.class;
     }
-
+    @Override
+    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        for(String propertyName:this.getPropertyNames()) {
+            if ( flowPropertyDefinition.isNamed(propertyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

@@ -14,6 +14,8 @@
 
 package org.amplafi.flow;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
+
 
 
 /**
@@ -32,7 +34,7 @@ public interface FlowManager {
      */
     Flow getFlowDefinition(String flowTypeName);
     boolean isFlowDefined(String flowTypeName);
-
+    FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
     /**
      * TODO: Need to define if the FlowManagement object is saved by FlowManager implementations.
      * if so how? per session? per thread?

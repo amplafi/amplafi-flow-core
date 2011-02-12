@@ -57,4 +57,6 @@ public interface FlowPropertyValueProvider<FPP extends FlowPropertyProvider> {
      * ( useful for case where get() does not actually use the {@link FlowPropertyProvider} )
      */
     Class<FPP> getFlowPropertyProviderClass();
+    // added so we can avoid bad assignments
+	boolean isHandling(FlowPropertyDefinition flowPropertyDefinition);
 }

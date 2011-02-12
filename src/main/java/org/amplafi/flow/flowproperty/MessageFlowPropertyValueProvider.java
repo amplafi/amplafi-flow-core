@@ -73,4 +73,10 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
     public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
         return FlowPropertyProvider.class;
     }
+	@Override
+	@Deprecated // provide better definition
+	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+		// not checking so sure.
+		return true;
+	}
 }

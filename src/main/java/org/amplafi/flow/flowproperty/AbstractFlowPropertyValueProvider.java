@@ -14,7 +14,6 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -46,15 +45,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             this.flowPropertyProviderClass = flowPropertyProviderClass;
         }
     }
-    /**
-     * {@link #getFlowPropertyProviderClass()} will return {@link FlowPropertyProviderWithValues} if FPP extends that class. otherwise {@link FlowPropertyProvider}
-     * @param propertiesHandled first property listed is property returned by
-     */
-    @Deprecated
-    protected AbstractFlowPropertyValueProvider(String...propertiesHandled) {
-        this();
-        Collections.addAll(this.propertiesHandled, propertiesHandled);
-    }
     protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this(flowPropertyProviderClass);
         setFlowPropertyDefinitions(flowPropertyDefinitions);
@@ -68,14 +58,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this((Class<FPP>)null, flowPropertyDefinitions);
     }
-    /**
-    *
-    * @param propertiesHandled first property listed is property returned by
-    */
-   protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, String...propertiesHandled) {
-       this(flowPropertyProviderClass);
-       Collections.addAll(this.propertiesHandled,propertiesHandled);
-   }
    /**
     * @return
     *
@@ -146,7 +128,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @return true if this {@link FlowPropertyDefinitionProvider} handles the {@link FlowPropertyDefinition}.
      */
     public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
-        for(String propertyName: propertiesHandled) {
+        for(String propertyName: getPropertiesHandled()) {
             if (flowPropertyDefinition.isNamed(propertyName)) {
                 return true;
             }

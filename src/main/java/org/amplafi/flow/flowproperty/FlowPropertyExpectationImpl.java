@@ -121,6 +121,6 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
 
     public static FlowPropertyExpectationImpl createDefaultExpectation(String name, Object defaultObject) {
-    	return new FlowPropertyExpectationImpl(name, new FixedFlowPropertyValueProvider<FlowPropertyProvider>(defaultObject));
+    	return new FlowPropertyExpectationImpl(name, new FixedFlowPropertyValueProvider(defaultObject));
     }
 }

@@ -73,4 +73,17 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
      * @return ordered collection used to find/set this property.
      */
     List<String> getNamespaceKeySearchList(FlowState flowState, FlowPropertyProvider flowPropertyProvider, boolean forceAll);
+
+    /**
+     * make immutable
+     */
+	void setTemplateFlowPropertyDefinition();
+
+	FlowPropertyDefinitionImplementor initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage);
+
+	FlowPropertyDefinitionImplementor initPropertyRequired(FlowActivityPhase flowActivityPhase);
+
+    FlowPropertyDefinitionImplementor initPropertyScope(PropertyScope propertyScope);
+
+    FlowPropertyDefinitionImplementor initPropertyUsage(PropertyUsage propertyUsage);
 }

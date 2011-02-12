@@ -26,6 +26,7 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowStateListener;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,10 +84,10 @@ public class FlowManagerImpl implements FlowManager {
     public boolean isFlowDefined(String flowTypeName) {
         return this.getFlowDefinitionsManager().isFlowDefined(flowTypeName);
     }
-    /**
-     * @see org.amplafi.flow.FlowDefinitionsManager#isFlowDefined(java.lang.String)
-     */
     @Override
+    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        return this.getFlowDefinitionsManager().getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+    }
     public Flow getFlowDefinition(String flowTypeName) {
         return this.getFlowDefinitionsManager().getFlowDefinition(flowTypeName);
     }

@@ -948,6 +948,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      * visible.
      * other wise will affect the definitions.
      * see #2179 / #2192
+     *
+     * TODO: make chaining more common
      */
     @SuppressWarnings("unchecked")
     protected void handleFlowPropertyValueProvider(String key, FlowPropertyValueProvider flowPropertyValueProvider) {

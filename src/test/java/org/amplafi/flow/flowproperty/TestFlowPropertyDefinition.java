@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTestingUtils;
@@ -38,9 +40,12 @@ import org.amplafi.flow.TestFlowTransitions;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.impl.FlowStateImplementor;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
 
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
@@ -148,7 +153,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-
+        	@Override
+        	@Deprecated // provide better definition
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		// not checking so sure.
+        		return true;
+        	}
         });
         t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
@@ -510,6 +520,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
+        	@Override
+        	@Deprecated // provide better definition
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		// not checking so sure.
+        		return true;
+        	}
         };
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder().createNonconfigurableFlowPropertyDefinition(propertyName, Boolean.class, flowPropertyValueProvider).toFlowPropertyDefinition();
         FlowActivityImpl flowActivity0 = newFlowActivity();
@@ -545,17 +561,22 @@ public class TestFlowPropertyDefinition {
         assertTrue(propertyValue.booleanValue(), "flowState="+flowState+" propertyValue="+propertyValue);
     }
 
+    /**
+     * Test to make sure that flowPropertyValueProviders are correctly hooked up.
+     */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyUsageCreatesAndInitializes() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         FlowActivityImpl flowActivity0 = newFlowActivity();
-        String notAutoCreated = "notAutocreated";
-        String autoCreated = "autocreated";
+        final String notAutoCreated = "notAutocreated";
+        final String autoCreated = "autocreated";
         FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new FlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider,
                     FlowPropertyDefinition flowPropertyDefinition) {
+            	ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition));
+            	ApplicationIllegalArgumentException.valid(flowPropertyDefinition.isNamed(autoCreated), "but test should only get the ",autoCreated," property");
                 CharSequence value = "ME: "+flowPropertyDefinition.getName();
                 return (T) value;
             }
@@ -564,6 +585,10 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
+        	@Override
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		return flowPropertyDefinition.isNamed(autoCreated) || flowPropertyDefinition.isNamed(notAutoCreated);
+        	}
         };
         FlowPropertyDefinitionImpl flowNotAutoCreatedProperty = new FlowPropertyDefinitionImpl(notAutoCreated, Object.class).initAccess(flowLocal,io).
         initFlowPropertyValueProvider(flowPropertyValueProvider);
@@ -581,15 +606,7 @@ public class TestFlowPropertyDefinition {
         assertFalse(flowState.isPropertySet(notAutoCreated));
         assertEquals(flowState.getProperty(autoCreated), "ME: "+autoCreated);
     }
-    /**
-     * Test to make sure that a required property with a default value that is not altered is still visible in the
-     * exported map.
-     */
-    @Test(enabled=TEST_ENABLED)
-    public void testRequiredFlowPropertyUsageWithDefaultInExportedMap() {
-        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
 
-    }
     /**
      * There are tests around FlowTransitions in {@link TestFlowTransitions#testAvoidConflictsOnFlowTransitions()}
      */
@@ -668,13 +685,24 @@ public class TestFlowPropertyDefinition {
 
     }
 
+    /**
+     * Ensure that FlowPropertyValueProviders are only set on properties that they handle and only on properties that have no existing
+     * {@link FlowPropertyValueProvider}
+     */
     @Test(enabled=TEST_ENABLED)
     public void testDefaultProviderInitialization() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        final FlowPropertyDefinitionImpl noProvider = new FlowPropertyDefinitionImpl("noProvider", PropertyUsage.class);
         final FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE);
-        FixedFlowPropertyValueProvider<FlowPropertyProvider> originalProvider = (FixedFlowPropertyValueProvider<FlowPropertyProvider>) flowPropertyDefinition.getFlowPropertyValueProvider();
-        FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>(flowPropertyDefinition) {
+        FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinition.getFlowPropertyValueProvider();
+        AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>(flowPropertyDefinition) {
 
+        	@Override
+        	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+        		super.defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
+				Collection<FlowPropertyDefinitionImplementor> flowPropertyDefinitions = Arrays.<FlowPropertyDefinitionImplementor>asList(noProvider);
+				super.addPropertyDefinitions(flowPropertyProvider, flowPropertyDefinitions, additionalConfigurationParameters);
+        	}
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
                 throw new UnsupportedOperationException("should not be called.");
@@ -682,14 +710,88 @@ public class TestFlowPropertyDefinition {
         };
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
+        flowPropertyValueProvider.defineFlowPropertyDefinitions(flowActivity0);
         flowActivity0.addPropertyDefinitions(flowPropertyDefinition);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null , null);
         assertEquals(flowState.getProperty("hasdefault"), Boolean.TRUE);
-        FlowPropertyDefinition actual = flowState.getFlowPropertyDefinition("hasdefault");
-        assertTrue(actual.getFlowPropertyValueProvider() instanceof FixedFlowPropertyValueProvider);
-        assertSame(actual.getFlowPropertyValueProvider(), originalProvider);
+        FlowPropertyDefinition actualFixed = flowState.getFlowPropertyDefinition("hasdefault");
+        assertTrue(actualFixed.getFlowPropertyValueProvider() instanceof FixedFlowPropertyValueProvider);
+        assertSame(actualFixed.getFlowPropertyValueProvider(), originalProvider);
+
+        FlowPropertyDefinition actualNoProvider = flowState.getFlowPropertyDefinition("noProvider");
+        assertNull(actualNoProvider.getFlowPropertyValueProvider());
+        assertEquals(actualNoProvider.getDataClass(), PropertyUsage.class);
+    }
+
+    /**
+     * Make sure that a {@link FlowPropertyValueProvider} that cannot handle a FlowPropertyDefinition is not set as its default
+     * Make sure the exception is thrown.
+     */
+    @Test(enabled=TEST_ENABLED, expectedExceptions= {ApplicationIllegalArgumentException.class})
+    public void testPreventAddingWrongFlowPropertyValueProvider() {
+        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new FlowPropertyValueProvider<FlowPropertyProvider>() {
+
+            @Override
+            public <T> T get(FlowPropertyProvider flowPropertyProvider,  FlowPropertyDefinition flowPropertyDefinition) {
+            	throw ApplicationIllegalArgumentException.fail();
+            }
+
+            @Override
+            public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+                return FlowPropertyProvider.class;
+            }
+        	@Override
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		return false;
+        	}
+        };
+        new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("foo", Object.class).initFlowPropertyValueProvider(flowPropertyValueProvider);
+    }
+
+    /**
+     * Create a standard property and see if that standard property is access and used when the property comes up unexpectedly.
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testStandardFlowPropertyExtensions() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        flowTestingUtils.getFlowDefinitionsManager().addStandardPropertyDefinition("user", UserObject.class);
+        String propertyName = "propertyName";
+
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);
+        flowLocalProperty.initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProviderWithValues>() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public <T> T get(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+                // return a non-String value to make sure initialization does not expect a string.
+            	UserObject userObject = flowPropertyProvider.getProperty("user");
+            	assertNotNull(userObject);
+            	assertEquals(userObject.i, 1);
+                return (T) Boolean.TRUE;
+            }
+
+            @Override
+            public Class<FlowPropertyProviderWithValues> getFlowPropertyProviderClass() {
+                return FlowPropertyProviderWithValues.class;
+            }
+        	@Override
+        	@Deprecated // provide better definition
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		// not checking so sure.
+        		return true;
+        	}
+        });
+        FlowActivityImpl flowActivity0 = newFlowActivity();
+        flowActivity0.setFlowPropertyProviderName("activity0");
+        flowActivity0.addPropertyDefinitions(flowLocalProperty);
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
+        FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
+        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, false, null, null);
+        assertNotNull(flowState);
+        flowState.setProperty("user", new UserObject(1));
+        Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
     }
     /**
      * Test to make sure property initialization is forced and that the initialization code does not expect a String.
@@ -713,6 +815,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
+        	@Override
+        	@Deprecated // provide better definition
+        	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        		// not checking so sure.
+        		return true;
+        	}
         });
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
@@ -772,6 +880,15 @@ public class TestFlowPropertyDefinition {
         public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
             throw new UnsupportedOperationException();
         }
+
+    }
+    private static class UserObject {
+
+    	int i;
+
+		public UserObject(int i) {
+			this.i = i;
+		}
 
     }
 

@@ -70,4 +70,8 @@ public class FlowPropertyValueProviderCallableImpl<FPP extends FlowPropertyProvi
     public Class<FPP> getFlowPropertyProviderClass() {
         return (Class<FPP>) flowPropertyProvider.getClass();
     }
+	@Override
+	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+		return this.getFlowPropertyValueProvider().isHandling(flowPropertyDefinition);
+	}
 }

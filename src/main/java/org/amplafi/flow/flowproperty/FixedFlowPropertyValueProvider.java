@@ -32,7 +32,7 @@ import org.apache.commons.lang.ObjectUtils;
  * @param <FA>
  *
  */
-public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> extends AbstractFlowPropertyValueProvider<FA> {
+public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
     private final Object defaultObject;
     private static Object NULL = new Object() {
@@ -45,15 +45,13 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
     /**
      * Used when want to force a {@link FlowPropertyDefinition} to not have the default {@link FlowPropertyValueProvider} assignments happen.
      */
-    public static FixedFlowPropertyValueProvider<FlowPropertyProvider> NULL_INSTANCE = new FixedFlowPropertyValueProvider<FlowPropertyProvider>(NULL);
+    public static FixedFlowPropertyValueProvider NULL_INSTANCE = new FixedFlowPropertyValueProvider(NULL);
     /**
      * key off of FlowPropertyDefinition so that different FPD can translate defaultObject differently
      */
     private ConcurrentMap<FlowPropertyDefinition, Object> map = new ConcurrentHashMap<FlowPropertyDefinition, Object>();
 
-    @SuppressWarnings("unchecked")
     public FixedFlowPropertyValueProvider(Object defaultObject) {
-        super((Class<FA>)FlowPropertyProvider.class);
         ApplicationIllegalArgumentException.notNull(defaultObject, "Fixed value cannot be null. If explicit null is really intended use FixedFlowPropertyValueProvider.NULL_INSTANCE");
         this.defaultObject = defaultObject;
     }
@@ -68,7 +66,7 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
 
     @Override
     @SuppressWarnings({  "unchecked" })
-    public <T> T get(FA flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+    public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         T value;
         if ( !map.containsKey(flowPropertyDefinition) ) {
             convertable(flowPropertyDefinition);
@@ -103,8 +101,8 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
 
     @Override
     public boolean equals(Object o) {
-        if ( o instanceof FixedFlowPropertyValueProvider<?>) {
-            return ObjectUtils.equals(this.getDefaultObject(), ((FixedFlowPropertyValueProvider<?>)o).getDefaultObject());
+        if ( o instanceof FixedFlowPropertyValueProvider) {
+            return ObjectUtils.equals(this.getDefaultObject(), ((FixedFlowPropertyValueProvider)o).getDefaultObject());
         } else {
             return ObjectUtils.equals(this.getDefaultObject(), o);
         }
@@ -126,11 +124,11 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
      * @param flowPropertyDefinition
      * @return
      */
-    public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider<FPP> newFixedFlowPropertyValueProvider(Object defaultObject,
+    public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(Object defaultObject,
         FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
-        FixedFlowPropertyValueProvider<FPP> fixedFlowPropertyValueProvider = null;
+        FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = null;
         if ( defaultObject != null ) {
-            fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider<FPP>(defaultObject);
+            fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider(defaultObject);
             fixedFlowPropertyValueProvider.convertable(flowPropertyDefinition);
             if ( testAndConfigFlowPropertyDefinition ) {
                 DataClassDefinition dataClassDefinition = flowPropertyDefinition.getDataClassDefinition();
@@ -145,5 +143,13 @@ public class FixedFlowPropertyValueProvider<FA extends FlowPropertyProvider> ext
             }
         }
         return fixedFlowPropertyValueProvider;
+    }
+    @Override
+    public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
+        return FlowPropertyProvider.class;
+    }
+    @Override
+    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        return this.getDefaultObject() == null || flowPropertyDefinition.isAssignableFrom(this.getSuggestedClass());
     }
 }

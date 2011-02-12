@@ -40,7 +40,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
@@ -503,16 +503,15 @@ public class BaseFlowManagement implements FlowManagement {
         }
         // something to be said for making it requestFlowLocal - because this would give flash persistence for free.
         // but using global allows a property to be set that is really for the next flow to be run.
-        FlowPropertyDefinitionImpl propertyDefinition = new FlowPropertyDefinitionImpl(key).initAccess(PropertyScope.global, PropertyUsage.io);
-        if (expectedClass != null && !CharSequence.class.isAssignableFrom(expectedClass) ) {
-            // auto define property
-            // TODO save the definition when the flowState is persisted.
-            propertyDefinition.setDataClass(expectedClass);
-            if ( sampleValue != null) {
-                // actually going to be setting this property
-                getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+"(expected class="+expected+") might want to check situation. FlowState="+flowPropertyProvider );
-                flowPropertyProvider.addPropertyDefinitions(propertyDefinition);
-            }
+        // Note: cannot use flowLocal scope because this definition may not be preserved in the flow and then the export would not properly happen.
+        // Note: because of read then write possibility then we need to assume that property will be set even if it is not now.
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = getFlowManager().getFlowPropertyDefinitionBuilder(key, expectedClass)
+            .initAccess(PropertyScope.global, PropertyUsage.io);
+        FlowPropertyDefinitionImplementor propertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
+        if ( sampleValue != null) {
+            // actually going to be setting this property
+            getLog().warn("FlowState: Creating a dynamic FlowDefinition for key="+key+"(expected class="+expectedClass+") might want to check situation. FlowState="+flowPropertyProvider );
+            flowPropertyProvider.addPropertyDefinitions(propertyDefinition);
         }
         // HACK : don't think this should be a 'toString()' maybe flowProvidername ?
         getFlowTranslatorResolver().resolve(flowPropertyProvider.toString(), propertyDefinition);

@@ -34,6 +34,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -131,13 +132,15 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSREFERRING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
-            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize),
+            // HACK
+            FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION.clone(),
 
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
+            // HACK
             CancelTextFlowPropertyValueProvider.CANCEL_TEXT.clone().initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE)
         );
 //        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this);

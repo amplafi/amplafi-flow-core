@@ -15,6 +15,7 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.definitions.DefinitionSource;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
 
 /**
@@ -32,4 +33,12 @@ public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor
 
     void addDefinitions(DefinitionSource... definitionSource);
 
+    FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
+    /**
+     *
+     * @param propertyName
+     * @param dataClass
+     * @throws IllegalArgumentException if there is a definition for propertyName already
+     */
+    void addStandardPropertyDefinition(String propertyName, Class<?> dataClass) throws IllegalArgumentException;
 }

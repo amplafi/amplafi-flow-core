@@ -15,14 +15,12 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
-import static com.sworddance.util.CUtilities.*;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
-import org.amplafi.flow.FlowPropertyValueProvider;
+
+import com.sworddance.util.NotNullIterator;
 
 /**
  * support methods for {@link FlowPropertyDefinitionProvider} implementations.
@@ -40,8 +38,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     protected void setFlowPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
         this.flowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
-        if ( isNotEmpty(flowPropertyDefinitions)) {
-            Collections.addAll(this.flowPropertyDefinitions, flowPropertyDefinitions);
+        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
+        	flowPropertyDefinitionImplementor.setTemplateFlowPropertyDefinition();
+        	this.flowPropertyDefinitions.add(flowPropertyDefinitionImplementor);
         }
     }
     /**
@@ -60,6 +59,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         if ( this.flowPropertyDefinitions != null) {
             List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
             for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
+            	// TODO: cloning aggressively will not be necessary when FlowPropertyDefinitionImplementor does a better job of being immutable.
                 FlowPropertyDefinitionImplementor cloned = flowPropertyDefinition.clone();
                 clonedFlowPropertyDefinitions.add(cloned);
             }
@@ -71,11 +71,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      * @param flowPropertyProvider
      * @param flowPropertyDefinitions
      */
-    @SuppressWarnings({"hiding"})
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionImplementor>flowPropertyDefinitions, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
-            initPropertyDefinition(flowPropertyProvider, flowPropertyDefinition, additionalConfigurationParameters);
-            flowPropertyProvider.addPropertyDefinitions(flowPropertyDefinition);
+        	FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = initPropertyDefinition(flowPropertyProvider, flowPropertyDefinition, additionalConfigurationParameters);
+            flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
         }
     }
     /**
@@ -84,35 +83,23 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      * @param flowPropertyDefinition will be modified (make sure not modifying the master definition)
      * @param additionalConfigurationParameters
      */
-    @SuppressWarnings({"unchecked"})
-    protected void initPropertyDefinition(
+    protected FlowPropertyDefinitionImplementor initPropertyDefinition(
         FlowPropertyProviderImplementor flowPropertyProvider,
-        FlowPropertyDefinitionImplementor flowPropertyDefinition, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        new FlowPropertyDefinitionBuilder(flowPropertyDefinition).applyFlowPropertyExpectations(additionalConfigurationParameters)
+        final FlowPropertyDefinitionImplementor flowPropertyDefinition, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+    	FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinition)
+        	.applyFlowPropertyExpectations(additionalConfigurationParameters)
         	.applyDefaultProviders(flowPropertyProvider, this);
-        if ( !flowPropertyDefinition.isDefaultAvailable() && this instanceof FlowPropertyValueProvider) {
-            flowPropertyDefinition.initFlowPropertyValueProvider((FlowPropertyValueProvider)this);
-        }
+    	FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
         // TODO : also create a "read-only" v. writeable property mechanism.
-        if ( !flowPropertyDefinition.isCacheOnly()) {
+        if ( !returnedFlowPropertyDefinition.isCacheOnly()) {
         	// only set persisters on non-cache-only objects.
-            FlowPropertyValuePersister<?> flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
-            if ( flowPropertyValuePersister == null) {
-            	// set default persister
-                if ( flowPropertyProvider instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) flowPropertyProvider;
-                } else if ( this instanceof FlowPropertyValuePersister) {
-                    flowPropertyValuePersister = (FlowPropertyValuePersister<?>) this;
-                }
-                flowPropertyDefinition.initFlowPropertyValuePersister(flowPropertyValuePersister);
-            } else if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider && flowPropertyValuePersister != this){
+            FlowPropertyValuePersister<?> flowPropertyValuePersister = returnedFlowPropertyDefinition.getFlowPropertyValuePersister();
+            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider && flowPropertyValuePersister != this){
                 // TODO: note: infinite loop possibilities here if 2 different objects have mutually dependent FPDs
                 ((FlowPropertyDefinitionProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
             }
         }
-        if ( this instanceof FlowPropertyValueChangeListener ) {
-            flowPropertyDefinition.initFlowPropertyValueChangeListener((FlowPropertyValueChangeListener)this);
-        }
+        return returnedFlowPropertyDefinition;
     }
 
     /**
