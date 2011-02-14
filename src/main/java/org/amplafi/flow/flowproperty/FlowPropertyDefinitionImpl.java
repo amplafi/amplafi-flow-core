@@ -942,6 +942,30 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public Set<String> getPropertiesDependentOn() {
         return propertiesDependentOn;
     }
+    /**
+     * Used in resource code
+     * @param propertiesDependentOn
+     * @return
+     */
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<String> propertiesDependentOn) {
+        if ( isNotEmpty(propertiesDependentOn)) {
+            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
+        }
+        return this;
+    }
+    /**
+     * Used in resource code
+     * @param propertiesDependentOn
+     * @return
+     */
+    @SuppressWarnings("hiding")
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(String... propertiesDependentOn) {
+        if ( isNotEmpty(propertiesDependentOn)) {
+            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
+        }
+        return this;
+    }
 
     public boolean isDynamic() {
         if (this.flowPropertyValueChangeListeners != null) {
