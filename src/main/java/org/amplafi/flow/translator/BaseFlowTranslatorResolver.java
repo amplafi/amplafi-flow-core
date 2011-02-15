@@ -55,12 +55,14 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      * These are {@link org.amplafi.flow.FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
      * These should not be altered.
      */
+    @Deprecated // TODO see FlowDefinitionsManager
     private Map<String, FlowPropertyDefinition> coreFlowPropertyDefinitions;
     /**
      * These are the definitions that are standard across many different flowActivities.
      * Rather than be defined in each FlowActivity (which results in duplication and may result in
      * differing definitions), these standard definitions can be defined and injected.
      */
+    @Deprecated // TODO see FlowDefinitionsManager
     private Map<String, FlowPropertyDefinition> commonFlowPropertyDefinitions;
 
     public BaseFlowTranslatorResolver() {
@@ -76,48 +78,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         for(FlowTranslator<?> flowTranslator: getFlowTranslators() ) {
             addFlowTranslator(flowTranslator);
         }
-        initCoreFlowPropertyDefinitions();
-        initCoreFlowActivityFlowPropertyDefinitions();
-    }
-    /**
-     * TODO -- move to a {@link FlowPropertyProvider} implementation
-     */
-    protected void initCoreFlowPropertyDefinitions() {
-        // too many problems at this point #2192 #2179
-//        this.putCoreFlowPropertyDefinitions(
-//            new FlowPropertyDefinition(FSTITLE_TEXT).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSCANCEL_TEXT).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSNO_CANCEL, boolean.class).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSFINISH_TEXT).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initPropertyUsage(flowLocal)
-//            .initFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<String, FlowTransition>(
-//                    new FlowTransition(null, DEFAULT_FSFINISH_TEXT, TransitionType.normal, null))),
-//            // io -- for now because need to communicate the next page to be displayed
-//            new FlowPropertyDefinition(FSPAGE_NAME).initPropertyUsage(io),
-//            new FlowPropertyDefinition(FSAFTER_PAGE).initPropertyUsage(io),
-//            new FlowPropertyDefinition(FSDEFAULT_AFTER_PAGE).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSDEFAULT_AFTER_CANCEL_PAGE).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSREDIRECT_URL, URI.class).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSACTIVATABLE, boolean.class).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSAUTO_COMPLETE, boolean.class).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSALT_FINISHED).initPropertyUsage(flowLocal),
-//            new FlowPropertyDefinition(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
-//            new FlowPropertyDefinition(FSNEXT_FLOW).initPropertyUsage(io),
-//            new FlowPropertyDefinition(FSIMMEDIATE_SAVE, boolean.class).initPropertyUsage(flowLocal)
-//            );
-    }
-    /**
-     * TODO -- move to a {@link FlowPropertyProvider} implementation
-     */
-    protected void initCoreFlowActivityFlowPropertyDefinitions() {
-        // too many problems at this point #2192 #2179
-//        this.putCoreFlowPropertyDefinitions(
-//            new FlowPropertyDefinition(FATITLE_TEXT).initPropertyUsage(activityLocal),
-//            new FlowPropertyDefinition(FAUPDATE_TEXT).initPropertyUsage(activityLocal),
-//            new FlowPropertyDefinition(FANEXT_TEXT).initPropertyUsage(activityLocal),
-//            new FlowPropertyDefinition(FAPREV_TEXT).initPropertyUsage(activityLocal)
-//        );
     }
     /**
      * TODO -- move to a {@link FlowPropertyProvider} implementation

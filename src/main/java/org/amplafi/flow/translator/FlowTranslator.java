@@ -18,6 +18,7 @@ import java.util.List;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
@@ -29,6 +30,7 @@ import org.amplafi.json.JsonRenderer;
  *
  * Sometimes it is desired to have a generic FlowTranslator that can customize at runtime for the specific class. Such FlowTranslator should extends {@link InstanceSpecificFlowTranslator}.
  *
+ * FlowTranslators are registered with the {@link FlowTranslatorResolver}
  * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
  *
  * FlowTranslators have db transactions available.

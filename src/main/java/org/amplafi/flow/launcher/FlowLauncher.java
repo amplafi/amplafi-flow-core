@@ -26,6 +26,12 @@ import org.amplafi.flow.FlowState;
  * FlowLaunchers are used when it is desired to encapsulate the state surrounding starting/continuing a new flow
  * before it is known if the starting will actually happen.
  *
+ * TODO:
+ * move FlowLauncher to the flowclient code because the concept of launching a flow makes sense as a flow-client operation.
+ * Not all methods may be able to be moved. Most should be able to be moved.
+ *
+ * There may need to be a server-side extension of FlowLauncher ( to handle fact that FlowState is still server-sidey )
+ *
  * @author Patrick Moore
  */
 public interface FlowLauncher extends Callable<FlowState> {
