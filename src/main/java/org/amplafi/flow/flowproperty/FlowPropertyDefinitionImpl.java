@@ -691,21 +691,22 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition) {
-        return getDataClassDefinition().isMergable(((FlowPropertyDefinitionImpl)flowPropertyDefinition).getDataClassDefinition());
+        return getDataClassDefinition().isMergable(((FlowPropertyDefinitionImplementor)flowPropertyDefinition).getDataClassDefinition());
     }
 
     public boolean isMergeable(FlowPropertyDefinition property) {
-        if (!(property instanceof FlowPropertyDefinitionImpl)) {
+        if (!(property instanceof FlowPropertyDefinitionImplementor)) {
             return false;
         }
-        FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
+        FlowPropertyDefinitionImplementor source = (FlowPropertyDefinitionImplementor)property;
         boolean result = isDataClassMergeable(source);
         if ( result ) {
-            result &=this.flowPropertyValueProvider == null || source.flowPropertyValueProvider == null || this.flowPropertyValueProvider.equals(source.getFlowPropertyValueProvider());
+            result &=this.flowPropertyValueProvider == null || source.getFlowPropertyValueProvider() == null || this.flowPropertyValueProvider.equals(source.getFlowPropertyValueProvider());
             if ( result ) {
                 result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
                 result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()
                     || getPropertyUsage().isChangeableTo(property.getPropertyUsage()) || property.getPropertyUsage().isChangeableTo(getPropertyUsage());
+                // TODO: PropertySecurity
                 if ( !result) {
 //                    System.out.println("scope clash");
                 }
@@ -719,9 +720,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     /**
-     * For any fields that are not already set in this
-     * {@link FlowPropertyDefinitionImpl}, this use previous to supply any missing
-     * values.
+     * Copy from property any fields not already set.
      *
      * TODO: Need to check {@link PropertyScope}!! How to handle activityLocal/flowLocals???
      *
