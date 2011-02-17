@@ -20,15 +20,15 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
-
+import static com.sworddance.util.CUtilities.*;
 /**
  * @author patmoore
- * @param <T>
+ * @param <FPP>
  *
  */
-public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> implements FlowPropertyProvider {
+public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider> implements FlowPropertyProvider {
 
-    private T definition;
+    private FPP definition;
 
     private Map<String, FlowPropertyDefinition> propertyDefinitions;
 
@@ -41,7 +41,7 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
     /**
      * @param definition
      */
-    public BaseFlowPropertyProvider(T definition) {
+    public BaseFlowPropertyProvider(FPP definition) {
         this.definition = definition;
     }
     public BaseFlowPropertyProvider(String flowPropertyProviderName) {
@@ -51,11 +51,11 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         return this.definition != null;
     }
 
-    protected T getDefinition() {
+    protected FPP getDefinition() {
         return definition;
     }
 
-    protected void setDefinition(T definition) {
+    protected void setDefinition(FPP definition) {
         this.definition = definition;
     }
 
@@ -63,12 +63,57 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         this.propertyDefinitions = properties;
     }
 
+    @SuppressWarnings("unchecked")
     public <FD extends FlowPropertyDefinition> Map<String, FD> getPropertyDefinitions() {
         if ( propertyDefinitions == null && this.isInstance() ) {
             // as is usually the case for instance flow activities.
             return this.definition.getPropertyDefinitions();
         }
         return (Map<String, FD>) propertyDefinitions;
+    }
+    /**
+     * Look for the {@link FlowPropertyDefinition} in just this FlowPropertyProvider's local property definitions map or its definition.
+     * Do not follow the chain of other FlowPropertyProviders.
+     * @param flowPropertyDefinitionName
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public final <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String flowPropertyDefinitionName) {
+        return (FPD) getFlowPropertyDefinition(flowPropertyDefinitionName, true);
+    }
+    /**
+     *
+     * @param <FPD>
+     * @param flowPropertyDefinitionName
+     * @param followChain in future will have the chain following currently only in FlowActivity. But want to have this extra argument so the
+     * some FlowActivity code can be pulled up.
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String flowPropertyDefinitionName, boolean followChain) {
+        Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
+        return (FPD)( propDefs == null? null : propDefs.get(flowPropertyDefinitionName));
+    }
+    @SuppressWarnings("unchecked")
+    protected <FPD extends FlowPropertyDefinition> FPD putLocalPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition) {
+        if ( this.getPropertyDefinitions() == null ) {
+            this.setPropertyDefinitions(new LinkedHashMap<String, FlowPropertyDefinition>());
+            if ( isInstance()) {
+                // adding instance specific properties so copy the definition's FlowPropertyDefinitions for modification.
+                if ( isNotEmpty(this.definition.getPropertyDefinitions())) {
+                    this.getPropertyDefinitions().putAll(this.definition.getPropertyDefinitions());
+                }
+            }
+        }
+        return (FPD) getPropertyDefinitions().put(flowPropertyDefinition.getName(), flowPropertyDefinition);
+    }
+    @SuppressWarnings("unchecked")
+    protected <FPD extends FlowPropertyDefinition> FPD removeLocalPropertyDefinition(String flowPropertyDefinitionName) {
+        if ( getPropertyDefinitions() != null ) {
+            return (FPD) getPropertyDefinitions().remove(flowPropertyDefinitionName);
+        } else {
+            return null;
+        }
     }
     /**
      * method used by hivemind to add in properties
@@ -79,24 +124,14 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
         if ( flowPropertyDefinition == null ) {
             return;
         }
-        if ( this.propertyDefinitions == null ) {
-            if ( isInstance()) {
-                this.propertyDefinitions =
-                    new LinkedHashMap<String, FlowPropertyDefinition>();
-                if ( this.definition.getPropertyDefinitions() != null) {
-                    this.propertyDefinitions.putAll(this.definition.getPropertyDefinitions());
-                }
-            } else {
-                this.propertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinition>();
-            }
-        }
-        FlowPropertyDefinition current = this.propertyDefinitions.get(flowPropertyDefinition.getName());
+
+        FlowPropertyDefinition current = this.getFlowPropertyDefinition(flowPropertyDefinition.getName(), false);
         if ( current != null ) {
             if ( !flowPropertyDefinition.merge(current) ) {
                 throw new ApplicationIllegalArgumentException(this,".",flowPropertyDefinition,": cannot be merged with ",current);
             }
         }
-        this.propertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
+        putLocalPropertyDefinition(flowPropertyDefinition);
     }
     public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
         if ( flowPropertyDefinitions != null ) {
@@ -112,11 +147,7 @@ public abstract class BaseFlowPropertyProvider<T extends FlowPropertyProvider> i
             }
         }
     }
-    @SuppressWarnings("unchecked")
-    public <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String key) {
-        Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
-        return (FPD)( propDefs == null? null : propDefs.get(key));
-    }
+
     public boolean isFlowPropertyProviderNameSet() {
         return this.flowPropertyProviderName != null;
     }

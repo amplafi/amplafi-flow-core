@@ -17,7 +17,6 @@ package org.amplafi.flow.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -540,14 +539,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     /**
-     * @see org.amplafi.flow.FlowActivity#getFlowPropertyDefinition(java.lang.String)
+     * TODO: pull up to BaseFlowPropertyProvider
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
-        T propertyDefinition = (T) getLocalPropertyDefinition(key);
-        if (propertyDefinition == null) {
-            propertyDefinition = (T) getFlowPropertyDefinitionDefinedInFlow(key);
+    protected <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String flowPropertyDefinitionName, boolean followChain) {
+        FPD propertyDefinition = (FPD) super.getFlowPropertyDefinition(flowPropertyDefinitionName, false /*for now*/);
+        if (propertyDefinition == null && followChain) {
+            propertyDefinition = (FPD) getFlowPropertyDefinitionDefinedInFlow(flowPropertyDefinitionName);
         }
         return propertyDefinition;
     }
@@ -565,28 +564,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return flowPropertyDefinition;
     }
 
-    /**
-     * Look for the {@link FlowPropertyDefinition} in just this FlowActivity's local property definitions.
-     * @param key
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private <T extends FlowPropertyDefinition> T getLocalPropertyDefinition(String key) {
-        Map<String, FlowPropertyDefinition> propDefs = this.getPropertyDefinitions();
-        T def = null;
-        if (propDefs != null) {
-            def = (T) propDefs.get(key);
-        }
-        return def;
-    }
-
     @Override
     public void addPropertyDefinition(FlowPropertyDefinition definition) {
-        FlowPropertyDefinition currentLocal;
-        if (getPropertyDefinitions() == null) {
-            setPropertyDefinitions(new LinkedHashMap<String, FlowPropertyDefinition>());
-            currentLocal = null;
-        } else if ( (currentLocal = getLocalPropertyDefinition(definition.getName())) != null) {
+        FlowPropertyDefinition currentLocal = getFlowPropertyDefinition(definition.getName(), false);
+        if ( currentLocal != null) {
             // check against the FlowPropertyDefinition
             if ( !definition.isDataClassMergeable(currentLocal)) {
                 getLog().warn(this.getFlowPropertyProviderFullName()+": has new (overriding) definition '"+definition+
@@ -598,7 +579,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                                         + "'(overriding) with the same data type but different scope or initializations that conflicts with previous definition " + currentLocal +
                                                 ". Previous definition discarded.");
             }
-            getPropertyDefinitions().remove(currentLocal.getName());
+            removeLocalPropertyDefinition(currentLocal.getName());
         }
         if (!definition.isLocal()) {
             // this property may be from the Flow definition itself.
@@ -626,7 +607,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                 pushPropertyDefinitionToFlow((FlowPropertyDefinitionImplementor)definition);
             }
         }
-        getPropertyDefinitions().put(definition.getName(), definition);
+        putLocalPropertyDefinition(definition);
     }
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinitionImplementor definition) {
@@ -953,7 +934,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
      */
     @SuppressWarnings("unchecked")
     protected void handleFlowPropertyValueProvider(String key, FlowPropertyValueProvider flowPropertyValueProvider) {
-        FlowPropertyDefinitionImplementor flowPropertyDefinition = this.getLocalPropertyDefinition(key);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = this.getFlowPropertyDefinition(key, false);
         if ( flowPropertyDefinition != null) {
             if ( flowPropertyValueProvider instanceof ChainedFlowPropertyValueProvider) {
                 ((ChainedFlowPropertyValueProvider)flowPropertyValueProvider).setPrevious(flowPropertyDefinition.getFlowPropertyValueProvider());
