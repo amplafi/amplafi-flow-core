@@ -66,12 +66,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
      */
     FlowTranslator<?> getTranslator();
 
-    /**
-     * @return if property is local to the flow activity
-     * @see org.amplafi.flow.flowproperty.PropertyScope#activityLocal
-     */
-    boolean isLocal();
-
     boolean isMergeable(FlowPropertyDefinition source);
     boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition);
 
