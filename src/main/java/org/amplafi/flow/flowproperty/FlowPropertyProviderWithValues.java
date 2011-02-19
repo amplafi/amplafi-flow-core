@@ -14,6 +14,17 @@
 package org.amplafi.flow.flowproperty;
 
 /**
+ * FlowPropertyProviderWithValues are called when external code desires to know the value of a property.
+ *
+ * NOTE: it is tempting to have this interface extend
+ * {@link org.amplafi.flow.FlowPropertyValueProvider<FlowPropertyProviderWithValues>} because there is some method similarity.
+ * However, FlowPropertyProviderWithValues are called when external code desires to know a property's value.
+ *
+ * This is at a higher level in the call stack. Having FlowPropertyProviderWithValues
+ * extend FlowPropertyValueProvider would confuse developers about exactly when a FlowPropertyProviderWithValues implementor is being called.
+ *
+ * FlowPropertyProviderWithValues are typically instantiated per-session and are stateful.
+ *
  * @author patmoore
  *
  */
