@@ -915,9 +915,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     public FlowPropertyDefinitionImpl initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         FlowPropertyDefinitionImpl flowPropertyDefinition = this.cloneIfTemplateAndNeedToAdd(this.flowPropertyValueChangeListeners, flowPropertyValueChangeListener);
-        if (this != flowPropertyDefinition || !templateFlowPropertyDefinition) {
-            flowPropertyDefinition.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
-        }
+        flowPropertyDefinition.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
         return flowPropertyDefinition;
     }
     public FlowPropertyDefinitionImpl addFlowPropertyValueChangeListeners(Collection<FlowPropertyValueChangeListener> additionalFlowPropertyValueChangeListeners) {
