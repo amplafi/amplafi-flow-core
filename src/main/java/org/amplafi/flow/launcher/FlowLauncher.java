@@ -68,6 +68,7 @@ public interface FlowLauncher extends Callable<FlowState> {
      * @return the flow type this {@link FlowLauncher launcher}.
      */
     String getFlowTypeName();
+    void setFlowTypeName(String flowTypeName);
 
     /**
      * @return map of initial parameters that will be set to the {@link FlowState} of the {@link org.amplafi.flow.Flow} to launch.

@@ -38,7 +38,7 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
     @Override
     public FlowState call() {
         FlowState currentFlowState = getFlowState();
-        currentFlowState.morphFlow(getFlowTypeName(), getValuesMap());
+        currentFlowState.morphFlow(getFlowTypeName(), getInitialFlowState());
         return currentFlowState;
     }
 }

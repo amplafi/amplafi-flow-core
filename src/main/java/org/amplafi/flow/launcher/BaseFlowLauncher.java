@@ -15,6 +15,7 @@
 package org.amplafi.flow.launcher;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,7 +42,7 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     Serializable{
     private transient FlowManagement flowManagement;
     private ConcurrentMap<String, String> valuesMap = new ConcurrentHashMap<String, String>();
-    protected String flowTypeName;
+    private String flowTypeName;
     /**
      * Used for Listable items.
      */
@@ -60,9 +61,7 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
      */
     public BaseFlowLauncher(String flowTypeName, Map<String, String> valuesMap, Serializable keyExpression) {
         this.flowTypeName = flowTypeName;
-        if ( valuesMap != null) {
-            this.valuesMap.putAll(valuesMap);
-        }
+        this.putAll(valuesMap);
         this.keyExpression = keyExpression;
     }
     /**
@@ -83,7 +82,18 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     public void setFlowManagement(FlowManagement sessionFlowManagement) {
         this.flowManagement = sessionFlowManagement;
     }
+    /**
+     * No check is done to allow for auto wiring by DI frameworks
+     * @return
+     */
     public FlowManagement getFlowManagement() {
+        return flowManagement;
+    }
+    /**
+     * Should be used by subclasses so that check happens
+     * @return
+     */
+    protected FlowManagement getFlowManagementWithCheck() {
         ApplicationNullPointerException.notNull(flowManagement,"no flowmanagement object supplied!");
         return flowManagement;
     }
@@ -104,8 +114,9 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     }
     @Override
     public Map<String, String> getInitialFlowState() {
-        return getValuesMap();
+        return Collections.unmodifiableMap(getValuesMap());
     }
+
     /**
      * @see org.amplafi.flow.launcher.FlowLauncher#put(java.lang.String, java.lang.String)
      */
@@ -122,9 +133,10 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     }
 
     public void putAll(Map<? extends String, ? extends String> map) {
-        this.getValuesMap().putAll(map);
+        if ( CUtilities.isNotEmpty(map)) {
+            this.getValuesMap().putAll(map);
+        }
     }
-
     public String get(Object key) {
         return this.getValuesMap().get(key);
     }
@@ -134,6 +146,13 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     @Override
     public String getFlowTypeName() {
         return flowTypeName;
+    }
+    /**
+     * Used when building a FlowLauncher and the exact flow to launch is determined by a user selection.
+     * @param flowTypeName
+     */
+    public void setFlowTypeName(String flowTypeName) {
+        this.flowTypeName = flowTypeName;
     }
     public void setLinkTitle(String linkTitle) {
         this.put(FSLINK_TEXT, linkTitle);
@@ -147,7 +166,7 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
                 linkTitle = flowPropertyProvider.getProperty(FSLINK_TEXT, String.class);
             }
             if ( isBlank(linkTitle) && this.flowManagement !=null) {
-                Flow flow = getFlowManagement().getFlowDefinition(flowTypeName);
+                Flow flow = getFlowManagementWithCheck().getFlowDefinition(getFlowTypeName());
                 linkTitle = flow.getLinkTitle();
             }
         }
@@ -160,17 +179,17 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     }
     @SuppressWarnings("unchecked")
     protected <FS extends FlowState> FS getFlowState() {
-        return (FS) getFlowManagement().getFlowState(getExistingFlowStateLookupKey());
+        return (FS) getFlowManagementWithCheck().getFlowState(getExistingFlowStateLookupKey());
     }
     protected String getExistingFlowStateLookupKey() {
         return this.existingFlowStateLookupKey;
     }
 
     public Object getKeyExpression() {
-        return this.keyExpression;
+        return this.keyExpression == null?this.getFlowTypeName():this.keyExpression;
     }
 
     public boolean hasKey(Object key) {
-        return ObjectUtils.equals(this.keyExpression, key);
+        return ObjectUtils.equals(this.getKeyExpression(), key);
     }
 }

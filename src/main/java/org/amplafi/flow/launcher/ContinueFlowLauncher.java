@@ -45,7 +45,7 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
      * @return the flow that was continued
      */
     public FlowState call() {
-        return getFlowManagement().continueFlowState(getExistingFlowStateLookupKey(), true, this.getValuesMap());
+        return getFlowManagementWithCheck().continueFlowState(getExistingFlowStateLookupKey(), true, this.getInitialFlowState());
     }
     @Override
     public String getLinkTitle() {
