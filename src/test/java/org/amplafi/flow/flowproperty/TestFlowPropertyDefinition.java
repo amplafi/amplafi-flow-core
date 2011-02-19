@@ -308,7 +308,7 @@ public class TestFlowPropertyDefinition {
                 for(PropertyUsage propertyUsage: PropertyUsage.values()) {
                     String name= propertyScope+"_"+propertyUsage;
                     String externalInitial = "ext_"+name;
-                    FlowPropertyDefinition flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initAccess(propertyScope, propertyUsage);
+                    FlowPropertyDefinitionImplementor flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initAccess(propertyScope, propertyUsage);
                     flowActivity.addPropertyDefinitions(flowPropertyDefinition);
                     initialFlowState.put(name, externalInitial);
                 }
@@ -366,7 +366,7 @@ public class TestFlowPropertyDefinition {
     public void testExportingProperties(PropertyUsage propertyUsage, PropertyScope propertyScope) {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String key = "testProp";
-        FlowPropertyDefinition flowPropertyDefinition = new FlowPropertyDefinitionImpl(key, boolean.class).initAccess(propertyScope, propertyUsage);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = new FlowPropertyDefinitionImpl(key, boolean.class).initAccess(propertyScope, propertyUsage);
         FlowActivityImpl flowActivity =newFlowActivity();
         flowActivity.addPropertyDefinitions(flowPropertyDefinition);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity);
