@@ -22,22 +22,37 @@ import java.util.Map;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.NotNullIterator;
 
-
-import static org.apache.commons.collections.CollectionUtils.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static com.sworddance.util.CUtilities.*;
 
 /**
  * {@link FlowLauncher} that starts a new {@link FlowState}.
  * TODO:
- * Check login case. initialValues has email and password repeated
+ * Check login case. evaluatedValues has email and password repeated
  * @author Patrick Moore
  */
 public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements ListableFlowLauncher {
     private static final long serialVersionUID = 7909909329479094947L;
-    private List<String> initialValues;
+    /**
+     * A list of strings in the form:
+     *  "flowPropertyDefinitionName=valueSource"
+     *  or
+     *  "flowPropertyDefinitionName" (which is equivalent to the first form: "flowPropertyDefinitionName=flowPropertyDefinitionName" )
+     *
+     *
+     * When the flow is launched with {@link #call()}, if propertyRoot != null, then the value returned by the {@link FlowManagement#getValueFromBindingProvider()}
+     * is put in the initialStateMap for the flow initialization.
+     *
+     * If propertyRoot == null or
+     * the result of the ValueFromBinding is null (only if the string was not the short hand form "flowPropertyDefinitionName" )
+     * then valueSource is treated as a literal string.
+     *
+     */
+    private List<String> evaluatedValues;
     private transient Object propertyRoot;
 
     public StartFromDefinitionFlowLauncher() {
@@ -45,6 +60,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     }
     public StartFromDefinitionFlowLauncher(String flowTypeName, FlowManagement flowManagement) {
         this(flowTypeName, null, flowManagement);
+    }
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState) {
+        this(flowTypeName, initialFlowState, null, flowTypeName);
     }
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
             FlowManagement flowManagement) {
@@ -61,35 +79,42 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     /**
     *
     * @param flowTypeName
-     * @param initialFlowState map of strings - not evaluated like initialValues is.
-     * @param flowManagement
-     * @param keyExpression for html rendering identification.
-     * @param propertyRoot must be provided if the initialValues need to be evaluated when the flow is launched.
-     * @param initialValues used to define the initial values for flow. This is a
+    * @param initialFlowState map of strings - not evaluated like evaluatedValues is.
+    * @param flowManagement
+    * @param keyExpression for html rendering identification.
+    * @param propertyRoot must be provided if the evaluatedValues need to be evaluated when the flow is launched.
+    * @param overridingValues used to define the initial values for flow. This is a
     * list of strings. Each string is 'key=value'. if value is the same name as a component
     * that has a 'value' attribute (like TextField components) then the initial value.
     * If value is a container's property then that value is used. Otherwise the value
     * provided is used as a literal.
     */
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState, FlowManagement flowManagement,
-            Serializable keyExpression, Object propertyRoot, Iterable<String> initialValues) {
+            Serializable keyExpression, Object propertyRoot, Iterable<String> overridingValues) {
         this(flowTypeName, initialFlowState, flowManagement, keyExpression);
-        this.setInitialValues(initialValues);
+        this.setEvaluatedValues(overridingValues);
         this.propertyRoot = propertyRoot;
     }
 
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Iterable<String> initialFlowState, FlowManagement flowManagement,
+        Serializable keyExpression, Object propertyRoot, Iterable<String> evaluatedValues) {
+        this(flowTypeName, null, flowManagement, keyExpression);
+        this.setEvaluatedValues(evaluatedValues);
+        this.setInitialFlowState(initialFlowState);
+        this.propertyRoot = propertyRoot;
+    }
+
+    private void setInitialFlowState(Iterable<String> initialFlowState) {
+        if (isNotEmpty( initialFlowState)) {
+            Map<String, String> staticInitialFlowState = convertToMap(null, initialFlowState);
+            this.putAll(staticInitialFlowState);
+        }
+    }
     @Override
     public FlowState call() {
-        Map<String,String> launchMap;
-        if(this.initialValues != null && !this.initialValues.isEmpty()) {
-            launchMap = new LinkedHashMap<String, String>();
-            launchMap.putAll(getValuesMap());
-            launchMap.putAll(convertToMap());
-        } else {
-            launchMap = getValuesMap();
-        }
+        Map<String, String> launchMap = getInitialFlowState();
         try {
-            FlowState flowState = getFlowManagement().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
+            FlowState flowState = getFlowManagementWithCheck().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
             return flowState;
         } catch(FlowValidationException e) {
         	throw e;
@@ -97,10 +122,14 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
             throw new ApplicationIllegalStateException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
         }
     }
-
-    @Deprecated // used only one place and that is questionable.
-    public void setFlowTypeName(String flowTypeName) {
-        this.flowTypeName = flowTypeName;
+    @Override
+    public Map<String, String> getInitialFlowState() {
+        Map<String,String> launchMap = new LinkedHashMap<String, String>();
+        launchMap.putAll(super.getInitialFlowState());
+        if(this.evaluatedValues != null && !this.evaluatedValues.isEmpty()) {
+            launchMap.putAll(convertToMap(this.getPropertyRoot(), this.getEvaluatedValues()));
+        }
+        return launchMap;
     }
 
     public void setPropertyRoot(Object propertyRoot) {
@@ -109,21 +138,22 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     public Object getPropertyRoot() {
         return propertyRoot;
     }
-    public void setInitialValues(Iterable<String> initialValues) {
-        this.initialValues = new ArrayList<String>();
-        if ( initialValues != null ) {
-            addAll(this.initialValues, initialValues.iterator());
+    private void setEvaluatedValues(Iterable<String> evaluatedValues) {
+        this.evaluatedValues = new ArrayList<String>();
+        if ( evaluatedValues != null ) {
+            NotNullIterator.notNullAdd(this.evaluatedValues, evaluatedValues.iterator());
         }
     }
-    public void addInitialValues(Iterable<String> additionalValues) {
-        if ( isEmpty(this.initialValues)) {
-            setInitialValues(additionalValues);
-        } else if ( additionalValues != null ) {
-            addAll(this.initialValues, additionalValues.iterator());
+    public StartFromDefinitionFlowLauncher addEvaluatedValues(Iterable<String> additionalEvaluatedValues) {
+        if ( isEmpty(this.evaluatedValues)) {
+            setEvaluatedValues(additionalEvaluatedValues);
+        } else if ( additionalEvaluatedValues != null ) {
+            NotNullIterator.notNullAdd(this.evaluatedValues, additionalEvaluatedValues.iterator());
         }
+        return this;
     }
-    public Iterable<String> getInitialValues() {
-        return initialValues;
+    public Iterable<String> getEvaluatedValues() {
+        return evaluatedValues;
     }
     /**
      * @see org.amplafi.flow.launcher.BaseFlowLauncher#getFlowState()
@@ -135,29 +165,42 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
 
     /**
      * @param propertyRoot
-     * @param initialValues
+     * @param evaluatedValues
      * @return
      */
-    private Map<String, String> convertToMap() {
+    private Map<String, String> convertToMap(Object evaluationRoot, Iterable<String> keyValueList) {
         Map<String, String> initialMap = new HashMap<String, String>();
-        if ( initialValues != null) {
+        if ( keyValueList != null) {
+            final ValueFromBindingProvider valueFromBindingProvider = getValueFromBindingProvider();
 
-            for(String entry: initialValues) {
-                String[] v = split(entry, "=", 2);
-                String key = v[0];
+            for(String entry: NotNullIterator.<String>newNotNullIterator(keyValueList)) {
+                String[] v = entry.split("=", 2);
+                String key = v[0].trim();
                 String lookup;
+                Object value;
                 if ( v.length < 2 ) {
+                    // shorthand form (default value is null if no valueFromBindingProvider)
                     lookup = key;
+                    value = null;
                 } else {
-                    lookup = v[1];
+                    // long form: default value is the other side of equals
+                    value = lookup = v[1];
                 }
-                Object value = getValueFromBindingProvider() == null? lookup:getValueFromBindingProvider().getValueFromBinding(propertyRoot, lookup);
-                initialMap.put(key, value == null?null:value.toString());
+                if ( valueFromBindingProvider != null) {
+                    value = valueFromBindingProvider.getValueFromBinding(evaluationRoot, lookup);
+                }
+                if ( value != null) {
+                    initialMap.put(key, value == null?null:value.toString());
+                }
             }
         }
         return initialMap;
     }
     private ValueFromBindingProvider getValueFromBindingProvider() {
-        return this.getFlowManagement().getValueFromBindingProvider();
+        return this.getFlowManagementWithCheck().getValueFromBindingProvider();
+    }
+    @Override
+    public String toString() {
+        return super.toString()+ " evaluatedValues=["+ StringUtils.join(this.evaluatedValues,",")+"]";
     }
 }
