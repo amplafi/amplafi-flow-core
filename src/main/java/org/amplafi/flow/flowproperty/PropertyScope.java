@@ -46,7 +46,7 @@ public enum PropertyScope {
      *
      * TODO put in a flowState.lookupKey namespace
      */
-    flowLocal(true, false, use, noRestrictions, false, PropertyUsage.values()),
+    flowLocal(true, use, noRestrictions, false, PropertyUsage.values()),
     /**
      * If {@link PropertyUsage} is NOT {@link PropertyUsage#initialize},
      * Initial value is copied from flow namespace or no value in flow namespace then the global namespace.
@@ -56,7 +56,7 @@ public enum PropertyScope {
      * This allows a FA to have a private namespace so it can save info knowing
      * that it will not impact another FA.
      */
-    activityLocal(true, true, use, noRestrictions, false, PropertyUsage.values()),
+    activityLocal(true, use, noRestrictions, false, PropertyUsage.values()),
     /**
      * The property is not saved into the flowState map. It is available for the current request only
      * and is cleared when current transaction completes. It has the same scope as flowLocal
@@ -71,26 +71,26 @@ public enum PropertyScope {
      * <li>If user clicks another action, sees the 'flash' message pop-up. There is no 'go back' support for seeing the flash message.</li>
      * <li>A history tracker is better</li>
      * </ul>
-     * 
+     *
      * Note: TODO: currently, a requestFlowLocal property must not have a {@link org.amplafi.flow.FlowActivityPhase} requirement because the
      * {@link org.amplafi.flow.FlowActivityPhase} requirement is done by checking to see if the property is set. We cannot just check to see if there is a {@link org.amplafi.flow.FlowPropertyValueProvider}
      * because a {@link org.amplafi.flow.FlowPropertyValueProvider} may not actually set a value.
      */
-    requestFlowLocal(true, false, internalState, noAccess, true),
+    requestFlowLocal(true, internalState, noAccess, true),
     /**
-     * A global property represents a property that the current flow has no knowledge of. 
-     * 
+     * A global property represents a property that the current flow has no knowledge of.
+     *
      * Use cases:
      * 1) a value that is set by called subflow that will be made available to subsequent flows.
      * 2) a flow may be morphed into another flow and that value is meaningful to the other flow.
      * 3) any alteration of a global is in the un-namespaced part of the FlowState map, therefore PropertyUsage that depends on a
-     * flow local copy of the property does not apply: ( {@link PropertyUsage#internalState}, {@link PropertyUsage#use}, {@link PropertyUsage#consume} ) 
+     * flow local copy of the property does not apply: ( {@link PropertyUsage#internalState}, {@link PropertyUsage#use}, {@link PropertyUsage#consume} )
      * (special note on {@link PropertyUsage#consume}: consume does its clearing when the flow is initialized - so the value is lost no matter how the flow
      * exits. This means that global/consumes is not an option because the global/consumes value will not be available for the flow itself. )
-     * 
-     * Since the flow does not understand the property, it shouldn't try to manage it. However, this does leave the question about 
+     *
+     * Since the flow does not understand the property, it shouldn't try to manage it. However, this does leave the question about
      * how to clean out these orphaned values.
-     * 
+     *
      * Therefore, global is deprecated to see if we can avoid using it.
      *
      * EXPERIMENTAL -- does global mean that any changes the flow makes are supposed to be 'universally visible'/instantly visible outside of flow?
@@ -102,13 +102,12 @@ public enum PropertyScope {
      * <li>change their active BP to one in which they are much lower</li>
      * <li>with global flow states this could change the BP of the admin flow -- constant battle to make sure that no security hole opens.</li>
      * </ul>
-     * Notes on excluded 
+     * Notes on excluded
      */
     @Deprecated
-    global(false, false, io, noRestrictions, false, new PropertyUsage[] { suppliesIfMissing, initialize, io })
+    global(false, io, noRestrictions, false, new PropertyUsage[] { suppliesIfMissing, initialize, io })
     ;
     private final boolean localToFlow;
-    private final boolean localToActivity;
     private final PropertyUsage defaultPropertyUsage;
     private final Set<PropertyUsage> allowPropertyUsages;
     private final PropertySecurity defaultPropertySecurity;
@@ -123,9 +122,8 @@ public enum PropertyScope {
      * this prevents passwords from being saved into the flowstate db table.
      */
     private final boolean cacheOnly;
-    private PropertyScope(boolean localToFlow, boolean localToActivity, PropertyUsage defaultPropertyUsage, PropertySecurity defaultPropertySecurity, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
+    private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, PropertySecurity defaultPropertySecurity, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
         this.localToFlow = localToFlow;
-        this.localToActivity = localToActivity;
         this.defaultPropertyUsage = defaultPropertyUsage;
         this.defaultPropertySecurity = defaultPropertySecurity;
         this.cacheOnly = cacheOnly;
@@ -142,12 +140,6 @@ public enum PropertyScope {
      */
     public boolean isLocalToFlow() {
         return localToFlow;
-    }
-    /**
-     * @return the localToActivity
-     */
-    public boolean isLocalToActivity() {
-        return localToActivity;
     }
     /**
      * @return the defaultPropertyUsage
