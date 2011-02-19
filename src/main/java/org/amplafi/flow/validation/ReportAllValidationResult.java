@@ -44,9 +44,6 @@ public class ReportAllValidationResult implements FlowValidationResult {
     @Override
     public FlowValidationResult addTracking(FlowValidationTracking... flowValidationTrackings) {
         if ( flowValidationTrackings != null ) {
-            if (trackings==null) {
-                trackings = new ArrayList<FlowValidationTracking>();
-            }
             addTracking(Arrays.asList(flowValidationTrackings));
         }
         return this;
@@ -57,6 +54,9 @@ public class ReportAllValidationResult implements FlowValidationResult {
     public void addTracking(Collection<FlowValidationTracking> flowValidationTrackings) {
         for (FlowValidationTracking flowValidationTracking: flowValidationTrackings) {
             if ( flowValidationTracking != null ) {
+                if (trackings==null) {
+                    trackings = new ArrayList<FlowValidationTracking>();
+                }
                 trackings.add(flowValidationTracking);
             }
         }
