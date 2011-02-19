@@ -20,6 +20,9 @@ package org.amplafi.flow;
  *
  */
 public enum FlowActivityPhase {
+    /**
+     * explicit declaration that it is optional.
+     */
     optional,
     /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
@@ -47,5 +50,17 @@ public enum FlowActivityPhase {
     /**
      * FlowProperty is required to be set prior to calling the {@link org.amplafi.flow.FlowActivity#finishFlow(org.amplafi.flow.FlowState)}.
      */
-    finish
+    finish;
+    public static boolean isSameAs(FlowActivityPhase flowActivityPhase1, FlowActivityPhase flowActivityPhase2) {
+        if ( flowActivityPhase1 == flowActivityPhase2) {
+            return true;
+        } else if ( flowActivityPhase1 == null && flowActivityPhase2 == optional) {
+            // null is same as optional
+            return true;
+        } else if ( flowActivityPhase1 == optional && flowActivityPhase2 == null) {
+            // null is same as optional
+            return true;
+        }
+        return false;
+    }
 }
