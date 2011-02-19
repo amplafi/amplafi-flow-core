@@ -19,6 +19,9 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
  * FlowPropertyValueProviders are used to supply property values to a Flow from the external environment that is decoupled from a given FlowActivity implementation.
+ * FlowPropertyValueProviders are only called when there is no cached value in the FlowPropertyProvider, nor is there a serialized form of the property that can be deserialized
+ * by a FlowPropertyDefinition's FlowTranslators.
+ *
  *
  * This avoids having to override {@link FlowActivity#getProperty(String)}/ {@link FlowActivity#setProperty(String, Object)}.
  *
