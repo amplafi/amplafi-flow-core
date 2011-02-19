@@ -16,7 +16,9 @@ package org.amplafi.flow.impl;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +40,7 @@ import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
+import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
@@ -96,7 +99,7 @@ import static com.sworddance.util.CUtilities.*;
  * fuzzy.flows.FooBarFlowActivity would have a default component of
  * 'fuzzy/FooBar'. <p/> TODO handle return to previous flow issues.
  */
-public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> implements Serializable, FlowActivityImplementor {
+public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowActivity> implements Serializable, FlowActivityImplementor {
 
     private static final long serialVersionUID = 5578715117421910908L;
 
@@ -147,6 +150,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     private String fullActivityInstanceNamespace;
 
     private static final Pattern compNamePattern = Pattern.compile("([\\w]+)\\.flows\\.([\\w]+)FlowActivity$");
+
+    private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.activityLocal);
 
     public FlowActivityImpl() {
         if (this.getClass() != FlowActivityImpl.class) {
@@ -565,7 +570,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
     }
 
     @Override
-    public void addPropertyDefinition(FlowPropertyDefinition definition) {
+    public void addPropertyDefinition(FlowPropertyDefinitionImplementor definition) {
         FlowPropertyDefinition currentLocal = getFlowPropertyDefinition(definition.getName(), false);
         if ( currentLocal != null) {
             // check against the FlowPropertyDefinition
@@ -581,7 +586,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
             }
             removeLocalPropertyDefinition(currentLocal.getName());
         }
-        if (!definition.isLocal()) {
+        if (!isLocal(definition)) {
             // this property may be from the Flow definition itself.
             FlowPropertyDefinition current = this.getFlowPropertyDefinitionDefinedInFlow(definition.getName());
             if ( current != null && !definition.merge(current)) {
@@ -595,34 +600,33 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
                         + " has a FlowPropertyDefinition '"
                         + definition.getName()
                         + "' that conflicts with flow's property definition. The data classes are NOT mergeable. This might cause problems so the FlowActivity's definition will be marked as 'activityLocal' and 'internalState'.");
-                    ((FlowPropertyDefinitionImplementor)definition).setPropertyUsage(PropertyUsage.internalState);
+                    definition.setPropertyUsage(PropertyUsage.internalState);
                 }
-                ((FlowPropertyDefinitionImplementor)definition).setPropertyScope(activityLocal);
+                definition.setPropertyScope(activityLocal);
             } else {
-                // no flow version of this property.
+                // no flow version of this property or no merge conflict with the flow version of the property.
                 // NOTE that this means the first FlowActivity to define this property sets the meaning for the whole flow.
                 // TODO we may want to see if we can merge up to the flow property as well. but this could cause problems with previous flowactivities that have already checked against the
                 // property ( the property might become more precise in a way that causes a conflict.)
                 // TODO: maybe in such cases if no FlowPropertyValueProvider the provider gets merged up?
-                pushPropertyDefinitionToFlow((FlowPropertyDefinitionImplementor)definition);
+                pushPropertyDefinitionToFlow(definition);
             }
         }
         putLocalPropertyDefinition(definition);
     }
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinitionImplementor definition) {
-        if (getFlow() != null && !definition.isLocal()) {
+        if (getFlow() != null && !isLocal(definition)) {
+            definition.setTemplateFlowPropertyDefinition();
             FlowPropertyDefinitionImplementor flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
+            // the FAP requirement is removed because otherwise the FPD could prevent an earlier FA from advancing.
+            FlowPropertyDefinitionImplementor cloned = definition.initPropertyRequired(null);
             if (flowProp == null ) {
                 // push up to flow so that other can see it.
                 // seems like flows should handle this issue with properties.
-                FlowPropertyDefinitionImplementor cloned = definition.clone();
-                // a FPD may be pushed so for an earlier FA may not require the property be set.
-                cloned.setPropertyRequired(FlowActivityPhase.optional);
                 this.getFlow().addPropertyDefinitions(cloned);
-            } else if ( flowProp.isMergeable(definition)) {
-                flowProp.merge(definition);
-                flowProp.setPropertyRequired(FlowActivityPhase.optional);
+            } else if ( flowProp.isMergeable(cloned)) {
+                flowProp.merge(cloned);
             }
         }
     }
@@ -729,13 +733,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         return getTx().flushIfNeeded(entities);
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.String)
-     */
-    @SuppressWarnings("unchecked")
-    public final <T> T getProperty(String key) {
-        return (T) this.getProperty(key, null);
-    }
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(String key, Class<? extends T> expected) {
@@ -744,6 +741,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
         return result;
     }
+
     /**
      * @param key
      * @return a flow property definition, if none then the definition is created
@@ -957,4 +955,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProvider<FlowActivity> imp
         addStandardFlowPropertyDefinitions();
         pushPropertyDefinitionsToFlow();
     }
+    @Override
+    protected List<PropertyScope> getLocalPropertyScopes() {
+        return LOCAL_PROPERTY_SCOPES;
+    }
+
 }

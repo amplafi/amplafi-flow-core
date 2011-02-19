@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.impl;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.FlowGroup;
@@ -21,6 +23,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.MapDefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.PropertyScope;
 
 /**
  *
@@ -28,6 +31,8 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
  *
  */
 public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> implements FlowGroup, FlowPropertyProviderImplementor {
+
+    private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.global);
 
     private DefinitionSource<FlowImplementor> definitionSource = new MapDefinitionSource();
 
@@ -110,5 +115,10 @@ public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> imp
     public DefinitionSource getDefinitionSource() {
         return definitionSource;
     }
+    @Override
+    protected List<PropertyScope> getLocalPropertyScopes() {
+        return LOCAL_PROPERTY_SCOPES;
+    }
+
 
 }

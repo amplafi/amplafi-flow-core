@@ -17,6 +17,7 @@ package org.amplafi.flow.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -36,6 +37,7 @@ import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.PropertyScope;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,6 +72,8 @@ import static org.apache.commons.lang.StringUtils.*;
 public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implements Serializable, Cloneable, FlowImplementor, Iterable<FlowActivityImplementor> {
 
     private static final long serialVersionUID = -985306244948511836L;
+
+    private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.flowLocal, PropertyScope.requestFlowLocal, PropertyScope.global);
 
     private FlowGroup primaryFlowGroup;
     private List<FlowActivityImplementor> activities;
@@ -476,4 +480,9 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public <F extends Flow> F getFlow() {
         return (F) this;
     }
+    @Override
+    protected List<PropertyScope> getLocalPropertyScopes() {
+        return LOCAL_PROPERTY_SCOPES;
+    }
+
 }
