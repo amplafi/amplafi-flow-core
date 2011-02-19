@@ -14,10 +14,13 @@
 package org.amplafi.flow.impl;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.PropertyScope;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import static com.sworddance.util.CUtilities.*;
@@ -95,7 +98,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         return (FPD)( propDefs == null? null : propDefs.get(flowPropertyDefinitionName));
     }
     @SuppressWarnings("unchecked")
-    protected <FPD extends FlowPropertyDefinition> FPD putLocalPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition) {
+    protected <FPD extends FlowPropertyDefinition> FPD putLocalPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         if ( this.getPropertyDefinitions() == null ) {
             this.setPropertyDefinitions(new LinkedHashMap<String, FlowPropertyDefinition>());
             if ( isInstance()) {
@@ -104,6 +107,9 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
                     this.getPropertyDefinitions().putAll(this.definition.getPropertyDefinitions());
                 }
             }
+        }
+        if ( !isInstance()) {
+            flowPropertyDefinition.setTemplateFlowPropertyDefinition();
         }
         return (FPD) getPropertyDefinitions().put(flowPropertyDefinition.getName(), flowPropertyDefinition);
     }
@@ -118,9 +124,9 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
     /**
      * method used by hivemind to add in properties
      * @param flowPropertyDefinition
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(org.amplafi.flow.FlowPropertyDefinition)
+     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(FlowPropertyDefinitionImplementor)
      */
-    public void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition) {
+    public void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         if ( flowPropertyDefinition == null ) {
             return;
         }
@@ -133,16 +139,16 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         }
         putLocalPropertyDefinition(flowPropertyDefinition);
     }
-    public void addPropertyDefinitions(Iterable<FlowPropertyDefinition> flowPropertyDefinitions) {
+    public void addPropertyDefinitions(Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions) {
         if ( flowPropertyDefinitions != null ) {
-            for (FlowPropertyDefinition flowPropertyDefinition : flowPropertyDefinitions) {
+            for (FlowPropertyDefinitionImplementor flowPropertyDefinition : flowPropertyDefinitions) {
                 addPropertyDefinition(flowPropertyDefinition);
             }
         }
     }
-    public void addPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
+    public void addPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
         if ( flowPropertyDefinitions != null && flowPropertyDefinitions.length > 0) {
-            for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
+            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
                 this.addPropertyDefinition(flowPropertyDefinition);
             }
         }
@@ -174,4 +180,19 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
     public boolean isResolved() {
         return resolved;
     }
+
+    protected boolean isLocal(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
+        final PropertyScope propertyScope = flowPropertyDefinitionImplementor.getPropertyScope();
+        return getLocalPropertyScopes().contains(propertyScope);
+    }
+
+    protected PropertyScope getDefaultPropertyScope() {
+        return getFirst(getLocalPropertyScopes());
+    }
+    /**
+     * Returns the scopes that this object stores properties. For example, a FlowActivity operates at the {@link PropertyScope#activityLocal}
+     * level. Properties that have have a different? higher? scope should be pushed up to the chained definitions.
+     * @return the scopes that this object stores properties.
+     */
+    protected abstract List<PropertyScope> getLocalPropertyScopes();
 }
