@@ -30,7 +30,7 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, R
     void setFlowPropertyProviderName(String flowPropertyProviderName) throws IllegalStateException;
     void setPropertyDefinitions(Map<String, FlowPropertyDefinition> flowPropertyDefinitions);
 
-    void addPropertyDefinitions(FlowPropertyDefinition...flowPropertyDefinitions);
+    void addPropertyDefinitions(FlowPropertyDefinitionImplementor...flowPropertyDefinitions);
 
-    void addPropertyDefinition(FlowPropertyDefinition flowPropertyDefinition);
+    void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition);
 }

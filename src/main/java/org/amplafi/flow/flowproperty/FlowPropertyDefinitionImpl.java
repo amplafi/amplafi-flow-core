@@ -85,9 +85,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
+    @Deprecated // needing this is lame. should have a list of flowPropertyValueProvider
     private transient FlowPropertyValueProvider<? extends FlowPropertyProvider> factoryFlowPropertyValueProvider;
 
-//    private boolean forceFactoryProvider;
     private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
     private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
@@ -159,7 +159,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         autoCreate = clone.autoCreate;
         this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
-//        this.forceFactoryProvider = clone.forceFactoryProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
@@ -228,13 +227,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     @SuppressWarnings("unchecked")
     public void setDefaultObject(Object defaultObject) {
-//        forceFactoryProvider = defaultObject != null;
         if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
             FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = FixedFlowPropertyValueProvider.newFixedFlowPropertyValueProvider(defaultObject, this, true);
-//            this.factoryFlowPropertyValueProvider = fixedFlowPropertyValueProvider;
             this.flowPropertyValueProvider = fixedFlowPropertyValueProvider;
         } else {
-//            this.factoryFlowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
             this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
         }
     }
@@ -288,7 +284,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return
      */
     private FlowPropertyValueProvider<? extends FlowPropertyProvider> getDefaultFlowPropertyValueProviderToUse() {
-//      if (this.flowPropertyValueProvider != null && !forceFactoryProvider) {
       if (this.flowPropertyValueProvider != null ) {
             return this.flowPropertyValueProvider;
         } else {
@@ -298,7 +293,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
-//        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, defaultObject);
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValueProvider, defaultObject);
         flowPropertyDefinition.setDefaultObject(defaultObject);
         return flowPropertyDefinition;
@@ -352,7 +346,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Note that existing validators will be removed - if you
      * don't want that behavior, consider using {@link #addValidator(String)}.
      * @param validators
-     * @return this
+     * @return this or flowPropertyDefinition
      */
     public FlowPropertyDefinitionImpl initValidators(String validators) {
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.validators, validators);
@@ -401,10 +395,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.initial, initialValue);
         flowPropertyDefinition.setInitial(initialValue);
         return flowPropertyDefinition;
-    }
-
-    public boolean isLocal() {
-        return this.getPropertyScope().isLocalToActivity();
     }
 
     public void setUiComponentParameterName(String uiComponentParameterName) {
@@ -487,9 +477,13 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return this
      */
     public FlowPropertyDefinitionImpl initPropertyRequired(FlowActivityPhase flowActivityPhase) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowActivityPhase, flowActivityPhase);
-    	flowPropertyDefinition.setPropertyRequired(flowActivityPhase);
-        return flowPropertyDefinition;
+        if ( !FlowActivityPhase.isSameAs(this.flowActivityPhase, flowActivityPhase)){
+        	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowActivityPhase, flowActivityPhase);
+        	flowPropertyDefinition.setPropertyRequired(flowActivityPhase);
+            return flowPropertyDefinition;
+        } else {
+            return this;
+        }
     }
     /**
      * @param flowActivityPhase the propertyRequired to set
@@ -665,7 +659,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
     protected <T> T setCheckTemplateState(T oldObject, T newObject) {
         if ( templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject)) {
-            throw new IllegalStateException("Cannot change state of a Template FlowPropertyDefinition");
+            ApplicationIllegalStateException.checkState(false,
+                this, "Cannot change state of a Template FlowPropertyDefinition. A property was going from ", oldObject," to ", newObject);
         }
         return newObject;
     }
@@ -723,7 +718,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Copy from property any fields not already set.
      *
      * TODO: Need to check {@link PropertyScope}!! How to handle activityLocal/flowLocals???
-     *
+     * TODO: NOTE that merge explicitly is allowed to violate the {@link #templateFlowPropertyDefinition} lockdown rules
      * @param property
      * @return true if there is no conflict in the dataClass, true if
      *         this.dataClass cannot be assigned by previous.dataClass
@@ -751,38 +746,39 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
 
         if ( flowPropertyValueProvider == null && source.flowPropertyValueProvider != null ) {
-            this.setFlowPropertyValueProvider(source.flowPropertyValueProvider);
+            this.flowPropertyValueProvider =source.flowPropertyValueProvider;
         }
         if ( flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
-            this.setFlowPropertyValuePersister(source.flowPropertyValuePersister);
+            this.flowPropertyValuePersister =source.flowPropertyValuePersister;
         }
         if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
-            this.initFactoryFlowPropertyValueProvider(source.factoryFlowPropertyValueProvider);
+            this.factoryFlowPropertyValueProvider =source.factoryFlowPropertyValueProvider;
         }
         // TODO: merging should handling chained notification.
         if ( flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
-            this.setFlowPropertyValueChangeListeners(source.flowPropertyValueChangeListeners);
+            this.flowPropertyValueChangeListeners = source.flowPropertyValueChangeListeners;
         }
         if (initial == null && source.initial != null) {
-            this.setInitial(source.initial);
+            this.initial = source.initial;
+            checkInitial(this.initial);
         }
         if (saveBack == null && source.saveBack != null) {
-            this.setSaveBack(source.saveBack);
+            this.saveBack =source.saveBack;
         }
         if (uiComponentParameterName == null && source.uiComponentParameterName != null) {
             uiComponentParameterName = source.uiComponentParameterName;
         }
         if (propertySecurity == null && source.propertySecurity != null) {
-            this.setPropertySecurity(source.propertySecurity);
+            this.propertySecurity =source.propertySecurity;
         }
         if (validators == null && source.validators != null) {
-            setValidators(source.validators);
+            this.validators =source.validators;
         }
         if ( !isPropertyScopeSet() && source.isPropertyScopeSet()) {
-            setPropertyScope(source.propertyScope);
+            this.propertyScope =source.propertyScope;
         }
         if ( source.isPropertyUsageSet()) {
-            setPropertyUsage(PropertyUsage.survivingPropertyUsage(propertyUsage, source.propertyUsage));
+            this.propertyUsage = PropertyUsage.survivingPropertyUsage(propertyUsage, source.propertyUsage);
         }
 
         // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/PropertySecurity which vary between different FAs in the same Flow.
@@ -850,6 +846,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     @SuppressWarnings("unchecked")
     public <FA extends FlowPropertyProvider>void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider) {
+        // TODO: lock down for templates
         this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>) flowPropertyValueProvider;
     }
 
