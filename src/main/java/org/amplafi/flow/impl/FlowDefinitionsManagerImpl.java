@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.sworddance.util.CUtilities.*;
+
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowImplementor;
@@ -33,11 +35,11 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 
-import org.apache.commons.collections.MapUtils;
+import com.sworddance.util.ApplicationIllegalArgumentException;
+import com.sworddance.util.ApplicationIllegalStateException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.sworddance.util.ApplicationIllegalStateException;
 
 /**
  * Basic implementation for managing Flow definitions. Provides no persistence mechanism.
@@ -106,9 +108,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      */
     @Override
     public FlowImplementor getFlowDefinition(String flowTypeName) {
-        if ( flowTypeName == null) {
-            throw new IllegalArgumentException("null flowTypeName");
-        }
+        ApplicationIllegalArgumentException.notNull(flowTypeName, "null flowTypeName");
         FlowImplementor flow = this.getFlowDefinitions().get(flowTypeName);
         if (flow==null) {
             throw new FlowValidationException("flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
@@ -126,7 +126,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
 
     public void setFlowDefinitions(Map<String, FlowImplementor> flowDefinitions) {
         this.flowDefinitions.clear();
-        if ( MapUtils.isNotEmpty(flowDefinitions) ) {
+        if ( isNotEmpty(flowDefinitions) ) {
             this.flowDefinitions.putAll(flowDefinitions);
         }
         if ( running) {
@@ -166,7 +166,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     /**
      * Used as the way to get a property
      * @param propertyName
-     * @param standardDefinitionClass
+     * @param dataClass
      * @return
      */
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
