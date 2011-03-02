@@ -54,6 +54,12 @@ import static org.apache.commons.lang.StringUtils.*;
  */
 public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
 
+    private static final String MODULE_ELEMENT = "module";
+    /**
+     * element name that defines a property.
+     */
+    private static final String PROPERTY = "property";
+
     /**
      *
      */
@@ -120,11 +126,6 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
     private static final String LINK_TITLE = "link-title";
 
     /**
-     * element name that defines a property.
-     */
-    private static final String PROPERTY = "property";
-
-    /**
      * name of the flow or flowActivity.
      */
     private static final String NAME_ATTR = "name";
@@ -163,8 +164,9 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
                         break;
                     }
                 }
-                if ( resource == null ) {
-                    throw new ApplicationIllegalArgumentException("Cannot locate xml definitions file. File '",file,"' does not exist and cannot find a resource in the classpath named ", join(searchPaths, ","));
+                if (resource == null) {
+                    throw new ApplicationIllegalArgumentException("Cannot locate xml definitions file. File '",
+                        file,"' does not exist and cannot find a resource in the classpath=", join(searchPaths, ","));
                 }
             }
         } catch (SAXException e) {
@@ -175,6 +177,11 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
         parseDocument();
     }
 
+    /**
+     * Create a search path list containing:
+     * [ fileName, /fileName, /META-INF/fileName, /META-INF/flows/fileName ]
+     * @return a list of locations to look for the file supplied.
+     */
     private List<String> createSearchPath() {
         List<String> searchPath = new ArrayList<String>();
         searchPath.add(fileName);
@@ -224,8 +231,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
     }
 
     private void parseDocument() {
-        // TODO: remove module?
-        NodeList moduleList = this.xmlDocument.getElementsByTagName("module");
+        NodeList moduleList = this.xmlDocument.getElementsByTagName(MODULE_ELEMENT);
         for (int i = 0; i < moduleList.getLength(); i++) {
             FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
         }
