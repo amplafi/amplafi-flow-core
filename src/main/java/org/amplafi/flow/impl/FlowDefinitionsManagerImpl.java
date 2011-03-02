@@ -166,7 +166,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     /**
      * Used as the way to get a property
      * @param propertyName
-     * @param standardDefinitionClass
+     * @param dataClass
      * @return
      */
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
