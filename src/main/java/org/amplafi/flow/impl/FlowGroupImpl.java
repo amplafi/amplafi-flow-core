@@ -25,20 +25,13 @@ import org.amplafi.flow.definitions.MapDefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 
-/**
- *
- * @author patmoore
- *
- */
 public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> implements FlowGroup, FlowPropertyProviderImplementor {
 
     private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.global);
 
-    private DefinitionSource<FlowImplementor> definitionSource = new MapDefinitionSource();
+    private DefinitionSource<FlowImplementor> definitionSource = new MapDefinitionSource<FlowImplementor>();
 
     private FlowGroup primaryFlowGroup;
-
-	private String name;
 
     /**
      *
@@ -46,13 +39,10 @@ public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> imp
     public FlowGroupImpl() {
         super();
     }
-    /**
-    *
-    */
-   public FlowGroupImpl(String name) {
-       super();
-       this.name = name;
-   }
+
+    public FlowGroupImpl(String flowPropertyProviderName) {
+        super(flowPropertyProviderName);
+    }
 
     /**
      * @param definition
@@ -103,22 +93,13 @@ public class FlowGroupImpl extends BaseFlowPropertyProvider<FlowImplementor> imp
     }
 
     /**
-     * @param definitionSource the definitionSource to set
-     */
-    public void setDefinitionSource(DefinitionSource definitionSource) {
-        this.definitionSource = definitionSource;
-    }
-
-    /**
      * @return the definitionSource
      */
-    public DefinitionSource getDefinitionSource() {
+    public DefinitionSource<FlowImplementor> getDefinitionSource() {
         return definitionSource;
     }
     @Override
     protected List<PropertyScope> getLocalPropertyScopes() {
         return LOCAL_PROPERTY_SCOPES;
     }
-
-
 }
