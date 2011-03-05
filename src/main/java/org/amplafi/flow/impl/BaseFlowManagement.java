@@ -201,6 +201,7 @@ public class BaseFlowManagement implements FlowManagement {
      */
     @SuppressWarnings("unchecked")
     public synchronized <FS extends FlowState> FS createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent) {
+        LapTimer.sLap("Begin createFlowState ", flowTypeName);
         FS flowState = (FS) makeFlowState(flowTypeName, initialFlowState);
         initializeFlowState(flowState);
         if (makeNewStateCurrent || this.sessionFlows.isEmpty()) {
@@ -208,6 +209,7 @@ public class BaseFlowManagement implements FlowManagement {
         } else {
             makeLast(flowState);
         }
+        LapTimer.sLap("End createFlowState ", flowTypeName);
         return flowState;
     }
     @SuppressWarnings({ "unchecked" })
