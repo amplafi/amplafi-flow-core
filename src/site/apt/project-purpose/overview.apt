@@ -70,7 +70,6 @@ Goals
 
 What does Amplafi-Flow do
 
- * connects tapestry ui components to business logic.
  * segments session data allowing portions of the session to be garbage-collected. [Andy: we need to talk about webframeworks]
  * seamless manages conversion of the serialized representation.
  * automatic API creation
