@@ -13,16 +13,21 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.EventListener;
+
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
  *
  * Implementors register to be notified when a property changes its value. This includes the initialization.
- *             // TODO: really need a propertyChange method that gets the original objects.
+ * TODO: really need a propertyChange method that gets the original objects.
+ * TODO: maybe extend {@link java.beans.PropertyChangeListener}? PropertyChangeEvent is not very different than current propertyChange()
+ * even has same method :-)
+ * TODO: investigate use of {@link java.beans.VetoableChangeListener} to allow vetoing.
  * @author patmoore
  *
  */
-public interface FlowPropertyValueChangeListener {
+public interface FlowPropertyValueChangeListener extends EventListener {
     /**
      * Called when a property changes value.
      * @param flowPropertyProvider TODO
