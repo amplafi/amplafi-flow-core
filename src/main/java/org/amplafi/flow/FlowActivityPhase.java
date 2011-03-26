@@ -23,7 +23,7 @@ public enum FlowActivityPhase {
     /**
      * explicit declaration that it is optional.
      */
-    optional,
+    optional(false),
     /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
      * Use for properties that must be set by prior steps for the FlowActivity to function correctly.
@@ -31,7 +31,7 @@ public enum FlowActivityPhase {
      * Properties of this sort should be minimized. "activate" properties impose an ordering that may not
      * be the best for a user experience and restrict a product manager's ability to redesign a flow.
      */
-    activate,
+    activate(false),
     /**
      * FlowProperty is required to be set before advancing beyond the {@link org.amplafi.flow.FlowActivity}.
      * This is used when *the* current FlowActivity is requesting the user to set the property to a value.
@@ -39,18 +39,32 @@ public enum FlowActivityPhase {
      * The FlowActivity must have the ability to let user set the property in this case ( i.e. proper UI component)
      * Do not use as a gatekeeper to 'protect' later FlowActivities, those later FlowActivities will have
      */
-    advance,
+    advance(true),
     /**
      * FlowProperty is required to be set prior to calling the {@link org.amplafi.flow.FlowActivity#saveChanges()}.
      *
      * This is used in cases where the FlowActivity can gather its needed data and perform correctly
      * until the moment that the changes need to be saved.
      */
-    saveChanges,
+    saveChanges(true),
     /**
      * FlowProperty is required to be set prior to calling the {@link org.amplafi.flow.FlowActivity#finishFlow(org.amplafi.flow.FlowState)}.
      */
-    finish;
+    finish(true);
+    private final boolean advancing;
+    FlowActivityPhase(boolean advancing) {
+        this.advancing = advancing;
+    }
+    /**
+     * @return true if the {@link FlowActivityPhase} means the current activity may be advanced past.
+     * see also {@link FlowStepDirection}.
+     */
+    public boolean isAdvancing() {
+        return advancing;
+    }
+    public boolean isAdvancing(FlowStepDirection flowStepDirection) {
+        return isAdvancing() && flowStepDirection != FlowStepDirection.backward;
+    }
     public static boolean isSameAs(FlowActivityPhase flowActivityPhase1, FlowActivityPhase flowActivityPhase2) {
         if ( flowActivityPhase1 == flowActivityPhase2) {
             return true;
