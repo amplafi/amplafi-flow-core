@@ -121,7 +121,10 @@ public interface FlowConstants {
 
     /**
      * For flow activities that should immediately have saveChanges() called.
+     * 
+     * @deprecated Kostya: seems to be unused, remove?
      */
+    @Deprecated
     public static final String FSIMMEDIATE_SAVE = "fsImmediateSave";
 
     /**
