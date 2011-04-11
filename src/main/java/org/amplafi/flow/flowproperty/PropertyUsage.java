@@ -93,13 +93,13 @@ public enum PropertyUsage {
      *
      * If the property's object is a database object then {@link #createAlways} must be used.
      *
-     * For example, FIRST_NAME would be {@link #initialize} but never {@link #createAlways} because FIRST_NAME is a
+     * For example, FIRST_NAME would be {@link #initialize} but never {@link #createAlways} because FIRST_NAME is a not a database object.
      */
     initialize(true, true, false),
     /**
      * EXPERIMENTAL -- do not use yet.
      *
-     * Like {@link #initialize} except that the object is always created.
+     * Like {@link #initialize} except that the object is always created ( object must be a database object )
      *
      * In general limit the usage of {@link #createAlways} to those case where a fresh value is mandatory.
      * Consider if {@link #createsIfMissing} is adequate as {@link #createAlways} prevents the flow from being a
