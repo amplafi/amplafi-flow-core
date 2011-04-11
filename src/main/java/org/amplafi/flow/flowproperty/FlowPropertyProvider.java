@@ -25,14 +25,15 @@ import org.amplafi.flow.FlowPropertyDefinition;
 public interface FlowPropertyProvider {
     /**
      *
-     * @return unique portion of the namespace.
+     * @return just the immediate name not the full context. May not be unique.
      */
     String getFlowPropertyProviderName();
 
     /**
-     * "flowName.activityName"
+     * "flowgroup.flowName.activityName"
+     * "flowgroup.flowName"
      *
-     * @return full flow activity name.
+     * @return full name, must be unique.
      */
     String getFlowPropertyProviderFullName();
 
