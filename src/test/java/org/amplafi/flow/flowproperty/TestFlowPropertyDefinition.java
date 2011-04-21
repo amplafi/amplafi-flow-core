@@ -670,7 +670,7 @@ public class TestFlowPropertyDefinition {
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         String returnToFlowLookupKey = null;
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
