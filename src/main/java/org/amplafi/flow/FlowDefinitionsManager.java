@@ -26,10 +26,9 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor> {
 
     /**
-     * @param key (usually) the {@link Flow#getFlowPropertyProviderName()}.
      * @param flow the flow definition to add.
      */
-    void addDefinition(String key, FlowImplementor flow);
+    void addDefinition(FlowImplementor flow);
 
     void addDefinitions(DefinitionSource... definitionSource);
 
