@@ -190,7 +190,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
                     value = valueFromBindingProvider.getValueFromBinding(evaluationRoot, lookup);
                 }
                 if ( value != null) {
-                    initialMap.put(key, value == null?null:value.toString());
+                    initialMap.put(key, value.toString());
                 }
             }
         }
