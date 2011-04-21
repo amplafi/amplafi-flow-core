@@ -91,16 +91,15 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         for(DefinitionSource<FlowImplementor> definitionSource: definitionSources) {
             Collection<FlowImplementor> flows = definitionSource.getFlowDefinitions().values();
             for(FlowImplementor flow: flows) {
-                addDefinition(flow.getFlowPropertyProviderName(), flow);
+                addDefinition(flow);
             }
         }
     }
-    public void addDefinition(String key, FlowImplementor flow) {
-        if (flow.isInstance()) {
-            throw new IllegalStateException( flow+ " not a definition");
-        }
+    public void addDefinition(FlowImplementor flow) {
+        ApplicationIllegalStateException.checkState(!flow.isInstance(), flow, " is an instance not a definition");
+
         this.flowTranslatorResolver.resolveFlow(flow);
-        getFlowDefinitions().put(key, flow);
+        getFlowDefinitions().put(flow.getFlowPropertyProviderFullName(), flow);
     }
 
     /**

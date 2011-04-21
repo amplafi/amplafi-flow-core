@@ -104,7 +104,7 @@ public class TestFlows {
             flowActivity1.setFlowPropertyProviderName("fs1");
             FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1);
             flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
-            flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+            flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         }
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
@@ -134,7 +134,7 @@ public class TestFlows {
         flow.addActivity(new FlowActivityImpl().initInvisible(false));
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowState fs = new FlowStateImpl(FLOW_TYPE, flowManagement);
@@ -171,7 +171,7 @@ public class TestFlows {
         flowTestingUtils.getFlowTranslatorResolver().resolve(fa3);
         flow.addActivity(fa2);
         flowTestingUtils.getFlowTranslatorResolver().resolve(fa1);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowState fs = new FlowStateImpl(FLOW_TYPE, flowManagement);
@@ -207,7 +207,7 @@ public class TestFlows {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
 
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = new HashMap<String, String>();
         initialFlowState.put(PROPERTY2, SET_BY_MAP);
@@ -232,7 +232,7 @@ public class TestFlows {
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolve(fa1);
-        flowTestingUtils.getFlowDefinitionsManager().addDefinition(FLOW_TYPE, flow);
+        flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
         flowState.setProperty("fee", true);
