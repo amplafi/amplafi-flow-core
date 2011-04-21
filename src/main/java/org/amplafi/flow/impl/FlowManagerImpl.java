@@ -28,6 +28,8 @@ import org.amplafi.flow.FlowStateListener;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,9 +53,8 @@ public class FlowManagerImpl implements FlowManager {
     @Override
     public FlowImplementor getInstanceFromDefinition(String flowTypeName) {
         FlowImplementor definition = flowDefinitionsManager.getFlowDefinition(flowTypeName);
-        if (definition == null) {
-            throw new IllegalArgumentException(flowTypeName + ": definition does not exist");
-        }
+        ApplicationIllegalArgumentException.notNull(definition,
+            flowTypeName, ": Flow definition with this name is not defined.");
         FlowImplementor inst = definition.createInstance();
         return inst;
     }
