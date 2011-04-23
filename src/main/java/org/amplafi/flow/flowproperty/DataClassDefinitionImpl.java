@@ -52,18 +52,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinition keyClassDefinition, DataClassDefinition elementClassDefinition) {
         super(mapClass, keyClassDefinition, elementClassDefinition);
     }
-    /**
-     * clone ctor
-     * @param dataClassDefinition
-     */
-    public DataClassDefinitionImpl(DataClassDefinition dataClassDefinition) {
-        super(dataClassDefinition.getPropertyClass(),
-            dataClassDefinition.isKeyPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getKeyPropertyDefinition()):null,
-            dataClassDefinition.isElementPropertyDefinitionSet()?new DataClassDefinitionImpl(dataClassDefinition.getElementPropertyDefinition()):null);
-        if ( dataClassDefinition.isFlowTranslatorSet() ) {
-            this.flowTranslator = dataClassDefinition.getFlowTranslator();
-        }
-    }
+
     // don't use yet.
     public DataClassDefinitionImpl(Class<?> element, Class<?>... collections) {
         switch ( CUtilities.size(collections)) {
@@ -159,7 +148,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     private DataClassDefinition mergeIt(DataClassDefinition original, DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition != null ) {
             if( original == null ) {
-                return new DataClassDefinitionImpl(dataClassDefinition);
+                return (DataClassDefinition) dataClassDefinition.clone();
             } else {
                 original.merge(dataClassDefinition);
             }
@@ -378,5 +367,9 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      */
     public boolean isFlowTranslatorSet() {
         return this.flowTranslator != null || this.getDataClass() == String.class;
+    }
+    @Override
+    public DataClassDefinitionImpl clone() {
+        return (DataClassDefinitionImpl) super.clone();
     }
 }

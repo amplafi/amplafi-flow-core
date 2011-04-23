@@ -144,6 +144,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     private boolean templateFlowPropertyDefinition;
 
     /**
+     * A set of {@link FlowPropertyExpectation}s that this property definition needs. Note that a {@link FlowPropertyExpectation} can be optional.
+     */
+    private Set<FlowPropertyExpectation> flowPropertyExpectations;
+
+    /**
      * Creates an unnamed String property.
      */
     public FlowPropertyDefinitionImpl() {
@@ -152,7 +157,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
         this.setName(clone.name);
-        dataClassDefinition = new DataClassDefinitionImpl(clone.dataClassDefinition);
+        dataClassDefinition = (DataClassDefinition) clone.dataClassDefinition.clone();
         if (isNotEmpty(clone.alternates)) {
             alternates = new HashSet<String>();
             alternates.addAll(clone.alternates);
@@ -600,10 +605,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     public Class<? extends Object> getDataClass() {
         return getDataClassDefinition().getDataClass();
-    }
-
-    public Class<? extends Object> getCollectionClass() {
-        return this.getDataClassDefinition().getCollection();
     }
 
     public Set<String> getAlternates() {

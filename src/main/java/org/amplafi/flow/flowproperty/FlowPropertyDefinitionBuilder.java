@@ -34,16 +34,23 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * A property that is not allowed to be altered. (no set is allowed) But the property is not immutable because a FPVP could supply different values.
      * Use case: User id
+     *
+     * Specifically:
+     * PropertyScope.flowLocal,
+     * PropertyUsage.initialize,
+     * PropertySecurity.readonly
+     *
      * @param name
      * @param dataClass
      * @param collectionClasses
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public FlowPropertyDefinitionBuilder createNonalterableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowPropertyValueProvider flowPropertyValueProvider, Class<?>...collectionClasses) {
-        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).
+    public static FlowPropertyDefinitionBuilder createNonalterableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowPropertyValueProvider flowPropertyValueProvider, Class<?>...collectionClasses) {
+        FlowPropertyDefinitionImpl flowPropertyDefinitionImplementor = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor).
         initAccess(PropertyScope.flowLocal, PropertyUsage.initialize, PropertySecurity.readonly).initFlowPropertyValueProvider(flowPropertyValueProvider);
-        return this;
+        return flowPropertyDefinitionBuilder;
     }
     /**
      * Expectation is that {@link FlowPropertyValueProvider} will be supplied later.
@@ -136,12 +143,6 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyDefinitionBuilder createCreatingFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenCreated, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenCreated, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.suppliesIfMissing);
-        return this;
-    }
-
-    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowActivityPhase whenRequired, Class<?>...collectionClasses) {
-    	createFlowPropertyDefinition(name, dataClass, collectionClasses);
-        initAccess(PropertyScope.flowLocal, PropertyUsage.io);
         return this;
     }
 
@@ -261,6 +262,10 @@ public class FlowPropertyDefinitionBuilder {
     	this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage);
 		return this;
 	}
+    public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, PropertySecurity propertySecurity) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage, propertySecurity);
+        return this;
+    }
     public FlowPropertyDefinitionBuilder applyDefaultProviders(Object... defaultProviders) {
     	boolean needPersister = flowPropertyDefinition.getFlowPropertyValuePersister() == null && !flowPropertyDefinition.isCacheOnly();
     	boolean needProvider = !flowPropertyDefinition.isDefaultAvailable();
@@ -280,5 +285,8 @@ public class FlowPropertyDefinitionBuilder {
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
     	return (FPD) this.flowPropertyDefinition;
     }
-
+    public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
+        return this;
+    }
 }

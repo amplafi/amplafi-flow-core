@@ -86,4 +86,12 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinitionImplementor initPropertyScope(PropertyScope propertyScope);
 
     FlowPropertyDefinitionImplementor initPropertyUsage(PropertyUsage propertyUsage);
+
+    /**
+     * @param propertyScope
+     * @param propertyUsage
+     * @param propertySecurity
+     * @return
+     */
+    FlowPropertyDefinitionImplementor initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, PropertySecurity propertySecurity);
 }

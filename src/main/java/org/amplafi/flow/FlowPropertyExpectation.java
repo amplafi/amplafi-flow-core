@@ -30,6 +30,19 @@ import com.sworddance.util.map.MapKeyed;
  */
 public interface FlowPropertyExpectation extends MapKeyed<String> {
     String getName();
+    /**
+     * The class of the object returned by a call to a {@link org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#getProperty(String, Class)}
+     * For a complex collection definition this is the top-level collection.
+     *
+     * This is optional and is only enforced if a non-null is returned.
+     * @return the class expected if defined.
+     */
+    Class<?> getDataClass();
+    /**
+     * For more complex type definitions, such as collections and maps, this
+     * @return
+     */
+    DataClassDefinition getDataClassDefinition();
 
     /**
      * @return how the property is being used.

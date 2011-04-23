@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 import java.util.Arrays;
 import java.util.List;
 
+import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -38,6 +39,8 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private final FlowPropertyValuePersister flowPropertyValuePersister;
 
     private final PropertySecurity propertySecurity;
+
+    private DataClassDefinition dataClassDefinition;
 
     /**
      * All properties should have the
@@ -118,6 +121,24 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
     public PropertySecurity getPropertySecurity() {
         return propertySecurity;
+    }
+
+    /**
+     * @param dataClassDefinition the dataClassDefinition to set
+     */
+    public void setDataClassDefinition(DataClassDefinition dataClassDefinition) {
+        this.dataClassDefinition = dataClassDefinition;
+    }
+
+    /**
+     * @return the dataClassDefinition
+     */
+    public DataClassDefinition getDataClassDefinition() {
+        return dataClassDefinition;
+    }
+
+    public Class<? extends Object> getDataClass() {
+        return getDataClassDefinition().getDataClass();
     }
 
     public static FlowPropertyExpectationImpl createDefaultExpectation(String name, Object defaultObject) {
