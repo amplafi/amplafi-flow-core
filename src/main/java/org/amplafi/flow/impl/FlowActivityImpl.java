@@ -364,7 +364,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     @Override
     public String getFlowPropertyProviderName() {
-        return isFlowPropertyProviderNameSet()?super.getFlowPropertyProviderName():this.getClass().getSimpleName();
+        if ( isFlowPropertyProviderNameSet() ) {
+            return super.getFlowPropertyProviderName();
+        } else {
+            return this.getClass().getSimpleName()+"_"+getIndex();
+        }
     }
 
     public void setActivityTitle(String activityTitle) {
