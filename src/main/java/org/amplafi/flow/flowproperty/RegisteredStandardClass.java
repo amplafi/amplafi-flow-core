@@ -20,7 +20,7 @@ public @interface RegisteredStandardClass {
 	 * @return the propertyName
 	 */
 	String propertyName() default "";
-	PropertySecurity defaultPropertySecurity() default PropertySecurity.noRestrictions;
+	ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction() default ExternalPropertyAccessRestriction.noRestrictions;
 	PropertyUsage defaultPropertyUsage() default PropertyUsage.use;
 	/**
 	 * very rarely needed. only real exception is for security/account objects ( like UserImpl ) which needs to always be available

@@ -220,7 +220,7 @@ public class TestFlowPropertyDefinition {
      */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCloning() {
-        FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance, Set.class, List.class).initAccess(PropertyScope.activityLocal, PropertyUsage.consume, PropertySecurity.noAccess);
+        FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionImpl("foo", Boolean.class, FlowActivityPhase.advance, Set.class, List.class).initAccess(PropertyScope.activityLocal, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess);
         FlowPropertyDefinitionImpl cloned = new FlowPropertyDefinitionImpl(original);
         assertEquals(original, cloned, "cloning failed");
     }

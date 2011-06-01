@@ -159,7 +159,7 @@ public enum PropertyUsage {
 
     /**
      * True means the property can be set externally.
-     * TODO: {@link PropertySecurity} should be used?
+     * TODO: {@link ExternalPropertyAccessRestriction} should be used?
      * @return true means the property can be initialized externally by previous flows or from clients.
      * false means the property is always set by the flow itself. ( Use case: security parameters )
      *

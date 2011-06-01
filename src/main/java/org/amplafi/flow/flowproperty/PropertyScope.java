@@ -13,7 +13,7 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import static org.amplafi.flow.flowproperty.PropertySecurity.*;
+import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 
 import java.util.Arrays;
@@ -110,7 +110,7 @@ public enum PropertyScope {
     private final boolean localToFlow;
     private final PropertyUsage defaultPropertyUsage;
     private final Set<PropertyUsage> allowPropertyUsages;
-    private final PropertySecurity defaultPropertySecurity;
+    private final ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction;
     /**
      * Property should not be persisted as string in the FlowState map. This is
      * useful caching values during this transaction. TODO maybe allow
@@ -122,10 +122,10 @@ public enum PropertyScope {
      * this prevents passwords from being saved into the flowstate db table.
      */
     private final boolean cacheOnly;
-    private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, PropertySecurity defaultPropertySecurity, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
+    private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
         this.localToFlow = localToFlow;
         this.defaultPropertyUsage = defaultPropertyUsage;
-        this.defaultPropertySecurity = defaultPropertySecurity;
+        this.defaultExternalPropertyAccessRestriction = defaultExternalPropertyAccessRestriction;
         this.cacheOnly = cacheOnly;
         this.allowPropertyUsages = new HashSet<PropertyUsage>();
         if (isNotEmpty(allowedPropertyUsages)) {
@@ -148,10 +148,10 @@ public enum PropertyScope {
         return defaultPropertyUsage;
     }
     /**
-     * @return the defaultPropertySecurity
+     * @return the defaultExternalPropertyAccessRestriction
      */
-    public PropertySecurity getDefaultPropertySecurity() {
-        return defaultPropertySecurity;
+    public ExternalPropertyAccessRestriction getDefaultExternalPropertyAccessRestriction() {
+        return defaultExternalPropertyAccessRestriction;
     }
     /**
      * @return the cacheOnly

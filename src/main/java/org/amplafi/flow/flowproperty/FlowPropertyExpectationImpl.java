@@ -38,7 +38,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private final FlowPropertyValueProvider<?> flowPropertyValueProvider;
     private final FlowPropertyValuePersister flowPropertyValuePersister;
 
-    private final PropertySecurity propertySecurity;
+    private final ExternalPropertyAccessRestriction externalPropertyAccessRestriction;
 
     private DataClassDefinition dataClassDefinition;
 
@@ -56,18 +56,18 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         this(name, null, null, null, null, flowPropertyValueProvider, null, null);
     }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
-            PropertySecurity propertySecurity, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        this(name, propertyRequired, propertyScope, propertyUsage, propertySecurity, null, null, Arrays.asList(flowPropertyValueChangeListener));
+            ExternalPropertyAccessRestriction externalPropertyAccessRestriction, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
 
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
-            PropertySecurity propertySecurity,
+            ExternalPropertyAccessRestriction externalPropertyAccessRestriction,
             FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, FlowPropertyValuePersister flowPropertyValuePersister, List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
         this.name = name;
         this.propertyRequired = propertyRequired;
         this.propertyScope = propertyScope;
         this.propertyUsage = propertyUsage;
-        this.propertySecurity = propertySecurity;
+        this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
         this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
         this.flowPropertyValueProvider = flowPropertyValueProvider;
         this.flowPropertyValuePersister = flowPropertyValuePersister;
@@ -119,8 +119,8 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyValuePersister getFlowPropertyValuePersister() {
         return flowPropertyValuePersister;
     }
-    public PropertySecurity getPropertySecurity() {
-        return propertySecurity;
+    public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
+        return externalPropertyAccessRestriction;
     }
 
     /**

@@ -21,8 +21,8 @@ import org.amplafi.flow.FlowState;
  * 
  * TODO: rename to PropertyAccess
  * 
- * PropertySecurity determines if setProperty() or getProperty() are allowed.
- * PropertySecurity does not affect {@link FlowPropertyValueProvider} setting a value
+ * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed.
+ * ExternalPropertyAccessRestriction does NOT affect {@link FlowPropertyValueProvider} setting a value
  * This differs from how the property is initialized and exported ( {@link PropertyUsage} ) and how
  * broad any changes to the property are spread. ( PropertyScope )
  * but this may overlap with {@link PropertyUsage#isExternallySettable()}
@@ -34,7 +34,7 @@ import org.amplafi.flow.FlowState;
  * @author patmoore
  *
  */
-public enum PropertySecurity {
+public enum ExternalPropertyAccessRestriction {
     /**
      * can be accessed externally both for modification, viewing
      */
@@ -64,7 +64,7 @@ public enum PropertySecurity {
      * @param externalReadAccess
      * @param externalWriteAccess
      */
-    private PropertySecurity(boolean externalReadAccess, boolean externalWriteAccess) {
+    private ExternalPropertyAccessRestriction(boolean externalReadAccess, boolean externalWriteAccess) {
         this.externalReadAccessAllowed = externalReadAccess;
         this.externalWriteAccessAllowed = externalWriteAccess;
     }

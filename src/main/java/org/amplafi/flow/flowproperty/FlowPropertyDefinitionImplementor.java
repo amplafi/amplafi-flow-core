@@ -90,8 +90,8 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     /**
      * @param propertyScope
      * @param propertyUsage
-     * @param propertySecurity
+     * @param externalPropertyAccessRestriction
      * @return
      */
-    FlowPropertyDefinitionImplementor initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, PropertySecurity propertySecurity);
+    FlowPropertyDefinitionImplementor initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction);
 }

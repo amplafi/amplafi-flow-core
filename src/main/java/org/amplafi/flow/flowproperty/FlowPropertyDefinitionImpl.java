@@ -126,7 +126,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     /**
      * data that should not be outputted or saved. for example, passwords.
      */
-    private PropertySecurity propertySecurity;
+    private ExternalPropertyAccessRestriction externalPropertyAccessRestriction;
 
     /**
      * A string meaningful to the UI framework
@@ -168,8 +168,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
         this.setUiComponentParameterName(clone.uiComponentParameterName);
-        if (clone.propertySecurity != null) {
-            this.setPropertySecurity(clone.propertySecurity);
+        if (clone.externalPropertyAccessRestriction != null) {
+            this.setExternalPropertyAccessRestriction(clone.externalPropertyAccessRestriction);
         }
         validators = clone.validators;
         saveBack = clone.saveBack;
@@ -560,10 +560,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return flowPropertyDefinition;
     }
     public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
-        return initAccess(propertyScope,propertyUsage,propertySecurity.noRestrictions);
+        return initAccess(propertyScope,propertyUsage,externalPropertyAccessRestriction.noRestrictions);
     }
-    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, PropertySecurity propertySecurity) {
-        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage).initPropertySecurity(propertySecurity);
+    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
+        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage).initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
     }
     /**
      * affects isEntity()
@@ -620,8 +620,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return allNames;
     }
 
-    public void setPropertySecurity(PropertySecurity propertySecurity) {
-        this.propertySecurity = propertySecurity;
+    public void setExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
+        this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
         // TODO: rethink on handling this (commented out in order to access
         // values)
         /*
@@ -629,20 +629,20 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
          */
     }
 
-    public PropertySecurity getPropertySecurity() {
-        return propertySecurity != null?propertySecurity:getPropertyScope().getDefaultPropertySecurity();
+    public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
+        return externalPropertyAccessRestriction != null?externalPropertyAccessRestriction:getPropertyScope().getDefaultExternalPropertyAccessRestriction();
     }
-    public FlowPropertyDefinitionImpl initPropertySecurity(PropertySecurity propertySecurity) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.propertySecurity, propertySecurity);
-    	flowPropertyDefinition.setPropertySecurity(propertySecurity);
+    public FlowPropertyDefinitionImpl initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
+    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.externalPropertyAccessRestriction, externalPropertyAccessRestriction);
+    	flowPropertyDefinition.setExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
         return flowPropertyDefinition;
     }
     public FlowPropertyDefinitionImpl initSensitive() {
-    	return initPropertySecurity(PropertySecurity.noAccess);
+    	return initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction.noAccess);
     }
 
     public boolean isSensitive() {
-        return !getPropertySecurity().isExternalReadAccessAllowed();
+        return !getExternalPropertyAccessRestriction().isExternalReadAccessAllowed();
     }
     /**
      * TODO: USE!
@@ -702,7 +702,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
                 result &= !isPropertyScopeSet() || !property.isPropertyScopeSet() || getPropertyScope() == property.getPropertyScope();
                 result &= !isPropertyUsageSet() || !property.isPropertyUsageSet()
                     || getPropertyUsage().isChangeableTo(property.getPropertyUsage()) || property.getPropertyUsage().isChangeableTo(getPropertyUsage());
-                // TODO: PropertySecurity
+                // TODO: ExternalPropertyAccessRestriction
                 if ( !result) {
 //                    System.out.println("scope clash");
                 }
@@ -769,8 +769,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         if (uiComponentParameterName == null && source.uiComponentParameterName != null) {
             uiComponentParameterName = source.uiComponentParameterName;
         }
-        if (propertySecurity == null && source.propertySecurity != null) {
-            this.propertySecurity =source.propertySecurity;
+        if (externalPropertyAccessRestriction == null && source.externalPropertyAccessRestriction != null) {
+            this.externalPropertyAccessRestriction =source.externalPropertyAccessRestriction;
         }
         if (validators == null && source.validators != null) {
             this.validators =source.validators;
@@ -782,7 +782,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             this.propertyUsage = PropertyUsage.survivingPropertyUsage(propertyUsage, source.propertyUsage);
         }
 
-        // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/PropertySecurity which vary between different FAs in the same Flow.
+        // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/ExternalPropertyAccessRestriction which vary between different FAs in the same Flow.
         return noMergeConflict;
     }
 
@@ -805,7 +805,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public boolean isCopyBackOnFlowSuccess() {
-        // TODO: This needs to be a more complex test involving PropertySecurity as well.
+        // TODO: This needs to be a more complex test involving ExternalPropertyAccessRestriction as well.
         return getPropertyUsage().isCopyBackOnFlowSuccess();
     }
 
@@ -1000,7 +1000,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
             .append(this.getPropertyScope(), flowPropertyDefinition.getPropertyScope())
-            .append(this.getPropertySecurity(), flowPropertyDefinition.getPropertySecurity())
+            .append(this.getExternalPropertyAccessRestriction(), flowPropertyDefinition.getExternalPropertyAccessRestriction())
             .append(this.saveBack, flowPropertyDefinition.saveBack)
             .append(this.validators, flowPropertyDefinition.validators);
         return equalsBuilder.isEquals();
