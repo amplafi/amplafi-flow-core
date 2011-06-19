@@ -42,6 +42,8 @@ import org.amplafi.json.JSONWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sworddance.util.CUtilities;
+
 public class BaseFlowService implements FlowService {
 
 	public static final String USE_CURRENT = "current";
@@ -305,9 +307,11 @@ public class BaseFlowService implements FlowService {
 			            jsonWriter.key(FLOW_STATE_JSON_KEY).value(flowState);
 			            // TODO : probably need to check on PropertyRequired.finish
 			            Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
-			            if (result != null && !result.isEmpty()) {
-			                jsonWriter.key(ServicesConstants.VALIDATION_ERRORS).value(result);
-			            }
+			            writeValidationResult(jsonWriter, result);
+			        } else if (exception instanceof FlowValidationException) {
+			        	FlowValidationException e = (FlowValidationException) exception;
+			        	Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
+						writeValidationResult(jsonWriter, validationResult);
 			        }
 			        jsonWriter.endObject();
 			        writer.append(jsonWriter.toString());
@@ -317,6 +321,13 @@ public class BaseFlowService implements FlowService {
 			        throw new IOException(exception);
 			    }
 			}
+
+	private void writeValidationResult(JSONWriter jsonWriter,
+			Map<String, FlowValidationResult> result) {
+		if (result != null && !result.isEmpty()) {
+		    jsonWriter.key(ServicesConstants.VALIDATION_ERRORS).value(result);
+		}
+	}
 
 	/**
 	 * Render a json description of the flow. This includes parameters (name, type, required).
