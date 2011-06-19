@@ -1839,5 +1839,10 @@ public class FlowStateImpl implements FlowStateImplementor {
     public String toString() {
         return this.lookupKey + " [type:" + this.flowTypeName + "]; current Activity="+this.getCurrentActivity()+"; flowStateMap="+this.flowValuesMap;
     }
+    
+    @Override
+    public boolean isPersisted() {
+    	return false;
+    }
 
 }

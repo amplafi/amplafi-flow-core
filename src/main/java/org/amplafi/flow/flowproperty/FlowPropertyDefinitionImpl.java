@@ -38,6 +38,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -1198,4 +1199,28 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
 
+	@Override
+	public boolean isExportable() {
+		String name = getName();
+		if (name.startsWith("fs") || name.startsWith("fa")) {
+			return false;
+		}
+		final PropertyUsage usage = getPropertyUsage();
+		return usage == null || usage == PropertyUsage.io	|| usage == PropertyUsage.consume || usage == PropertyUsage.use;
+	}
+	
+	@Override
+	public IJsonWriter toJson(IJsonWriter jsonWriter) {
+		jsonWriter.object();
+		jsonWriter.keyValue("name", this.getName());
+		jsonWriter.keyValue("type", this.getDataClass().getSimpleName());
+		jsonWriter.keyValue("req", this.getPropertyRequired());
+		jsonWriter.endObject();
+		return jsonWriter;
+	}
+	
+	@Override
+	public <T> T fromJson(Object object) {
+		return null;
+	}
 }

@@ -310,4 +310,5 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param map
      */
     public void setAllProperties(Map<?,?> map);
+	public boolean isPersisted();
 }

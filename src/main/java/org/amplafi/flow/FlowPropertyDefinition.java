@@ -18,6 +18,7 @@ import java.util.Set;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.json.JsonSelfRenderer;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -26,7 +27,7 @@ import org.amplafi.flow.translator.FlowTranslator;
  *
  * TODO: split into 2 interfaces so that there can be immutable FlowPropertyDefinition
  */
-public interface FlowPropertyDefinition extends FlowPropertyExpectation {
+public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSelfRenderer {
 
     DataClassDefinition getDataClassDefinition();
 
@@ -116,4 +117,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
     boolean isCopyBackOnFlowSuccess();
 
     boolean isDefaultAvailable();
+    
+    boolean isExportable();
 }
