@@ -371,14 +371,23 @@ public class BaseFlowService implements FlowService {
 	protected FlowState completeFlowState(String flowType, String flowId, String renderResult,
 			Map<String, String> initial, String complete, boolean currentFlow, Writer writer, String advanceToActivity)
 			throws IOException, FlowNotFoundException, FlowRedirectException {
-				FlowState flowState;
-				flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
-				if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
-				    if ( JSON.equalsIgnoreCase(renderResult)) {
-				        renderJSON(flowState, writer);
-				    } else if ( HTML.equalsIgnoreCase(renderResult)) {
-				        renderHtml(flowState);
-				    }
+				FlowState flowState = null;
+				try {
+					flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
+					if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
+						if ( JSON.equalsIgnoreCase(renderResult)) {
+							renderJSON(flowState, writer);
+						} else if ( HTML.equalsIgnoreCase(renderResult)) {
+							renderHtml(flowState);
+						}
+					}
+				} catch (FlowNotFoundException e) {
+					throw e;
+				} catch (FlowRedirectException e) {
+					throw e;
+				} catch (Exception e){
+					renderError(writer, "Error", renderResult, flowState, e);
+					return flowState;
 				}
 				return flowState;
 			}
