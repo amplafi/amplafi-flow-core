@@ -30,7 +30,7 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowStateJsonOutputRenderer;
+import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowUtils;
@@ -292,7 +292,7 @@ public class BaseFlowService implements FlowService {
 
 	protected JSONWriter getFlowStateWriter(){
 		JSONWriter jsonWriter = new JSONWriter();
-		jsonWriter.addRenderer(FlowState.class, new FlowStateJsonOutputRenderer());
+		jsonWriter.addRenderer(FlowState.class, new FlowStateJsonRenderer());
 		return jsonWriter;
 	}
 
