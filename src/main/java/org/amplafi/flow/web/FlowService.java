@@ -14,6 +14,7 @@
 
 package org.amplafi.flow.web;
 
+import java.io.IOException;
 import java.util.Map;
 
 
@@ -26,8 +27,9 @@ public interface FlowService {
      *
      * @param flowLookupKey the key of an existing flow to continue
      * @param propertyChanges values with which to update the state of the flow
-     * @throws FlowRedirectException 
+     * @throws FlowRedirectException
      */
     public void continueFlowState(String flowLookupKey,
             Map<String, String> propertyChanges) throws FlowRedirectException;
+    public void service(FlowRequest flowRequest) throws IOException, FlowNotFoundException, FlowRedirectException;
 }

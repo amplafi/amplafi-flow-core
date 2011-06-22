@@ -50,7 +50,7 @@ public class BaseFlowService implements FlowService {
 	  // see InsertionPoint.js
     private static final String FS_BACKGROUND_FLOW = "fsInBackground";
 	protected static final String SCRIPT_CONTENT_TYPE = "text/javascript";
-	
+
 	private FlowManager flowManager;
 	private Log log;
 	/**
@@ -68,7 +68,10 @@ public class BaseFlowService implements FlowService {
 	public BaseFlowService() {
 		super();
 	}
-
+    public BaseFlowService(FlowDefinitionsManager flowDefinitionsManager, FlowManager flowManager) {
+        this.setFlowDefinitionsManager(flowDefinitionsManager);
+        this.setFlowManager(flowManager);
+    }
 	/**
 	 * @param flowDefinitionsManager the flowDefinitionsManager to set
 	 */
@@ -110,14 +113,14 @@ public class BaseFlowService implements FlowService {
                 Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
                 CharSequence flowTypesFormattedWithJson = toJsonArray(flowTypes);
                 writer.append(flowTypesFormattedWithJson);
-                return; 
+                return;
             }else {
                 CharSequence description = describeService(flowType, renderResult);
                 writer.append(description);
                 return;
             }
         }
-        
+
         Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
         // TODO map cookie to the json flow state.
         String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
@@ -165,11 +168,11 @@ public class BaseFlowService implements FlowService {
 			                renderError(writer, flowType+": no such flow type", renderResult, null, new FlowNotFoundException(flowType));
 			                return null;
 			            }
-			
+
 			            if (USE_CURRENT.equals(flowId)) {
 			                flowState = getFlowManagement().getFirstFlowStateByType(flowType);
 			            }
-			
+
 			            if (flowState==null) {
 			                String returnToFlowLookupKey = null;
 			                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey );
@@ -348,7 +351,7 @@ public class BaseFlowService implements FlowService {
 	        return "";
 	    }
 	};
-	
+
 	/**
      * TODO: Move in separate JsonRenderer when finalized
      */
