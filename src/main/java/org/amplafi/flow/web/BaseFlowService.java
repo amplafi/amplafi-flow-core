@@ -356,24 +356,33 @@ public class BaseFlowService implements FlowService {
      * TODO: Move in separate JsonRenderer when finalized
      */
     public void renderFlowParameterJSON(JSONWriter jsonWriter, Flow flow) {
-        jsonWriter.key("parameters");
+        jsonWriter.key("flowParameters");
         jsonWriter.array();
-
-        final Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
-        renderFlowPropertyDefinitions(jsonWriter, propertyDefinitions);
-        if ( isNotEmpty(flow.getActivities())) {
-            for(FlowActivity flowActivity: flow.getActivities()) {
-                renderFlowPropertyDefinitions(jsonWriter, flowActivity.getPropertyDefinitions());
-            }
-        }
+	        Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
+	        renderFlowPropertyDefinitions(jsonWriter, propertyDefinitions);
         jsonWriter.endArray();
+        if ( isNotEmpty(flow.getActivities())) {
+        	jsonWriter.key("activities");
+        	jsonWriter.array();
+	            for(FlowActivity flowActivity: flow.getActivities()) {
+	            	jsonWriter.object();
+		            	jsonWriter.key("activity");
+		            	jsonWriter.value(flowActivity.getFlowPropertyProviderName());
+		            	jsonWriter.key("parameters");
+		            	jsonWriter.array();
+		                	renderFlowPropertyDefinitions(jsonWriter, flowActivity.getPropertyDefinitions());
+		                jsonWriter.endArray();
+	                jsonWriter.endObject();
+	            }
+            jsonWriter.endArray();
+        }
     }
 
     /**
      * @param jsonWriter
      * @param propertyDefinitions
      */
-    private void renderFlowPropertyDefinitions(JSONWriter jsonWriter, final Map<String, FlowPropertyDefinition> propertyDefinitions) {
+    private void renderFlowPropertyDefinitions(JSONWriter jsonWriter, Map<String, FlowPropertyDefinition> propertyDefinitions) {
         for (Map.Entry<String, FlowPropertyDefinition> entry : propertyDefinitions.entrySet()) {
             final FlowPropertyDefinition definition = entry.getValue();
             if (definition.isExportable()) {
