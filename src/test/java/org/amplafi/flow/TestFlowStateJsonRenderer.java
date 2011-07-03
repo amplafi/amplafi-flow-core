@@ -14,6 +14,9 @@
 
 package org.amplafi.flow;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
@@ -28,7 +31,6 @@ import org.testng.annotations.Test;
 
 
 public class TestFlowStateJsonRenderer extends Assert {
-
 
     @Test
     public void testSimpleFlowState() {
@@ -51,6 +53,24 @@ public class TestFlowStateJsonRenderer extends Assert {
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+
         		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
                 FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"property1\":\"value1\",\"property2\":\"value2\"}}}");
+    }
+
+    @Test
+    public void testCompleteFlowStateWithSimpleObject() {
+        Map<String, String> testObject = new LinkedHashMap<String, String>();
+        testObject.put("objectParameter1", "parameterValue1");
+        testObject.put("objectParameter2", "parameterValue2");
+        FlowStateImpl flowState = newFlowState();
+        flowState.<String> setProperty("property1", "value1");
+        flowState.<String> setProperty("property2", "value2");
+        flowState.<Map<String, String>> setProperty("objectProperty", testObject);
+
+        JSONWriter jsonWriter = getJsonWriter();
+        jsonWriter.object().key("flowState").value(flowState).endObject();
+        assertEquals(jsonWriter.toString(), "{\"flowState\":{\"" + FlowStateJsonRenderer.FS_COMPLETE + "\":true,\""
+            + FlowStateJsonRenderer.FS_LOOKUP_KEY + "\":\"" + flowState.getLookupKey() + "\",\"" + FlowStateJsonRenderer.FS_PARAMETERS
+            + "\":{\"property1\":\"value1\",\"property2\":\"value2\""
+            + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}}}");
     }
 
     private FlowStateImpl newFlowState() {

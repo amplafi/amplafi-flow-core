@@ -14,6 +14,8 @@
 
 package org.amplafi.flow;
 
+import java.util.Map;
+
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JsonRenderer;
@@ -52,7 +54,37 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     }
 
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
-        jsonWriter.key(FS_PARAMETERS).value(flowState.getExportedValuesMap());
+        jsonWriter.key(FS_PARAMETERS);
+        renderFlowsValueMap(jsonWriter, flowState);
+    }
+
+    private void renderFlowsValueMap(IJsonWriter jsonWriter, FlowState flowState) {
+        Map fsParametersMap = flowState.getExportedValuesMap();
+        jsonWriter.object();
+        if (fsParametersMap != null) {
+            for (Object entry : fsParametersMap.entrySet()) {
+                Object key = ((Map.Entry) entry).getKey();
+                Object value = ((Map.Entry) entry).getValue();
+                // TODO: TO_KONSTA are null values allowed for this object?
+                if (key != null && value != null) {
+                    jsonWriter.key(key);
+                    /*
+                     * All objects stored in the flow state are converted to json strings, so there
+                     * are two cases from here. Either the value is a an object and starts with '{'
+                     * or '[' or it is not an object.
+                     */
+                    if (value instanceof String) {
+                        String valueAsString = (String) value;
+                        if (valueAsString.startsWith("{") || valueAsString.startsWith("[")) {
+                            jsonWriter.append(valueAsString);
+                        } else {
+                            jsonWriter.value(valueAsString);
+                        }
+                    }
+                }
+            }
+        }
+        jsonWriter.endObject();
     }
 
     /**
