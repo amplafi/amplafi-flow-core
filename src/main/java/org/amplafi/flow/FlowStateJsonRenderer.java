@@ -53,11 +53,17 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         return jsonWriter.endObject();
     }
 
+
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
         jsonWriter.key(FS_PARAMETERS);
         renderFlowsValueMap(jsonWriter, flowState);
     }
 
+    // TO_TIRIS : This change is normally o.k. But can you please check
+    // FlowStateJsonOutputRenderer to see if it does the same thing?
+    // I prefer the FlowStateJsonOutputRenderer version ( with a tweak )
+    // you are correct that null values should not be outputted
+    // if so then see if we can delete FlowStateJsonOutputRenderer
     private void renderFlowsValueMap(IJsonWriter jsonWriter, FlowState flowState) {
         Map fsParametersMap = flowState.getExportedValuesMap();
         jsonWriter.object();
