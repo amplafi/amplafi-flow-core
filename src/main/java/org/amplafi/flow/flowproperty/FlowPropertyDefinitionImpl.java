@@ -1201,6 +1201,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
 	@Override
 	public boolean isExportable() {
+	    // HACK: PATM : old problem of "export to user v export to another flow"
 		String name = getName();
 		if (name.startsWith("fs") || name.startsWith("fa")) {
 			return false;
@@ -1208,7 +1209,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 		final PropertyUsage usage = getPropertyUsage();
 		return usage == null || usage == PropertyUsage.io	|| usage == PropertyUsage.consume || usage == PropertyUsage.use;
 	}
-	
+
 	@Override
 	public IJsonWriter toJson(IJsonWriter jsonWriter) {
 		jsonWriter.object();
@@ -1218,7 +1219,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 		jsonWriter.endObject();
 		return jsonWriter;
 	}
-	
+
 	@Override
 	public <T> T fromJson(Object object) {
 		return null;
