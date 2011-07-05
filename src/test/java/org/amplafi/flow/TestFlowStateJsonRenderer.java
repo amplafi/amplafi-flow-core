@@ -55,6 +55,10 @@ public class TestFlowStateJsonRenderer extends Assert {
                 FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"property1\":\"value1\",\"property2\":\"value2\"}}}");
     }
 
+    /**
+     * TO_TIRIS: add comments about what the test is testing for. ( add comments to the other tests in this file as well )
+     * it was bad of me to not have added the comments myself.
+     */
     @Test
     public void testCompleteFlowStateWithSimpleObject() {
         Map<String, String> testObject = new LinkedHashMap<String, String>();
