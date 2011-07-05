@@ -37,7 +37,6 @@ import com.sworddance.beans.MapByClass;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import static org.apache.commons.collections.CollectionUtils.*;
 
@@ -278,9 +277,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      * @return the log
      */
     public Log getLog() {
-    	if ( this.log == null ) {
-            this.log = LogFactory.getLog(this.getClass());
-        }
         return log;
     }
 
