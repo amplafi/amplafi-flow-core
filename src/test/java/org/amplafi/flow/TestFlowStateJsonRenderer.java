@@ -32,6 +32,9 @@ import org.testng.annotations.Test;
 
 public class TestFlowStateJsonRenderer extends Assert {
 
+    /**
+     * This tests the JSON rendering of a flow state with no fsParameters.
+     */
     @Test
     public void testSimpleFlowState() {
         FlowStateImpl flowState = newFlowState();
@@ -43,6 +46,10 @@ public class TestFlowStateJsonRenderer extends Assert {
         		"}}");
 
     }
+
+    /**
+     * This tests the JSON rendering of a flow state with two string parameters.
+     */
     @Test
     public void testCompleteFlowState() {
         FlowStateImpl flowState = newFlowState();
@@ -56,8 +63,9 @@ public class TestFlowStateJsonRenderer extends Assert {
     }
 
     /**
-     * TO_TIRIS: add comments about what the test is testing for. ( add comments to the other tests in this file as well )
-     * it was bad of me to not have added the comments myself.
+     * This tests that a object represented in the flow state is properly rendered when serializing
+     * to JSON. The object should already bee stored in JSON format so we would want to see it
+     * re-rendered as a string, which would give all of the double quotes the escape character.
      */
     @Test
     public void testCompleteFlowStateWithSimpleObject() {
