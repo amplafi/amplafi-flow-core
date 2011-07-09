@@ -42,7 +42,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\"" +
         		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{}" +
+                FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"fsFlowTransitions\":{}}" +
         		"}}");
 
     }
@@ -59,7 +59,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+
         		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"property1\":\"value1\",\"property2\":\"value2\"}}}");
+                FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"fsFlowTransitions\":{},\"property1\":\"value1\",\"property2\":\"value2\"}}}");
     }
 
     /**
@@ -81,7 +81,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\"" + FlowStateJsonRenderer.FS_COMPLETE + "\":true,\""
             + FlowStateJsonRenderer.FS_LOOKUP_KEY + "\":\"" + flowState.getLookupKey() + "\",\"" + FlowStateJsonRenderer.FS_PARAMETERS
-            + "\":{\"property1\":\"value1\",\"property2\":\"value2\""
+            + "\":{\"fsFlowTransitions\":{},\"property1\":\"value1\",\"property2\":\"value2\""
             + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}}}");
     }
 

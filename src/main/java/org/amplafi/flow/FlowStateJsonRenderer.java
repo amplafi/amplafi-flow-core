@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import java.util.Map;
+import java.util.Collection;
 
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
@@ -28,6 +28,7 @@ import org.amplafi.json.JsonRenderer;
  */
 public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 
+    public static final FlowStateJsonRenderer INSTANCE = new FlowStateJsonRenderer();
     public static final String FS_PARAMETERS = "fsParameters";
     public static final String FS_LOOKUP_KEY = "fsLookupKey";
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
@@ -55,39 +56,15 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 
 
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
+        // TODO: TO_KONSTA: The FlowStateJsonOutputRenderer indeed was that same output save the tweak. I have added the tweak to the TestFlowStateJsonRenderer, integrated the changes into this class and removed the FlowStateJsonOutputRenderer class. Please just remove this comment after you have read it.
         jsonWriter.key(FS_PARAMETERS);
-        renderFlowsValueMap(jsonWriter, flowState);
-    }
-
-    // TO_TIRIS : This change is normally o.k. But can you please check
-    // FlowStateJsonOutputRenderer to see if it does the same thing?
-    // I prefer the FlowStateJsonOutputRenderer version ( with a tweak )
-    // you are correct that null values should not be outputted
-    // if so then see if we can delete FlowStateJsonOutputRenderer
-    private void renderFlowsValueMap(IJsonWriter jsonWriter, FlowState flowState) {
-        Map fsParametersMap = flowState.getExportedValuesMap();
         jsonWriter.object();
-        if (fsParametersMap != null) {
-            for (Object entry : fsParametersMap.entrySet()) {
-                Object key = ((Map.Entry) entry).getKey();
-                Object value = ((Map.Entry) entry).getValue();
-                // TODO: TO_KONSTA are null values allowed for this object?
-                if (key != null && value != null) {
-                    jsonWriter.key(key);
-                    /*
-                     * All objects stored in the flow state are converted to json strings, so there
-                     * are two cases from here. Either the value is a an object and starts with '{'
-                     * or '[' or it is not an object.
-                     */
-                    if (value instanceof String) {
-                        String valueAsString = (String) value;
-                        if (valueAsString.startsWith("{") || valueAsString.startsWith("[")) {
-                            jsonWriter.append(valueAsString);
-                        } else {
-                            jsonWriter.value(valueAsString);
-                        }
-                    }
-                }
+        Collection<FlowPropertyDefinition> propertyDefinitions = flowState.getPropertyDefinitions().values();
+        for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
+            String propertyName = flowPropertyDefinition.getName();
+            if (flowState.isPropertyValueSet(propertyName)) {
+                Object property = flowState.getProperty(propertyName);
+                jsonWriter.keyValueIfNotNullValue(propertyName, property);
             }
         }
         jsonWriter.endObject();
