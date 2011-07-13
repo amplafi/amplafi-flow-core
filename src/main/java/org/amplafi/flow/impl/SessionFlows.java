@@ -20,6 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowState;
 
+import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.ApplicationNullPointerException;
+
 import static org.apache.commons.lang.StringUtils.*;
 
 public class SessionFlows implements Iterable<FlowStateImplementor>{
@@ -44,10 +47,7 @@ public class SessionFlows implements Iterable<FlowStateImplementor>{
     public synchronized boolean isEmpty() {
         return activeFlows.isEmpty();
     }
-    public boolean add(FlowStateImplementor flowState) {
-        addLast(flowState);
-        return true;
-    }
+
     public synchronized FlowStateImplementor getFirst() {
         return isEmpty()?null:activeFlows.getFirst();
     }
@@ -65,9 +65,9 @@ public class SessionFlows implements Iterable<FlowStateImplementor>{
         activeFlows.addFirst(flowState);
     }
     public synchronized int makeAfter(FlowStateImplementor flowState, FlowStateImplementor nextFlowState) {
-        if(!activeFlowsMap.containsKey(flowState.getLookupKey())) {
-            throw new IllegalStateException(flowState.getLookupKey()+ ": not a current flow");
-        }
+        ApplicationIllegalStateException.checkState(activeFlowsMap.containsKey(flowState.getLookupKey()),
+            flowState.getLookupKey()+ ": not a current flow");
+
         int oldPosition = -1;
         for(int i = 0; i < this.activeFlows.size(); ) {
             FlowStateImplementor state = this.activeFlows.get(i);
@@ -83,6 +83,10 @@ public class SessionFlows implements Iterable<FlowStateImplementor>{
         }
         return oldPosition;
     }
+    public boolean add(FlowStateImplementor flowState) {
+        addLast(flowState);
+        return true;
+    }
     /**
      * @param i
      * @param nextFlowState
@@ -92,9 +96,7 @@ public class SessionFlows implements Iterable<FlowStateImplementor>{
         this.activeFlowsMap.put(nextFlowState.getLookupKey(), nextFlowState);
     }
     public synchronized FlowState get(String lookupKey) {
-        if (lookupKey == null ) {
-            throw new IllegalArgumentException("lookupKey for flow is null!");
-        }
+        ApplicationNullPointerException.notNull(lookupKey,"lookupKey for flow is null!");
         return this.activeFlowsMap.get(lookupKey);
     }
     /**

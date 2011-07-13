@@ -52,6 +52,7 @@ import org.amplafi.flow.web.PageProvider;
 
 import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
+import com.sworddance.util.ApplicationGeneralException;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
 
@@ -341,6 +342,11 @@ public class BaseFlowManagement implements FlowManagement {
                 }
             }
             return (FS) flowState;
+        } catch (RuntimeException e) {
+            // HACK: when starting a flow that has a problem we lose the flow information.
+            // ideally we would have a general mechanism for capturing this flow information.
+            // ( more correctly we should store the data in the database for analysis )
+            throw new ApplicationGeneralException(flowState.toString(), e);
         } finally {
             if ( !success ) {
                 this.dropFlowState(flowState);
