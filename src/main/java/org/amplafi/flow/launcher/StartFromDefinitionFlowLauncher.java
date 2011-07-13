@@ -61,7 +61,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
     public StartFromDefinitionFlowLauncher(String flowTypeName, FlowManagement flowManagement) {
         this(flowTypeName, null, flowManagement);
     }
-
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState) {
+        this(flowTypeName, initialFlowState, null, flowTypeName);
+    }
     public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState,
             FlowManagement flowManagement) {
         this(flowTypeName, initialFlowState, flowManagement, flowTypeName);
@@ -71,7 +73,9 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
             FlowManagement flowManagement, Serializable keyExpression) {
         super(flowTypeName, flowManagement, initialFlowState, keyExpression);
     }
-
+    public StartFromDefinitionFlowLauncher(String flowTypeName, Map<String, String> initialFlowState, Serializable keyExpression) {
+        super(flowTypeName, initialFlowState, keyExpression);
+    }
     /**
     *
     * @param flowTypeName
