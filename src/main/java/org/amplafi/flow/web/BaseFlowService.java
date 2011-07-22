@@ -176,7 +176,9 @@ public class BaseFlowService implements FlowService {
                     }
                 }
             } else {
-                renderError(writer, "neither " + ServicesConstants.FLOW_TYPE + " nor " + FLOW_ID + " in parameters", renderResult, null, null);
+                String error = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.",
+                    ServicesConstants.FLOW_TYPE, FLOW_ID);
+                renderError(writer, error, renderResult, null, null);
                 return null;
             }
         }
