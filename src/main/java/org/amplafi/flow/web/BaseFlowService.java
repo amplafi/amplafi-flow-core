@@ -39,6 +39,8 @@ import org.amplafi.flow.launcher.FlowLauncher;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.json.JSONWriter;
+import org.amplafi.json.renderers.IterableJsonOutputRenderer;
+
 import org.apache.commons.logging.Log;
 import com.sworddance.util.CUtilities;
 
@@ -95,22 +97,6 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
-    /**
-     * TODO: move to a JSON utils class
-     *
-     * @param collection
-     * @return
-     */
-    protected CharSequence toJsonArray(Collection<String> collection) {
-        JSONWriter jsonWriter = new JSONWriter();
-        jsonWriter.array();
-        for (String string : collection) {
-            jsonWriter.value(string);
-        }
-        jsonWriter.endArray();
-        return jsonWriter.toString();
-    }
-
     public void service(FlowRequest flowRequest) throws IOException, FlowNotFoundException, FlowRedirectException {
         String flowType = flowRequest.getParameter(ServicesConstants.FLOW_TYPE);
         String flowId = flowRequest.getParameter(FLOW_ID);
@@ -121,8 +107,9 @@ public class BaseFlowService implements FlowService {
             if (flowType == null) {
                 // if no flow type then return a json array of all the flow types.
                 Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
-                CharSequence flowTypesFormattedWithJson = toJsonArray(flowTypes);
-                writer.append(flowTypesFormattedWithJson);
+                JSONWriter jWriter = new JSONWriter();
+                IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, flowTypes);
+                writer.append(jWriter.toString());
                 return;
             } else {
                 CharSequence description = describeService(flowType, renderResult);
