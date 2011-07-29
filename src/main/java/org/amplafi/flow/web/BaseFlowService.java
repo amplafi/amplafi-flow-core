@@ -12,8 +12,6 @@ import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.join;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -36,6 +34,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.launcher.FlowLauncher;
+import org.amplafi.flow.validation.ExceptionTracking;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.json.JSONWriter;
@@ -205,21 +204,20 @@ public class BaseFlowService implements FlowService {
         return log;
     }
 
-    protected String advanceFlow(FlowState flowState) {
-        String error = "some error occured";
-        if (flowState.isCurrentActivityCompletable()) {
+    protected FlowValidationResult advanceFlow(FlowState flowState) {
+        FlowValidationResult flowValidationResult = flowState.getCurrentActivityFlowValidationResult();
+        if (flowValidationResult.isValid()) {
             try {
                 flowState.next();
-                error = null;
             } catch (FlowValidationException flowValidationException) {
-                getLog().debug(flowState.getLookupKey(), flowValidationException);
+                flowValidationResult.addTracking(new ExceptionTracking(flowValidationException));
             } catch (Exception e) {
                 // TODO attach exception to output somehow.
                 getLog().error(flowState.getLookupKey(), e);
-                error = flowState.getLookupKey() + " " + e.getMessage() + join(e.getStackTrace(), ", ");
+                flowValidationResult.addTracking(new ExceptionTracking("", e));
             }
         }
-        return error;
+        return flowValidationResult;
     }
 
     public void setDefaultComplete(String defaultComplete) {
@@ -291,7 +289,7 @@ public class BaseFlowService implements FlowService {
         return jsonWriter;
     }
 
-    public void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
+    protected void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
         getLog().error("Exception while running flowState=" + flowState, exception);
         if (JSON.equalsIgnoreCase(renderResult) && writer != null) {
             JSONWriter jsonWriter = getFlowStateWriter();
@@ -418,11 +416,16 @@ public class BaseFlowService implements FlowService {
             // blank means don't try to complete flow.
             complete = defaultComplete;
         }
+        FlowValidationResult flowValidationResult = null;
         if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
             while (!flowState.isCompleted()) {
-                String error = advanceFlow(flowState);
-                if (error != null) {
-                    renderError(writer, "could not advance to the end. activity not completeable " + error, renderResult, flowState, null);
+                flowValidationResult = advanceFlow(flowState);
+                if (!flowValidationResult.isValid()) {
+                    Exception e = null;
+                    if ( flowValidationResult.getTrackings().size() == 1 && flowValidationResult.getTrackings().get(0) instanceof ExceptionTracking) {
+                        e = ((ExceptionTracking)flowValidationResult.getTrackings().get(0)).getThrowable();
+                    }
+                    renderError(writer, "could not advance to the end. Activity not completeable:", renderResult, flowState, e);
                     // if the flow has not been persisted then we drop the flow
                     // so it is not
                     // cluttering the session.
@@ -433,10 +436,9 @@ public class BaseFlowService implements FlowService {
                 }
             }
         } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
-            String success = null;
-            while (success == null && !flowState.isCompleted() && !flowState.isFinishable()
+            while ((flowValidationResult == null || flowValidationResult.isValid()) && !flowState.isCompleted() && !flowState.isFinishable()
                 && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
-                success = advanceFlow(flowState);
+                flowValidationResult = advanceFlow(flowState);
             }
         }
         return true;

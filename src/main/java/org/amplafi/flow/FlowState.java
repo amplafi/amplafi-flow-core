@@ -221,8 +221,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     FlowValidationResult getCurrentActivityFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 
-    boolean isCurrentActivityCompletable();
-
     Map<String, FlowValidationResult> getFlowValidationResults(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 
 

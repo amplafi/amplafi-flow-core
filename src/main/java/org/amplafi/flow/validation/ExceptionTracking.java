@@ -23,7 +23,15 @@ package org.amplafi.flow.validation;
  * using the string and the message of the exception passed in the constructor.
  */
 public class ExceptionTracking extends SimpleValidationTracking {
-    public ExceptionTracking(String property, Exception e) {
-        super(ExceptionTracking.class.getSimpleName(), property, e.getMessage(), e);
+    private final Throwable throwable;
+    public ExceptionTracking(Throwable throwable) {
+        this("", throwable);
+    }
+    public ExceptionTracking(String property, Throwable throwable) {
+        super(ExceptionTracking.class.getSimpleName(), property, throwable.getMessage());
+        this.throwable = throwable;
+    }
+    public <T extends Throwable> T getThrowable() {
+        return (T) throwable;
     }
 }
