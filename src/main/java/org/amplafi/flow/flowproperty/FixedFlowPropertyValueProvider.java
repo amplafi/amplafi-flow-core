@@ -35,7 +35,6 @@ import org.apache.commons.lang.ObjectUtils;
  * {@link org.amplafi.flow.FlowPropertyValueProvider} that handles statically provided values.
  *
  * Exploring as alternative to {@link FlowPropertyDefinitionImpl#getInitial()}
- * @param <FA>
  *
  */
 public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowPropertyProvider> {
@@ -111,7 +110,11 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
     }
 
     public Class<?> getSuggestedClass() {
-        return this.getDefaultObject() == null? String.class:this.getDefaultObject().getClass();
+        if ( this.defaultClass == null ) {
+            return String.class;
+        } else {
+            return this.defaultClass;
+        }
     }
 
     @Override
@@ -130,7 +133,7 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
     /**
      * @return the defaultObject
      */
-    private Object getDefaultObject() {
+    public Object getDefaultObject() {
         return defaultObject == NULL?null:this.defaultObject;
     }
     @Override
