@@ -623,16 +623,25 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     public void setExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
-        // TODO: rethink on handling this (commented out in order to access
-        // values)
-        /*
-         * if ( sensitive) { this.cacheOnly = true; }
-         */
     }
 
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
-        return externalPropertyAccessRestriction != null?externalPropertyAccessRestriction:getPropertyScope().getDefaultExternalPropertyAccessRestriction();
+        if( externalPropertyAccessRestriction != null) {
+            return externalPropertyAccessRestriction;
+        } else if ( name.startsWith("fs") || name.startsWith("fa")) {
+            // HACK: PATM : To TIRIS: Start applying ExternalPropertyAccessRestriction.noAccess to these properties
+            return ExternalPropertyAccessRestriction.noAccess;
+        } else {
+            return getPropertyUsage() == PropertyUsage.internalState? ExternalPropertyAccessRestriction.noAccess :
+                ExternalPropertyAccessRestriction.noRestrictions;
+        }
     }
+
+    @Override
+    public boolean isExportable() {
+        return this.getExternalPropertyAccessRestriction() != ExternalPropertyAccessRestriction.noAccess;
+    }
+
     public FlowPropertyDefinitionImpl initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
     	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.externalPropertyAccessRestriction, externalPropertyAccessRestriction);
     	flowPropertyDefinition.setExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
@@ -1198,17 +1207,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         List<FlowPropertyDefinitionImplementor> clonedSelf = Arrays.asList((FlowPropertyDefinitionImplementor)this.clone());
         super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
-
-	@Override
-	public boolean isExportable() {
-	    // HACK: PATM : old problem of "export to user v export to another flow"
-		String name = getName();
-		if (name.startsWith("fs") || name.startsWith("fa")) {
-			return false;
-		}
-		final PropertyUsage usage = getPropertyUsage();
-		return usage == null || usage == PropertyUsage.io	|| usage == PropertyUsage.consume || usage == PropertyUsage.use;
-	}
 
 	@Override
 	public IJsonWriter toJson(IJsonWriter jsonWriter) {

@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 
 import java.util.Arrays;
@@ -23,7 +22,8 @@ import java.util.Set;
 import static com.sworddance.util.CUtilities.*;
 
 /**
- * PropertyScope is scope of visibility while the flow is active.
+ * PropertyScope determines when a property is in scope (available) or out of scope ( can be gc'ed ) while the flow is active.
+ * A completed flow has all properties gc'ed. Properties that need to be saved need to be copied to a subsequent flow.
  *
  * Property scope is used to determine namespace of property while the flow is active and the namespace list when
  * initializing the flow. While active the namespace used is the most narrow namespace.
@@ -46,7 +46,7 @@ public enum PropertyScope {
      *
      * TODO put in a flowState.lookupKey namespace
      */
-    flowLocal(true, use, noRestrictions, false, PropertyUsage.values()),
+    flowLocal(true, use, false, PropertyUsage.values()),
     /**
      * If {@link PropertyUsage} is NOT {@link PropertyUsage#initialize},
      * Initial value is copied from flow namespace or no value in flow namespace then the global namespace.
@@ -56,7 +56,7 @@ public enum PropertyScope {
      * This allows a FA to have a private namespace so it can save info knowing
      * that it will not impact another FA.
      */
-    activityLocal(true, use, noRestrictions, false, PropertyUsage.values()),
+    activityLocal(true, use, false, PropertyUsage.values()),
     /**
      * The property is not saved into the flowState map. It is available for the current request only
      * and is cleared when current transaction completes. It has the same scope as flowLocal
@@ -76,7 +76,7 @@ public enum PropertyScope {
      * {@link org.amplafi.flow.FlowActivityPhase} requirement is done by checking to see if the property is set. We cannot just check to see if there is a {@link org.amplafi.flow.FlowPropertyValueProvider}
      * because a {@link org.amplafi.flow.FlowPropertyValueProvider} may not actually set a value.
      */
-    requestFlowLocal(true, internalState, noAccess, true),
+    requestFlowLocal(true, internalState, true),
     /**
      * A global property represents a property that the current flow has no knowledge of.
      *
@@ -105,12 +105,11 @@ public enum PropertyScope {
      * Notes on excluded
      */
     @Deprecated
-    global(false, io, noRestrictions, false, new PropertyUsage[] { suppliesIfMissing, initialize, io })
+    global(false, io, false, new PropertyUsage[] { suppliesIfMissing, initialize, io })
     ;
     private final boolean localToFlow;
     private final PropertyUsage defaultPropertyUsage;
     private final Set<PropertyUsage> allowPropertyUsages;
-    private final ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction;
     /**
      * Property should not be persisted as string in the FlowState map. This is
      * useful caching values during this transaction. TODO maybe allow
@@ -122,10 +121,9 @@ public enum PropertyScope {
      * this prevents passwords from being saved into the flowstate db table.
      */
     private final boolean cacheOnly;
-    private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
+    private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
         this.localToFlow = localToFlow;
         this.defaultPropertyUsage = defaultPropertyUsage;
-        this.defaultExternalPropertyAccessRestriction = defaultExternalPropertyAccessRestriction;
         this.cacheOnly = cacheOnly;
         this.allowPropertyUsages = new HashSet<PropertyUsage>();
         if (isNotEmpty(allowedPropertyUsages)) {
@@ -146,12 +144,6 @@ public enum PropertyScope {
      */
     public PropertyUsage getDefaultPropertyUsage() {
         return defaultPropertyUsage;
-    }
-    /**
-     * @return the defaultExternalPropertyAccessRestriction
-     */
-    public ExternalPropertyAccessRestriction getDefaultExternalPropertyAccessRestriction() {
-        return defaultExternalPropertyAccessRestriction;
     }
     /**
      * @return the cacheOnly
