@@ -14,14 +14,15 @@
 package org.amplafi.flow.flowproperty;
 
 /**
+ * Implemented by {@link FlowPropertyValueChangeListener}s to trigger things async behavior.
  * @author patmoore
  *
  */
 public interface PossibleDynamic {
     /**
      * @return true if the implementor wants the property to be dynamically refreshed.
-     * (From the UI perspective this means that the field binded to the property will be submitted 
-     * just after it looses focus.)
+     * (From the UI perspective this means that the field binded to the property will be submitted via AJAX
+     * just after the field looses focus in the UI)
      */
     boolean isDynamic();
 }

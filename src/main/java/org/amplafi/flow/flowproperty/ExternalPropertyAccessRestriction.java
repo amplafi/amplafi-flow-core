@@ -18,15 +18,18 @@ import org.amplafi.flow.FlowState;
 
 /**
  * Controls visibility and external access to the property while the flow is active.
- * 
- * TODO: rename to PropertyAccess
- * 
- * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed.
+ *
+ *
+ * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed via external clients.
+ *
+ * In order for ExternalPropertyAccessRestriction to be checked properly, external client property changes should have a different
+ * entry point than internal changes.
+ *
  * ExternalPropertyAccessRestriction does NOT affect {@link FlowPropertyValueProvider} setting a value
  * This differs from how the property is initialized and exported ( {@link PropertyUsage} ) and how
  * broad any changes to the property are spread. ( PropertyScope )
  * but this may overlap with {@link PropertyUsage#isExternallySettable()}
- * 
+ *
  * TODO: what about security levels based on if the data is provided by a potentially tainted source (clients) vs. another flow?
  * so "external" means another flow and "client" means to a browser client or api client.
  *
@@ -47,7 +50,7 @@ public enum ExternalPropertyAccessRestriction {
     /**
      * this is typically used for passwords (or any other security credential )
      * User is allowed to send in the password but not allowed to see stored passwords.
-     * 
+     *
      * This does not affect internal flow code which is always permitted get/set access.
      */
     writeonly(false, true),
