@@ -289,7 +289,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         if ( flowTitle == null && isInstance()) {
             return getDefinition().getFlowTitle();
         } else {
-            return this.flowTitle;
+            return this.flowTitle != null ? this.flowTitle : "messsage:" + getFlowPropertyProviderName();
         }
     }
 
