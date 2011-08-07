@@ -347,6 +347,7 @@ public class BaseFlowService implements FlowService {
      * TODO: Move in separate JsonRenderer when finalized
      */
     public void renderFlowParameterJSON(JSONWriter jsonWriter, Flow flow) {
+    	jsonWriter.keyValue("flowTitle", flow.getFlowTitle());
         jsonWriter.key("flowParameters");
         jsonWriter.array();
         Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
