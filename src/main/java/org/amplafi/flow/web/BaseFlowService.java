@@ -359,6 +359,10 @@ public class BaseFlowService implements FlowService {
                 jsonWriter.object();
                 jsonWriter.key("activity");
                 jsonWriter.value(flowActivity.getFlowPropertyProviderName());
+                jsonWriter.key("activityTitle");
+                jsonWriter.value(flowActivity.getActivityTitle());
+                jsonWriter.key("invisible");
+                jsonWriter.value(flowActivity.isInvisible());
                 jsonWriter.key("parameters");
                 jsonWriter.array();
                 renderFlowPropertyDefinitions(jsonWriter, flowActivity.getPropertyDefinitions());
