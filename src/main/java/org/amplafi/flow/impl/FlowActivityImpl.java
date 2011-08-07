@@ -747,6 +747,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         if (flowStateImplementor != null) {
         	result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
         } else {
+        	//There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return 
+        	//default object in the case.
         	result = (T) flowPropertyDefinition.getDefaultObject(this);
         }
 		return result;
