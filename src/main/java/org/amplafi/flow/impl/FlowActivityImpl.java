@@ -742,8 +742,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     public <T> T getProperty(String key, Class<? extends T> expected) {
         // doing the FlowPropertyDefinition here so that the flow doesn't create a global property.
         FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
-        T result = (T) getFlowStateImplementor().getPropertyWithDefinition(this, flowPropertyDefinition);
-        return result;
+        FlowStateImplementor flowStateImplementor = getFlowStateImplementor();
+        T result;
+        if (flowStateImplementor != null) {
+        	result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
+        } else {
+        	result = (T) flowPropertyDefinition.getDefaultObject(this);
+        }
+		return result;
     }
 
     /**
