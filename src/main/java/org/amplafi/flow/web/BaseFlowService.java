@@ -355,6 +355,7 @@ public class BaseFlowService implements FlowService {
         if (isNotEmpty(flow.getActivities())) {
             jsonWriter.key("activities");
             jsonWriter.array();
+            //TODO Kostya: describe the format in the tutorial..
             for (FlowActivity flowActivity : flow.getActivities()) {
                 jsonWriter.object();
                 jsonWriter.key("activity");
