@@ -155,6 +155,7 @@ public class BaseFlowService implements FlowService {
         FlowState flowState = null;
         if (isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
+            flowState.setAllProperties(initial);
         }
         if (flowState == null) {
             if (isNotBlank(flowType)) {
@@ -206,20 +207,11 @@ public class BaseFlowService implements FlowService {
     }
 
     protected String advanceFlow(FlowState flowState) {
-        String error = "some error occured";
-        if (flowState.isCurrentActivityCompletable()) {
-            try {
-                flowState.next();
-                error = null;
-            } catch (FlowValidationException flowValidationException) {
-                getLog().debug(flowState.getLookupKey(), flowValidationException);
-            } catch (Exception e) {
-                // TODO attach exception to output somehow.
-                getLog().error(flowState.getLookupKey(), e);
-                error = flowState.getLookupKey() + " " + e.getMessage() + join(e.getStackTrace(), ", ");
-            }
-        }
-        return error;
+//        String error = "some error occured";
+//        if (flowState.isCurrentActivityCompletable()) {
+        	flowState.next();
+//        }
+        return null;
     }
 
     public void setDefaultComplete(String defaultComplete) {
@@ -440,9 +432,14 @@ public class BaseFlowService implements FlowService {
             }
         } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
             String success = null;
-            while (success == null && !flowState.isCompleted() && !flowState.isFinishable()
-                && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
-                success = advanceFlow(flowState);
+            if (advanceToActivity != null) {
+            	while (success == null && !flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
+            		success = advanceFlow(flowState);
+            	}
+            } else {
+            	while (success == null && !flowState.isCompleted() && !flowState.isFinishable()) {
+            		success = advanceFlow(flowState);
+            	}
             }
         }
         return true;
