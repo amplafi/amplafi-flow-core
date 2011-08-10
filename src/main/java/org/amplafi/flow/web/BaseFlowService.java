@@ -155,33 +155,32 @@ public class BaseFlowService implements FlowService {
         FlowState flowState = null;
         if (isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
-            flowState.setAllProperties(initial);
         }
-        if (flowState == null) {
-            if (isNotBlank(flowType)) {
-                if (!getFlowManager().isFlowDefined(flowType)) {
-                    renderError(writer, flowType + ": no such flow type", renderResult, null, new FlowNotFoundException(flowType));
-                    return null;
-                }
-
-                if (USE_CURRENT.equals(flowId)) {
-                    flowState = getFlowManagement().getFirstFlowStateByType(flowType);
-                }
-
-                if (flowState == null) {
-                    String returnToFlowLookupKey = null;
-                    flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
-                    if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
-                        renderError(writer, flowType + ": could not start flow type", renderResult, flowState, null);
-                        return null;
-                    }
-                }
-            } else {
-                String error = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.",
-                    ServicesConstants.FLOW_TYPE, FLOW_ID);
-                renderError(writer, error, renderResult, null, null);
+        if (flowState != null) {
+        	flowState.setAllProperties(initial);
+        } else if (isNotBlank(flowType)) {
+            if (!getFlowManager().isFlowDefined(flowType)) {
+                renderError(writer, flowType + ": no such flow type", renderResult, null, new FlowNotFoundException(flowType));
                 return null;
             }
+
+            if (USE_CURRENT.equals(flowId)) {
+                flowState = getFlowManagement().getFirstFlowStateByType(flowType);
+            }
+
+            if (flowState == null) {
+                String returnToFlowLookupKey = null;
+                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
+                if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
+                    renderError(writer, flowType + ": could not start flow type", renderResult, flowState, null);
+                    return null;
+                }
+            }
+        } else {
+            String error = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.",
+                ServicesConstants.FLOW_TYPE, FLOW_ID);
+            renderError(writer, error, renderResult, null, null);
+            return null;
         }
         return flowState;
     }
@@ -206,12 +205,8 @@ public class BaseFlowService implements FlowService {
         return log;
     }
 
-    protected String advanceFlow(FlowState flowState) {
-//        String error = "some error occured";
-//        if (flowState.isCurrentActivityCompletable()) {
-        	flowState.next();
-//        }
-        return null;
+    protected void advanceFlow(FlowState flowState) {
+    	flowState.next();
     }
 
     public void setDefaultComplete(String defaultComplete) {
@@ -351,12 +346,10 @@ public class BaseFlowService implements FlowService {
             //TODO Kostya: describe the format in the tutorial..
             for (FlowActivity flowActivity : flow.getActivities()) {
                 jsonWriter.object();
-                jsonWriter.key("activity");
-                jsonWriter.value(flowActivity.getFlowPropertyProviderName());
-                jsonWriter.key("activityTitle");
-                jsonWriter.value(flowActivity.getActivityTitle());
-                jsonWriter.key("invisible");
-                jsonWriter.value(flowActivity.isInvisible());
+                jsonWriter.keyValue("activity", flowActivity.getFlowPropertyProviderName());
+                jsonWriter.keyValue("activityTitle", flowActivity.getActivityTitle());
+                jsonWriter.keyValue("invisible", flowActivity.isInvisible());
+                jsonWriter.keyValue("finishing", flowActivity.isFinishingActivity());
                 jsonWriter.key("parameters");
                 jsonWriter.array();
                 renderFlowPropertyDefinitions(jsonWriter, flowActivity.getPropertyDefinitions());
@@ -397,8 +390,10 @@ public class BaseFlowService implements FlowService {
         } catch (FlowRedirectException e) {
             throw e;
         } catch (Exception e) {
+        	if (flowState != null && !flowState.isPersisted()) {
+        		getFlowManagement().dropFlowState(flowState);
+        	}
             renderError(writer, "Error", renderResult, flowState, e);
-            return flowState;
         }
         return flowState;
     }
@@ -418,27 +413,16 @@ public class BaseFlowService implements FlowService {
         }
         if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
             while (!flowState.isCompleted()) {
-                String error = advanceFlow(flowState);
-                if (error != null) {
-                    renderError(writer, "could not advance to the end. activity not completeable " + error, renderResult, flowState, null);
-                    // if the flow has not been persisted then we drop the flow
-                    // so it is not
-                    // cluttering the session.
-                    if (!flowState.isPersisted()) {
-                        getFlowManagement().dropFlowState(flowState);
-                    }
-                    return false;
-                }
+                advanceFlow(flowState);
             }
         } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
-            String success = null;
             if (advanceToActivity != null) {
-            	while (success == null && !flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
-            		success = advanceFlow(flowState);
+            	while (!flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
+            		advanceFlow(flowState);
             	}
             } else {
-            	while (success == null && !flowState.isCompleted() && !flowState.isFinishable()) {
-            		success = advanceFlow(flowState);
+            	while (!flowState.isCompleted() && !flowState.isFinishable()) {
+            		advanceFlow(flowState);
             	}
             }
         }
