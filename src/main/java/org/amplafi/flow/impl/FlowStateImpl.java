@@ -1453,14 +1453,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         return this.getCurrentActivityFlowValidationResult(FlowActivityPhase.advance, FlowStepDirection.forward);
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#isCurrentActivityCompletable()
-     */
-    @Override
-    public boolean isCurrentActivityCompletable() {
-        return getCurrentActivityFlowValidationResult().isValid();
-    }
-
     @Override
     public Map<String, FlowValidationResult> getFlowValidationResults(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         Map<String, FlowValidationResult> result = new LinkedHashMap<String, FlowValidationResult>();
@@ -1839,7 +1831,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     public String toString() {
         return this.lookupKey + " [type:" + this.flowTypeName + "]; current Activity="+this.getCurrentActivity()+"; flowStateMap="+this.flowValuesMap;
     }
-    
+
     @Override
     public boolean isPersisted() {
     	return false;

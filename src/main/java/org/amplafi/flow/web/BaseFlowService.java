@@ -12,8 +12,6 @@ import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.join;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -36,6 +34,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.launcher.FlowLauncher;
+import org.amplafi.flow.validation.ExceptionTracking;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.json.JSONWriter;
@@ -278,7 +277,7 @@ public class BaseFlowService implements FlowService {
         return jsonWriter;
     }
 
-    public void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
+    protected void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
         getLog().error("Exception while running flowState=" + flowState, exception);
         if (JSON.equalsIgnoreCase(renderResult) && writer != null) {
             JSONWriter jsonWriter = getFlowStateWriter();
