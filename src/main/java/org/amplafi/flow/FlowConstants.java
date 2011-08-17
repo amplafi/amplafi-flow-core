@@ -14,6 +14,8 @@
 
 package org.amplafi.flow;
 
+import org.amplafi.flow.web.BaseFlowService;
+
 
 /**
  *  TODO Convert this to {@link FlowPropertyDefinition}s
@@ -206,6 +208,14 @@ public interface FlowConstants {
      * handled (the calling code will handle this issue)
      */
     public static final String FSRENDER_RESULT = "fsRenderResult";
+    
+    /**
+     * 
+     * On calls to {@link BaseFlowService} these properties will be accessed via FPVP.get().
+     * 
+     */
+    public static final String FS_PROPS_TO_INIT = "fsPropsToInit";
+    
     public static final String HTML = "html";
     public static final String JSON = "json";
     public static final String HANDLED = "handled";

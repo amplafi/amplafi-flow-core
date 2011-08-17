@@ -4,6 +4,7 @@ import static com.sworddance.util.CUtilities.isNotEmpty;
 import static com.sworddance.util.CUtilities.put;
 import static org.amplafi.flow.FlowConstants.FSREFERRING_URL;
 import static org.amplafi.flow.FlowConstants.FSRENDER_RESULT;
+import static org.amplafi.flow.FlowConstants.FS_PROPS_TO_INIT;
 import static org.amplafi.flow.FlowConstants.HTML;
 import static org.amplafi.flow.FlowConstants.JSON;
 import static org.amplafi.flow.launcher.FlowLauncher.ADVANCE_TO_END;
@@ -16,8 +17,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -42,6 +45,7 @@ import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 
 import org.apache.commons.logging.Log;
 import com.sworddance.util.CUtilities;
+import com.sworddance.util.NotNullIterator;
 
 public class BaseFlowService implements FlowService {
 
@@ -141,15 +145,15 @@ public class BaseFlowService implements FlowService {
         String background = flowRequest.getParameter(FS_BACKGROUND_FLOW);
         String advanceToActivity = flowRequest.getParameter(FlowLauncher.ADV_FLOW_ACTIVITY);
         boolean currentFlow = background == null;
-        doActualService(flowRequest, flowType, flowId, renderResult, writer, initial, complete, advanceToActivity, currentFlow);
+		doActualService(flowRequest, flowType, flowId, renderResult, writer, initial, flowRequest.getIterableParameter(FS_PROPS_TO_INIT), complete, advanceToActivity, currentFlow);
     }
 
     protected FlowState doActualService(FlowRequest request, String flowType, String flowId, String renderResult, PrintWriter writer,
-        Map<String, String> initial, String complete, String advanceToActivity, boolean currentFlow) throws IOException, FlowNotFoundException, FlowRedirectException {
-        return completeFlowState(flowType, flowId, renderResult, initial, complete, currentFlow, writer, advanceToActivity);
+        Map<String, String> initial, Iterable<String> propertiesToInitialize, String complete, String advanceToActivity, boolean currentFlow) throws IOException, FlowNotFoundException, FlowRedirectException {
+        return completeFlowState(flowType, flowId, renderResult, initial, propertiesToInitialize, complete, currentFlow, writer, advanceToActivity);
     }
 
-    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer,
+    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Iterable<String> parametersToInitialize, Writer writer,
         boolean currentFlow) throws IOException {
         FlowState flowState = null;
         if (isNotBlank(flowId)) {
@@ -181,6 +185,12 @@ public class BaseFlowService implements FlowService {
             renderError(writer, error, renderResult, null, null);
             return null;
         }
+    	
+        //Now just request all the properties that client asked for.
+        NotNullIterator<String> it = NotNullIterator.newNotNullIterator(parametersToInitialize);
+    	while (it.hasNext()) {
+    		flowState.getProperty(it.next());
+    	}
         return flowState;
     }
 
@@ -372,11 +382,11 @@ public class BaseFlowService implements FlowService {
         }
     }
 
-    protected FlowState completeFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, String complete,
+    protected FlowState completeFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Iterable<String> propertiesToInitialize, String complete,
         boolean currentFlow, Writer writer, String advanceToActivity) throws IOException, FlowNotFoundException, FlowRedirectException {
         FlowState flowState = null;
         try {
-            flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
+            flowState = getFlowState(flowType, flowId, renderResult, initial, propertiesToInitialize, writer, currentFlow);
             if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
                 if (JSON.equalsIgnoreCase(renderResult)) {
                     renderJSON(flowState, writer);
