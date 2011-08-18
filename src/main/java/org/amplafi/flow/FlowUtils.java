@@ -31,7 +31,7 @@ import org.apache.commons.lang.ObjectUtils;
 /**
  *
  */
-// TODO need to figure out a way to get rid of this as a utility class -- fold it into something else.
+@Deprecated // TODO need to figure out a way to get rid of this as a utility class -- fold it into something else.
 public class FlowUtils {
 
     public static final FlowUtils INSTANCE = new FlowUtils();

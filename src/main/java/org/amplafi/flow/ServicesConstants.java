@@ -17,9 +17,8 @@ package org.amplafi.flow;
 /**
  * Here should be some useful constants for services.
  *
- * @author sasha nasheeva@gmail.com
- *
  */
+@Deprecated
 public class ServicesConstants {
     // would really like to fold this into FlowConstants.FSNEXT_FLOW
     // as of 3 Jan 2009 doesn't look like the this constant's value is used directly in javascript.

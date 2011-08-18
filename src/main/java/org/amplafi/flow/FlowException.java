@@ -20,6 +20,7 @@ package org.amplafi.flow;
  */
 public class FlowException extends RuntimeException {
 
+    private static final long serialVersionUID = 1L;
     private final FlowState flowState;
 
     public FlowException() {

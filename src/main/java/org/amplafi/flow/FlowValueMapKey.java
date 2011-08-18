@@ -17,6 +17,7 @@ package org.amplafi.flow;
 import com.sworddance.util.map.NamespaceMapKey;
 
 /**
+ * Represents a federated key, i.e. namespace.key
  * @author patmoore
  *
  */

@@ -24,6 +24,8 @@ import com.sworddance.core.Emptyable;
  *
  * Roughly follows the java.util.Map definition - so respect
  * that interface's conventions.
+ *
+ * Keys are federated (i.e. namespace.key) see {@link FlowValueMapKey}
  * @author Patrick Moore
  * @param <K> extends {@link FlowValueMapKey} the key class.
  * @param <V> extends CharSequence the value class.
