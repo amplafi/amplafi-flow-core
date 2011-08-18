@@ -17,11 +17,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
@@ -29,7 +26,9 @@ import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
+import org.amplafi.flow.FlowNotFoundException;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.FlowStateLifecycle;
@@ -37,7 +36,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.launcher.FlowLauncher;
-import org.amplafi.flow.validation.ExceptionTracking;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.json.JSONWriter;
@@ -265,6 +263,13 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
+    /**
+     * TODO: implement a {@link FlowRenderer} to implement this method.
+     * HACK: WTF? A method that always throws exceptions???
+     * @param flowState
+     * @throws FlowNotFoundException
+     * @throws FlowRedirectException
+     */
     protected void renderHtml(FlowState flowState) throws FlowNotFoundException, FlowRedirectException {
         String page = flowState.getCurrentPage();
         // page should always be not null - if that's not the case, then
@@ -382,11 +387,7 @@ public class BaseFlowService implements FlowService {
         try {
             flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
             if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
-                //Now just request all the properties that client asked for.
-                NotNullIterator<String> it = NotNullIterator.newNotNullIterator(propertiesToInitialize);
-            	while (it.hasNext()) {
-            		flowState.getProperty(it.next());
-            	}            	
+                initializeRequestedParameters(propertiesToInitialize, flowState);
                 if (JSON.equalsIgnoreCase(renderResult)) {
                     renderJSON(flowState, writer);
                 } else if (HTML.equalsIgnoreCase(renderResult)) {
@@ -406,7 +407,26 @@ public class BaseFlowService implements FlowService {
         return flowState;
     }
 
-    private void renderJSON(FlowState flowState, Writer writer) throws IOException {
+    /**
+     * KOSTYA : describe need.
+     * @param propertiesToInitialize
+     * @param flowState
+     */
+    protected void initializeRequestedParameters(Iterable<String> propertiesToInitialize, FlowState flowState) {
+        //Now just request all the properties that client asked for.
+        NotNullIterator<String> it = NotNullIterator.newNotNullIterator(propertiesToInitialize);
+        while (it.hasNext()) {
+        	flowState.getProperty(it.next());
+        }
+    }
+
+    /**
+     * TODO : implement a {@link FlowRenderer} to handle the json rendering
+     * @param flowState
+     * @param writer
+     * @throws IOException
+     */
+    protected void renderJSON(FlowState flowState, Writer writer) throws IOException {
         JSONWriter jsonWriter = getFlowStateWriter();
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
