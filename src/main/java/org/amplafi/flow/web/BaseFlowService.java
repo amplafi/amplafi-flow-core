@@ -153,7 +153,7 @@ public class BaseFlowService implements FlowService {
         return completeFlowState(flowType, flowId, renderResult, initial, propertiesToInitialize, complete, currentFlow, writer, advanceToActivity);
     }
 
-    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Iterable<String> parametersToInitialize, Writer writer,
+    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer,
         boolean currentFlow) throws IOException {
         FlowState flowState = null;
         if (isNotBlank(flowId)) {
@@ -185,12 +185,6 @@ public class BaseFlowService implements FlowService {
             renderError(writer, error, renderResult, null, null);
             return null;
         }
-    	
-        //Now just request all the properties that client asked for.
-        NotNullIterator<String> it = NotNullIterator.newNotNullIterator(parametersToInitialize);
-    	while (it.hasNext()) {
-    		flowState.getProperty(it.next());
-    	}
         return flowState;
     }
 
@@ -386,8 +380,13 @@ public class BaseFlowService implements FlowService {
         boolean currentFlow, Writer writer, String advanceToActivity) throws IOException, FlowNotFoundException, FlowRedirectException {
         FlowState flowState = null;
         try {
-            flowState = getFlowState(flowType, flowId, renderResult, initial, propertiesToInitialize, writer, currentFlow);
+            flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
             if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
+                //Now just request all the properties that client asked for.
+                NotNullIterator<String> it = NotNullIterator.newNotNullIterator(propertiesToInitialize);
+            	while (it.hasNext()) {
+            		flowState.getProperty(it.next());
+            	}            	
                 if (JSON.equalsIgnoreCase(renderResult)) {
                     renderJSON(flowState, writer);
                 } else if (HTML.equalsIgnoreCase(renderResult)) {
