@@ -56,7 +56,6 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 
 
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
-        // TODO: TO_KONSTA: The FlowStateJsonOutputRenderer indeed was that same output save the tweak. I have added the tweak to the TestFlowStateJsonRenderer, integrated the changes into this class and removed the FlowStateJsonOutputRenderer class. Please just remove this comment after you have read it.
         jsonWriter.key(FS_PARAMETERS);
         jsonWriter.object();
         Collection<FlowPropertyDefinition> propertyDefinitions = flowState.getPropertyDefinitions().values();
