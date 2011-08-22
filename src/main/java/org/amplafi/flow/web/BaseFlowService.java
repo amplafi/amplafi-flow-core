@@ -3,54 +3,34 @@ package org.amplafi.flow.web;
 import static com.sworddance.util.CUtilities.isNotEmpty;
 import static com.sworddance.util.CUtilities.put;
 import static org.amplafi.flow.FlowConstants.FSREFERRING_URL;
-import static org.amplafi.flow.FlowConstants.FSRENDER_RESULT;
-import static org.amplafi.flow.FlowConstants.FS_PROPS_TO_INIT;
-import static org.amplafi.flow.FlowConstants.HTML;
-import static org.amplafi.flow.FlowConstants.JSON;
 import static org.amplafi.flow.launcher.FlowLauncher.ADVANCE_TO_END;
 import static org.amplafi.flow.launcher.FlowLauncher.AS_FAR_AS_POSSIBLE;
-import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
-import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.amplafi.flow.Flow;
-import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.FlowActivityPhase;
+
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
-import org.amplafi.flow.FlowNotFoundException;
-import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.FlowStateLifecycle;
-import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
-import org.amplafi.flow.launcher.FlowLauncher;
-import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.flow.validation.FlowValidationResult;
-import org.amplafi.json.JSONWriter;
-import org.amplafi.json.renderers.IterableJsonOutputRenderer;
-
+import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.apache.commons.logging.Log;
-import com.sworddance.util.CUtilities;
+
 import com.sworddance.util.NotNullIterator;
 
 public class BaseFlowService implements FlowService {
 
     public static final String USE_CURRENT = "current";
-
-    // see InsertionPoint.js
-    private static final String FS_BACKGROUND_FLOW = "fsInBackground";
 
     protected static final String SCRIPT_CONTENT_TYPE = "text/javascript";
 
@@ -75,16 +55,25 @@ public class BaseFlowService implements FlowService {
 
     protected FlowDefinitionsManager flowDefinitionsManager;
 
+	private List<FlowRenderer> flowRenderers;
+
     public BaseFlowService() {
-        super();
     }
 
     public BaseFlowService(FlowDefinitionsManager flowDefinitionsManager, FlowManager flowManager) {
         this.setFlowDefinitionsManager(flowDefinitionsManager);
         this.setFlowManager(flowManager);
+        addFlowRenderer(new JsonFlowRenderer(flowDefinitionsManager));
     }
 
-    /**
+    public void addFlowRenderer(FlowRenderer flowRenderer) {
+    	if (flowRenderers == null) {
+    		flowRenderers = new ArrayList<FlowRenderer>();
+    	}
+    	flowRenderers.add(flowRenderer);
+	}
+
+	/**
      * @param flowDefinitionsManager the flowDefinitionsManager to set
      */
     public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
@@ -98,70 +87,53 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
-    public void service(FlowRequest flowRequest) throws IOException, FlowNotFoundException, FlowRedirectException {
-        String flowType = flowRequest.getParameter(ServicesConstants.FLOW_TYPE);
-        String flowId = flowRequest.getParameter(FLOW_ID);
-        String renderResult = flowRequest.getParameter(FSRENDER_RESULT);
-        PrintWriter writer = flowRequest.getWriter();
-
-        if (FlowConstants.JSON_DESCRIBE.equals(renderResult)) {
-            if (flowType == null) {
-                // if no flow type then return a json array of all the flow types.
-                Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
-                JSONWriter jWriter = new JSONWriter();
-                IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, flowTypes);
-                writer.append(jWriter.toString());
-                return;
-            } else {
-                CharSequence description = describeService(flowType, renderResult);
-                writer.append(description);
-                return;
-            }
+    public void service(FlowRequest flowRequest) throws IOException {
+        if (flowRequest.isDescribeRequest()) {
+        	getRenderer(flowRequest.getRenderResultType()).describe(flowRequest);
+        } else {
+	        Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
+	        // TODO map cookie to the json flow state.
+	        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
+	        if (isNotBlank(cookieString)) {
+	            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
+	        }
+	
+	        List<String> keyList = flowRequest.getParameterNames();
+	        if (isNotEmpty(keyList)) {
+	            for (String key : keyList) {
+	                String value = flowRequest.getParameter(key);
+	                if (value != null) {
+	                    // we do allow the value to be blank ( value may be existence of parameter)
+	                    initial.put(key, value);
+	                }
+	            }
+	        }
+	
+	        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
+			doActualService(flowRequest, initial);
         }
-
-        Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
-        // TODO map cookie to the json flow state.
-        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
-        if (isNotBlank(cookieString)) {
-            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
-        }
-
-        List<String> keyList = flowRequest.getParameterNames();
-        if (isNotEmpty(keyList)) {
-            for (String key : keyList) {
-                String value = flowRequest.getParameter(key);
-                if (value != null) {
-                    // we do allow the value to be blank ( value may be existence of parameter)
-                    initial.put(key, value);
-                }
-            }
-        }
-
-        String referingUri = flowRequest.getReferingUri();
-        put(initial, FSREFERRING_URL, referingUri);
-        String complete = flowRequest.getParameter(COMPLETE_FLOW);
-        String background = flowRequest.getParameter(FS_BACKGROUND_FLOW);
-        String advanceToActivity = flowRequest.getParameter(FlowLauncher.ADV_FLOW_ACTIVITY);
-        boolean currentFlow = background == null;
-		doActualService(flowRequest, flowType, flowId, renderResult, writer, initial, flowRequest.getIterableParameter(FS_PROPS_TO_INIT), complete, advanceToActivity, currentFlow);
     }
 
-    protected FlowState doActualService(FlowRequest request, String flowType, String flowId, String renderResult, PrintWriter writer,
-        Map<String, String> initial, Iterable<String> propertiesToInitialize, String complete, String advanceToActivity, boolean currentFlow) throws IOException, FlowNotFoundException, FlowRedirectException {
-        return completeFlowState(flowType, flowId, renderResult, initial, propertiesToInitialize, complete, currentFlow, writer, advanceToActivity);
+    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws IOException {
+        return completeFlowState(request, initial);
     }
 
-    protected FlowState getFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Writer writer,
-        boolean currentFlow) throws IOException {
+    private FlowState getFlowState(FlowRequest request, Map<String, String> initial) throws IOException {
         FlowState flowState = null;
+        String flowId = request.getFlowId();
+        String flowType = request.getFlowType();
+        Writer writer = request.getWriter();
+        String renderResult = request.getRenderResultType();
+
         if (isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
         }
-        if (flowState != null) {
+        
+		if (flowState != null) {
         	flowState.setAllProperties(initial);
         } else if (isNotBlank(flowType)) {
             if (!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType + ": no such flow type", renderResult, null, new FlowNotFoundException(flowType));
+                renderError(writer, flowType + ": no such flow type", renderResult, null, new IllegalStateException("Flow not found: " + flowType));
                 return null;
             }
 
@@ -171,16 +143,16 @@ public class BaseFlowService implements FlowService {
 
             if (flowState == null) {
                 String returnToFlowLookupKey = null;
-                flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
+                boolean currentFlow = !request.isBackgorund();
+				flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
                 if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
                     renderError(writer, flowType + ": could not start flow type", renderResult, flowState, null);
                     return null;
                 }
             }
         } else {
-            String error = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.",
-                ServicesConstants.FLOW_TYPE, FLOW_ID);
-            renderError(writer, error, renderResult, null, null);
+            String message = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.", ServicesConstants.FLOW_TYPE, FLOW_ID);
+            renderError(writer, message, renderResult, null, null);
             return null;
         }
         return flowState;
@@ -234,21 +206,6 @@ public class BaseFlowService implements FlowService {
         return discardSessionOnExit;
     }
 
-    public void continueFlowState(String flowLookupKey, Map<String, String> propertyChanges) throws FlowRedirectException {
-        FlowState flowState = getFlowManagement().continueFlowState(flowLookupKey, true, propertyChanges);
-        if (flowState != null) {
-            throw new FlowRedirectException(flowState.getCurrentPage(), null);
-        }
-    }
-
-    protected void renderValidationException(FlowValidationException e, String flowType, Writer writer) throws IOException {
-        // TODO: we should be looking at render code.
-        // but could be bad urls from searchbots
-        String m = "Cannot start " + flowType + " :\n" + e.getTrackings();
-        getLog().info(m, e);
-        writer.append(m + e);
-    }
-
     /**
      * @param assumeApiCall the assumeApiCall to set
      */
@@ -263,156 +220,79 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
-    /**
-     * TODO: implement a {@link FlowRenderer} to implement this method.
-     * HACK: WTF? A method that always throws exceptions???
-     * @param flowState
-     * @throws FlowNotFoundException
-     * @throws FlowRedirectException
-     */
-    protected void renderHtml(FlowState flowState) throws FlowNotFoundException, FlowRedirectException {
-        String page = flowState.getCurrentPage();
-        // page should always be not null - if that's not the case, then
-        // check the pageName attribute of flow definitions in the xml files
-        if (page == null) {
-            throw new FlowNotFoundException("pageName not defined for flow " + flowState.getFlowTypeName());
-        }
-        throw new FlowRedirectException(page, flowState);
-    }
-
-    protected JSONWriter getFlowStateWriter() {
-        JSONWriter jsonWriter = new JSONWriter();
-        jsonWriter.addRenderer(FlowState.class, new FlowStateJsonRenderer());
-        return jsonWriter;
-    }
-
-    protected void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
+    private void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
         getLog().error("Exception while running flowState=" + flowState, exception);
-        if (JSON.equalsIgnoreCase(renderResult) && writer != null) {
-            JSONWriter jsonWriter = getFlowStateWriter();
-            jsonWriter.object();
-            jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
-            if (flowState != null) {
-                jsonWriter.key(FLOW_STATE_JSON_KEY).value(flowState);
-                // TODO : probably need to check on PropertyRequired.finish
-                Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
-                writeValidationResult(jsonWriter, result);
-            } else if (exception instanceof FlowValidationException) {
-                FlowValidationException e = (FlowValidationException) exception;
-                Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
-                writeValidationResult(jsonWriter, validationResult);
-            }
-            jsonWriter.endObject();
-            writer.append(jsonWriter.toString());
-        } else if (exception == null) {
-            throw new IOException(message);
-        } else {
-            throw new IOException(exception);
-        }
-    }
-
-    private void writeValidationResult(JSONWriter jsonWriter, Map<String, FlowValidationResult> result) {
-        if (result != null && !result.isEmpty()) {
-            jsonWriter.key(ServicesConstants.VALIDATION_ERRORS).value(result);
-        }
-    }
-
-    /**
-     * Render a json description of the flow. This includes parameters (name, type, required).
-     *
-     * @param flowType
-     * @param renderResult TODO
-     * @return TODO
-     * @throws IOException
-     */
-    public CharSequence describeService(String flowType, String renderResult) throws IOException {
-        if (isNotBlank(flowType)) {
-            final Flow flow = getFlowManagement().getFlowDefinition(flowType);
-            JSONWriter jsonWriter = getFlowStateWriter();
-            jsonWriter.object();
-            renderFlowParameterJSON(jsonWriter, flow);
-            jsonWriter.endObject();
-            return jsonWriter.toString();
-        } else {
-            return "";
-        }
-    };
-
-    /**
-     * TODO: Move in separate JsonRenderer when finalized
-     */
-    public void renderFlowParameterJSON(JSONWriter jsonWriter, Flow flow) {
-    	jsonWriter.keyValue("flowTitle", flow.getFlowTitle());
-        jsonWriter.key("flowParameters");
-        jsonWriter.array();
-        Map<String, FlowPropertyDefinition> propertyDefinitions = flow.getPropertyDefinitions();
-        renderFlowPropertyDefinitions(jsonWriter, propertyDefinitions);
-        jsonWriter.endArray();
-        if (isNotEmpty(flow.getActivities())) {
-            jsonWriter.key("activities");
-            jsonWriter.array();
-            //TODO Kostya: describe the format in the tutorial..
-            for (FlowActivity flowActivity : flow.getActivities()) {
-                jsonWriter.object();
-                jsonWriter.keyValue("activity", flowActivity.getFlowPropertyProviderName());
-                jsonWriter.keyValue("activityTitle", flowActivity.getActivityTitle());
-                jsonWriter.keyValue("invisible", flowActivity.isInvisible());
-                jsonWriter.keyValue("finishing", flowActivity.isFinishingActivity());
-                jsonWriter.key("parameters");
-                jsonWriter.array();
-                renderFlowPropertyDefinitions(jsonWriter, flowActivity.getPropertyDefinitions());
-                jsonWriter.endArray();
-                jsonWriter.endObject();
-            }
-            jsonWriter.endArray();
-        }
-    }
-
-    /**
-     * @param jsonWriter
-     * @param propertyDefinitions
-     */
-    private void renderFlowPropertyDefinitions(JSONWriter jsonWriter, Map<String, FlowPropertyDefinition> propertyDefinitions) {
-        for (Map.Entry<String, FlowPropertyDefinition> entry : propertyDefinitions.entrySet()) {
-            final FlowPropertyDefinition definition = entry.getValue();
-            if (definition.isExportable()) {
-                definition.toJson(jsonWriter);
-            }
-        }
-    }
-
-    protected FlowState completeFlowState(String flowType, String flowId, String renderResult, Map<String, String> initial, Iterable<String> propertiesToInitialize, String complete,
-        boolean currentFlow, Writer writer, String advanceToActivity) throws IOException, FlowNotFoundException, FlowRedirectException {
-        FlowState flowState = null;
         try {
-            flowState = getFlowState(flowType, flowId, renderResult, initial, writer, currentFlow);
-            if (flowState != null && completeFlow(flowState, renderResult, complete, writer, advanceToActivity)) {
-                initializeRequestedParameters(propertiesToInitialize, flowState);
-                if (JSON.equalsIgnoreCase(renderResult)) {
-                    renderJSON(flowState, writer);
-                } else if (HTML.equalsIgnoreCase(renderResult)) {
-                    renderHtml(flowState);
-                }
-            }
-        } catch (FlowNotFoundException e) {
-            throw e;
-        } catch (FlowRedirectException e) {
-            throw e;
+        	getRenderer(renderResult).renderError(flowState, message, exception, writer);
         } catch (Exception e) {
-        	if (flowState != null && !flowState.isPersisted()) {
-        		getFlowManagement().dropFlowState(flowState);
-        	}
-            renderError(writer, "Error", renderResult, flowState, e);
+        	throw new IOException(e);
+        }
+    }
+
+    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws IOException {
+        FlowState flowState = getFlowState(flowRequest, initial);
+		boolean flowAdvancedWithNoErrors = false;
+		if (flowState != null) {
+			try {
+		    	String complete = flowRequest.getCompleteType();
+				if (complete == null) {
+		            // blank means don't try to complete flow.
+		            complete = defaultComplete;
+		        }
+		        if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
+		            while (!flowState.isCompleted()) {
+		                advanceFlow(flowState);
+		            }
+		        } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
+		            String advanceToActivity = flowRequest.getAdvanceToActivity();
+					if (advanceToActivity != null) {
+		            	while (!flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
+		            		advanceFlow(flowState);
+		            	}
+		            } else {
+		            	while (!flowState.isCompleted() && !flowState.isFinishable()) {
+		            		advanceFlow(flowState);
+		            	}
+		            }
+		        }
+		        flowAdvancedWithNoErrors = true;
+		    } catch (Exception e) {
+		    	if (!flowState.isPersisted()) {
+		    		getFlowManagement().dropFlowState(flowState);
+		    	}
+		        renderError(flowRequest.getWriter(), "Error", flowRequest.getRenderResultType(), flowState, e);
+		        flowAdvancedWithNoErrors = false;
+		    }
+		}
+		if (flowAdvancedWithNoErrors) {
+        	initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
+            getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
         }
         return flowState;
     }
 
-    /**
-     * KOSTYA : describe need.
+    private FlowRenderer getRenderer(String renderResult) {
+    	if (renderResult == null) {
+    		renderResult = renderResultDefault;
+    	}
+    	if (flowRenderers != null){
+    		for (FlowRenderer renderer : flowRenderers) {
+				if (renderer.getRenderResultType().equals(renderResult)){
+					return renderer;
+				}
+			}
+    	}
+    	throw new IllegalStateException("There is no flow renderer for requested render result type: " + renderResult);
+	}
+
+	/**
+	 * Needed to initialize some common properties which might not be part of the flow. For example if a client needs to get
+	 * current user name along with messages list flow request.
+	 * 
      * @param propertiesToInitialize
      * @param flowState
      */
-    protected void initializeRequestedParameters(Iterable<String> propertiesToInitialize, FlowState flowState) {
+    private void initializeRequestedParameters(Iterable<String> propertiesToInitialize, FlowState flowState) {
         //Now just request all the properties that client asked for.
         NotNullIterator<String> it = NotNullIterator.newNotNullIterator(propertiesToInitialize);
         while (it.hasNext()) {
@@ -420,41 +300,12 @@ public class BaseFlowService implements FlowService {
         }
     }
 
-    /**
-     * TODO : implement a {@link FlowRenderer} to handle the json rendering
-     * @param flowState
-     * @param writer
-     * @throws IOException
-     */
-    protected void renderJSON(FlowState flowState, Writer writer) throws IOException {
-        JSONWriter jsonWriter = getFlowStateWriter();
-        jsonWriter.object();
-        jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
-        jsonWriter.endObject();
-        writer.append(jsonWriter.toString());
-    }
+	public List<FlowRenderer> getFlowRenderers() {
+		return flowRenderers;
+	}
 
-    private boolean completeFlow(FlowState flowState, String renderResult, String complete, Writer writer, String advanceToActivity) throws IOException {
-        if (complete == null) {
-            // blank means don't try to complete flow.
-            complete = defaultComplete;
-        }
-        if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
-            while (!flowState.isCompleted()) {
-                advanceFlow(flowState);
-            }
-        } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
-            if (advanceToActivity != null) {
-            	while (!flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
-            		advanceFlow(flowState);
-            	}
-            } else {
-            	while (!flowState.isCompleted() && !flowState.isFinishable()) {
-            		advanceFlow(flowState);
-            	}
-            }
-        }
-        return true;
-    }
+	public void setFlowRenderers(List<FlowRenderer> flowRenderers) {
+		this.flowRenderers = flowRenderers;
+	}
 
 }

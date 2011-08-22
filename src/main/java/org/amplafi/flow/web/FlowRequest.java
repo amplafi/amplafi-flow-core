@@ -1,6 +1,6 @@
 package org.amplafi.flow.web;
 
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 
 public interface FlowRequest {
@@ -18,7 +18,25 @@ public interface FlowRequest {
 	
 	List<String> getParameterNames();
 	
+	boolean hasParameter(String parameterName);
+	
 	String getReferingUri();
 	
-	PrintWriter getWriter();
+	Writer getWriter();
+	
+	boolean isDescribeRequest();
+	
+	String getFlowType();
+	
+	String getFlowId();
+
+	String getRenderResultType();
+	
+	String getCompleteType();
+	
+	String getAdvanceToActivity();
+	
+	boolean isBackgorund();
+	
+	Iterable<String> getPropertiesToInitialize();
 }
