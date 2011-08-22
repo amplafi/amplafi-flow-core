@@ -84,4 +84,9 @@ public class FlowRequestAdapter implements FlowRequest {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public void setStatus(int status) {
+		
+	}
+
 }

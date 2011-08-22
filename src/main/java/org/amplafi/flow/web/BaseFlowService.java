@@ -25,6 +25,7 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.apache.commons.logging.Log;
+import org.apache.http.HttpStatus;
 
 import com.sworddance.util.NotNullIterator;
 
@@ -122,8 +123,6 @@ public class BaseFlowService implements FlowService {
         FlowState flowState = null;
         String flowId = request.getFlowId();
         String flowType = request.getFlowType();
-        Writer writer = request.getWriter();
-        String renderResult = request.getRenderResultType();
 
         if (isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
@@ -133,7 +132,7 @@ public class BaseFlowService implements FlowService {
         	flowState.setAllProperties(initial);
         } else if (isNotBlank(flowType)) {
             if (!getFlowManager().isFlowDefined(flowType)) {
-                renderError(writer, flowType + ": no such flow type", renderResult, null, new IllegalStateException("Flow not found: " + flowType));
+                renderError(request, flowType + ": no such flow type", null, new IllegalStateException("Flow not found: " + flowType));
                 return null;
             }
 
@@ -146,13 +145,13 @@ public class BaseFlowService implements FlowService {
                 boolean currentFlow = !request.isBackgorund();
 				flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
                 if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
-                    renderError(writer, flowType + ": could not start flow type", renderResult, flowState, null);
+                    renderError(request, flowType + ": could not start flow type", flowState, null);
                     return null;
                 }
             }
         } else {
             String message = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.", ServicesConstants.FLOW_TYPE, FLOW_ID);
-            renderError(writer, message, renderResult, null, null);
+            renderError(request, message, null, null);
             return null;
         }
         return flowState;
@@ -220,10 +219,13 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
-    private void renderError(Writer writer, String message, String renderResult, FlowState flowState, Exception exception) throws IOException {
+    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) throws IOException {
         getLog().error("Exception while running flowState=" + flowState, exception);
+        flowRequest.setStatus(HttpStatus.SC_BAD_REQUEST);
         try {
-        	getRenderer(renderResult).renderError(flowState, message, exception, writer);
+        	String renderResult = flowRequest.getRenderResultType();
+			Writer writer = flowRequest.getWriter();
+			getRenderer(renderResult).renderError(flowState, message, exception, writer);
         } catch (Exception e) {
         	throw new IOException(e);
         }
@@ -260,13 +262,14 @@ public class BaseFlowService implements FlowService {
 		    	if (!flowState.isPersisted()) {
 		    		getFlowManagement().dropFlowState(flowState);
 		    	}
-		        renderError(flowRequest.getWriter(), "Error", flowRequest.getRenderResultType(), flowState, e);
+		        renderError(flowRequest, "Error", flowState, e);
 		        flowAdvancedWithNoErrors = false;
 		    }
 		}
 		if (flowAdvancedWithNoErrors) {
         	initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
             getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
+            flowRequest.setStatus(HttpStatus.SC_OK);
         }
         return flowState;
     }

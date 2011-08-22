@@ -39,4 +39,10 @@ public interface FlowRequest {
 	boolean isBackgorund();
 	
 	Iterable<String> getPropertiesToInitialize();
+	
+	/**
+	 *  
+	 * @param status - one of HttpStatus codes
+	 */
+	void setStatus(int status);
 }
