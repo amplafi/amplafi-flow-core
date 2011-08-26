@@ -37,6 +37,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -55,6 +56,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.noAccess;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 import static org.apache.commons.lang.StringUtils.*;
@@ -175,11 +177,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     protected void addStandardFlowPropertyDefinitions() {
         // see #2179 #2192
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume)
+            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
         );
     }
 

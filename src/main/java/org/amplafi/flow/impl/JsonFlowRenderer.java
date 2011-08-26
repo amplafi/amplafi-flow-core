@@ -138,7 +138,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 				for (Map.Entry<String, FlowPropertyDefinition> entry : flowActivity.getPropertyDefinitions().entrySet()) {
 					final FlowPropertyDefinition definition = entry.getValue();
 					//Only describe properties that can be set from a client.
-					if (definition.getPropertyUsage().isExternallySettable()) {
+					if (definition.getPropertyUsage().isExternallySettable() && definition.isExportable()) {
 						definition.toJson(jsonWriter);
 					}
 				}
