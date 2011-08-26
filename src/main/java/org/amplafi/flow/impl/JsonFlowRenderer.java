@@ -123,17 +123,6 @@ public class JsonFlowRenderer implements FlowRenderer {
 	 */
 	private void renderFlowParameterJSON(JSONWriter jsonWriter, Flow flow) {
 		jsonWriter.keyValue("flowTitle", flow.getFlowTitle());
-		jsonWriter.key("flowParameters");
-		jsonWriter.array();
-		Map<String, FlowPropertyDefinition> propertyDefinitions = flow
-				.getPropertyDefinitions();
-		for (Map.Entry<String, FlowPropertyDefinition> entry : propertyDefinitions.entrySet()) {
-			final FlowPropertyDefinition definition = entry.getValue();
-			if (definition.isExportable()) {
-				definition.toJson(jsonWriter);
-			}
-		}
-		jsonWriter.endArray();
 		if (isNotEmpty(flow.getActivities())) {
 			jsonWriter.key("activities");
 			jsonWriter.array();
@@ -148,7 +137,8 @@ public class JsonFlowRenderer implements FlowRenderer {
 				jsonWriter.array();
 				for (Map.Entry<String, FlowPropertyDefinition> entry : flowActivity.getPropertyDefinitions().entrySet()) {
 					final FlowPropertyDefinition definition = entry.getValue();
-					if (definition.isExportable()) {
+					//Only describe properties that can be set from a client.
+					if (definition.getPropertyUsage().isExternallySettable()) {
 						definition.toJson(jsonWriter);
 					}
 				}
