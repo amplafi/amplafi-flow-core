@@ -51,9 +51,13 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
     /**
-     * This map is used to connect a standard property name "user" to a standard class (UserImpl)
-     * This map solves the problem where a flowProperty*Provider or changelistener needs (or would like) to have a property available but does not
-     * define it.
+     * This map is used to connect a standard property name i.e. "user" to a standard class (UserImpl)
+     * This map solves the problem where a flowProperty*Provider or changelistener needs (or would like)
+     * to have a property available but does not define it.
+     *
+     * Explicit NOTE: the flow propertydefinitions returned MUST not persist any changes to permanent storage.
+     * This is easy to enforce at the primary level (i.e. no persister is called. ) but what about accessing a read-only property
+     * that returns a db object and then changes the db object? Can we tell hibernate not to persist?
      */
     private Map<String, FlowPropertyDefinitionImplementor> standardPropertyNameToDefinition;
 
@@ -171,7 +175,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
     	FlowPropertyDefinitionImplementor standardDefinition = this.standardPropertyNameToDefinition.get(propertyName);
     	if ( standardDefinition == null || (dataClass != null && !standardDefinition.isAssignableFrom(dataClass))) {
-    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, dataClass, null);
+    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, dataClass);
     	} else {
     		return new FlowPropertyDefinitionBuilder(standardDefinition);
     	}

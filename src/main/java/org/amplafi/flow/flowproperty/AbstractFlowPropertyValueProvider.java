@@ -38,16 +38,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     protected AbstractFlowPropertyValueProvider() {
         this.flowPropertyProviderClass = initFlowPropertyProviderClass();
     }
-    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass) {
+    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
+        super(flowPropertyDefinitions);
         if ( flowPropertyProviderClass == null) {
             this.flowPropertyProviderClass = initFlowPropertyProviderClass();
         } else {
             this.flowPropertyProviderClass = flowPropertyProviderClass;
         }
-    }
-    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        this(flowPropertyProviderClass);
-        setFlowPropertyDefinitions(flowPropertyDefinitions);
         if ( isNotEmpty(flowPropertyDefinitions)) {
             for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
                 this.propertiesHandled.add(flowPropertyDefinition.getName());

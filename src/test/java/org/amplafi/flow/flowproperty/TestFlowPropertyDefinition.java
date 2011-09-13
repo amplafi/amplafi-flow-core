@@ -792,6 +792,7 @@ public class TestFlowPropertyDefinition {
         assertNotNull(flowState);
         flowState.setProperty("user", new UserObject(1));
         Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
+        assertTrue(propertyValue);
     }
     /**
      * Test to make sure property initialization is forced and that the initialization code does not expect a String.
