@@ -27,7 +27,7 @@ import static com.sworddance.util.CUtilities.*;
 /**
  * @author patmoore
  * @param <FPP>
- *
+ * {@link FlowPropertyProvider} comments should be read for clarification on how to use/subclass.
  */
 public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider> implements FlowPropertyProvider {
 

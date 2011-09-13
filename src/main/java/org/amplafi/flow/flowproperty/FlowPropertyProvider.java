@@ -19,6 +19,14 @@ import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
  * Implementers manage a map of {@link FlowPropertyDefinition}s
+ *
+ * NOTE: use of this interface needs clarification wrt to the FlowPropertyValueProvider interface.
+ * Specifically, FlowPropertyProvider implementors:
+ * 1. can be queried to find out the value for multiple properties. (so this would be FlowStates, Flow, FlowActivities ).
+ * 2. delegate to FlowPropertyValueProvider to find any missing values.
+ * 3. store values in a cache.
+ *
+ * probably this interface must have the get/set value methods here rather than on a subinterface.
  * @author patmoore
  *
  */
