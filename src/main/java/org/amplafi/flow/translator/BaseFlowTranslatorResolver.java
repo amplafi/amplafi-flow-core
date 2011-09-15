@@ -15,8 +15,6 @@
 package org.amplafi.flow.translator;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,8 +22,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.Resolvable;
@@ -47,28 +47,13 @@ import static org.apache.commons.collections.CollectionUtils.*;
  */
 public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 
+    private FlowDefinitionsManager flowDefinitionsManager;
     private Map<Class<?>, FlowTranslator<?>> translators;
     private Map<Class<?>, JsonRenderer<?>> jsonRenderers;
     private Log log;
     private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
-    /**
-     * These are {@link org.amplafi.flow.FlowPropertyDefinition}s that are core to the functioning of the AmpFlow code.
-     * These should not be altered.
-     */
-    @Deprecated // TODO see FlowDefinitionsManager
-    private Map<String, FlowPropertyDefinition> coreFlowPropertyDefinitions;
-    /**
-     * These are the definitions that are standard across many different flowActivities.
-     * Rather than be defined in each FlowActivity (which results in duplication and may result in
-     * differing definitions), these standard definitions can be defined and injected.
-     */
-    @Deprecated // TODO see FlowDefinitionsManager
-    private Map<String, FlowPropertyDefinition> commonFlowPropertyDefinitions;
 
     public BaseFlowTranslatorResolver() {
-        // this instead of ConcurrentHashMap so that tests that are order dependent will still pass.
-        this.coreFlowPropertyDefinitions = Collections.synchronizedMap(new LinkedHashMap<String, FlowPropertyDefinition>());
-        this.commonFlowPropertyDefinitions = Collections.synchronizedMap(new LinkedHashMap<String, FlowPropertyDefinition>());
 
     }
     public void initializeService() {
@@ -77,21 +62,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         jsonRenderers = new MapByClass<JsonRenderer<?>>();
         for(FlowTranslator<?> flowTranslator: getFlowTranslators() ) {
             addFlowTranslator(flowTranslator);
-        }
-    }
-    /**
-     * TODO -- move to a {@link FlowPropertyProvider} implementation
-     */
-    public void putCoreFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
-        for (FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
-            this.resolve("", flowPropertyDefinition);
-            this.coreFlowPropertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
-        }
-    }
-    public void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions) {
-        for (FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
-            this.resolve("", flowPropertyDefinition);
-            this.commonFlowPropertyDefinitions.put(flowPropertyDefinition.getName(), flowPropertyDefinition);
         }
     }
 
@@ -138,9 +108,9 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     @Override
     public void resolve(String context, FlowPropertyDefinition definition) {
-        FlowPropertyDefinition standardFlowPropertyDefinition = getFlowPropertyDefinition(definition.getName());
-        if ( standardFlowPropertyDefinition != null) {
-            definition.merge(standardFlowPropertyDefinition);
+        FlowPropertyDefinitionBuilder standardFlowPropertyDefinitionBuilder = getFlowDefinitionsManager().getFactoryFlowPropertyDefinitionBuilder(definition.getName(), definition.getDataClass());
+        if ( standardFlowPropertyDefinitionBuilder != null) {
+            definition.merge(standardFlowPropertyDefinitionBuilder.toFlowPropertyDefinition());
         }
         if ( !resolve(context+definition.getName()+":", definition.getDataClassDefinition(), !definition.isCacheOnly())) {
             // TODO: anything special?
@@ -248,26 +218,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     }
 
     /**
-     * @param commonFlowPropertyDefinitions the commonFlowPropertyDefinitions to set
-     */
-    public void setCommonFlowPropertyDefinitions(Map<String, FlowPropertyDefinition> commonFlowPropertyDefinitions) {
-        this.commonFlowPropertyDefinitions = commonFlowPropertyDefinitions;
-    }
-    /**
-     * @return the commonFlowPropertyDefinitions
-     */
-    public Map<String, FlowPropertyDefinition> getCommonFlowPropertyDefinitions() {
-        return commonFlowPropertyDefinitions;
-    }
-
-    public FlowPropertyDefinition getFlowPropertyDefinition(String key) {
-        FlowPropertyDefinition flowPropertyDefinition = this.commonFlowPropertyDefinitions.get(key);
-        if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = this.coreFlowPropertyDefinitions.get(key);
-        }
-        return flowPropertyDefinition;
-    }
-    /**
      * @param log the log to set
      */
     public void setLog(Log log) {
@@ -278,6 +228,12 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     public Log getLog() {
         return log;
+    }
+    public void setFlowDefinitionsManager(FlowDefinitionsManager flowDefinitionsManager) {
+        this.flowDefinitionsManager = flowDefinitionsManager;
+    }
+    public FlowDefinitionsManager getFlowDefinitionsManager() {
+        return flowDefinitionsManager;
     }
 
 }

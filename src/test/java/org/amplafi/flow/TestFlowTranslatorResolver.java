@@ -25,6 +25,7 @@ import java.util.Set;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.translator.ListFlowTranslator;
@@ -34,8 +35,6 @@ import org.amplafi.flow.translator.SetFlowTranslator;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static org.amplafi.flow.FlowConstants.*;
 
 /**
  * @author patmoore
@@ -50,6 +49,7 @@ public class TestFlowTranslatorResolver extends Assert {
 
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         BaseFlowTranslatorResolver flowTranslatorResolver = new BaseFlowTranslatorResolver();
+        flowTranslatorResolver.setFlowDefinitionsManager(new FlowDefinitionsManagerImpl());
         flowTranslatorResolver.addStandardFlowTranslators();
         flowTranslatorResolver.initializeService();
         return flowTranslatorResolver;
@@ -161,22 +161,22 @@ public class TestFlowTranslatorResolver extends Assert {
         assertTrue(result.equals(map));
     }
 
-    /**
-     * Test to make sure the merge with the standard definition happens.
-     * Make sure that the standard definition does not change.
-     */
-    @Test(enabled=false) // for now #2179, #2192 forces these to be defined in FlowImpl
-    public void testMergingWithStandardFlowPropertyDefinition() {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL);
-        assertEquals(flowPropertyDefinition.getDataClass(), String.class);
-        FlowPropertyDefinition standardFlowPropertyDefinition =
-                this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
-        assertEquals(standardFlowPropertyDefinition.getDataClass(), boolean.class);
-        getFlowTranslatorResolver().resolve("", flowPropertyDefinition);
-        assertEquals(flowPropertyDefinition.getDataClass(), boolean.class);
-        assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
-        standardFlowPropertyDefinition =
-                this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
-        assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
-    }
+//    /**
+//     * Test to make sure the merge with the standard definition happens.
+//     * Make sure that the standard definition does not change.
+//     */
+//    @Test(enabled=false) // for now #2179, #2192 forces these to be defined in FlowImpl
+//    public void testMergingWithStandardFlowPropertyDefinition() {
+//        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL);
+//        assertEquals(flowPropertyDefinition.getDataClass(), String.class);
+//        FlowPropertyDefinition standardFlowPropertyDefinition =
+//                this.getFlowDefManager().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
+//        assertEquals(standardFlowPropertyDefinition.getDataClass(), boolean.class);
+//        getFlowTranslatorResolver().resolve("", flowPropertyDefinition);
+//        assertEquals(flowPropertyDefinition.getDataClass(), boolean.class);
+//        assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
+//        standardFlowPropertyDefinition =
+//                this.getFlowTranslatorResolver().getFlowPropertyDefinition(FSHIDE_FLOW_CONTROL);
+//        assertNotSame(standardFlowPropertyDefinition, flowPropertyDefinition);
+//    }
 }

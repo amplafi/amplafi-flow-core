@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
@@ -108,8 +109,7 @@ public interface FlowManagement extends FlowStateListener {
      * @return the resulting FlowState may not be the same as the FlowState corresponding to the passed lookupKey. This
      * happens if the lookupKey'ed flow completes.
      */
-    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow,
-            Map<String, String> initialFlowState);
+    <FS extends FlowState> FS continueFlowState(String lookupKey, boolean currentFlow, Map<String, String> initialFlowState);
     /**
      * the flows that the current session has active.
      *
@@ -198,15 +198,14 @@ public interface FlowManagement extends FlowStateListener {
 
     /**
      * look for a global {@link FlowPropertyDefinition} that is not specific to a {@link Flow} or {@link FlowActivity}.
-     * @param <T>
-     * @param key
-     * @return the global {@link FlowPropertyDefinition}
+     * @param propertyName
+     * @param dataClass TODO
      */
-    <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key);
+    FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 
     /**
      * {@link FlowManagement} is a session
-     * object the value returned by this method may be customized to the session setting. 
+     * object the value returned by this method may be customized to the session setting.
      * @return the default home to use when a flow ends and there is no other place to return.
      */
     URI getDefaultHomePage();

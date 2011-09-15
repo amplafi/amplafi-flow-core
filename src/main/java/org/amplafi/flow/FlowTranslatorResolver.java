@@ -53,13 +53,6 @@ public interface FlowTranslatorResolver {
     IJsonWriter getJsonWriter();
 
     /**
-     * TODO: probably should be a copy so the definition could be altered.
-     * @param key
-     * @return the standard {@link FlowPropertyDefinition} for this key.
-     */
-    FlowPropertyDefinition getFlowPropertyDefinition(String key);
-    void putCommonFlowPropertyDefinitions(FlowPropertyDefinition... flowPropertyDefinitions);
-    /**
      * @param flowPropertyProvider
      */
     void resolve(FlowPropertyProvider flowPropertyProvider);

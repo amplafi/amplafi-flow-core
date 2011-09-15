@@ -736,7 +736,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      *         instances.
      */
     public boolean merge(FlowPropertyDefinition property) {
-        if ( property == null) {
+        if ( property == null || this == property) {
             return true;
         } else if ( !isDataClassMergeable(property)) {
             return false;

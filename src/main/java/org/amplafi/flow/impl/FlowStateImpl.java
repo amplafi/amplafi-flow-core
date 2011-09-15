@@ -37,6 +37,7 @@ import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
@@ -1665,7 +1666,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
         if (flowPropertyDefinition == null && this.getFlowManagement() != null) {
             // (may not be assigned to a flowManagement any more -- historical FlowState )
-            flowPropertyDefinition = (T) this.getFlowManagement().getFlowPropertyDefinition(key);
+            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowManagement().getFactoryFlowPropertyDefinitionBuilder(key, null);
+            if ( flowPropertyDefinitionBuilder !=null ) {
+                flowPropertyDefinition = (T) flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
+            }
         }
         return flowPropertyDefinition;
     }

@@ -37,6 +37,7 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
 import org.amplafi.flow.TestFlowTransitions;
+import org.amplafi.flow.impl.FactoryFlowPropertyDefinitionProvider;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
@@ -756,7 +757,9 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     public void testStandardFlowPropertyExtensions() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.getFlowDefinitionsManager().addStandardPropertyDefinition("user", UserObject.class);
+        FactoryFlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider = new FactoryFlowPropertyDefinitionProvider();
+        factoryFlowPropertyDefinitionProvider.addStandardPropertyDefinition("user", UserObject.class);
+        flowTestingUtils.getFlowDefinitionsManager().addFactoryFlowPropertyDefinitionProvider(factoryFlowPropertyDefinitionProvider);
         String propertyName = "propertyName";
 
         FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionImpl(propertyName, Boolean.class).initAccess(flowLocal,initialize);

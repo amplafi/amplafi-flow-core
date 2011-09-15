@@ -30,8 +30,7 @@ import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.MissingRequiredTracking;
 
@@ -47,25 +46,17 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private FlowTranslatorResolver flowTranslatorResolver;
-    private boolean running;
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
-    /**
-     * This map is used to connect a standard property name i.e. "user" to a standard class (UserImpl)
-     * This map solves the problem where a flowProperty*Provider or changelistener needs (or would like)
-     * to have a property available but does not define it.
-     *
-     * Explicit NOTE: the flow propertydefinitions returned MUST not persist any changes to permanent storage.
-     * This is easy to enforce at the primary level (i.e. no persister is called. ) but what about accessing a read-only property
-     * that returns a db object and then changes the db object? Can we tell hibernate not to persist?
-     */
-    private Map<String, FlowPropertyDefinitionImplementor> standardPropertyNameToDefinition;
+
+    private List<FactoryFlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
-        this.standardPropertyNameToDefinition = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
+        factoryFlowPropertyDefinitionProviders = new CopyOnWriteArrayList<FactoryFlowPropertyDefinitionProvider>();
+        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.INSTANCE);
     }
 
     /**
@@ -75,18 +66,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         for(String fileName: getFlowsFilenames()) {
             XmlDefinitionSource definitionSource = new XmlDefinitionSource(fileName);
             addDefinitions(definitionSource);
-        }
-        initFlowDefinitions();
-        running = true;
-    }
-
-    /**
-     *
-     */
-    private void initFlowDefinitions() {
-        Collection<FlowImplementor> flowDefinitionCollection = flowDefinitions.values();
-        for(FlowImplementor flow: flowDefinitionCollection) {
-            getFlowTranslatorResolver().resolveFlow(flow);
         }
     }
 
@@ -101,8 +80,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
     public void addDefinition(FlowImplementor flow) {
         ApplicationIllegalStateException.checkState(!flow.isInstance(), flow, " is an instance not a definition");
-
-        this.flowTranslatorResolver.resolveFlow(flow);
         getFlowDefinitions().put(flow.getFlowPropertyProviderFullName(), flow);
     }
 
@@ -115,6 +92,10 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         FlowImplementor flow = this.getFlowDefinitions().get(flowTypeName);
         if (flow==null) {
             throw new FlowValidationException("flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
+        } else {
+            // cannot do this any more at initializeService() time because of infinite-loop.
+            // BaseFlowTranslatorResolver.resolveFlow() calls back to FlowDefinitionManager
+            this.flowTranslatorResolver.resolveFlow(flow);
         }
         return flow;
     }
@@ -127,16 +108,6 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.flowDefinitions;
     }
 
-    public void setFlowDefinitions(Map<String, FlowImplementor> flowDefinitions) {
-        this.flowDefinitions.clear();
-        if ( isNotEmpty(flowDefinitions) ) {
-            this.flowDefinitions.putAll(flowDefinitions);
-        }
-        if ( running) {
-            initFlowDefinitions();
-        }
-    }
-
     public Log getLog() {
         if ( this.log == null ) {
             this.log = LogFactory.getLog(this.getClass());
@@ -144,42 +115,21 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.log;
     }
 
-    /**
-     *
-     * @param propertyName
-     * @param standardDefinitionClass
-     */
-    public void addStandardPropertyDefinition(String propertyName, Class<?> standardDefinitionClass) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(propertyName, standardDefinitionClass);
-    	addStandardPropertyDefinition(flowPropertyDefinition);
+    public void addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
+        addIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
     }
 
-    /**
-     * This property should be minimal.
-     * @param flowPropertyDefinition supply the default property.
-     */
-    public void addStandardPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-    	String propertyName = flowPropertyDefinition.getName();
-    	ApplicationIllegalStateException.checkState(!this.standardPropertyNameToDefinition.containsKey(propertyName), propertyName, " already defined as a standard property.");
-    	flowPropertyDefinition.setTemplateFlowPropertyDefinition();
-    	this.standardPropertyNameToDefinition.put(propertyName, flowPropertyDefinition);
-    	// Note: alternate names are not automatically added.
+    public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = null;
+        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider: this.factoryFlowPropertyDefinitionProviders) {
+            flowPropertyDefinitionBuilder = flowPropertyDefinitionProvider.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+            if ( flowPropertyDefinitionBuilder != null ) {
+                break;
+            }
+        }
+        return flowPropertyDefinitionBuilder;
     }
 
-    /**
-     * Used as the way to get a property
-     * @param propertyName
-     * @param dataClass
-     * @return
-     */
-    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
-    	FlowPropertyDefinitionImplementor standardDefinition = this.standardPropertyNameToDefinition.get(propertyName);
-    	if ( standardDefinition == null || (dataClass != null && !standardDefinition.isAssignableFrom(dataClass))) {
-    		return new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(propertyName, dataClass);
-    	} else {
-    		return new FlowPropertyDefinitionBuilder(standardDefinition);
-    	}
-    }
     /**
      * @see org.amplafi.flow.FlowDefinitionsManager#isFlowDefined(java.lang.String)
      */

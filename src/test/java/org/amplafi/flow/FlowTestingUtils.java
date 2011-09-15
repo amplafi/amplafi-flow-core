@@ -77,6 +77,7 @@ public class FlowTestingUtils {
      */
     @SuppressWarnings("unchecked")
     private void initializeService() {
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowDefinitionsManager(this.flowDefinitionsManager);
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addStandardFlowTranslators();
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).initializeService();
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new ShortFlowTranslator());
@@ -178,13 +179,13 @@ public class FlowTestingUtils {
         return flowManagement;
     }
     /**
-     * @param flowManager the flowManager to set
+     * @param flowDefinitionsManager the flowDefinitionsManager to set
      */
     public void setFlowManager(FlowManager flowManager) {
         this.flowManager = flowManager;
     }
     /**
-     * @return the flowManager
+     * @return the flowDefinitionsManager
      */
     public FlowManager getFlowManager() {
         return flowManager;

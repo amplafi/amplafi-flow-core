@@ -513,8 +513,11 @@ public class BaseFlowManagement implements FlowManagement {
         // but using global allows a property to be set that is really for the next flow to be run.
         // Note: cannot use flowLocal scope because this definition may not be preserved in the flow and then the export would not properly happen.
         // Note: because of read then write possibility then we need to assume that property will be set even if it is not now.
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = getFlowManager().getFlowPropertyDefinitionBuilder(key, expectedClass)
-            .initAccess(PropertyScope.global, PropertyUsage.io);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = getFactoryFlowPropertyDefinitionBuilder(key, expectedClass);
+        if ( flowPropertyDefinitionBuilder == null) {
+            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(key, expectedClass);
+        }
+        flowPropertyDefinitionBuilder.initAccess(PropertyScope.global, PropertyUsage.io);
         FlowPropertyDefinitionImplementor propertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
         if ( sampleValue != null) {
             // actually going to be setting this property
@@ -525,6 +528,7 @@ public class BaseFlowManagement implements FlowManagement {
         getFlowTranslatorResolver().resolve(flowPropertyProvider.toString(), propertyDefinition);
         return propertyDefinition;
     }
+
     /**
      * @see org.amplafi.flow.FlowManagement#getInstanceFromDefinition(java.lang.String)
      */
@@ -573,12 +577,12 @@ public class BaseFlowManagement implements FlowManagement {
 
 
     /**
-     * @see org.amplafi.flow.FlowManagement#getFlowPropertyDefinition(java.lang.String)
+     * @see org.amplafi.flow.FlowManagement#getFactoryFlowPropertyDefinitionBuilder(java.lang.String, Class)
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends FlowPropertyDefinition> T getFlowPropertyDefinition(String key) {
-        return (T) this.getFlowTranslatorResolver().getFlowPropertyDefinition(key);
+    public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder =
+            this.getFlowManager().getFactoryFlowPropertyDefinitionBuilder(propertyName, dataClass);
+        return flowPropertyDefinitionBuilder;
     }
 
 

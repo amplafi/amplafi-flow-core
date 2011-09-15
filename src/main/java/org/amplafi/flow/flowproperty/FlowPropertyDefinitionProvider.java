@@ -46,4 +46,5 @@ public interface FlowPropertyDefinitionProvider {
      * @param additionalConfigurationParameters
      */
     void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters);
+    FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 }

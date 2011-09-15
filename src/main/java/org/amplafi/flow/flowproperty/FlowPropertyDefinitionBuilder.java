@@ -28,8 +28,9 @@ public class FlowPropertyDefinitionBuilder {
 	public FlowPropertyDefinitionBuilder() {
 
 	}
-	public FlowPropertyDefinitionBuilder(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
-		this.flowPropertyDefinition = flowPropertyDefinitionImplementor;
+	public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
+		this.flowPropertyDefinition = flowPropertyDefinitionImplementor.clone();
+		return this;
 	}
     /**
      * A property that is not allowed to be altered. (no set is allowed) But the property is not immutable because a FPVP could supply different values.
@@ -40,19 +41,6 @@ public class FlowPropertyDefinitionBuilder {
      * PropertyUsage.initialize,
      * ExternalPropertyAccessRestriction.readonly
      *
-     * @param name
-     * @param dataClass
-     * @param collectionClasses
-     * @return this
-     */
-    @SuppressWarnings("unchecked")
-    public static FlowPropertyDefinitionBuilder createNonalterableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, FlowPropertyValueProvider flowPropertyValueProvider, Class<?>...collectionClasses) {
-        FlowPropertyDefinitionImpl flowPropertyDefinitionImplementor = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses);
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor).
-        initAccess(PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly).initFlowPropertyValueProvider(flowPropertyValueProvider);
-        return flowPropertyDefinitionBuilder;
-    }
-    /**
      * Expectation is that {@link FlowPropertyValueProvider} will be supplied later.
      * @param name
      * @param dataClass
@@ -227,10 +215,7 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 	public FlowPropertyDefinitionBuilder initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister) {
-		return initFlowPropertyValuePersister(flowPropertyValuePersister, true);
-	}
-	public FlowPropertyDefinitionBuilder initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister, boolean failOnNotHandling) {
-		_initFlowPropertyValuePersister(flowPropertyValuePersister, failOnNotHandling);
+		_initFlowPropertyValuePersister(flowPropertyValuePersister, true);
 		return this;
 	}
 	private boolean _initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister, boolean failOnNotHandling) {

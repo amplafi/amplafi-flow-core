@@ -86,8 +86,8 @@ public class FlowManagerImpl implements FlowManager {
         return this.getFlowDefinitionsManager().isFlowDefined(flowTypeName);
     }
     @Override
-    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
-        return this.getFlowDefinitionsManager().getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+    public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        return this.getFlowDefinitionsManager().getFactoryFlowPropertyDefinitionBuilder(propertyName, dataClass);
     }
     public Flow getFlowDefinition(String flowTypeName) {
         return this.getFlowDefinitionsManager().getFlowDefinition(flowTypeName);
