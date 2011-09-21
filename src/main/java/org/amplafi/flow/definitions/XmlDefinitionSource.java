@@ -13,17 +13,9 @@
  */
 package org.amplafi.flow.definitions;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowGroup;
@@ -38,21 +30,17 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.TransitionFlowActivity;
 import org.amplafi.flow.translator.FlowTranslator;
 
+import com.sworddance.util.AbstractXmlParser;
 import com.sworddance.util.ApplicationGeneralException;
-import com.sworddance.util.ApplicationIllegalArgumentException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import static org.apache.commons.lang.StringUtils.*;
-
 /**
  * @author patmoore
  */
-public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
+public class XmlDefinitionSource extends AbstractXmlParser implements DefinitionSource<FlowImplementor> {
 
     private static final String MODULE_ELEMENT = "module";
     /**
@@ -130,13 +118,7 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
      */
     private static final String NAME_ATTR = "name";
 
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-
-    private Document xmlDocument;
-
     private Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();
-
-    private String fileName;
 
     public XmlDefinitionSource() {
 
@@ -148,86 +130,14 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
     }
 
     public XmlDefinitionSource(String fileName) {
-        DocumentBuilder newDocumentBuilder = createDocumentBuilder();
-        this.fileName = fileName;
-        File file = new File(fileName);
-        try {
-            if ( file.exists()) {
-                this.xmlDocument = newDocumentBuilder.parse(file);
-            } else {
-                List<String> searchPaths = createSearchPath();
-                InputStream resource = null;
-                for(String searchPath: searchPaths) {
-                    resource = this.getClass().getResourceAsStream(searchPath);
-                    if ( resource != null) {
-                        this.xmlDocument = newDocumentBuilder.parse(resource);
-                        break;
-                    }
-                }
-                if (resource == null) {
-                    throw new ApplicationIllegalArgumentException("Cannot locate xml definitions file. File '",
-                        file,"' does not exist and cannot find a resource in the classpath=", join(searchPaths, ","));
-                }
-            }
-        } catch (SAXException e) {
-            throw new ApplicationGeneralException(e);
-        } catch (IOException e) {
-            throw new ApplicationGeneralException(e);
-        }
+        super(fileName, "flows");
         parseDocument();
     }
 
-    /**
-     * Create a search path list containing:
-     * [ fileName, /fileName, /META-INF/fileName, /META-INF/flows/fileName ]
-     * @return a list of locations to look for the file supplied.
-     */
-    private List<String> createSearchPath() {
-        List<String> searchPath = new ArrayList<String>();
-        searchPath.add(fileName);
-        String adjustedFilename;
-        if (!fileName.startsWith("/")) {
-            searchPath.add("/"+fileName);
-            adjustedFilename = fileName;
-        } else {
-            adjustedFilename = fileName.substring(1);
-        }
-        if (!adjustedFilename.startsWith("META-INF/")) {
-            // look in META-INF
-            searchPath.add("/META-INF/"+adjustedFilename);
-        }
-        if (!adjustedFilename.startsWith("META-INF/flows/")) {
-            // look in META-INF
-            searchPath.add("/META-INF/flows/"+adjustedFilename);
-        }
-        if (!adjustedFilename.startsWith("flows/")) {
-            // look in META-INF
-            searchPath.add("/flows/"+adjustedFilename);
-        }
-        return searchPath;
-    }
+
     public XmlDefinitionSource(InputStream inputStream) {
-        DocumentBuilder newDocumentBuilder = createDocumentBuilder();
-        try {
-            this.xmlDocument = newDocumentBuilder.parse(inputStream);
-        } catch (SAXException e) {
-            throw new ApplicationGeneralException(e);
-        } catch (IOException e) {
-            throw new ApplicationGeneralException(e);
-        }
-
+        super(inputStream);
         parseDocument();
-    }
-
-    /**
-     * @return
-     */
-    private DocumentBuilder createDocumentBuilder() {
-        try {
-            return DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new ApplicationGeneralException(e);
-        }
     }
 
     private void parseDocument() {
@@ -513,19 +423,5 @@ public class XmlDefinitionSource implements DefinitionSource<FlowImplementor> {
     @Override
     public boolean isFlowDefined(String flowTypeName) {
         return this.flows.containsKey(flowTypeName);
-    }
-
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * @param fileName the fileName to set
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 }
