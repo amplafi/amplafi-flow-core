@@ -125,7 +125,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
     }
 
     public XmlDefinitionSource(Document xmlDocument) {
-        this.xmlDocument = xmlDocument;
+        super(xmlDocument);
         parseDocument();
     }
 
@@ -141,10 +141,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
     }
 
     private void parseDocument() {
-        NodeList moduleList = this.xmlDocument.getElementsByTagName(MODULE_ELEMENT);
-        for (int i = 0; i < moduleList.getLength(); i++) {
-            FlowGroup flowGroup = parseFlowGroup(moduleList.item(i));
-        }
+        FlowGroup flowGroup = parseFlowGroup(this.getDocumentElement());
     }
 
 
@@ -152,20 +149,17 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
     	NamedNodeMap attributes = flowGroupNode.getAttributes();
     	String flowGroupId = getNameAttribute(attributes);
         FlowGroupImpl flowGroup = new FlowGroupImpl(flowGroupId);
-        NodeList children = flowGroupNode.getChildNodes();
+        NodeList children = this.getChildElementsByTagName(flowGroupNode, false, PROPERTY, DEFINITION);
         for (int index = 0; index < children.getLength(); index++) {
             Node child = children.item(index);
-            switch ( child.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                String nodeName = child.getNodeName();
-                if (PROPERTY.equals(nodeName)) {
-                    flowGroup.addPropertyDefinition(parseProperty(child, PropertyScope.global));
-                } else if (DEFINITION.equals(nodeName)) {
-                    FlowImplementor flow = parseFlow(child);
-                    this.flows.put(flow.getFlowPropertyProviderName(), flow);
-                } else {
-                    //                    System.out.println(nodeName);
-                }
+            String nodeName = child.getNodeName();
+            if (PROPERTY.equals(nodeName)) {
+                flowGroup.addPropertyDefinition(parseProperty(child, PropertyScope.global));
+            } else if (DEFINITION.equals(nodeName)) {
+                FlowImplementor flow = parseFlow(child);
+                this.flows.put(flow.getFlowPropertyProviderName(), flow);
+            } else {
+                //                    System.out.println(nodeName);
             }
         }
         return flowGroup;
@@ -261,12 +255,6 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
      */
     private String getNameAttribute(NamedNodeMap attributes) {
         return getAttributeString(attributes, NAME_ATTR);
-    }
-
-    private String getAttributeString(NamedNodeMap attributes, String attributeName) {
-        Node node = attributes.getNamedItem(attributeName);
-        String attributeValue = node==null?null:node.getNodeValue();
-        return attributeValue;
     }
 
     private FlowActivityImplementor parseStep(Node flowActivityImplementorNode, boolean transition) {
