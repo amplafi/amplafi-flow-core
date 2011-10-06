@@ -36,9 +36,9 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         }
     }
 
-    public void add(String flowTypeName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider) {
-        FlowImpl flow = new FlowImpl(flowTypeName);
-        FlowActivityImpl flowActivity = new FlowActivityImpl(flowTypeName+"Activity");
+    public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider) {
+        FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
+        FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
         flow.addActivity(flowActivity);
         put(flows, flow.getFlowPropertyProviderFullName(), flow);
