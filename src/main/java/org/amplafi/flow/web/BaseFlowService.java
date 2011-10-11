@@ -142,7 +142,7 @@ public class BaseFlowService implements FlowService {
 
             if (flowState == null) {
                 String returnToFlowLookupKey = null;
-                boolean currentFlow = !request.isBackgorund();
+                boolean currentFlow = !request.isBackground();
 				flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
                 if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
                     renderError(request, flowType + ": could not start flow type", flowState, null);
