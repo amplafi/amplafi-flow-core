@@ -1,11 +1,15 @@
 package org.amplafi.flow.definitions;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowImplementor;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 
@@ -39,7 +43,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     // HACK having to pass in the property name seems weak.
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider) {
         FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
-        FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
+        FlowActivityImpl flowActivity = new FlowActivityImpl("FA1");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
         flow.addActivity(flowActivity);
         put(flows, flow.getFlowPropertyProviderFullName(), flow);
@@ -49,8 +53,8 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
             for(String flowPropertyName : flowPropertyDefinitionProvider.getFlowPropertyDefinitionNames()) {
                 FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
-                FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
-                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
+                FlowActivityImpl flowActivity = new FlowActivityImpl("FA1");
+                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish)));
                 flow.addActivity(flowActivity);
                 put(flows, flow.getFlowPropertyProviderFullName(), flow);
             }
