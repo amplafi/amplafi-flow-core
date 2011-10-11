@@ -36,12 +36,25 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         }
     }
 
+    // HACK having to pass in the property name seems weak.
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider) {
         FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
         FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
         flow.addActivity(flowActivity);
         put(flows, flow.getFlowPropertyProviderFullName(), flow);
+    }
+    // HACK: assuming that all properties should be visible as a flow also feels bad.S
+    public void add(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
+        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
+            for(String flowPropertyName : flowPropertyDefinitionProvider.getFlowPropertyDefinitionNames()) {
+                FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
+                FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
+                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
+                flow.addActivity(flowActivity);
+                put(flows, flow.getFlowPropertyProviderFullName(), flow);
+            }
+        }
     }
     /**
      * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)

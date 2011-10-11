@@ -98,7 +98,7 @@ public class BaseFlowService implements FlowService {
 	        if (isNotBlank(cookieString)) {
 	            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
 	        }
-	
+
 	        List<String> keyList = flowRequest.getParameterNames();
 	        if (isNotEmpty(keyList)) {
 	            for (String key : keyList) {
@@ -109,7 +109,7 @@ public class BaseFlowService implements FlowService {
 	                }
 	            }
 	        }
-	
+
 	        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
 			doActualService(flowRequest, initial);
         }
@@ -127,12 +127,12 @@ public class BaseFlowService implements FlowService {
         if (isNotBlank(flowId)) {
             flowState = getFlowManagement().getFlowState(flowId);
         }
-        
+
 		if (flowState != null) {
         	flowState.setAllProperties(initial);
         } else if (isNotBlank(flowType)) {
             if (!getFlowManager().isFlowDefined(flowType)) {
-                renderError(request, flowType + ": no such flow type", null, new IllegalStateException("Flow not found: " + flowType));
+                renderError(request, flowType + ": no such flow type", null, null);
                 return null;
             }
 
@@ -220,7 +220,12 @@ public class BaseFlowService implements FlowService {
     }
 
     private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) throws IOException {
-        getLog().error("Exception while running flowState=" + flowState, exception);
+        String errorMessage = flowRequest.getReferingUri();
+        if (flowState != null ) {
+            errorMessage += " Error while running flowState=" + flowState;
+        }
+
+        getLog().error(errorMessage, exception);
         flowRequest.setStatus(HttpStatus.SC_BAD_REQUEST);
         try {
         	String renderResult = flowRequest.getRenderResultType();
@@ -291,7 +296,7 @@ public class BaseFlowService implements FlowService {
 	/**
 	 * Needed to initialize some common properties which might not be part of the flow. For example if a client needs to get
 	 * current user name along with messages list flow request.
-	 * 
+	 *
      * @param propertiesToInitialize
      * @param flowState
      */

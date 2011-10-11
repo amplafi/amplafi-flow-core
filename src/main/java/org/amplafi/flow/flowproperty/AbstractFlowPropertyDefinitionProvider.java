@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -51,6 +52,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
 
     protected Map<String, FlowPropertyDefinitionImplementor> getFlowPropertyDefinitions() {
         return this.flowPropertyDefinitions;
+    }
+
+    public Set<String> getFlowPropertyDefinitionNames() {
+        return getFlowPropertyDefinitions().keySet();
     }
     /**
      * add ALL the {@link FlowPropertyDefinition}s provided by this definition provider to flowPropertyProvider.

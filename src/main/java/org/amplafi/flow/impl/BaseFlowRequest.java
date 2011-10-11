@@ -11,57 +11,57 @@ import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.web.FlowRequest;
 
 /**
- * @author Konstantin Burov 
+ * @author Konstantin Burov
  *
  */
 public abstract class BaseFlowRequest implements FlowRequest{
-	
-	// see InsertionPoint.js
+
+    // see amplafi.flow.js
     private static final String FS_BACKGROUND_FLOW = "fsInBackground";
 
-	@Override
-	public boolean hasParameter(String parameterName) {
-		return getParameterNames().contains(parameterName);
-	}
-	
-	@Override
-	public boolean isDescribeRequest() {
-		return hasParameter(DESCRIBE);
-	}
-	
-	@Override
-	public Iterable<String> getPropertiesToInitialize() {
-		return getIterableParameter(FS_PROPS_TO_INIT);
-	}
-	
-	@Override
-	public String getAdvanceToActivity() {
-		return getParameter(ADV_FLOW_ACTIVITY);
-	}
-	
-	@Override
-	public String getCompleteType() {
-		return getParameter(COMPLETE_FLOW);
-	}
-	
-	@Override
-	public String getRenderResultType() {
-		return getParameter(FSRENDER_RESULT);
-	}
-	
-	@Override
-	public String getFlowId() {
-		return getParameter(FLOW_ID);
-	}
-	
-	@Override
-	public String getFlowType() {
-		return getParameter(ServicesConstants.FLOW_TYPE);
-	}
-	
-	@Override
-	public boolean isBackgorund() {
-		return hasParameter(FS_BACKGROUND_FLOW);
-	}
-	
+    @Override
+    public boolean hasParameter(String parameterName) {
+        return getParameterNames().contains(parameterName);
+    }
+
+    @Override
+    public boolean isDescribeRequest() {
+        return hasParameter(DESCRIBE);
+    }
+
+    @Override
+    public Iterable<String> getPropertiesToInitialize() {
+        return getIterableParameter(FS_PROPS_TO_INIT);
+    }
+
+    @Override
+    public String getAdvanceToActivity() {
+        return getParameter(ADV_FLOW_ACTIVITY);
+    }
+
+    @Override
+    public String getCompleteType() {
+        return getParameter(COMPLETE_FLOW);
+    }
+
+    @Override
+    public String getRenderResultType() {
+        return getParameter(FSRENDER_RESULT);
+    }
+
+    @Override
+    public String getFlowId() {
+        return getParameter(FLOW_ID);
+    }
+
+    @Override
+    public String getFlowType() {
+        return getParameter(ServicesConstants.FLOW_TYPE);
+    }
+
+    @Override
+    public boolean isBackground() {
+        return hasParameter(FS_BACKGROUND_FLOW);
+    }
+
 }

@@ -75,7 +75,7 @@ public class FlowRequestAdapter implements FlowRequest {
 	}
 
 	@Override
-	public boolean isBackgorund() {
+	public boolean isBackground() {
 		return false;
 	}
 

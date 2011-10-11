@@ -36,7 +36,7 @@ public interface FlowRequest {
 	
 	String getAdvanceToActivity();
 	
-	boolean isBackgorund();
+	boolean isBackground();
 	
 	Iterable<String> getPropertiesToInitialize();
 	
