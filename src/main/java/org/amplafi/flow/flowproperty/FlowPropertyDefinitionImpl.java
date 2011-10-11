@@ -86,9 +86,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
-    @Deprecated // needing this is lame. should have a list of flowPropertyValueProvider
     private transient FlowPropertyValueProvider<? extends FlowPropertyProvider> factoryFlowPropertyValueProvider;
 
+    // TODO: if a list of providers is defined then it becomes impossible to determine the minimum set of dependencies.
+    // dependencies required by alternative FPVP may never be needed because the FPVP is never called.
     private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
     private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
@@ -122,8 +123,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     private Set<String> alternates;
 
-    private Set<String> propertiesDependentOn = new HashSet<String>();
-
     /**
      * data that should not be outputted or saved. for example, passwords.
      */
@@ -147,7 +146,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     /**
      * A set of {@link FlowPropertyExpectation}s that this property definition needs. Note that a {@link FlowPropertyExpectation} can be optional.
      */
-    private Set<FlowPropertyExpectation> flowPropertyExpectations;
+    private Set<FlowPropertyExpectation> propertiesDependentOn;
 
     /**
      * Creates an unnamed String property.
@@ -936,7 +935,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     /**
      * @param propertiesDependentOn the propertiesDependentOn to set
      */
-    public void setPropertiesDependentOn(Set<String> propertiesDependentOn) {
+    public void setPropertiesDependentOn(Set<FlowPropertyExpectation> propertiesDependentOn) {
         this.propertiesDependentOn = this.setCheckTemplateState(this.propertiesDependentOn, propertiesDependentOn);
     }
 
@@ -944,7 +943,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the propertiesDependentOn
      */
     @Override
-    public Set<String> getPropertiesDependentOn() {
+    public Collection<FlowPropertyExpectation> getPropertiesDependentOn() {
         return propertiesDependentOn;
     }
     /**
@@ -953,7 +952,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<String> propertiesDependentOn) {
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<FlowPropertyExpectation> propertiesDependentOn) {
         if ( isNotEmpty(propertiesDependentOn)) {
             addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
         }
@@ -965,7 +964,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return
      */
     @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl addPropertiesDependentOn(String... propertiesDependentOn) {
+    public FlowPropertyDefinitionImpl addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn) {
         if ( isNotEmpty(propertiesDependentOn)) {
             addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
         }

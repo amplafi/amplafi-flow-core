@@ -19,6 +19,7 @@ import java.util.List;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 
@@ -51,7 +52,7 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     /**
      * @return collection of property that if changed should invalidate this property.
      */
-    Collection<String> getPropertiesDependentOn();
+    Collection<FlowPropertyExpectation> getPropertiesDependentOn();
 
     /**
      * The namespace used to retrieve this property while the flowState is actively running after the flowState's FlowValueMap has been initialized.

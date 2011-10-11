@@ -25,10 +25,17 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import com.sworddance.util.map.MapKeyed;
 
 /**
+ * Describes a property that is expected AND the characteristics of the expected property to the extent desired.
+ * This additional pattern matching avoids false positives.
  * @author patmoore
  *
  */
 public interface FlowPropertyExpectation extends MapKeyed<String> {
+    /**
+     * Note: name is also the value to be returned by {@link #getMapKey()}
+     * This method is provided for semantic usefulness.
+     * @return the name of the property that is expected.
+     */
     String getName();
     /**
      * The class of the object returned by a call to a {@link org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#getProperty(String, Class)}

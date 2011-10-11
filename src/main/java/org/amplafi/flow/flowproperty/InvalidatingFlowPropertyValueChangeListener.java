@@ -20,8 +20,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.apache.commons.collections.CollectionUtils;
-
+import com.sworddance.util.CUtilities;
 import com.sworddance.util.map.ConcurrentInitializedMap;
 
 import static com.sworddance.util.CUtilities.*;
@@ -33,7 +34,7 @@ import static com.sworddance.util.CUtilities.*;
  */
 public class InvalidatingFlowPropertyValueChangeListener implements FlowPropertyValueChangeListener {
 
-    private ConcurrentMap<String, List<String>> propertyToDependentPropertiesMap = new ConcurrentInitializedMap<String, List<String>>(List.class);
+    private ConcurrentMap<String, List<String>> propertyToDependentPropertiesMap = ConcurrentInitializedMap.<String, String>newConcurrentInitializedMapWithList();
     /**
      * @see org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener#propertyChange(org.amplafi.flow.flowproperty.FlowPropertyProvider, java.lang.String, org.amplafi.flow.FlowPropertyDefinition, java.lang.String, java.lang.String)
      */
@@ -84,8 +85,8 @@ public class InvalidatingFlowPropertyValueChangeListener implements FlowProperty
     }
 
     public void addDependency(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
-        for(String dependentOn: flowPropertyDefinitionImplementor.getPropertiesDependentOn()) {
-            this.propertyToDependentPropertiesMap.get(dependentOn).add(flowPropertyDefinitionImplementor.getName());
+        for(FlowPropertyExpectation dependentOn: flowPropertyDefinitionImplementor.getPropertiesDependentOn()) {
+            CUtilities.get(this.propertyToDependentPropertiesMap,dependentOn).add(flowPropertyDefinitionImplementor.getName());
         }
     }
 }

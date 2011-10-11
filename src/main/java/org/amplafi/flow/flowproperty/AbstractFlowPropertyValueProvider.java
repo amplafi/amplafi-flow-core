@@ -14,15 +14,10 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationNullPointerException;
-
-import static com.sworddance.util.CUtilities.*;
 
 /**
  * @author patmoore
@@ -31,9 +26,6 @@ import static com.sworddance.util.CUtilities.*;
  */
 public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
-    @Deprecated
-    private Set<String> propertiesHandled = new LinkedHashSet<String>();
-
 
     protected AbstractFlowPropertyValueProvider() {
         this.flowPropertyProviderClass = initFlowPropertyProviderClass();
@@ -44,11 +36,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             this.flowPropertyProviderClass = initFlowPropertyProviderClass();
         } else {
             this.flowPropertyProviderClass = flowPropertyProviderClass;
-        }
-        if ( isNotEmpty(flowPropertyDefinitions)) {
-            for(FlowPropertyDefinition flowPropertyDefinition: flowPropertyDefinitions) {
-                this.propertiesHandled.add(flowPropertyDefinition.getName());
-            }
         }
     }
 
@@ -73,7 +60,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
         ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition),
-            flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",propertiesHandled);
+            flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
     }
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
@@ -116,7 +103,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     }
 
     public Collection<String> getPropertiesHandled() {
-        return this.propertiesHandled;
+        return this.getFlowPropertyDefinitionNames();
     }
 
     /**
