@@ -13,7 +13,7 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.testng.Assert;
+import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Test {@link AddToListFlowPropertyValueProvider}.
  */
-public class TestAddToListFlowPropertyValueProvider extends Assert {
+public class TestAddToListFlowPropertyValueProvider {
     @Test
     public void testPrevious() {
         AddToListFlowPropertyValueProvider<String> provider =

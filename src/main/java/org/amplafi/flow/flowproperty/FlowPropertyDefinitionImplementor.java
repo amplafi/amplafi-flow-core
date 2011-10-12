@@ -95,4 +95,7 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
      * @return
      */
     FlowPropertyDefinitionImplementor initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction);
+
+    FlowPropertyDefinitionImplementor addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn);
+    FlowPropertyDefinitionImplementor addPropertiesDependentOn(Collection<FlowPropertyExpectation> propertiesDependentOn);
 }

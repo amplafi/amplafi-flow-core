@@ -13,12 +13,17 @@ import com.sworddance.util.NotNullIterator;
 
 /**
  * Designed to handle the problems of extending standard definitions.
+ * Notes: FlowPropertyDefinitionBuilder was introduced because of the problems of having a FlowPropertyDefinition that can be endlessly modified, which
+ * then resulted in FPD deciding if they were templates (immutable) or not.
+ *
+ * With a builder, all {@link FlowPropertyDefinition}s become immutable. Any changes to a FPD require a builder to construct a new FPD.
  *
  * TODO: ? add a way to make an attempt to read an unset property fail rather than return null?
  * Useful for {@link PropertyUsage#getSetsValue()} == TRUE
  * TODO: should really be a builder ( 1 per FPD )
  * TODO: remove initDefaultObject()
  * Handles some common use cases
+ *
  * @author patmoore
  *
  */
@@ -53,6 +58,14 @@ public class FlowPropertyDefinitionBuilder {
         initAccess(PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly);
         return this;
     }
+    /**
+     * Immutable because a default value is provided that must be used.
+     * @param name
+     * @param dataClass
+     * @param immutableValue
+     * @param collectionClasses
+     * @return
+     */
     public FlowPropertyDefinitionBuilder createImmutableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Object immutableValue, Class<?>...collectionClasses) {
     	this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).
         initAccess(PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly).initDefaultObject(immutableValue);
@@ -272,6 +285,11 @@ public class FlowPropertyDefinitionBuilder {
     }
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
+        return this;
+    }
+
+    public FlowPropertyDefinitionBuilder addPropertiesDependentOn(FlowPropertyExpectation...propertiesDependentOn) {
+        this.flowPropertyDefinition.addPropertiesDependentOn(propertiesDependentOn);
         return this;
     }
 }

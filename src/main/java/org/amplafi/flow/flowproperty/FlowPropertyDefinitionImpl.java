@@ -141,6 +141,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * calling init* methods will return a new {@link FlowPropertyDefinitionImpl} that can be modified.
      * calling set* will result in an exception.
      */
+    @Deprecated // need to use FlowPropertyDefinitionBuilder and make FPDI immutable.
     private boolean templateFlowPropertyDefinition;
 
     /**
@@ -954,6 +955,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<FlowPropertyExpectation> propertiesDependentOn) {
         if ( isNotEmpty(propertiesDependentOn)) {
+            if ( this.propertiesDependentOn == null) {
+                this.propertiesDependentOn = new HashSet<FlowPropertyExpectation>();
+            }
             addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
         }
         return this;
@@ -966,6 +970,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @SuppressWarnings("hiding")
     public FlowPropertyDefinitionImpl addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn) {
         if ( isNotEmpty(propertiesDependentOn)) {
+            if ( this.propertiesDependentOn == null) {
+                this.propertiesDependentOn = new HashSet<FlowPropertyExpectation>();
+            }
             addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
         }
         return this;

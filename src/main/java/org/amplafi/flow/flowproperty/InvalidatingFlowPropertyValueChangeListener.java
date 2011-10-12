@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,20 +20,20 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
-import org.apache.commons.collections.CollectionUtils;
 import com.sworddance.util.CUtilities;
+import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.map.ConcurrentInitializedMap;
 
-import static com.sworddance.util.CUtilities.*;
-
 /**
- * Listen for property changes will cause invalidation of other properties.
+ * Listen for property changes so that dependent properties can be cleared.
+ *
+ * The FlowPropertyProvider must implement FlowPropertyProviderWithValues for this listener to work. If not nothing is done in {@link #propertyChange(FlowPropertyProvider, String, FlowPropertyDefinition, String, String)}
  * @author patmoore
  *
  */
 public class InvalidatingFlowPropertyValueChangeListener implements FlowPropertyValueChangeListener {
 
-    private ConcurrentMap<String, List<String>> propertyToDependentPropertiesMap = ConcurrentInitializedMap.<String, String>newConcurrentInitializedMapWithList();
+    private ConcurrentMap<String, List<FlowPropertyDefinition>> propertyToDependentPropertiesMap = ConcurrentInitializedMap.<String, FlowPropertyDefinition>newConcurrentInitializedMapWithList();
     /**
      * @see org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener#propertyChange(org.amplafi.flow.flowproperty.FlowPropertyProvider, java.lang.String, org.amplafi.flow.FlowPropertyDefinition, java.lang.String, java.lang.String)
      */
@@ -42,14 +41,12 @@ public class InvalidatingFlowPropertyValueChangeListener implements FlowProperty
     public String propertyChange(FlowPropertyProvider flowPropertyProvider, String namespace, FlowPropertyDefinition flowPropertyDefinition,
         String newValue, String oldValue) {
         if ( flowPropertyProvider instanceof FlowPropertyProviderWithValues) {
-            Collection<String> propertiesNamesForProperty = CollectionUtils.intersection(flowPropertyDefinition.getAllNames(), this.propertyToDependentPropertiesMap.keySet());
-            if ( isNotEmpty(propertiesNamesForProperty)) {
-                Set<String> propertiesToBeInvalidated = new HashSet<String>();
-                collectInvalidated(propertiesToBeInvalidated, propertiesNamesForProperty);
-                for(String propertyToBeInvalidated: propertiesToBeInvalidated) {
+            // determine if there are any monitored properties dependent on flowPropertyDefinition.
+            Set<String> propertiesToBeInvalidated = new HashSet<String>();
+            collectInvalidated(propertiesToBeInvalidated, flowPropertyDefinition);
+            for(String propertyToBeInvalidated: NotNullIterator.<String>newNotNullIterator(propertiesToBeInvalidated)) {
                     // clear out the old values.
-                    ((FlowPropertyProviderWithValues)flowPropertyProvider).setProperty(propertyToBeInvalidated, null);
-                }
+                ((FlowPropertyProviderWithValues)flowPropertyProvider).setProperty(propertyToBeInvalidated, null);
             }
         }
         return newValue;
@@ -59,34 +56,23 @@ public class InvalidatingFlowPropertyValueChangeListener implements FlowProperty
      * @param flowPropertyDefinition
      * @param propertiesToBeInvalidated
      */
-    private void collectInvalidated(Set<String> propertiesToBeInvalidated, Collection<String>propertiesNamesForProperty) {
-
-        if ( isNotEmpty(propertiesToBeInvalidated)) {
+    private void collectInvalidated(Set<String> propertiesToBeInvalidated, FlowPropertyDefinition flowPropertyDefinition) {
             // collect set of all properties affected.
-            Set<String>additionalPropertiesToBePossiblyBeInvalidated = getInvalidateSet(propertiesToBeInvalidated);
-            Collection<String>additionalPropertiesToBeInvalidated = CollectionUtils.subtract(additionalPropertiesToBePossiblyBeInvalidated, propertiesToBeInvalidated);
-            if ( !additionalPropertiesToBeInvalidated.isEmpty()) {
-                propertiesToBeInvalidated.addAll(additionalPropertiesToBeInvalidated);
-                collectInvalidated(propertiesToBeInvalidated, additionalPropertiesToBeInvalidated);
+        for(String name : flowPropertyDefinition.getAllNames()) {
+            if ( this.propertyToDependentPropertiesMap.containsKey(name)) {
+                for(FlowPropertyDefinition flowPropertyDefinitionImplementor: this.propertyToDependentPropertiesMap.get(name)) {
+                    propertiesToBeInvalidated.addAll(flowPropertyDefinitionImplementor.getAllNames());
+                    collectInvalidated(propertiesToBeInvalidated, flowPropertyDefinitionImplementor);
+                }
             }
         }
     }
 
-    /**
-     * @param propertiesNamesForProperty
-     * @return
-     */
-    private Set<String> getInvalidateSet(Collection<String> propertiesNamesForProperty) {
-        Set<String> propertiesToBeInvalidated = new HashSet<String>();
-        for(String propertyNameForProperty: propertiesNamesForProperty) {
-            propertiesToBeInvalidated.addAll(this.propertyToDependentPropertiesMap.get(propertyNameForProperty));
-        }
-        return propertiesToBeInvalidated;
-    }
-
-    public void addDependency(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
+    public void monitorDependencies(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
         for(FlowPropertyExpectation dependentOn: flowPropertyDefinitionImplementor.getPropertiesDependentOn()) {
-            CUtilities.get(this.propertyToDependentPropertiesMap,dependentOn).add(flowPropertyDefinitionImplementor.getName());
+            // HACK : should be looking at the dataClass as well. Chances are that if there are conflicts on the dataclass other problems will exist
+            // and that check is too awkward for now.
+            CUtilities.get(this.propertyToDependentPropertiesMap,dependentOn.getMapKey()).add(flowPropertyDefinitionImplementor);
         }
     }
 }
