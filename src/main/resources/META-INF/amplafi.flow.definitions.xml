@@ -32,6 +32,7 @@
         <service id="UriTranslator"/>
         <service id="CalendarFlowTranslator"/>
         <service id="JsonSelfRendererFlowTranslator"/>
+        <service id="FlowAwareJsonSelfRendererFlowTranslator"/>
         <service id="JSONObjectFlowTranslator"/>
         <service id="LongFlowTranslator"/>
         <service id="IntegerFlowTranslator"/>
@@ -64,6 +65,12 @@
     <service-point id="JsonSelfRendererFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.JsonSelfRendererFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>
+    <service-point id="FlowAwareJsonSelfRendererFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.FlowAwareJsonSelfRendererFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>

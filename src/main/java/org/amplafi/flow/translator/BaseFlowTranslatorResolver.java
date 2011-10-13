@@ -78,6 +78,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         getFlowTranslators().add(new BooleanFlowTranslator());
         getFlowTranslators().add(new CalendarFlowTranslator());
         getFlowTranslators().add(new JsonSelfRendererFlowTranslator());
+        getFlowTranslators().add(new FlowAwareJsonSelfRendererFlowTranslator());
         getFlowTranslators().add(new UriFlowTranslator());
         getFlowTranslators().add(new EnumFlowTranslator());
         for(FlowTranslator<?> flowTranslator: this.flowTranslators) {
