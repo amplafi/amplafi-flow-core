@@ -36,9 +36,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         setFlowPropertyDefinitions(flowPropertyDefinitions);
     }
-    /**
-     * @param flowPropertyDefinitions
-     */
+
     protected void setFlowPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
         this.flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
         this.addFlowPropertyDefinitionImplementators(flowPropertyDefinitionImplementors);
@@ -99,7 +97,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     /**
      * initialize a flowPropertyDefinition.
      * @param flowPropertyProvider
-     * @param flowPropertyDefinition will be modified (make sure not modifying the master definition)
+     * @param flowPropertyDefinitionBuilder will be modified (make sure not modifying the master definition)
      * @param additionalConfigurationParameters
      */
     protected FlowPropertyDefinitionImplementor initPropertyDefinition(
