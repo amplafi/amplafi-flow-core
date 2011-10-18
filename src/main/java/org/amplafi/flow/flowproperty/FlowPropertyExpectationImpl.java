@@ -49,6 +49,14 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyExpectationImpl(FlowActivityPhase flowActivityPhase) {
         this(null, flowActivityPhase, null, null, null, null, null, null);
     }
+    /**
+     * Used to declare a dependency.
+     * TODO: the expected data class?
+     * @param name
+     */
+    public FlowPropertyExpectationImpl(String name) {
+        this(name, null, null, null, null, null, null, null);
+    }
     public FlowPropertyExpectationImpl(String name, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this(name, null, null, null, null, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
