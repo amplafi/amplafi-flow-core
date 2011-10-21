@@ -16,7 +16,7 @@ package org.amplafi.flow;
 
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.impl.FactoryFlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 
 
 /**
@@ -35,5 +35,5 @@ public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor
 
     FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 
-    void addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider);
+    void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider);
 }

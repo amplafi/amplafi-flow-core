@@ -49,13 +49,13 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
 
-    private List<FactoryFlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders;
+    private List<FlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
-        factoryFlowPropertyDefinitionProviders = new CopyOnWriteArrayList<FactoryFlowPropertyDefinitionProvider>();
+        factoryFlowPropertyDefinitionProviders = new CopyOnWriteArrayList<FlowPropertyDefinitionProvider>();
         this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.INSTANCE);
     }
 
@@ -115,7 +115,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.log;
     }
 
-    public void addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
+    public void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
         addIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
     }
 
