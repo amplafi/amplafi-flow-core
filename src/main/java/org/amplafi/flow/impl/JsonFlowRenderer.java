@@ -78,6 +78,8 @@ public class JsonFlowRenderer implements FlowRenderer {
             FlowValidationException e = (FlowValidationException) exception;
             Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
             writeValidationResult(jsonWriter, validationResult);
+        } else {
+            jsonWriter.keyValueIfNotBlankValue("exception", exception.getMessage());
         }
         jsonWriter.endObject();
         
