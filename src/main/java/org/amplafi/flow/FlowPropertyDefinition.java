@@ -13,10 +13,10 @@
  */
 package org.amplafi.flow;
 
+import java.util.List;
 import java.util.Set;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.JsonSelfRenderer;
 
@@ -29,19 +29,12 @@ import org.amplafi.json.JsonSelfRenderer;
  */
 public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSelfRenderer {
 
-    DataClassDefinition getDataClassDefinition();
-
     /**
      * merge the information from source into this FlowPropertyDefinition.
      * @param source
      * @return true if merge was successful.
      */
     boolean merge(FlowPropertyDefinition source);
-
-    /**
-     * @return the {@link Class} of this property
-     */
-    Class<?> getDataClass();
 
     /**
      * @return true if a default value for this property can be created.
@@ -59,8 +52,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     // TODO: define circumstances where this is used as opposed to just not having a persister.
     boolean isCacheOnly();
 
-    <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
-    <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
     /**
      *
      * @return the {@link FlowTranslator} used to serialize/deserialize the property value.
@@ -117,6 +108,11 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     boolean isCopyBackOnFlowSuccess();
 
     boolean isDefaultAvailable();
-    
+
     boolean isExportable();
+
+    /**
+     * @return
+     */
+    List<Object> getObjectsNeedingToBeWired();
 }

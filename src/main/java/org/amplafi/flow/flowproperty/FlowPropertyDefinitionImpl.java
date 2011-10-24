@@ -44,6 +44,7 @@ import org.amplafi.json.JsonSelfRenderer;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.ApplicationNullPointerException;
+import com.sworddance.util.CUtilities;
 import com.sworddance.util.NotNullIterator;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -905,6 +906,15 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValuePersister, flowPropertyValuePersister);
     	flowPropertyDefinition.setFlowPropertyValuePersister(flowPropertyValuePersister);
         return flowPropertyDefinition;
+    }
+
+
+    @Override
+    public List<Object> getObjectsNeedingToBeWired() {
+        List<Object> objectsNeedingToBeWired = new ArrayList<Object>();
+        CUtilities.addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
+        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider(), this.factoryFlowPropertyValueProvider);
+        return objectsNeedingToBeWired;
     }
 
     /**
