@@ -237,42 +237,42 @@ public class BaseFlowService implements FlowService {
     }
 
     protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws IOException {
-        FlowState flowState = getFlowState(flowRequest, initial);
-		boolean flowAdvancedWithNoErrors = false;
-		if (flowState != null) {
-			try {
-		    	String complete = flowRequest.getCompleteType();
-				if (complete == null) {
-		            // blank means don't try to complete flow.
-		            complete = defaultComplete;
-		        }
-		        if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
-		            while (!flowState.isCompleted()) {
-		                advanceFlow(flowState);
-		            }
-		        } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
-		            String advanceToActivity = flowRequest.getAdvanceToActivity();
-					if (advanceToActivity != null) {
-		            	while (!flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
-		            		advanceFlow(flowState);
-		            	}
-		            } else {
-		            	while (!flowState.isCompleted() && !flowState.isFinishable()) {
-		            		advanceFlow(flowState);
-		            	}
-		            }
-		        }
-		        flowAdvancedWithNoErrors = true;
-		    } catch (Exception e) {
-		    	if (!flowState.isPersisted()) {
-		    		getFlowManagement().dropFlowState(flowState);
-		    	}
-		        renderError(flowRequest, "Error", flowState, e);
-		        flowAdvancedWithNoErrors = false;
-		    }
-		}
-		if (flowAdvancedWithNoErrors) {
-        	initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
+        FlowState flowState = null;
+        boolean flowAdvancedWithNoErrors = false;
+        try {
+            if ((flowState = getFlowState(flowRequest, initial)) != null) {
+                String complete = flowRequest.getCompleteType();
+                if (complete == null) {
+                    // blank means don't try to complete flow.
+                    complete = defaultComplete;
+                }
+                if (ADVANCE_TO_END.equalsIgnoreCase(complete)) {
+                    while (!flowState.isCompleted()) {
+                        advanceFlow(flowState);
+                    }
+                } else if (AS_FAR_AS_POSSIBLE.equalsIgnoreCase(complete)) {
+                    String advanceToActivity = flowRequest.getAdvanceToActivity();
+                    if (advanceToActivity != null) {
+                        while (!flowState.isCompleted() && !flowState.getCurrentActivityByName().equals(advanceToActivity)) {
+                            advanceFlow(flowState);
+                        }
+                    } else {
+                        while (!flowState.isCompleted() && !flowState.isFinishable()) {
+                            advanceFlow(flowState);
+                        }
+                    }
+                }
+                flowAdvancedWithNoErrors = true;
+            }
+        } catch (Exception e) {
+            if (flowState != null && !flowState.isPersisted()) {
+                getFlowManagement().dropFlowState(flowState);
+            }
+            renderError(flowRequest, "Error", flowState, e);
+            flowAdvancedWithNoErrors = false;
+        }
+        if (flowAdvancedWithNoErrors) {
+            initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
             getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
             flowRequest.setStatus(HttpStatus.SC_OK);
         }
