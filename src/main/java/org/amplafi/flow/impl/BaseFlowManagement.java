@@ -47,6 +47,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
+import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.PageProvider;
 
 import com.sworddance.beans.ClassResolver;
@@ -341,11 +342,16 @@ public class BaseFlowManagement implements FlowManagement {
                 }
             }
             return (FS) flowState;
-        } catch (RuntimeException e) {
+        } 
+        catch (RuntimeException e) {
             // HACK: when starting a flow that has a problem we lose the flow information.
             // ideally we would have a general mechanism for capturing this flow information.
             // ( more correctly we should store the data in the database for analysis )
-            throw new ApplicationGeneralException(flowState.toString(), e);
+            if (e instanceof FlowValidationException) {
+                throw e;
+            }  else {
+                throw new ApplicationGeneralException(flowState.toString(), e);
+            }
         } finally {
             if ( !success ) {
                 this.dropFlowState(flowState);
