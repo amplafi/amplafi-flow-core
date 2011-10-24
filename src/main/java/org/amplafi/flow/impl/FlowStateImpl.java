@@ -249,6 +249,8 @@ public class FlowStateImpl implements FlowStateImplementor {
     /**
      * Look through the FlowState map to find all values with a valid key. ( see {@link FlowPropertyDefinitionImplementor#getNamespaceKeySearchList(FlowState, FlowPropertyProvider, boolean)} )
      * The first match found is used.
+     *
+     * See note in FactoryFlowPropertyDefinitionProvider - properties defined by FactoryFlowPropertyDefinitionProviders need to be initialized as well ( they are not ).
      * @param flowPropertyProvider
      * @param flowPropertyDefinition
      */

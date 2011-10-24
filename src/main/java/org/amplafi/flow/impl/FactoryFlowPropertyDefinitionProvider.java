@@ -54,7 +54,12 @@ import com.sworddance.util.ApplicationIllegalStateException;
  * that returns a db object and then changes the db object? Can we tell hibernate not to persist?
  */
 /**
- * Used to provide standard flow properties that are used every where
+ * Used to provide standard flow properties that are used every where.
+ *
+ * TODO: In order for the properties defined here to work completely, the FlowStateImpl.initializeFlowProperty() method must also look at the properties defined
+ * implicitly by FactoryFlowPropertyDefinitionProviders and other FlowPropertyDefinitionProvider that supply system/application-wide default definitions.
+ * Currently properties defined in FactoryFlowPropertyDefinitionProviders are not getting their initial state correctly copied over from the the initialFlowState when a flow is
+ * started.
  *
  * @author patmoore
  *

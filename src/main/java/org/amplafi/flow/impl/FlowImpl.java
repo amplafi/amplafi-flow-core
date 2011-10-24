@@ -41,12 +41,10 @@ import org.amplafi.flow.flowproperty.PropertyScope;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 import static org.apache.commons.lang.StringUtils.*;
-
 
 /**
  * defines a definition of a flow or a specific flow.
@@ -113,6 +111,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      */
     public FlowImpl() {
         // see #2179 #2192
+        // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),

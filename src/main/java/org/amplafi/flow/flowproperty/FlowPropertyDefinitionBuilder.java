@@ -272,7 +272,12 @@ public class FlowPropertyDefinitionBuilder {
     			needPersister= !_initFlowPropertyValuePersister((FlowPropertyValuePersister<FlowPropertyProvider>)provider, false);
     		}
     		if ( needProvider && (provider instanceof FlowPropertyValueProvider)) {
-    			needProvider= !_initFlowPropertyValueProvider((FlowPropertyValueProvider<? extends FlowPropertyProvider>)provider, false);
+    		    FlowPropertyValueProvider flowPropertyValueProvider = (FlowPropertyValueProvider) provider;
+    		    if ( flowPropertyValueProvider.isHandling(flowPropertyDefinition)) {
+		            this.flowPropertyDefinition = this.flowPropertyDefinition.initFactoryFlowPropertyValueProvider(flowPropertyValueProvider);
+		            needProvider = false;
+    		    }
+//    			needProvider= !_initFlowPropertyValueProvider((FlowPropertyValueProvider<? extends FlowPropertyProvider>)provider, false);
     		}
     		if ( provider instanceof FlowPropertyValueChangeListener) {
     			flowPropertyDefinition.addFlowPropertyValueChangeListeners(Arrays.asList((FlowPropertyValueChangeListener)provider));
@@ -280,7 +285,14 @@ public class FlowPropertyDefinitionBuilder {
     	}
 		return this;
     }
+    /**
+     * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is emitted it is not changed.
+     * (but best solution is FPD being truly immutable )
+     * prevent further changes and return constructed {@link FlowPropertyDefinition}
+     * @return
+     */
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
+//        flowPropertyDefinition.setTemplateFlowPropertyDefinition(); TODO
     	return (FPD) this.flowPropertyDefinition;
     }
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {

@@ -32,6 +32,9 @@ import org.testng.annotations.Test;
 
 public class TestFlowStateJsonRenderer extends Assert {
 
+    // when TODO in FactoryFlowPropertyDefinitionProvider is fixed, these values will not be in the outputed properties.
+    private static final String EMPTY_FLOW_TRANSITIONS = "\"fsFlowTransitions\":{}";
+    private static final String EMPTY_FLOW_TRANSITIONS_FIRST = EMPTY_FLOW_TRANSITIONS+",";
     /**
      * This tests the JSON rendering of a flow state with no fsParameters.
      */
@@ -42,7 +45,9 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\"" +
         		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"fsFlowTransitions\":{}}" +
+                FlowStateJsonRenderer.FS_PARAMETERS+"\":{" +
+                		EMPTY_FLOW_TRANSITIONS +
+                		"}" +
         		"}}");
 
     }
@@ -59,7 +64,9 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+
         		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{\"fsFlowTransitions\":{},\"property1\":\"value1\",\"property2\":\"value2\"}}}");
+                FlowStateJsonRenderer.FS_PARAMETERS+"\":{" +
+                EMPTY_FLOW_TRANSITIONS_FIRST +
+                		"\"property1\":\"value1\",\"property2\":\"value2\"}}}");
     }
 
     /**
@@ -81,7 +88,9 @@ public class TestFlowStateJsonRenderer extends Assert {
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\"" + FlowStateJsonRenderer.FS_COMPLETE + "\":true,\""
             + FlowStateJsonRenderer.FS_LOOKUP_KEY + "\":\"" + flowState.getLookupKey() + "\",\"" + FlowStateJsonRenderer.FS_PARAMETERS
-            + "\":{\"fsFlowTransitions\":{},\"property1\":\"value1\",\"property2\":\"value2\""
+            + "\":{" +
+            EMPTY_FLOW_TRANSITIONS_FIRST +
+            "\"property1\":\"value1\",\"property2\":\"value2\""
             + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}}}");
     }
 

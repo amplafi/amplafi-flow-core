@@ -37,7 +37,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -176,6 +175,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     protected void addStandardFlowPropertyDefinitions() {
         // see #2179 #2192
+        // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
@@ -749,7 +749,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         if (flowStateImplementor != null) {
         	result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
         } else {
-        	//There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return 
+        	//There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return
         	//default object in the case.
         	result = (T) flowPropertyDefinition.getDefaultObject(this);
         }
