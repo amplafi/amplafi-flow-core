@@ -98,4 +98,10 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
 
     FlowPropertyDefinitionImplementor addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn);
     FlowPropertyDefinitionImplementor addPropertiesDependentOn(Collection<FlowPropertyExpectation> propertiesDependentOn);
+
+    /**
+     * @param flowPropertyValueProvider
+     * @return
+     */
+    FlowPropertyDefinitionImplementor initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider);
 }

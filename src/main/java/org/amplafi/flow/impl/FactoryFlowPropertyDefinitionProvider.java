@@ -1,5 +1,6 @@
 package org.amplafi.flow.impl;
 
+import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowConstants.FSACTIVATABLE;
 import static org.amplafi.flow.FlowConstants.FSAFTER_PAGE;
 import static org.amplafi.flow.FlowConstants.FSALT_FINISHED;
@@ -22,6 +23,8 @@ import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW_TYPE;
 import static org.amplafi.flow.FlowConstants.FSRETURN_TO_TEXT;
 import static org.amplafi.flow.FlowConstants.FSSUGGESTED_NEXT_FLOW_TYPE;
 import static org.amplafi.flow.FlowConstants.FSTITLE_TEXT;
+import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
 import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
 import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
@@ -58,7 +61,7 @@ import com.sworddance.util.ApplicationIllegalStateException;
  */
 public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionProvider {
 
-    public static final FactoryFlowPropertyDefinitionProvider INSTANCE = new FactoryFlowPropertyDefinitionProvider(
+    public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
         new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
         new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
         new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
@@ -92,6 +95,13 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         // HACK
         CancelTextFlowPropertyValueProvider.CANCEL_TEXT.clone().initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE)
     );
+    public static final FactoryFlowPropertyDefinitionProvider FLOW_ACTIVITY_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
+            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
+        );
     public FactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         super(flowPropertyDefinitions);
     }

@@ -15,11 +15,12 @@
 package org.amplafi.flow;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
 import org.amplafi.json.JsonRenderer;
-
+import static com.sworddance.util.CUtilities.*;
 
 
 /**
@@ -58,12 +59,15 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
         jsonWriter.key(FS_PARAMETERS);
         jsonWriter.object();
-        Collection<FlowPropertyDefinition> propertyDefinitions = flowState.getPropertyDefinitions().values();
-        for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
-            String propertyName = flowPropertyDefinition.getName();
-            if (flowState.isPropertyValueSet(propertyName)) {
-                Object property = flowState.getProperty(propertyName);
-                jsonWriter.keyValueIfNotNullValue(propertyName, property);
+        Map<String, FlowPropertyDefinition> propertyDefinitionsMap = flowState.getPropertyDefinitions();
+        if ( isNotEmpty(propertyDefinitionsMap) ) {
+            Collection<FlowPropertyDefinition> propertyDefinitions = propertyDefinitionsMap.values();
+            for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
+                String propertyName = flowPropertyDefinition.getName();
+                if (flowState.isPropertyValueSet(propertyName)) {
+                    Object property = flowState.getProperty(propertyName);
+                    jsonWriter.keyValueIfNotNullValue(propertyName, property);
+                }
             }
         }
         jsonWriter.endObject();

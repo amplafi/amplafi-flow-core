@@ -25,7 +25,22 @@ import com.sworddance.core.Emptyable;
  * Roughly follows the java.util.Map definition - so respect
  * that interface's conventions.
  *
- * Keys are federated (i.e. namespace.key) see {@link FlowValueMapKey}
+ * Keys are federated (i.e. namespace.key) ({@link FlowValueMapKey})
+ *
+ * Federated keys allow each flow INSTANC and each flowActivity INSTANCE to have a unique namespace.
+ * Flows can call other flows and need to know that other flows in the call stack will not interfer with
+ * the caller flows values.
+ * When calling another flow, the calling flow needs to pass values to the called flows. It is too burdensome / impossible for the flow that is setting the values
+ * to know the namespace of the flow reading the value.
+ *
+ * For example, a flow may create an object putting its db id in the flowstate and then terminate, but the flow that will read the new object's id to access the new object is not determined
+ * by the flow that created the object.
+ *
+ * The global namespace ( i.e. keys without a namespace ) is the scratch area where flows communicate.
+ *
+ * When a flow is started, it looks through the global namespace for keys that match the keys in the FlowPropertyDefinitions attached to the flow or the flow's activities.
+ * Matching key value pairs are moved to the flow's unique name space.
+ *
  * @author Patrick Moore
  * @param <K> extends {@link FlowValueMapKey} the key class.
  * @param <V> extends CharSequence the value class.

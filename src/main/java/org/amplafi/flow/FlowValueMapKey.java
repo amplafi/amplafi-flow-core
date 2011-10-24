@@ -18,6 +18,8 @@ import com.sworddance.util.map.NamespaceMapKey;
 
 /**
  * Represents a federated key, i.e. namespace.key
+ *
+ * See {@link FlowValuesMap} as to why the federation occurs.
  * @author patmoore
  *
  */

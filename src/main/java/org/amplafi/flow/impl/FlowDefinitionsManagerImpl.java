@@ -56,7 +56,8 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
         factoryFlowPropertyDefinitionProviders = new CopyOnWriteArrayList<FlowPropertyDefinitionProvider>();
-        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.INSTANCE);
+        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.FLOW_INSTANCE);
+        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.FLOW_ACTIVITY_INSTANCE);
     }
 
     /**
