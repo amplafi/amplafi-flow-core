@@ -67,26 +67,31 @@ public class JsonFlowRenderer implements FlowRenderer {
 	public void renderError(FlowState flowState, String message,
 			Exception exception, Writer writer) {
 		JSONWriter jsonWriter = getFlowStateWriter();
-        jsonWriter.object();
-        jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
-        if (flowState != null) {
-            jsonWriter.key(FLOW_STATE_JSON_KEY).value(flowState);
-            // TODO : probably need to check on PropertyRequired.finish
-            Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
-            writeValidationResult(jsonWriter, result);
-        } else if (exception instanceof FlowValidationException) {
-            FlowValidationException e = (FlowValidationException) exception;
-            Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
-            writeValidationResult(jsonWriter, validationResult);
-        } else if (exception != null){
-            jsonWriter.keyValueIfNotBlankValue("exception", exception.getMessage());
-        }
-        jsonWriter.endObject();
-        
-        try {
+		try {
+            jsonWriter.object();
+            jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
+            if (flowState != null) {
+                jsonWriter.key(FLOW_STATE_JSON_KEY).value(flowState);
+                // TODO : probably need to check on PropertyRequired.finish
+                Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
+                writeValidationResult(jsonWriter, result);
+            } else if (exception instanceof FlowValidationException) {
+                FlowValidationException e = (FlowValidationException) exception;
+                Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
+                writeValidationResult(jsonWriter, validationResult);
+            } else if (exception != null){
+                jsonWriter.keyValueIfNotBlankValue("exception", exception.getMessage());
+            }
+            jsonWriter.endObject();
 			writer.append(jsonWriter.toString());
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
+		} catch (Exception e) {
+		    try {
+                writer.append("{" +ServicesConstants.ERROR_MESSAGE + ": 'Failed to render flow state. Cause: "+ e.getMessage() + "'}");
+            } catch (IOException e1) {
+                throw new IllegalStateException(e1);
+            }
 		}
 	}
 	

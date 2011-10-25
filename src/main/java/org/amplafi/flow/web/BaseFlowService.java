@@ -238,7 +238,6 @@ public class BaseFlowService implements FlowService {
 
     protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws IOException {
         FlowState flowState = null;
-        boolean flowAdvancedWithNoErrors = false;
         try {
             if ((flowState = getFlowState(flowRequest, initial)) != null) {
                 String complete = flowRequest.getCompleteType();
@@ -262,19 +261,15 @@ public class BaseFlowService implements FlowService {
                         }
                     }
                 }
-                flowAdvancedWithNoErrors = true;
+                initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
+                getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
+                flowRequest.setStatus(HttpStatus.SC_OK);
             }
         } catch (Exception e) {
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
             }
             renderError(flowRequest, "Error", flowState, e);
-            flowAdvancedWithNoErrors = false;
-        }
-        if (flowAdvancedWithNoErrors) {
-            initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
-            getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
-            flowRequest.setStatus(HttpStatus.SC_OK);
         }
         return flowState;
     }
