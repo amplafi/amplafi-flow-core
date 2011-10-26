@@ -1238,4 +1238,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 	public <T> T fromJson(Object object) {
 		return null;
 	}
+
+    @Override
+    public <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value) {
+        return dataClassDefinition.serialize(this, jsonWriter, value);
+    }
 }
