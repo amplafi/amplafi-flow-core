@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
 
 /**
@@ -115,4 +116,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * @return
      */
     List<Object> getObjectsNeedingToBeWired();
+    
+    <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value);
+    
 }
