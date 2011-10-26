@@ -66,7 +66,8 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
                 String propertyName = flowPropertyDefinition.getName();
                 if (flowState.isPropertyValueSet(propertyName)) {
                     Object property = flowState.getProperty(propertyName);
-                    jsonWriter.keyValueIfNotNullValue(propertyName, property);
+                    jsonWriter.key(propertyName);
+                    flowPropertyDefinition.serialize(jsonWriter, property);
                 }
             }
         }
