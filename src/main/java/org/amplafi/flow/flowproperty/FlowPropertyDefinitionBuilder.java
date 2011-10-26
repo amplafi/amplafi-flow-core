@@ -7,6 +7,7 @@ import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.translator.FlowTranslator;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.NotNullIterator;
@@ -260,6 +261,7 @@ public class FlowPropertyDefinitionBuilder {
     	this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage);
 		return this;
 	}
+    
     public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage, externalPropertyAccessRestriction);
         return this;
@@ -285,6 +287,12 @@ public class FlowPropertyDefinitionBuilder {
     	}
 		return this;
     }
+    
+    public FlowPropertyDefinitionBuilder initTranslator(FlowTranslator<?> flowTranslator) {
+        this.flowPropertyDefinition.initTranslator(flowTranslator);
+        return this;
+    }
+    
     /**
      * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is emitted it is not changed.
      * (but best solution is FPD being truly immutable )

@@ -22,6 +22,7 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.translator.FlowTranslator;
 
 /**
  * @author patmoore
@@ -88,6 +89,8 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
 
     FlowPropertyDefinitionImplementor initPropertyUsage(PropertyUsage propertyUsage);
 
+    FlowPropertyDefinitionImplementor initTranslator(FlowTranslator<?> flowTranslator);
+    
     /**
      * @param propertyScope
      * @param propertyUsage
