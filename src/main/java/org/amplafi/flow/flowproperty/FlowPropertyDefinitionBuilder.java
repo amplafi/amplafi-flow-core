@@ -244,6 +244,16 @@ public class FlowPropertyDefinitionBuilder {
 	public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
 		return initFlowPropertyValueProvider(flowPropertyValueProvider, true);
 	}
+	
+	public FlowPropertyDefinitionBuilder initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
+	    if ( flowPropertyValueProvider.isHandling(flowPropertyDefinition)) {
+            this.flowPropertyDefinition = this.flowPropertyDefinition.initFactoryFlowPropertyValueProvider(flowPropertyValueProvider);
+        } else {
+            ApplicationIllegalArgumentException.valid(false, flowPropertyValueProvider+" not handling "+this.flowPropertyDefinition);
+        }
+	    return this;
+    }
+	
 	public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) {
 		_initFlowPropertyValueProvider(flowPropertyValueProvider, failOnNotHandling);
 		return this;

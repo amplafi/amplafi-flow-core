@@ -38,6 +38,15 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             this.flowPropertyProviderClass = flowPropertyProviderClass;
         }
     }
+    
+    @Override
+    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = super.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+        if (flowPropertyDefinitionBuilder != null) {
+            flowPropertyDefinitionBuilder.initFactoryFlowPropertyValueProvider(this);
+        }
+        return flowPropertyDefinitionBuilder;
+    }
 
     protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         this((Class<FPP>)null, flowPropertyDefinitions);
