@@ -14,6 +14,23 @@
 
 package org.amplafi.flow.impl;
 
+import static com.sworddance.util.CUtilities.isNotEmpty;
+import static org.amplafi.flow.FlowConstants.FAINVISIBLE;
+import static org.amplafi.flow.FlowConstants.FANEXT_TEXT;
+import static org.amplafi.flow.FlowConstants.FAPREV_TEXT;
+import static org.amplafi.flow.FlowConstants.FATITLE_TEXT;
+import static org.amplafi.flow.FlowConstants.FAUPDATE_TEXT;
+import static org.amplafi.flow.FlowConstants.FLOW_PROPERTY_PREFIX;
+import static org.amplafi.flow.FlowConstants.FSAUTO_COMPLETE;
+import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.noAccess;
+import static org.amplafi.flow.flowproperty.PropertyScope.activityLocal;
+import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
+import static org.amplafi.flow.flowproperty.PropertyUsage.use;
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isNumeric;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
@@ -46,20 +63,12 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
-
-import com.sworddance.util.ApplicationIllegalStateException;
-import com.sworddance.util.ApplicationNullPointerException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.amplafi.flow.FlowConstants.*;
-import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.noAccess;
-import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.flowproperty.PropertyUsage.*;
-import static org.apache.commons.lang.StringUtils.*;
-import static com.sworddance.util.CUtilities.*;
+import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.ApplicationNullPointerException;
 
 
 /**
