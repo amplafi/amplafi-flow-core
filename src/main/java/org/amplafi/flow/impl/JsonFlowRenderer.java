@@ -75,7 +75,8 @@ public class JsonFlowRenderer implements FlowRenderer {
                 // TODO : probably need to check on PropertyRequired.finish
                 Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
                 writeValidationResult(jsonWriter, result);
-            } else if (exception instanceof FlowValidationException) {
+            } 
+            if (exception instanceof FlowValidationException) {
                 FlowValidationException e = (FlowValidationException) exception;
                 Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
                 writeValidationResult(jsonWriter, validationResult);
