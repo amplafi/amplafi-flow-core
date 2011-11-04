@@ -32,7 +32,7 @@ public interface FlowRenderer {
 	 * @param exception
 	 * @param writer
 	 */
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer);
+	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) throws Exception;
 
 	/**
 	 * TODO
