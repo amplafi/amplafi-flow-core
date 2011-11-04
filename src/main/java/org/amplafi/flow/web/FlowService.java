@@ -22,6 +22,6 @@ import java.io.IOException;
  */
 public interface FlowService {
 
-	public void service(FlowRequest flowRequest) throws IOException;
+	public void service(FlowRequest flowRequest) throws Exception;
 	
 }

@@ -88,7 +88,7 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
-    public void service(FlowRequest flowRequest) throws IOException {
+    public void service(FlowRequest flowRequest) throws Exception {
         if (flowRequest.isDescribeRequest()) {
         	getRenderer(flowRequest.getRenderResultType()).describe(flowRequest);
         } else {
@@ -115,11 +115,11 @@ public class BaseFlowService implements FlowService {
         }
     }
 
-    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws IOException {
+    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws Exception {
         return completeFlowState(request, initial);
     }
 
-    private FlowState getFlowState(FlowRequest request, Map<String, String> initial) throws IOException {
+    private FlowState getFlowState(FlowRequest request, Map<String, String> initial) throws Exception {
         FlowState flowState = null;
         String flowId = request.getFlowId();
         String flowType = request.getFlowType();
@@ -219,7 +219,7 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
-    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) throws IOException {
+    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) throws Exception {
         String errorMessage = flowRequest.getReferingUri();
         if (flowState != null ) {
             errorMessage += " Error while running flowState=" + flowState;
@@ -227,16 +227,12 @@ public class BaseFlowService implements FlowService {
 
         getLog().error(errorMessage, exception);
         flowRequest.setStatus(HttpStatus.SC_BAD_REQUEST);
-        try {
-        	String renderResult = flowRequest.getRenderResultType();
-			Writer writer = flowRequest.getWriter();
-			getRenderer(renderResult).renderError(flowState, message, exception, writer);
-        } catch (Exception e) {
-        	throw new IOException(e);
-        }
+    	String renderResult = flowRequest.getRenderResultType();
+		Writer writer = flowRequest.getWriter();
+		getRenderer(renderResult).renderError(flowState, message, exception, writer);
     }
 
-    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws IOException {
+    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws Exception {
         FlowState flowState = null;
         try {
             if ((flowState = getFlowState(flowRequest, initial)) != null) {
