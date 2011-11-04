@@ -801,12 +801,13 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (isCompleted()) {
             return this.getAfterPage();
         }
-        String pageName = getProperty(FSPAGE_NAME);
+        String pageName = null;
+        if (isActive()) {
+            FlowActivity flowActivity = getCurrentActivity();
+            pageName = flowActivity.getProperty(FSPAGE_NAME);
+        }
         if (isBlank(pageName)) {
-            if (isActive()) {
-                FlowActivity flowActivity = getCurrentActivity();
-                pageName = flowActivity.getPageName();
-            }
+            pageName = getProperty(FSPAGE_NAME);
             if (isBlank(pageName)) {
                 pageName = this.getFlow().getPageName();
             }
