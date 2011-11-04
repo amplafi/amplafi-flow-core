@@ -22,6 +22,7 @@ import static org.amplafi.flow.FlowConstants.FATITLE_TEXT;
 import static org.amplafi.flow.FlowConstants.FAUPDATE_TEXT;
 import static org.amplafi.flow.FlowConstants.FLOW_PROPERTY_PREFIX;
 import static org.amplafi.flow.FlowConstants.FSAUTO_COMPLETE;
+import static org.amplafi.flow.FlowConstants.FSPAGE_NAME;
 import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.noAccess;
 import static org.amplafi.flow.flowproperty.PropertyScope.activityLocal;
 import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
@@ -114,12 +115,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     private static final long serialVersionUID = 5578715117421910908L;
 
     /**
-     * The page name that this FlowActivity will activate.
-     */
-    @Deprecated // use FlowPropertyDefinition
-    private String pageName;
-
-    /**
      * The component name that this FlowActivity will activate.
      */
     @Deprecated // use FlowPropertyDefinition
@@ -189,7 +184,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use, noAccess),
-            new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use, noAccess),
+            //Having this property to be activityLocal we can allow each activity to manage redirects of its own..
+            new FlowPropertyDefinitionImpl(FSPAGE_NAME).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
         );
     }
@@ -313,14 +309,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     }
 
     public void setPageName(String pageName) {
-        this.pageName = pageName;
+        setProperty(FSPAGE_NAME, pageName);
     }
 
     /**
      * @see org.amplafi.flow.FlowActivity#getPageName()
      */
     public String getPageName() {
-        return pageName;
+        return getProperty(FlowConstants.FSPAGE_NAME);
     }
 
     /**
@@ -505,7 +501,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         instance.flowPropertyProviderName = flowPropertyProviderName;
         instance.activityTitle = activityTitle;
         instance.componentName = componentName;
-        instance.pageName = pageName;
+        instance.setPageName(getPageName());
         instance.finishingActivity = finishingActivity;
         instance.invisible = invisible;
         instance.persistFlow = persistFlow;
@@ -710,6 +706,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     public String getRawProperty(String key) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
+        if (flowPropertyDefinition == null) {
+            //Looks like flow state wasn't initialized yet, nothing to return..
+            return null;
+        }
         return getRawProperty(flowPropertyDefinition);
     }
 
@@ -773,7 +773,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     protected <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
         FP flowPropertyDefinition = (FP)getFlowPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = (FP)getFlowManagement().createFlowPropertyDefinition(getFlow(), key, expected, sampleValue);
+            FlowImplementor flow = getFlow();
+            FlowManagement flowManagement = getFlowManagement();
+            if (flowManagement != null) {
+                flowPropertyDefinition = (FP)flowManagement.createFlowPropertyDefinition(flow, key, expected, sampleValue);
+            }
         }
         return flowPropertyDefinition;
     }
