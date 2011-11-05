@@ -262,10 +262,10 @@ public class BaseFlowService implements FlowService {
                 flowRequest.setStatus(HttpStatus.SC_OK);
             }
         } catch (Exception e) {
+            renderError(flowRequest, "Error", flowState, e);
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
             }
-            renderError(flowRequest, "Error", flowState, e);
         }
         return flowState;
     }
