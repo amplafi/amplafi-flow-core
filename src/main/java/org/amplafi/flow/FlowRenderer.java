@@ -10,7 +10,7 @@ import org.amplafi.flow.web.FlowRequest;
  *
  */
 public interface FlowRenderer {
-	
+
 	/**
 	 * @return json, html, xml etc..
 	 */
@@ -18,25 +18,25 @@ public interface FlowRenderer {
 
 	/**
 	 * TODO
-	 * 
+	 *
 	 * @param flowState
 	 * @param writer
 	 */
 	public void render(FlowState flowState, Writer writer);
-	
+
 	/**
 	 * TODO
-	 * 
+	 *
 	 * @param flowState
 	 * @param message
 	 * @param exception
 	 * @param writer
 	 */
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) throws Exception;
+	public void renderError(FlowState flowState, String message, Exception exception, Writer writer);
 
 	/**
 	 * TODO
-	 * 
+	 *
 	 */
 	public void describe(FlowRequest flowRequest);
 

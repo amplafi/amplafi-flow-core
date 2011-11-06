@@ -88,7 +88,7 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
-    public void service(FlowRequest flowRequest) throws Exception {
+    public void service(FlowRequest flowRequest) throws IOException {
         if (flowRequest.isDescribeRequest()) {
         	getRenderer(flowRequest.getRenderResultType()).describe(flowRequest);
         } else {
@@ -115,7 +115,7 @@ public class BaseFlowService implements FlowService {
         }
     }
 
-    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws Exception {
+    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws IOException {
         return completeFlowState(request, initial);
     }
 
@@ -219,7 +219,7 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
-    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) throws Exception {
+    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) {
         String errorMessage = flowRequest.getReferingUri();
         if (flowState != null ) {
             errorMessage += " Error while running flowState=" + flowState;
@@ -232,7 +232,7 @@ public class BaseFlowService implements FlowService {
 		getRenderer(renderResult).renderError(flowState, message, exception, writer);
     }
 
-    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial) throws Exception {
+    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial)  {
         FlowState flowState = null;
         try {
             if ((flowState = getFlowState(flowRequest, initial)) != null) {
