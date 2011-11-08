@@ -170,7 +170,7 @@ public class FlowUtils {
         return ret;
     }
 
-    public String toKey(String namespace, String key) {
+    public String toKey(String namespace, Object key) {
         return new DefaultFlowValuesMapKey(namespace, key).toString();
     }
 }
