@@ -37,20 +37,20 @@ import com.sworddance.util.CUtilities;
  *
  */
 public abstract class BaseFlowLauncher implements FlowLauncher,
-// HACK Need to rework how links are being constructed in FlowEntryPoint to use LaunchLinkGenerator
+// HACK Need to rework how links are being constructed in FlowEntryPoint to use FlowLauncherLinkGenerator
 // right now we are relying on the tapestry serialization mechanism.
     Serializable{
     private transient FlowManagement flowManagement;
     private ConcurrentMap<String, String> valuesMap = new ConcurrentHashMap<String, String>();
     private String flowTypeName;
     /**
-     * Used for Listable items.
+     * Used for Listable items. Maybe null but should be set only once.
      */
     private Serializable keyExpression;
     /**
      * Lookup Key to find existing flow. May not be unique within a list so can not be used as the keyExpression.
      */
-    protected String existingFlowStateLookupKey;
+    private String existingFlowStateLookupKey;
     protected BaseFlowLauncher() {
 
     }
@@ -74,10 +74,7 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         this(flowTypeName, valuesMap, keyExpression);
         this.flowManagement = flowManagement;
     }
-    public BaseFlowLauncher(FlowState flowState, FlowManagement flowManagement, Serializable keyExpression) {
-        this(flowState.getFlowTypeName(), flowManagement, null, keyExpression);
-        this.existingFlowStateLookupKey = flowState.getLookupKey();
-    }
+
     @Override
     public void setFlowManagement(FlowManagement sessionFlowManagement) {
         this.flowManagement = sessionFlowManagement;
@@ -185,6 +182,9 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
         return this.existingFlowStateLookupKey;
     }
 
+    protected void setExistingFlowStateLookupKey(String existingFlowStateLookupKey) {
+        this.existingFlowStateLookupKey = existingFlowStateLookupKey;
+    }
     public Object getKeyExpression() {
         return this.keyExpression == null?this.getFlowTypeName():this.keyExpression;
     }

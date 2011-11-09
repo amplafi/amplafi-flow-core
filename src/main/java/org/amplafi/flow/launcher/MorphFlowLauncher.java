@@ -32,7 +32,7 @@ public class MorphFlowLauncher extends BaseFlowLauncher implements ListableFlowL
     public MorphFlowLauncher(String flowTypeName, String lookupKey,
             Map<String, String> initialFlowState, FlowManagement flowManagement) {
         super(flowTypeName, flowManagement, initialFlowState, lookupKey /*see comment in FlowTransition.*/);
-        this.existingFlowStateLookupKey = lookupKey;
+        this.setExistingFlowStateLookupKey(lookupKey);
     }
 
     @Override

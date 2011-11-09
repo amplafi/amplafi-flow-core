@@ -32,6 +32,7 @@ import org.amplafi.flow.FlowState;
  *
  * There may need to be a server-side extension of FlowLauncher ( to handle fact that FlowState is still server-sidey )
  *
+ * See {@link FlowLauncherLinkGenerator} for converting FlowLauncher into a URI.
  * @author Patrick Moore
  */
 public interface FlowLauncher extends Callable<FlowState> {

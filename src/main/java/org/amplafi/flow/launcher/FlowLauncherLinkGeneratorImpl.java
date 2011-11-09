@@ -15,6 +15,7 @@ package org.amplafi.flow.launcher;
 
 import java.net.URI;
 import com.sworddance.util.UriFactoryImpl;
+import static org.apache.commons.lang.StringUtils.*;
 
 /**
  * Generates a plain text link for the FlowLauncher.
@@ -23,29 +24,36 @@ import com.sworddance.util.UriFactoryImpl;
  *
  */
 // TODO: see FlowLinkEncoder and reconcile.
-public class LaunchLinkGenerator {
+public class FlowLauncherLinkGeneratorImpl implements FlowLauncherLinkGenerator {
 
     private String servicePrefix;
-    public LaunchLinkGenerator() {
+    public FlowLauncherLinkGeneratorImpl() {
 
     }
-    public LaunchLinkGenerator(String servicePrefix) {
+    public FlowLauncherLinkGeneratorImpl(String servicePrefix) {
         this.servicePrefix = servicePrefix;
     }
     public URI createURI(URI base, FlowLauncher flowLauncher) {
-        StringBuilder uriBuilder = new StringBuilder(this.servicePrefix).append("/").append(flowLauncher.getFlowTypeName());
-        if(!(flowLauncher instanceof StartFromDefinitionFlowLauncher)) {
-            throw new IllegalArgumentException("Can not yet handle anything else correctly through BaseFlowService "+flowLauncher);
+        StringBuilder uriBuilder = new StringBuilder();
+        if (this.servicePrefix!= null) {
+            uriBuilder.append(this.servicePrefix);
         }
+        uriBuilder.append("/").append(flowLauncher.getFlowTypeName());
         if ( flowLauncher instanceof MorphFlowLauncher) {
-            // HACK
+            // HACK (should be explicitly the FlowStateLookupKey)
             uriBuilder.append("/").append(((MorphFlowLauncher)flowLauncher).getKeyExpression().toString());
+            // what would be in the initial state of a morph? perhaps control operations like which flow to morph to?
         } else if ( flowLauncher instanceof ContinueFlowLauncher) {
-            // HACK
+            // HACK (should be explicitly the FlowStateLookupKey)
             uriBuilder.append("/").append(((ContinueFlowLauncher)flowLauncher).getKeyExpression().toString());
+            // what would be in the initial state of a continue? perhaps control operations?
+        } else if ( flowLauncher instanceof StartFromDefinitionFlowLauncher ) {
+            String createQueryString = UriFactoryImpl.createQueryString( flowLauncher.getInitialFlowState());
+            if ( isNotBlank(createQueryString)) {
+                uriBuilder.append("?");
+                uriBuilder.append(createQueryString);
+            }
         }
-        uriBuilder.append("?");
-        uriBuilder.append(UriFactoryImpl.createQueryString( flowLauncher.getInitialFlowState()));
         String uriStr = uriBuilder.toString();
         if ( base != null ) {
             return base.resolve(uriStr);

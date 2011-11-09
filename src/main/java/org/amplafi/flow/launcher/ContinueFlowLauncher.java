@@ -35,9 +35,13 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
 
     }
     public ContinueFlowLauncher(FlowState flowState, FlowManagement flowManagement) {
-        super(flowState, flowManagement, flowState.getLookupKey());
+        super(flowState.getFlowTypeName(), flowManagement, null, flowState.getLookupKey());
+        setExistingFlowStateLookupKey(flowState.getLookupKey());
     }
-
+    public ContinueFlowLauncher(String flowTypeName, String existingFlowStateLookupKey) {
+        super(flowTypeName, null, null, existingFlowStateLookupKey);
+        setExistingFlowStateLookupKey(existingFlowStateLookupKey);
+    }
     /**
      * May return no FlowState if the FlowState represented by
      * the lookupKey was already completed.
@@ -45,6 +49,7 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
      * @return the flow that was continued
      */
     public FlowState call() {
+        // TODO: We should not need? to pass the flowState because this flow is already known (reapplying same values???)
         return getFlowManagementWithCheck().continueFlowState(getExistingFlowStateLookupKey(), true, this.getInitialFlowState());
     }
     @Override
