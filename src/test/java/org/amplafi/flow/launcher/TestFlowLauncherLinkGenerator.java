@@ -25,9 +25,9 @@ public class TestFlowLauncherLinkGenerator {
     public static final String FLOW_TYPE_NAME_1 = "flowType1";
     private static final String EXISTING_FLOW_ID = "ftsehkjhs";
     @Test(dataProvider="testLaunchers")
-    public void testLinkGeneration(FlowLauncher flowLauncher, URI expectedResult) {
+    public void testLinkGeneration(URI base, FlowLauncher flowLauncher, URI expectedResult) {
         FlowLauncherLinkGenerator flowLauncherLinkGenerator = new FlowLauncherLinkGeneratorImpl(SERVICE_ID);
-        URI actual = flowLauncherLinkGenerator.createURI(BASE, flowLauncher);
+        URI actual = flowLauncherLinkGenerator.createURI(base, flowLauncher);
         assertEquals(actual, expectedResult);
     }
     @DataProvider(name="testLaunchers")
@@ -37,12 +37,17 @@ public class TestFlowLauncherLinkGenerator {
         initialFlowState_2.put("param1", "value_1");
         return new Object[][] {
             new Object[] {
-                new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_1), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1))},
+                BASE, new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_1), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1))},
             new Object[] {
-                new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_2), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"?"+createQueryString(initialFlowState_2)))},
+                BASE, new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_2), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"?"+createQueryString(initialFlowState_2)))},
             new Object[] {
-                new ContinueFlowLauncher(FLOW_TYPE_NAME_1, EXISTING_FLOW_ID), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"/"+EXISTING_FLOW_ID))
-            }
+                BASE, new ContinueFlowLauncher(FLOW_TYPE_NAME_1, EXISTING_FLOW_ID), BASE.resolve(createUri(SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"/"+EXISTING_FLOW_ID))},
+            new Object[] {
+                null, new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_1), createUri("/"+SERVICE_ID+"/"+FLOW_TYPE_NAME_1)},
+            new Object[] {
+                null, new StartFromDefinitionFlowLauncher(FLOW_TYPE_NAME_1, initialFlowState_2),  createUri("/"+SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"?"+createQueryString(initialFlowState_2))},
+            new Object[] {
+                null, new ContinueFlowLauncher(FLOW_TYPE_NAME_1, EXISTING_FLOW_ID), createUri("/"+ SERVICE_ID+"/"+FLOW_TYPE_NAME_1+"/"+EXISTING_FLOW_ID)}
         };
     }
 }

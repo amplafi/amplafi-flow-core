@@ -31,7 +31,7 @@ public class FlowLauncherLinkGeneratorImpl implements FlowLauncherLinkGenerator 
 
     }
     public FlowLauncherLinkGeneratorImpl(String servicePrefix) {
-        this.servicePrefix = servicePrefix;
+        this.setServicePrefix(servicePrefix);
     }
     public URI createURI(URI base, FlowLauncher flowLauncher) {
         StringBuilder uriBuilder = new StringBuilder();
@@ -58,14 +58,18 @@ public class FlowLauncherLinkGeneratorImpl implements FlowLauncherLinkGenerator 
         if ( base != null ) {
             return base.resolve(uriStr);
         } else {
-            return UriFactoryImpl.createUriWithSchemaAndPath(uriStr);
+            return UriFactoryImpl.createUri(uriStr);
         }
     }
     /**
      * @param servicePrefix the servicePrefix to set
      */
     public void setServicePrefix(String servicePrefix) {
-        this.servicePrefix = servicePrefix;
+        if ( isNotBlank(servicePrefix) && !servicePrefix.startsWith("/")) {
+            this.servicePrefix = "/" + servicePrefix;
+        } else {
+            this.servicePrefix = servicePrefix;
+        }
     }
     /**
      * @return the servicePrefix
