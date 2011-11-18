@@ -9,7 +9,7 @@ import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
 
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.web.FlowRequest;
-
+import static org.apache.commons.lang.StringUtils.*;
 /**
  * @author Konstantin Burov
  *
@@ -18,7 +18,11 @@ public abstract class BaseFlowRequest implements FlowRequest{
 
     // see amplafi.flow.js
     private static final String FS_BACKGROUND_FLOW = "fsInBackground";
+    private String renderResultDefault;
 
+    protected BaseFlowRequest(String renderResultDefault) {
+        this.renderResultDefault = renderResultDefault;
+    }
     @Override
     public boolean hasParameter(String parameterName) {
         return getParameterNames().contains(parameterName);
@@ -46,7 +50,12 @@ public abstract class BaseFlowRequest implements FlowRequest{
 
     @Override
     public String getRenderResultType() {
-        return getParameter(FSRENDER_RESULT);
+        String renderResultType = getParameter(FSRENDER_RESULT);
+        if ( isNotBlank(renderResultType)) {
+            return renderResultType;
+        } else {
+            return renderResultDefault;
+        }
     }
 
     @Override

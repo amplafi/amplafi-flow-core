@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+ * the specific language governing permissions and limitations under the
+ * License.
+ */
 package org.amplafi.flow.web;
 
 import static com.sworddance.util.CUtilities.isNotEmpty;
@@ -27,6 +40,7 @@ import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.http.HttpStatus;
 
+import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
 
 public class BaseFlowService implements FlowService {
@@ -197,8 +211,8 @@ public class BaseFlowService implements FlowService {
         return renderResultDefault;
     }
 
-    public void setDiscardSessionOnExit(boolean discardSession) {
-        this.discardSessionOnExit = discardSession;
+    public void setDiscardSessionOnExit(boolean discardSessionOnExit) {
+        this.discardSessionOnExit = discardSessionOnExit;
     }
 
     public boolean isDiscardSessionOnExit() {
@@ -262,7 +276,11 @@ public class BaseFlowService implements FlowService {
                 flowRequest.setStatus(HttpStatus.SC_OK);
             }
         } catch (Exception e) {
-            renderError(flowRequest, "Error", flowState, e);
+            try {
+                renderError(flowRequest, "Error", flowState, e);
+            } catch(Exception e1) {
+                // already exception processing
+            }
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
             }
@@ -274,13 +292,12 @@ public class BaseFlowService implements FlowService {
     	if (renderResult == null) {
     		renderResult = renderResultDefault;
     	}
-    	if (flowRenderers != null){
-    		for (FlowRenderer renderer : flowRenderers) {
-				if (renderer.getRenderResultType().equals(renderResult)){
-					return renderer;
-				}
+    	ApplicationNullPointerException.notNull(flowRenderers, "No flowRenders supplied");
+		for (FlowRenderer renderer : flowRenderers) {
+			if (renderer.getRenderResultType().equals(renderResult)){
+				return renderer;
 			}
-    	}
+		}
     	throw new IllegalStateException("There is no flow renderer for requested render result type: " + renderResult);
 	}
 
@@ -293,9 +310,8 @@ public class BaseFlowService implements FlowService {
      */
     private void initializeRequestedParameters(Iterable<String> propertiesToInitialize, FlowState flowState) {
         //Now just request all the properties that client asked for.
-        NotNullIterator<String> it = NotNullIterator.newNotNullIterator(propertiesToInitialize);
-        while (it.hasNext()) {
-        	flowState.getProperty(it.next());
+        for(String key: NotNullIterator.<String>newNotNullIterator(propertiesToInitialize)) {
+        	flowState.getProperty(key);
         }
     }
 
