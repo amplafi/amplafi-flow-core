@@ -201,6 +201,7 @@ public class TestFlowTransitions {
         FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
         FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class)).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class)).anyTimes();
         obj.setFlow(flow);
