@@ -29,8 +29,10 @@ public class TestTransitionFlowActivity {
     private static final boolean TEST_ENABLED=true;
     @Test(enabled=TEST_ENABLED)
     public void testDup() {
-        TransitionFlowActivity obj = new TransitionFlowActivity();
-        assertTrue(obj.getClass().isInstance(obj.dup()));
+    	 FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+         TransitionFlowActivity obj = new TransitionFlowActivity();
+         flowTestingUtils.addFlowDefinition("foo", obj);
+         assertTrue(obj.getClass().isInstance(obj.dup()));
     }
 
 
