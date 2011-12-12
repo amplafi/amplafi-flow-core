@@ -197,22 +197,22 @@ public class TestFlowTransitions {
      */
     @Test(enabled=TEST_ENABLED)
     public void testTransitionActivate() {
-        FlowActivityImpl obj = new FlowActivityImpl();
+        FlowActivityImpl activity = new FlowActivityImpl();
         FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
         FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class)).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class)).anyTimes();
-        obj.setFlow(flow);
+        activity.setFlow(flow);
         EasyMock.replay(flow, flowState);
-        assertTrue(obj.activate(FlowStepDirection.inPlace));
-        obj.setPageName("foo");
-        assertFalse(obj.activate(FlowStepDirection.inPlace));
-        obj.setPageName(null);
-        assertTrue(obj.activate(FlowStepDirection.inPlace));
-        obj.setComponentName("foo");
-        assertFalse(obj.activate(FlowStepDirection.inPlace));
+        assertTrue(activity.activate(FlowStepDirection.inPlace));
+        activity.setPageName("foo");
+        assertFalse(activity.activate(FlowStepDirection.inPlace));
+        activity.setPageName(null);
+        assertTrue(activity.activate(FlowStepDirection.inPlace));
+        activity.setComponentName("foo");
+        assertFalse(activity.activate(FlowStepDirection.inPlace));
     }
 
     /**
