@@ -208,6 +208,7 @@ public class TestFlowTransitions {
         EasyMock.replay(flow, flowState);
         assertTrue(activity.activate(FlowStepDirection.inPlace));
         activity.setPageName("foo");
+        //TODO the test fails because page name is no longer an activity property but is obtained from the flow state.
         assertFalse(activity.activate(FlowStepDirection.inPlace));
         activity.setPageName(null);
         assertTrue(activity.activate(FlowStepDirection.inPlace));
