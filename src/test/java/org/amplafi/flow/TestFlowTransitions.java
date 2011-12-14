@@ -199,20 +199,21 @@ public class TestFlowTransitions {
     public void testTransitionActivate() {
         FlowActivityImpl activity = new FlowActivityImpl();
         FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
-        FlowState flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
+        FlowStateImplementor flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
-        expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class)).anyTimes();
+        FlowPropertyDefinitionImpl pageNameDefinition = new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class);
+		expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(pageNameDefinition).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class)).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class)).anyTimes();
         activity.setFlow(flow);
+        expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn(null);
+        expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn("foo");
+        expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn(null);
+        expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn("foo");
         EasyMock.replay(flow, flowState);
         assertTrue(activity.activate(FlowStepDirection.inPlace));
-        activity.setPageName("foo");
-        //TODO the test fails because page name is no longer an activity property but is obtained from the flow state.
         assertFalse(activity.activate(FlowStepDirection.inPlace));
-        activity.setPageName(null);
         assertTrue(activity.activate(FlowStepDirection.inPlace));
-        activity.setComponentName("foo");
         assertFalse(activity.activate(FlowStepDirection.inPlace));
     }
 
