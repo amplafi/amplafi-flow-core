@@ -45,7 +45,9 @@ import com.sworddance.util.NotNullIterator;
 
 public class BaseFlowService implements FlowService {
 
-    public static final String USE_CURRENT = "current";
+    private static final String FLOW_NAME_SUFFIX = "Flow";
+
+	public static final String USE_CURRENT = "current";
 
     protected static final String SCRIPT_CONTENT_TYPE = "text/javascript";
 
@@ -146,8 +148,13 @@ public class BaseFlowService implements FlowService {
         	flowState.setAllProperties(initial);
         } else if (isNotBlank(flowType)) {
             if (!getFlowManager().isFlowDefined(flowType)) {
-                renderError(request, flowType + ": no such flow type", null, null);
-                return null;
+            	String typeWithSuffix = flowType + FLOW_NAME_SUFFIX;
+				if (!getFlowManager().isFlowDefined(typeWithSuffix)) {
+	                renderError(request, flowType + ": no such flow type", null, null);
+	                return null;
+            	} else {
+            		flowType = typeWithSuffix;
+            	}
             }
 
             if (USE_CURRENT.equals(flowId)) {
