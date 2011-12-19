@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowConstants;
+import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
@@ -16,6 +19,8 @@ import org.amplafi.flow.impl.FlowImpl;
 import com.sworddance.util.NotNullIterator;
 
 import static com.sworddance.util.CUtilities.*;
+import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
+import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
 
 /**
  * Define flows only needed to provide a property that is used by the ui of another flow. but is not needed by the execution of the flow itself.
@@ -33,6 +38,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
             String flowPropertyName = flowPropertyDefinitionImplementor.getName();
             FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
+            flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
             FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
             flowActivity.addPropertyDefinition(flowPropertyDefinitionImplementor);
             flow.addActivity(flowActivity);
@@ -53,6 +59,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
             for(String flowPropertyName : flowPropertyDefinitionProvider.getFlowPropertyDefinitionNames()) {
                 FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
+                flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
                 FlowActivityImpl flowActivity = new FlowActivityImpl("FA1");
                 flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish)));
                 flow.addActivity(flowActivity);
