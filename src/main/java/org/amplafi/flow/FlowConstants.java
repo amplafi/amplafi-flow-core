@@ -233,4 +233,9 @@ public interface FlowConstants {
      */
     @Deprecated // use FlowAppearanceFlowPropertyDefinitionProvider
     public static final String FSAPI_CALL = "fsApiCall";
+	/**
+	 * Being set, this property indicates that the flow is designed to return a single
+	 * property, the one specified by this one.
+	 */
+	public static final String FSSINGLE_PROPERTY_NAME = "fsSinglePropertyName";
 }
