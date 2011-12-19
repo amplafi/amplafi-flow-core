@@ -13,6 +13,7 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
@@ -47,9 +48,15 @@ public class JsonFlowRenderer implements FlowRenderer {
 	@Override
 	public void render(FlowState flowState, Writer writer) {
 		JSONWriter jsonWriter = getFlowStateWriter();
-		jsonWriter.object();
-		jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
-		jsonWriter.endObject();
+		FlowImplementor flow = flowState.getFlow();
+		if (flow.isSinglePropertyFlow()) {
+			String singlePropertyName = flow.getSinglePropertyName();
+			flowState.getPropertyDefinitions().get(singlePropertyName).serialize(jsonWriter, flowState.getProperty(singlePropertyName));
+		} else {
+			jsonWriter.object();
+			jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
+			jsonWriter.endObject();
+		}
 		try {
 			writer.append(jsonWriter.toString());
 		} catch (IOException e) {
