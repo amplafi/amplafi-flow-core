@@ -32,22 +32,27 @@ import com.sworddance.util.NotNullIterator;
  *
  */
 public abstract class AbstractFlowPropertyDefinitionProvider {
-    private Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions;
+    private Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
+
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        setFlowPropertyDefinitions(flowPropertyDefinitions);
+        addFlowPropertyDefinitionImplementators(flowPropertyDefinitions);
+    }
+    protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
+        addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilders);
     }
 
-    protected void setFlowPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
-        this.flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
-        this.addFlowPropertyDefinitionImplementators(flowPropertyDefinitionImplementors);
-    }
-    public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
-            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+    public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
+        for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
             FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             outputed.setTemplateFlowPropertyDefinition();
             put(this.flowPropertyDefinitions, outputed);
+        }
+    }
+    public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
+        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
+            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+            addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
         }
     }
 
@@ -66,7 +71,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected void addDefinedPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         if ( this.flowPropertyDefinitions != null) {
             List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
-            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions.values()) {
+            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.flowPropertyDefinitions.values()) {
             	// TODO: cloning aggressively will not be necessary when FlowPropertyDefinitionImplementor does a better job of being immutable.
                 FlowPropertyDefinitionImplementor cloned = flowPropertyDefinition.clone();
                 clonedFlowPropertyDefinitions.add(cloned);

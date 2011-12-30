@@ -27,8 +27,13 @@ import com.sworddance.util.ApplicationNullPointerException;
 public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
 
-    protected AbstractFlowPropertyValueProvider() {
-        this.flowPropertyProviderClass = initFlowPropertyProviderClass();
+    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
+        super(flowPropertyDefinitionBuilders);
+        if ( flowPropertyProviderClass == null) {
+            this.flowPropertyProviderClass = initFlowPropertyProviderClass();
+        } else {
+            this.flowPropertyProviderClass = flowPropertyProviderClass;
+        }
     }
     protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         super(flowPropertyDefinitions);
@@ -38,7 +43,14 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             this.flowPropertyProviderClass = flowPropertyProviderClass;
         }
     }
-    
+
+    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
+        this((Class<FPP>)null, flowPropertyDefinitionBuilders);
+    }
+
+    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
+        this((Class<FPP>)null, flowPropertyDefinitions);
+    }
     @Override
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = super.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
@@ -46,10 +58,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             flowPropertyDefinitionBuilder.initFactoryFlowPropertyValueProvider(this);
         }
         return flowPropertyDefinitionBuilder;
-    }
-
-    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        this((Class<FPP>)null, flowPropertyDefinitions);
     }
    /**
     * @return
@@ -133,6 +141,6 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @return the flowPropertyProviderClass
      */
     public Class<FPP> getFlowPropertyProviderClass() {
-        return flowPropertyProviderClass;
+        return this.flowPropertyProviderClass;
     }
 }

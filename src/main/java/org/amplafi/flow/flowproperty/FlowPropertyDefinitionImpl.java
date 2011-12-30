@@ -154,17 +154,19 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Creates an unnamed String property.
      */
     public FlowPropertyDefinitionImpl() {
-        dataClassDefinition = new DataClassDefinitionImpl();
+        super((FlowPropertyDefinitionImplementor)null);
+        this.dataClassDefinition = new DataClassDefinitionImpl();
     }
 
     public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
+        super((FlowPropertyDefinitionImplementor)null);
         this.setName(clone.name);
-        dataClassDefinition = (DataClassDefinition) clone.dataClassDefinition.clone();
+        this.dataClassDefinition = (DataClassDefinition) clone.dataClassDefinition.clone();
         if (isNotEmpty(clone.alternates)) {
-            alternates = new HashSet<String>();
-            alternates.addAll(clone.alternates);
+            this.alternates = new HashSet<String>();
+            this.alternates.addAll(clone.alternates);
         }
-        autoCreate = clone.autoCreate;
+        this.autoCreate = clone.autoCreate;
         this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
@@ -173,8 +175,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         if (clone.externalPropertyAccessRestriction != null) {
             this.setExternalPropertyAccessRestriction(clone.externalPropertyAccessRestriction);
         }
-        validators = clone.validators;
-        saveBack = clone.saveBack;
+        this.validators = clone.validators;
+        this.saveBack = clone.saveBack;
         this.flowActivityPhase = clone.flowActivityPhase;
         this.propertyUsage = clone.propertyUsage;
         this.propertyScope = clone.propertyScope;
@@ -186,7 +188,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @param name The name of the property.
      */
     public FlowPropertyDefinitionImpl(String name) {
-        dataClassDefinition = new DataClassDefinitionImpl();
+        super((FlowPropertyDefinitionImplementor)null);
+        this.dataClassDefinition = new DataClassDefinitionImpl();
         this.setName(name);
     }
 
@@ -226,6 +229,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         this(name, FlowActivityPhase.optional, dataClassDefinition);
     }
     public FlowPropertyDefinitionImpl(String name, FlowActivityPhase requiredFlowActivityPhase, DataClassDefinitionImpl dataClassDefinition) {
+        super((FlowPropertyDefinitionImplementor)null);
         this.setName(name);
         this.flowActivityPhase = requiredFlowActivityPhase;
         this.dataClassDefinition = dataClassDefinition;
@@ -316,7 +320,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override
@@ -325,7 +329,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public String getValidators() {
-        return validators;
+        return this.validators;
     }
 
     public void setValidators(String validators) {
@@ -335,10 +339,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     // TODO fix with template check
     public FlowPropertyDefinitionImpl addValidator(String validator) {
     	if ( !StringUtils.isBlank(validator)) {
-	        if (StringUtils.isBlank(validators)) {
+	        if (StringUtils.isBlank(this.validators)) {
 	            return initValidators(validator);
 	        } else {
-	            return initValidators(validators + "," + validator);
+	            return initValidators(this.validators + "," + validator);
 	        }
 	    }
     	return this;
@@ -395,7 +399,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public String getInitial() {
-        return initial;
+        return this.initial;
     }
 
     public FlowPropertyDefinitionImpl initInitial(String initialValue) {
@@ -409,10 +413,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public String getUiComponentParameterName() {
-        if (uiComponentParameterName == null) {
+        if (this.uiComponentParameterName == null) {
             return getName();
         }
-        return uiComponentParameterName;
+        return this.uiComponentParameterName;
     }
 
     public FlowPropertyDefinitionImpl initParameterName(String uiComponentParameterName) {
@@ -436,8 +440,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return
      */
     private boolean isDefaultByClassAvailable() {
-        if ( autoCreate != null) {
-            return getBoolean(autoCreate);
+        if ( this.autoCreate != null) {
+            return getBoolean(this.autoCreate);
         }
         if (!getDataClassDefinition().isCollection() ) {
             Class<?> dataClass = getDataClassDefinition().getDataClass();
@@ -503,7 +507,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the propertyRequired
      */
     public FlowActivityPhase getPropertyRequired() {
-        return flowActivityPhase == null?FlowActivityPhase.optional:flowActivityPhase;
+        return this.flowActivityPhase == null?FlowActivityPhase.optional:this.flowActivityPhase;
     }
 
     /**
@@ -522,7 +526,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     public PropertyUsage getPropertyUsage() {
         if ( isPropertyUsageSet() ) {
-            return propertyUsage;
+            return this.propertyUsage;
         } else {
             return this.getPropertyScope().getDefaultPropertyUsage();
         }
@@ -551,10 +555,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the propertyScope
      */
     public PropertyScope getPropertyScope() {
-        return isPropertyScopeSet()?propertyScope:PropertyScope.flowLocal;
+        return isPropertyScopeSet()?this.propertyScope:PropertyScope.flowLocal;
     }
     public boolean isPropertyScopeSet() {
-        return propertyScope != null;
+        return this.propertyScope != null;
     }
     public FlowPropertyDefinitionImpl initPropertyScope(PropertyScope propertyScope) {
     	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.propertyScope, propertyScope);
@@ -562,7 +566,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return flowPropertyDefinition;
     }
     public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
-        return initAccess(propertyScope,propertyUsage,externalPropertyAccessRestriction.noRestrictions);
+        return initAccess(propertyScope,propertyUsage,this.externalPropertyAccessRestriction.noRestrictions);
     }
     public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage).initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
@@ -602,7 +606,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the dataClassDefinition
      */
     public DataClassDefinition getDataClassDefinition() {
-        return dataClassDefinition;
+        return this.dataClassDefinition;
     }
 
     public Class<? extends Object> getDataClass() {
@@ -610,10 +614,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public Set<String> getAlternates() {
-        if (alternates == null) {
-            alternates = new HashSet<String>();
+        if (this.alternates == null) {
+            this.alternates = new HashSet<String>();
         }
-        return alternates;
+        return this.alternates;
     }
     public Set<String> getAllNames() {
         Set<String> allNames = new LinkedHashSet<String>();
@@ -627,9 +631,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
-        if( externalPropertyAccessRestriction != null) {
-            return externalPropertyAccessRestriction;
-        } else if ( name.startsWith("fs") || name.startsWith("fa")) {
+        if( this.externalPropertyAccessRestriction != null) {
+            return this.externalPropertyAccessRestriction;
+        } else if ( this.name.startsWith("fs") || this.name.startsWith("fa")) {
             // HACK: PATM : To TIRIS: Start applying ExternalPropertyAccessRestriction.noAccess to these properties
             return ExternalPropertyAccessRestriction.noAccess;
         } else {
@@ -667,23 +671,23 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the templateFlowPropertyDefinition
      */
     public boolean isTemplateFlowPropertyDefinition() {
-        return templateFlowPropertyDefinition;
+        return this.templateFlowPropertyDefinition;
     }
     protected <T> T setCheckTemplateState(T oldObject, T newObject) {
-        if ( templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject)) {
+        if ( this.templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject)) {
             ApplicationIllegalStateException.checkState(false,
                 this, "Cannot change state of a Template FlowPropertyDefinition. A property was going from ", oldObject," to ", newObject);
         }
         return newObject;
     }
     protected <T> FlowPropertyDefinitionImpl cloneIfTemplate(T oldObject, T newObject) {
-        if ( templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject) ) {
+        if ( this.templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject) ) {
             return this.clone();
         }
         return this;
     }
     protected <E, T extends Collection<E>> FlowPropertyDefinitionImpl cloneIfTemplateAndNeedToAdd(T oldObject, E newObject) {
-        if ( !templateFlowPropertyDefinition || newObject == null) {
+        if ( !this.templateFlowPropertyDefinition || newObject == null) {
             return this;
         } else if ( oldObject == null || !oldObject.contains(newObject)) {
             return this.clone();
@@ -744,53 +748,53 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean noMergeConflict = isMergeable(source);
-        if (autoCreate == null && source.autoCreate != null) {
+        if (this.autoCreate == null && source.autoCreate != null) {
             this.setAutoCreate(source.autoCreate);
         }
         this.getDataClassDefinition().merge(source.dataClassDefinition);
 
         if ( isNotEmpty(source.alternates)) {
-            if (alternates == null ) {
-                alternates = new HashSet<String>(source.alternates);
+            if (this.alternates == null ) {
+                this.alternates = new HashSet<String>(source.alternates);
             } else {
-                alternates.addAll(source.alternates);
+                this.alternates.addAll(source.alternates);
             }
         }
 
-        if ( flowPropertyValueProvider == null && source.flowPropertyValueProvider != null ) {
+        if ( this.flowPropertyValueProvider == null && source.flowPropertyValueProvider != null ) {
             this.flowPropertyValueProvider =source.flowPropertyValueProvider;
         }
-        if ( flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
+        if ( this.flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
             this.flowPropertyValuePersister =source.flowPropertyValuePersister;
         }
-        if ( factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
+        if ( this.factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
             this.factoryFlowPropertyValueProvider =source.factoryFlowPropertyValueProvider;
         }
         // TODO: merging should handling chained notification.
-        if ( flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
+        if ( this.flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
             this.flowPropertyValueChangeListeners = source.flowPropertyValueChangeListeners;
         }
-        if (initial == null && source.initial != null) {
+        if (this.initial == null && source.initial != null) {
             this.initial = source.initial;
             checkInitial(this.initial);
         }
-        if (saveBack == null && source.saveBack != null) {
+        if (this.saveBack == null && source.saveBack != null) {
             this.saveBack =source.saveBack;
         }
-        if (uiComponentParameterName == null && source.uiComponentParameterName != null) {
-            uiComponentParameterName = source.uiComponentParameterName;
+        if (this.uiComponentParameterName == null && source.uiComponentParameterName != null) {
+            this.uiComponentParameterName = source.uiComponentParameterName;
         }
-        if (externalPropertyAccessRestriction == null && source.externalPropertyAccessRestriction != null) {
+        if (this.externalPropertyAccessRestriction == null && source.externalPropertyAccessRestriction != null) {
             this.externalPropertyAccessRestriction =source.externalPropertyAccessRestriction;
         }
-        if (validators == null && source.validators != null) {
+        if (this.validators == null && source.validators != null) {
             this.validators =source.validators;
         }
         if ( !isPropertyScopeSet() && source.isPropertyScopeSet()) {
             this.propertyScope =source.propertyScope;
         }
         if ( source.isPropertyUsageSet()) {
-            this.propertyUsage = PropertyUsage.survivingPropertyUsage(propertyUsage, source.propertyUsage);
+            this.propertyUsage = PropertyUsage.survivingPropertyUsage(this.propertyUsage, source.propertyUsage);
         }
 
         // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/ExternalPropertyAccessRestriction which vary between different FAs in the same Flow.
@@ -808,8 +812,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     public boolean isSaveBack() {
-        if (saveBack != null) {
-            return getBoolean(saveBack);
+        if (this.saveBack != null) {
+            return getBoolean(this.saveBack);
         } else {
             return getDataClassDefinition().isCollection() || JsonSelfRenderer.class.isAssignableFrom(getDataClassDefinition().getDataClass());
         }
@@ -868,7 +872,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     @SuppressWarnings("unchecked")
     public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
-        return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
+        return (FlowPropertyValueProvider<FA>)this.flowPropertyValueProvider;
     }
 
     /**
@@ -885,7 +889,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the flowPropertyValuePersister
      */
     public FlowPropertyValuePersister<FlowPropertyProvider> getFlowPropertyValuePersister() {
-        return flowPropertyValuePersister;
+        return this.flowPropertyValuePersister;
     }
 
     /**
@@ -921,7 +925,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @return the flowPropertyValueChangeListener
      */
     public List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners() {
-        return flowPropertyValueChangeListeners;
+        return this.flowPropertyValueChangeListeners;
     }
 
     /**
@@ -955,7 +959,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     @Override
     public Collection<FlowPropertyExpectation> getPropertiesDependentOn() {
-        return propertiesDependentOn;
+        return this.propertiesDependentOn;
     }
     /**
      * Used in resource code
@@ -1241,6 +1245,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     @Override
     public <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value) {
-        return dataClassDefinition.serialize(this, jsonWriter, value);
+        return this.dataClassDefinition.serialize(this, jsonWriter, value);
     }
 }

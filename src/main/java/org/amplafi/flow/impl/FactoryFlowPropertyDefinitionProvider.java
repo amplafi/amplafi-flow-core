@@ -126,7 +126,7 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
     */
    public void addStandardPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
        String propertyName = flowPropertyDefinition.getName();
-       ApplicationIllegalStateException.checkState(!this.getFlowPropertyDefinitions().containsKey(propertyName), propertyName, " already defined as a standard property.");
+       ApplicationIllegalStateException.checkState(!this.getFlowPropertyDefinitionNames().contains(propertyName), propertyName, " already defined as a standard property.");
        flowPropertyDefinition.setTemplateFlowPropertyDefinition();
        this.addFlowPropertyDefinitionImplementators(flowPropertyDefinition);
        // Note: alternate names are not automatically added.
