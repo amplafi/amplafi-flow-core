@@ -22,7 +22,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
-import org.amplafi.flow.web.FlowRequest;
+import org.amplafi.flow.web.FlowResponse;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
@@ -46,21 +46,26 @@ public class JsonFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void render(FlowState flowState, Writer writer) {
+	public void render(FlowResponse flowResponse) {
 		JSONWriter jsonWriter = getFlowStateWriter();
-		FlowImplementor flow = flowState.getFlow();
-		if (flow.isSinglePropertyFlow()) {
-			String singlePropertyName = flow.getSinglePropertyName();
-			flowState.getPropertyDefinitions().get(singlePropertyName).serialize(jsonWriter, flowState.getProperty(singlePropertyName));
+		FlowState flowState = flowResponse.getFlowState();
+		if (flowResponse.hasErrors()) {
+			renderError(flowState, flowResponse.getErrorMessage(), flowResponse.getException(), flowResponse.getWriter());
 		} else {
-			jsonWriter.object();
-			jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
-			jsonWriter.endObject();
-		}
-		try {
-			writer.append(jsonWriter.toString());
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
+			FlowImplementor flow = flowState.getFlow();
+			if (flow.isSinglePropertyFlow()) {
+				String singlePropertyName = flow.getSinglePropertyName();
+				flowState.getPropertyDefinitions().get(singlePropertyName).serialize(jsonWriter, flowState.getProperty(singlePropertyName));
+			} else {
+				jsonWriter.object();
+				jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
+				jsonWriter.endObject();
+			}
+			try {
+				flowResponse.getWriter().append(jsonWriter.toString());
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
+			}			
 		}
 	}
 
@@ -70,9 +75,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 		return jsonWriter;
 	}
 
-	@Override
-	public void renderError(FlowState flowState, String message,
-			Exception exception, Writer writer) {
+	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
 		JSONWriter jsonWriter = getFlowStateWriter();
 		try {
             jsonWriter.object();
@@ -110,10 +113,9 @@ public class JsonFlowRenderer implements FlowRenderer {
     }
 
 	@Override
-	public void describe(FlowRequest flowRequest) {
+	public void describeFlow(FlowResponse flowResponse, String flowType) {
 		try{
-			Writer writer = flowRequest.getWriter();
-			String flowType = flowRequest.getFlowType();
+			Writer writer = flowResponse.getWriter();
 			if (StringUtils.isBlank(flowType)) {
 				Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
 				JSONWriter jWriter = new JSONWriter();

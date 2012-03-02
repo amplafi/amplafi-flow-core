@@ -1,8 +1,7 @@
 package org.amplafi.flow;
 
-import java.io.Writer;
-
 import org.amplafi.flow.web.FlowRequest;
+import org.amplafi.flow.web.FlowResponse;
 
 /**
  * Implementations render the flow output for at the conclusion of processing a flow request.
@@ -22,22 +21,12 @@ public interface FlowRenderer {
 	 * @param flowState
 	 * @param writer
 	 */
-	public void render(FlowState flowState, Writer writer);
-
-	/**
-	 * TODO
-	 *
-	 * @param flowState
-	 * @param message
-	 * @param exception
-	 * @param writer
-	 */
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer);
+	public void render(FlowResponse flowResponse);
 
 	/**
 	 * TODO
 	 *
 	 */
-	public void describe(FlowRequest flowRequest);
+	public void describeFlow(FlowResponse flowRequest, String flowType);
 
 }

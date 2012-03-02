@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.web;
 
-import java.io.Writer;
 import java.util.List;
 
 public interface FlowRequest {
@@ -35,8 +34,6 @@ public interface FlowRequest {
 
 	String getReferingUri();
 
-	Writer getWriter();
-
 	boolean isDescribeRequest();
 
 	String getFlowType();
@@ -52,10 +49,4 @@ public interface FlowRequest {
 	boolean isBackground();
 
 	Iterable<String> getPropertiesToInitialize();
-
-	/**
-	 *
-	 * @param status - one of HttpStatus codes
-	 */
-	void setStatus(int status);
 }

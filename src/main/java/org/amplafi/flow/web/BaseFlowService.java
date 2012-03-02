@@ -21,8 +21,6 @@ import static org.amplafi.flow.launcher.FlowLauncher.AS_FAR_AS_POSSIBLE;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +36,6 @@ import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.apache.commons.logging.Log;
-import org.apache.http.HttpStatus;
 
 import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
@@ -65,8 +62,6 @@ public class BaseFlowService implements FlowService {
      * the default way the results should be rendered. "html", "json", etc.
      */
     protected String renderResultDefault;
-
-    protected boolean discardSessionOnExit;
 
     private boolean assumeApiCall;
 
@@ -104,9 +99,10 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
-    public void service(FlowRequest flowRequest) throws IOException {
+    public void service(FlowRequest flowRequest, FlowResponse flowResponse)  {
+    	FlowRenderer renderer = getRenderer(flowRequest.getRenderResultType());
         if (flowRequest.isDescribeRequest()) {
-        	getRenderer(flowRequest.getRenderResultType()).describe(flowRequest);
+			renderer.describeFlow(flowResponse, flowRequest.getFlowType());
         } else {
 	        Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
 	        // TODO map cookie to the json flow state.
@@ -125,17 +121,17 @@ public class BaseFlowService implements FlowService {
 	                }
 	            }
 	        }
-
 	        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
-			doActualService(flowRequest, initial);
+			doActualService(flowRequest, flowResponse, initial);
         }
+        flowResponse.render(renderer);
     }
 
-    protected FlowState doActualService(FlowRequest request, Map<String, String> initial) throws IOException {
-        return completeFlowState(request, initial);
+    protected void doActualService(FlowRequest request, FlowResponse flowResponse, Map<String, String> initial) {
+        completeFlowState(request, flowResponse, initial);
     }
 
-    private FlowState getFlowState(FlowRequest request, Map<String, String> initial) throws Exception {
+    private FlowState getFlowState(FlowRequest request, FlowResponse flowResponse, Map<String, String> initial) throws Exception {
         FlowState flowState = null;
         String flowId = request.getFlowId();
         String flowType = request.getFlowType();
@@ -150,7 +146,7 @@ public class BaseFlowService implements FlowService {
             if (!getFlowManager().isFlowDefined(flowType)) {
             	String typeWithSuffix = flowType + FLOW_NAME_SUFFIX;
 				if (!getFlowManager().isFlowDefined(typeWithSuffix)) {
-	                renderError(request, flowType + ": no such flow type", null, null);
+	                flowResponse.setError(flowType + ": no such flow type", null);
 	                return null;
             	} else {
             		flowType = typeWithSuffix;
@@ -166,13 +162,13 @@ public class BaseFlowService implements FlowService {
                 boolean currentFlow = !request.isBackground();
 				flowState = getFlowManagement().startFlowState(flowType, currentFlow, initial, returnToFlowLookupKey);
                 if (flowState == null || flowState.getFlowStateLifecycle() == FlowStateLifecycle.failed) {
-                    renderError(request, flowType + ": could not start flow type", flowState, null);
+                    flowResponse.setError(flowType + ": could not start flow type", null);
                     return null;
                 }
             }
         } else {
             String message = String.format("Query String for request didn't contain %s or %s. At least one needs to be specified.", ServicesConstants.FLOW_TYPE, FLOW_ID);
-            renderError(request, message, null, null);
+            flowResponse.setError(message, null);
             return null;
         }
         return flowState;
@@ -218,14 +214,6 @@ public class BaseFlowService implements FlowService {
         return renderResultDefault;
     }
 
-    public void setDiscardSessionOnExit(boolean discardSessionOnExit) {
-        this.discardSessionOnExit = discardSessionOnExit;
-    }
-
-    public boolean isDiscardSessionOnExit() {
-        return discardSessionOnExit;
-    }
-
     /**
      * @param assumeApiCall the assumeApiCall to set
      */
@@ -240,23 +228,13 @@ public class BaseFlowService implements FlowService {
         return assumeApiCall;
     }
 
-    private void renderError(FlowRequest flowRequest, String message, FlowState flowState, Exception exception) {
-        String errorMessage = flowRequest.getReferingUri();
-        if (flowState != null ) {
-            errorMessage += " Error while running flowState=" + flowState;
-        }
-
-        getLog().error(errorMessage, exception);
-        flowRequest.setStatus(HttpStatus.SC_BAD_REQUEST);
-    	String renderResult = flowRequest.getRenderResultType();
-		Writer writer = flowRequest.getWriter();
-		getRenderer(renderResult).renderError(flowState, message, exception, writer);
-    }
-
-    protected FlowState completeFlowState(FlowRequest flowRequest, Map<String, String> initial)  {
+    protected FlowState completeFlowState(FlowRequest flowRequest, FlowResponse flowResponse, Map<String, String> initial)  {
         FlowState flowState = null;
         try {
-            if ((flowState = getFlowState(flowRequest, initial)) != null) {
+            if ((flowState = getFlowState(flowRequest, flowResponse, initial)) != null) {
+            	
+            	//HACK there mu
+            	
                 String complete = flowRequest.getCompleteType();
                 if (complete == null) {
                     // blank means don't try to complete flow.
@@ -279,18 +257,14 @@ public class BaseFlowService implements FlowService {
                     }
                 }
                 initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
-                getRenderer(flowRequest.getRenderResultType()).render(flowState, flowRequest.getWriter());
-                flowRequest.setStatus(HttpStatus.SC_OK);
             }
         } catch (Exception e) {
-            try {
-                renderError(flowRequest, "Error", flowState, e);
-            } catch(Exception e1) {
-                // already exception processing
-            }
+        	flowResponse.setError("Error", e);
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
             }
+        } finally {
+        	flowResponse.setFlowState(flowState);
         }
         return flowState;
     }

@@ -1,6 +1,5 @@
 package org.amplafi.flow.impl;
 
-import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,11 +35,6 @@ public class FlowRequestAdapter implements FlowRequest {
 
 	@Override
 	public String getReferingUri() {
-		return null;
-	}
-
-	@Override
-	public Writer getWriter() {
 		return null;
 	}
 
@@ -82,11 +76,6 @@ public class FlowRequestAdapter implements FlowRequest {
 	@Override
 	public Iterable<String> getPropertiesToInitialize() {
 		return Collections.emptyList();
-	}
-
-	@Override
-	public void setStatus(int status) {
-		
 	}
 
 }

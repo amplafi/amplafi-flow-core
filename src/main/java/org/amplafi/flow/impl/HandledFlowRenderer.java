@@ -1,11 +1,8 @@
 package org.amplafi.flow.impl;
 
-import java.io.Writer;
-
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowRenderer;
-import org.amplafi.flow.FlowState;
-import org.amplafi.flow.web.FlowRequest;
+import org.amplafi.flow.web.FlowResponse;
 
 /**
  * A renderer which does nothing, for everything is handled by some external code. 
@@ -22,16 +19,12 @@ public class HandledFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void render(FlowState flowState, Writer writer) {
+	public void render(FlowResponse flowResponse) {
 	}
 
 	@Override
-	public void renderError(FlowState flowState, String message,
-			Exception exception, Writer writer) {
-	}
-
-	@Override
-	public void describe(FlowRequest flowRequest) {
+	public void describeFlow(FlowResponse flowRequest, String flowType) {
+		
 	}
 
 }

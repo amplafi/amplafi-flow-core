@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.web;
 
-import java.io.IOException;
 
 
 /**
@@ -22,12 +21,6 @@ import java.io.IOException;
  */
 public interface FlowService {
 
-    /**
-     * TODO: KOSTYA -- generic Exception throws clause very bad because too broad. Actually prefer to have no
-     * exceptions declared. would rather have to no declared exceptions.
-     * @param flowRequest
-     * @throws IOException
-     */
-	public void service(FlowRequest flowRequest) throws IOException;
+	void service(FlowRequest flowRequest, FlowResponse flowResponse);
 
 }
