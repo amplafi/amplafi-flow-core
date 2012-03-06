@@ -35,6 +35,7 @@ import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.impl.JsonFlowRenderer;
+import org.amplafi.flow.validation.FlowValidationException;
 import org.apache.commons.logging.Log;
 
 import com.sworddance.util.ApplicationNullPointerException;
@@ -258,7 +259,9 @@ public class BaseFlowService implements FlowService {
                 }
                 initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
             }
-        } catch (Exception e) {
+        } catch (FlowValidationException e) {
+        	flowResponse.setError("Error", e);
+		} catch (Exception e) {
         	flowResponse.setError("Error", e);
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
