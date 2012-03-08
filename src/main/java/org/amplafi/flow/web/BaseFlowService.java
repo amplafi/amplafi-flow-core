@@ -22,6 +22,7 @@ import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -100,29 +101,35 @@ public class BaseFlowService implements FlowService {
         return flowDefinitionsManager;
     }
 
+    @Override
     public void service(FlowRequest flowRequest, FlowResponse flowResponse)  {
     	FlowRenderer renderer = getRenderer(flowRequest.getRenderResultType());
         if (flowRequest.isDescribeRequest()) {
 			renderer.describeFlow(flowResponse, flowRequest.getFlowType());
         } else {
-	        Map<String, String> initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
-	        // TODO map cookie to the json flow state.
-	        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
-	        if (isNotBlank(cookieString)) {
-	            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
-	        }
-
-	        List<String> keyList = flowRequest.getParameterNames();
-	        if (isNotEmpty(keyList)) {
-	            for (String key : keyList) {
-	                String value = flowRequest.getParameter(key);
-	                if (value != null) {
-	                    // we do allow the value to be blank ( value may be existence of parameter)
-	                    initial.put(key, value);
-	                }
-	            }
-	        }
-	        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
+        	Map<String, String> initial = null; 
+        	if (!flowRequest.hasFlowState()) {
+		        initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
+		        // TODO map cookie to the json flow state.
+		        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
+		        if (isNotBlank(cookieString)) {
+		            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
+		        }
+	
+		        List<String> keyList = flowRequest.getParameterNames();
+		        if (isNotEmpty(keyList)) {
+		            for (String key : keyList) {
+		                String value = flowRequest.getParameter(key);
+		                if (value != null) {
+		                    // we do allow the value to be blank ( value may be existence of parameter)
+		                    initial.put(key, value);
+		                }
+		            }
+		        } 
+		        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
+        	} else {
+        		initial = Collections.emptyMap();
+        	}
 			doActualService(flowRequest, flowResponse, initial);
         }
         flowResponse.render(renderer);
@@ -230,12 +237,11 @@ public class BaseFlowService implements FlowService {
     }
 
     protected FlowState completeFlowState(FlowRequest flowRequest, FlowResponse flowResponse, Map<String, String> initial)  {
-        FlowState flowState = null;
-        try {
-            if ((flowState = getFlowState(flowRequest, flowResponse, initial)) != null) {
-            	
+    	FlowState flowState = null;
+    	try {
+        	flowState = flowRequest.hasFlowState() ? flowRequest.getFlowState() : getFlowState(flowRequest, flowResponse, initial);
+            if (flowState != null) {
             	//HACK there mu
-            	
                 String complete = flowRequest.getCompleteType();
                 if (complete == null) {
                     // blank means don't try to complete flow.

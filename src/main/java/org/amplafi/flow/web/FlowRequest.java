@@ -15,6 +15,8 @@ package org.amplafi.flow.web;
 
 import java.util.List;
 
+import org.amplafi.flow.FlowState;
+
 public interface FlowRequest {
 
 	String getParameter(String parameterName);
@@ -49,4 +51,8 @@ public interface FlowRequest {
 	boolean isBackground();
 
 	Iterable<String> getPropertiesToInitialize();
+
+	boolean hasFlowState();
+
+	FlowState getFlowState();
 }

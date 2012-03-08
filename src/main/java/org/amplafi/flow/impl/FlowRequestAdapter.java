@@ -3,6 +3,7 @@ package org.amplafi.flow.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.amplafi.flow.FlowState;
 import org.amplafi.flow.web.FlowRequest;
 
 /**
@@ -76,6 +77,16 @@ public class FlowRequestAdapter implements FlowRequest {
 	@Override
 	public Iterable<String> getPropertiesToInitialize() {
 		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean hasFlowState() {
+		return false;
+	}
+
+	@Override
+	public FlowState getFlowState() {
+		return null;
 	}
 
 }
