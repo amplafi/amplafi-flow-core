@@ -49,6 +49,7 @@ import org.amplafi.flow.validation.ReportAllValidationResult;
 
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
+import com.sworddance.util.map.NamespaceMapKey;
 import com.sworddance.util.perf.LapTimer;
 
 import org.apache.commons.collections.map.MultiKeyMap;
@@ -133,6 +134,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     public FlowStateImpl(String flowTypeName, FlowManagement sessionFlowManagement,
             Map<String, String> initialFlowState) {
         this(flowTypeName, sessionFlowManagement);
+        //TODO Kostya: Should we put initial state into the flow namespace??
         this.setFlowValuesMap(new DefaultFlowValuesMap(initialFlowState));
     }
 
@@ -1776,6 +1778,10 @@ public class FlowStateImpl implements FlowStateImplementor {
         String key = propertyDefinition.getName();
         String namespace = ((FlowPropertyDefinitionImplementor)propertyDefinition).getNamespaceKey(this, flowPropertyProvider);
         String value = getRawProperty(namespace, key);
+        if (isBlank(value) && propertyDefinition.getPropertyUsage().isExternallySettable()) {
+        	//Property is externally settable so trying default namespace..
+        	value = getRawProperty(NamespaceMapKey.NO_NAMESPACE, key);
+        }
         return value;
     }
 
