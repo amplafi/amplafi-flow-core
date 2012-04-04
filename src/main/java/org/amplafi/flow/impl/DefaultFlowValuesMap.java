@@ -36,16 +36,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
         this.map = Collections.synchronizedMap(new LinkedHashMap<DefaultFlowValuesMapKey, String>());
     }
     public DefaultFlowValuesMap(Map<?,?> initialFlowState) {
-        this();
-        if ( isNotEmpty(initialFlowState)) {
-            for(Map.Entry entry: initialFlowState.entrySet()) {
-                Object value = entry.getValue();
-                if ( value != null) {
-                    DefaultFlowValuesMapKey key = DefaultFlowValuesMapKey.toKey(entry.getKey());
-                    this.map.put(key, value.toString());
-                }
-            }
-        }
+        this(initialFlowState, null);
     }
     public DefaultFlowValuesMap(FlowValuesMap<FlowValueMapKey, CharSequence> initialFlowState) {
         this();
@@ -59,7 +50,19 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
             }
         }
     }
-    @Override
+    public DefaultFlowValuesMap(Map<?, ?> initialFlowState, String flowLookupKey) {
+    	this();
+        if ( isNotEmpty(initialFlowState)) {
+            for(Map.Entry entry: initialFlowState.entrySet()) {
+                Object value = entry.getValue();
+                if ( value != null) {
+                    DefaultFlowValuesMapKey key = new DefaultFlowValuesMapKey(flowLookupKey, entry.getKey());
+                    this.map.put(key, value.toString());
+                }
+            }
+        }
+    }
+	@Override
     public boolean containsKey(Object key) {
         return map.containsKey(toKey(null, key));
     }
