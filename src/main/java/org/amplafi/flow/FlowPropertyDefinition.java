@@ -78,6 +78,8 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     String getValidators();
 
     boolean isAssignableFrom(Class<?> clazz);
+    
+    boolean isFlowTranslatorSet();
 
     /**
      *

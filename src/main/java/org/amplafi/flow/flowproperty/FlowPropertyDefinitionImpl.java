@@ -369,6 +369,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public FlowTranslator<?> getTranslator() {
         return this.getDataClassDefinition().getFlowTranslator();
     }
+    
+    @Override
+    public boolean isFlowTranslatorSet() {
+    	return getDataClassDefinition().isFlowTranslatorSet();
+    }
+    
     public void setTranslator(FlowTranslator<?> flowTranslator) {
     	this.getDataClassDefinition().setFlowTranslator(
     			this.setCheckTemplateState(getTranslator(), flowTranslator));
