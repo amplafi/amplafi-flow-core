@@ -42,7 +42,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
-        for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
+        for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
             FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             outputed.setTemplateFlowPropertyDefinition();
