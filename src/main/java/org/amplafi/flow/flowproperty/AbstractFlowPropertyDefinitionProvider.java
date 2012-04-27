@@ -135,6 +135,12 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         this.defineFlowPropertyDefinitions(flowPropertyProvider, null);
     }
+    
+    /**
+     * 
+     * @param flowPropertyProvider
+     * @param additionalConfigurationParameters - a list because we want consistent fixed order that the additionalConfigurationParameters are applied.
+     */
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters );
     }
