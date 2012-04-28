@@ -322,4 +322,8 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition.addPropertiesDependentOn(propertiesDependentOn);
         return this;
     }
+    public FlowPropertyDefinitionBuilder initPropertyScope(PropertyScope propertyScope) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyScope(propertyScope);
+        return this;
+    }
 }
