@@ -346,7 +346,7 @@ public class TestFlowPropertyDefinition {
                 String externalInitial = "ext_"+name;
                 String changed = "chg_"+name;
                 CharSequence actual = finalMap.get(name);
-                if ( !propertyScope.isCacheOnly() && propertyUsage.isCopyBackOnFlowSuccess() || propertyScope == global) {
+                if ( !propertyScope.isCacheOnly() && propertyUsage.isOutputedProperty() || propertyScope == global) {
                     assertEquals(actual, changed, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);
                 } else if ( !propertyScope.isCacheOnly() && propertyUsage.isCleanOnInitialization()) {
                     assertNull(actual, "name="+name+" PropertyUsage="+propertyUsage+" finalMap="+finalMap);

@@ -32,7 +32,7 @@ import com.sworddance.util.NotNullIterator;
  *
  */
 public abstract class AbstractFlowPropertyDefinitionProvider {
-    private Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
+    private final Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
 
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitions);
@@ -63,6 +63,15 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public Set<String> getFlowPropertyDefinitionNames() {
         return getFlowPropertyDefinitions().keySet();
     }
+    public List<String> getOutputFlowPropertyDefinitionNames() {
+        List<String> outputFlowPropertyDefinitionNames = new ArrayList<String>();
+        for(FlowPropertyDefinition flowPropertyDefinition : this.flowPropertyDefinitions.values()) {
+            if ( flowPropertyDefinition.getPropertyUsage().isOutputedProperty()) {
+                outputFlowPropertyDefinitionNames.add(flowPropertyDefinition.getName());
+            }
+        }
+        return outputFlowPropertyDefinitionNames;
+    }
     /**
      * add ALL the {@link FlowPropertyDefinition}s provided by this definition provider to flowPropertyProvider.
      * @param flowPropertyProvider
@@ -72,9 +81,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         if ( this.flowPropertyDefinitions != null) {
             List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
             for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.flowPropertyDefinitions.values()) {
-            	// TODO: cloning aggressively will not be necessary when FlowPropertyDefinitionImplementor does a better job of being immutable.
-                FlowPropertyDefinitionImplementor cloned = flowPropertyDefinition.clone();
-                clonedFlowPropertyDefinitions.add(cloned);
+                clonedFlowPropertyDefinitions.add(flowPropertyDefinition);
             }
             this.addPropertyDefinitions(flowPropertyProvider, clonedFlowPropertyDefinitions, additionalConfigurationParameters);
         }
@@ -135,9 +142,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         this.defineFlowPropertyDefinitions(flowPropertyProvider, null);
     }
-    
+
     /**
-     * 
+     *
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters - a list because we want consistent fixed order that the additionalConfigurationParameters are applied.
      */

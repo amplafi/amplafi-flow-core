@@ -68,7 +68,7 @@ public enum PropertyUsage {
      * Like {@link #use} except the value will not be visible to any later flows.
      * the property can be initialized externally ( using the global namespace - null ). The initialization value will be moved into the flow/activity namespace
      * Any changes the flow makes are not visible after flow completes.
-     * setsValue = true because it sets value to null!
+     * altersProperty = true because it sets value to null!
      *
      * Note: consume will set a NULL when completing the flow, so it sets a value but not the value in the flowstate.
      */
@@ -113,48 +113,52 @@ public enum PropertyUsage {
      * clear from global namespaces when copied to local flow state's namespace. Namespaces in question are determined by PropertyScope??
      */
     private final boolean cleanOnInitialization;
-    private final boolean copyBackOnFlowSuccess;
+    private final boolean outputedProperty;
     private final boolean externallySettable;
     /**
      * if false then it is known that this property WILL NOT set a value in the export map.
      * if true then it is known that this property WILL set a value on the export map ( but maybe null ).
      * if null then it is unknown if this property will be changed. (for example, #io )
      */
-    private final Boolean setsValue;
-    private List<PropertyUsage> canbeChangedTo;
+    private final Boolean altersProperty;
+    private List<PropertyUsage> canBeChangedTo;
 
     static {
         // roughly trying to enforce that can become more strict but not less strict.
         // notice that this some changes take away behavior ( for example, use -> consume removes the property )
-        internalState.canbeChangedTo = Arrays.asList();
-        use.canbeChangedTo = Arrays.asList(io, suppliesIfMissing, consume, initialize);
-        io.canbeChangedTo = Arrays.asList(suppliesIfMissing, consume, initialize);
-        suppliesIfMissing.canbeChangedTo = Arrays.asList(initialize);
-        createsIfMissing.canbeChangedTo = Arrays.asList(initialize);
-        consume.canbeChangedTo = Arrays.asList();
-        initialize.canbeChangedTo = Arrays.asList();
-        createAlways.canbeChangedTo = Arrays.asList();
+        internalState.canBeChangedTo = Arrays.asList();
+        use.canBeChangedTo = Arrays.asList(io, suppliesIfMissing, consume, initialize);
+        io.canBeChangedTo = Arrays.asList(suppliesIfMissing, consume, initialize);
+        suppliesIfMissing.canBeChangedTo = Arrays.asList(initialize);
+        createsIfMissing.canBeChangedTo = Arrays.asList(initialize);
+        consume.canBeChangedTo = Arrays.asList();
+        initialize.canBeChangedTo = Arrays.asList();
+        createAlways.canBeChangedTo = Arrays.asList();
     }
 
-    private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnFlowSuccess, boolean externallySettable) {
-        this(cleanOnInitialization,copyBackOnFlowSuccess, externallySettable, copyBackOnFlowSuccess);
+    private PropertyUsage(boolean cleanOnInitialization, boolean outputedProperty, boolean externallySettable) {
+        this(cleanOnInitialization,outputedProperty, externallySettable, outputedProperty);
     }
-    private PropertyUsage(boolean cleanOnInitialization, boolean copyBackOnFlowSuccess, boolean externallySettable, Boolean setsValue) {
+    private PropertyUsage(boolean cleanOnInitialization, boolean outputedProperty, boolean externallySettable, Boolean altersProperty) {
         this.cleanOnInitialization = cleanOnInitialization;
-        this.copyBackOnFlowSuccess = copyBackOnFlowSuccess;
+        this.outputedProperty = outputedProperty;
         this.externallySettable = externallySettable;
-        this.setsValue = setsValue;
+        this.altersProperty = altersProperty;
     }
 
     public boolean isCleanOnInitialization() {
-        return cleanOnInitialization;
+        return this.cleanOnInitialization;
     }
 
+
     /**
-     * @return the copyBackOnExit
+     * Intent is that we can determine if a property is set. Useful to see if 1 flow can start another flow that has
+     * property that must be set before starting the flow (  {@link FlowActivityPhase#activate} )
+     * @see #getAltersProperty()
+     * @return
      */
-    public boolean isCopyBackOnFlowSuccess() {
-        return copyBackOnFlowSuccess;
+    public boolean isOutputedProperty() {
+        return this.outputedProperty;
     }
 
     /**
@@ -165,11 +169,11 @@ public enum PropertyUsage {
      *
      */
     public boolean isExternallySettable() {
-        return externallySettable;
+        return this.externallySettable;
     }
 
     public boolean isChangeableTo(PropertyUsage other) {
-        return other==this || (other != null && canbeChangedTo.contains(other));
+        return other==this || (other != null && this.canBeChangedTo.contains(other));
     }
 
     public static PropertyUsage survivingPropertyUsage(PropertyUsage current, PropertyUsage other) {
@@ -189,17 +193,18 @@ public enum PropertyUsage {
             return current;
         } else {
             // both can change to each other - return most restrictive
-            return other.canbeChangedTo.size() > current.canbeChangedTo.size()?current:other;
+            return other.canBeChangedTo.size() > current.canBeChangedTo.size()?current:other;
         }
     }
 
     /**
-     * Intent is that we can determine if a property is set. Useful to see if 1 flow can start another flow that has
-     * property that must be set before starting the flow (  {@link FlowActivityPhase#activate} )
+     * This differs from {@link #isOutputedProperty()} because the property previous value may be altered to null ( i.e. the property is unset ).
+     * This is the case for {@link #consume}.
+     *
      * @return
      */
-    public Boolean getSetsValue() {
-        return setsValue;
+    public Boolean getAltersProperty() {
+        return this.altersProperty;
     }
 
 }

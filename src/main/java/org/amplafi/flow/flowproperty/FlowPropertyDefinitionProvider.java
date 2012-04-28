@@ -16,8 +16,6 @@ package org.amplafi.flow.flowproperty;
 
 
 import java.util.List;
-import java.util.Set;
-
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 
@@ -49,5 +47,9 @@ public interface FlowPropertyDefinitionProvider {
     void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters);
     FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 
-    Set<String> getFlowPropertyDefinitionNames();
+    /**
+     *
+     * @return list of property names that this are outputted.
+     */
+    List<String> getOutputFlowPropertyDefinitionNames();
 }

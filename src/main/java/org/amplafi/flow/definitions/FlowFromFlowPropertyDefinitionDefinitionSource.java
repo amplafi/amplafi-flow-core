@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowPropertyDefinition;
+
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
@@ -13,6 +15,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 
@@ -29,7 +32,7 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
  */
 public class FlowFromFlowPropertyDefinitionDefinitionSource implements DefinitionSource<FlowImplementor> {
 
-    private Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();
+    private final Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();
 
     public FlowFromFlowPropertyDefinitionDefinitionSource() {
 
@@ -42,7 +45,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
             FlowActivityImpl flowActivity = new FlowActivityImpl(flowPropertyName+"FlowActivity");
             flowActivity.addPropertyDefinition(flowPropertyDefinitionImplementor);
             flow.addActivity(flowActivity);
-            put(flows, flow.getFlowPropertyProviderFullName(), flow);
+            put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
         }
     }
 
@@ -52,18 +55,25 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA1");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity);
         flow.addActivity(flowActivity);
-        put(flows, flow.getFlowPropertyProviderFullName(), flow);
+        put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
     }
-    // HACK: assuming that all properties should be visible as a flow also feels bad.S
+    /**
+     * Add {@link FlowPropertyDefinition}s from the flowPropertyDefinitionProviders as a flow for each property.
+     *
+     * Only the properties that have {@link FlowPropertyDefinition#getPropertyUsage()}.{@link PropertyUsage#isOutputedProperty()} != false get their own flow.
+     * This makes it safe to list properties that are expected on input without having a flow created for those input only properties.
+     *
+     * @param flowPropertyDefinitionProviders
+     */
     public void add(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
-            for(String flowPropertyName : flowPropertyDefinitionProvider.getFlowPropertyDefinitionNames()) {
+            for(String flowPropertyName : flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames()) {
                 FlowImpl flow = new FlowImpl(flowPropertyName+"Flow");
                 flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
                 FlowActivityImpl flowActivity = new FlowActivityImpl("FA1");
                 flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish)));
                 flow.addActivity(flowActivity);
-                put(flows, flow.getFlowPropertyProviderFullName(), flow);
+                put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
             }
         }
     }

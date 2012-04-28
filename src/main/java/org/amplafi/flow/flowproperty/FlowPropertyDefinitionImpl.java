@@ -827,7 +827,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     public boolean isCopyBackOnFlowSuccess() {
         // TODO: This needs to be a more complex test involving ExternalPropertyAccessRestriction as well.
-        return getPropertyUsage().isCopyBackOnFlowSuccess();
+        return getPropertyUsage().isOutputedProperty();
     }
 
     private boolean getBoolean(Boolean b) {
