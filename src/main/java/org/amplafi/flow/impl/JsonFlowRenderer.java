@@ -26,12 +26,16 @@ import org.amplafi.flow.web.FlowResponse;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.util.CUtilities;
 
 public class JsonFlowRenderer implements FlowRenderer {
 
 	private FlowDefinitionsManager flowDefinitionsManager;
+	
+ 	private Log log;
 	
 	public JsonFlowRenderer() {
 	}
@@ -75,7 +79,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 		return jsonWriter;
 	}
 
-	public void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
+	protected void renderError(FlowState flowState, String message, Exception exception, Writer writer) {
 		JSONWriter jsonWriter = getFlowStateWriter();
 		try {
             jsonWriter.object();
@@ -92,6 +96,7 @@ public class JsonFlowRenderer implements FlowRenderer {
                 writeValidationResult(jsonWriter, validationResult);
             } else if (exception != null){
                 jsonWriter.keyValueIfNotBlankValue("exception", exception.getMessage());
+                getLog().error("A non-FlowValidationException terminated flow execution.", exception);
             }
             jsonWriter.endObject();
 			writer.append(jsonWriter.toString());
@@ -173,5 +178,17 @@ public class JsonFlowRenderer implements FlowRenderer {
 	public void setFlowDefinitionsManager(
 			FlowDefinitionsManager flowDefinitionsManager) {
 		this.flowDefinitionsManager = flowDefinitionsManager;
+	}
+
+	public Log getLog() {
+		if (log == null) {
+			log = LogFactory.getLog(JsonFlowRenderer.class);
+			log.warn("Log wasn't injected by a dependency injection framework, initializing it manually.");
+		}
+		return log;
+	}
+
+	public void setLog(Log log) {
+		this.log = log;
 	}
 }
