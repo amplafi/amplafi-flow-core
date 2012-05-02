@@ -103,6 +103,7 @@ public interface FlowConstants {
      * TODO -- 3 Jan 2009 most usages of this are bad -- need to indicate which flow will redirect to refering uri once completed.
      * TODO: Use "Referer" as string so it matches what the HttpRequest sends.
      */
+    @Deprecated
     public static final String FSREFERRING_URL = "fsReferringUrl";
 
     /**
