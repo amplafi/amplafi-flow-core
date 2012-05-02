@@ -159,10 +159,10 @@ public class BaseFlowService implements FlowService {
             	String typeWithSuffix = flowType + FLOW_NAME_SUFFIX;
 				if (!getFlowManager().isFlowDefined(typeWithSuffix)) {
 	                flowResponse.setError(flowType + ": no such flow type", null);
-	                return null;
             	} else {
-            		flowType = typeWithSuffix;
+            	    flowResponse.setError(flowType + ": no such flow type. But "+ typeWithSuffix + " exists. Use the full name", null);
             	}
+				return null;
             }
 
             if (USE_CURRENT.equals(flowId)) {
