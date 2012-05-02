@@ -129,7 +129,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initAccess(flowLocal, consume),
             new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initAccess(flowLocal, internalState),
 
-            new FlowPropertyDefinitionImpl(FSAPI_CALL, boolean.class).initAccess(flowLocal, io),
             new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
             new FlowPropertyDefinitionImpl(FSALT_FINISHED).initAccess(flowLocal, use),
             new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
@@ -419,6 +418,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         this.notCurrentAllowed = notCurrentAllowed;
     }
 
+    @Override
     public boolean isNotCurrentAllowed() {
         return notCurrentAllowed;
     }

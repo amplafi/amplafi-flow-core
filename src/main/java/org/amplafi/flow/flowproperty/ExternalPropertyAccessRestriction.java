@@ -43,7 +43,8 @@ public enum ExternalPropertyAccessRestriction {
      */
     noRestrictions(true, true),
     /**
-     * property value is visible external to the user. property value cannot be modified even during the Flow. The change prohibition during the flow
+     * property value is visible external to the user. property value cannot be modified even during the Flow.
+     * The change prohibition during the flow
      * makes this different than {@link PropertyUsage#use}
      */
     readonly(true, false),

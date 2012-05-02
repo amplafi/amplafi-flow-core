@@ -4,7 +4,6 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowConstants.FSACTIVATABLE;
 import static org.amplafi.flow.FlowConstants.FSAFTER_PAGE;
 import static org.amplafi.flow.FlowConstants.FSALT_FINISHED;
-import static org.amplafi.flow.FlowConstants.FSAPI_CALL;
 import static org.amplafi.flow.FlowConstants.FSAUTO_COMPLETE;
 import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
 import static org.amplafi.flow.FlowConstants.FSDEFAULT_AFTER_CANCEL_PAGE;
@@ -82,7 +81,6 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initAccess(flowLocal, consume),
         new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initAccess(flowLocal, internalState),
 
-        new FlowPropertyDefinitionImpl(FSAPI_CALL, boolean.class).initAccess(flowLocal, io),
         new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
         new FlowPropertyDefinitionImpl(FSALT_FINISHED).initAccess(flowLocal, use),
         new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),

@@ -217,6 +217,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      *
      * @see org.amplafi.flow.FlowState#initializeFlow()
      */
+    @Override
     public void initializeFlow() {
         this.setFlowLifecycleState(initializing);
         FlowStateLifecycle nextFlowLifecycleState = initialized;
@@ -243,6 +244,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             }
         }
     }
+    @Override
     public void initializeFlowProperties(FlowPropertyProvider flowPropertyProvider, Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions) {
         for (FlowPropertyDefinitionImplementor flowPropertyDefinition : flowPropertyDefinitions) {
             initializeFlowProperty(flowPropertyProvider, flowPropertyDefinition);
@@ -256,6 +258,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @param flowPropertyProvider
      * @param flowPropertyDefinition
      */
+    @Override
     public void initializeFlowProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         // move values from alternateNames to the true name.
         // or just clear out the alternate names of their values.
@@ -745,6 +748,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         return pageName;
     }
 
+    @Override
     public FlowValidationResult getFullFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         FlowValidationResult flowValidationResult = new ReportAllValidationResult();
         // TODO : need to account for properties that earlier activities will create the property required by a later property.
@@ -775,6 +779,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * @param possibleReferencedState
      * @return true if this flowState references possibleReferencedState
      */
+    @Override
     public boolean isReferencing(FlowState possibleReferencedState) {
         if ( this == possibleReferencedState) {
             // can't reference self.
@@ -817,6 +822,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         return pageName;
     }
 
+    @Override
     public void setCurrentPage(String page) {
         setProperty(FSPAGE_NAME, page);
     }
@@ -1225,11 +1231,13 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider) {
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         return (T) getCached(namespace, flowPropertyDefinition.getName());
     }
+    @Override
     public void setCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider, Object value) {
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         setCached(namespace, flowPropertyDefinition.getName(), value);
@@ -1438,6 +1446,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     public Long getLong(String key) {
         return getRawLong(null, key);
     }
+    @Override
     public FlowValidationResult getCurrentActivityFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         FlowActivity currentActivity = this.getCurrentActivity();
         if (currentActivity == null) {
@@ -1592,6 +1601,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      * TODO: note that there exists an issue: if a property for the current FA is PropertyUsage.initialize,
      * because PropertyUsage.initialize does not clear out the old values but just ignores them.
      */
+    @Override
     public boolean isPropertySet(String key) {
         // HACK : too problematic need better way to ask if a FlowPropertyValueProvider can actually return a value.
 //        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
@@ -1827,10 +1837,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public <FS extends FlowState> FS getFlowState() {
         return (FS) this;
-    }
-
-    public boolean isApiCall() {
-        return isTrue(FSAPI_CALL);
     }
 
     protected void warn(String message) {

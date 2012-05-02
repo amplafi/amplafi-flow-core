@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
@@ -35,6 +35,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
+import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
 import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.apache.commons.logging.Log;
@@ -107,15 +108,18 @@ public class BaseFlowService implements FlowService {
         if (flowRequest.isDescribeRequest()) {
 			renderer.describeFlow(flowResponse, flowRequest.getFlowType());
         } else {
-        	Map<String, String> initial = null; 
+        	Map<String, String> initial = null;
         	if (!flowRequest.hasFlowState()) {
-		        initial = FlowUtils.INSTANCE.createState(FlowConstants.FSAPI_CALL, isAssumeApiCall());
+		        initial = FlowUtils.INSTANCE.createState();
+		        if ( isAssumeApiCall()) {
+		            initial.put(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE, FlowAppearance.apiCall.toString());
+		        }
 		        // TODO map cookie to the json flow state.
 		        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
 		        if (isNotBlank(cookieString)) {
 		            initial.put(ServicesConstants.COOKIE_OBJECT, cookieString);
 		        }
-	
+
 		        List<String> keyList = flowRequest.getParameterNames();
 		        if (isNotEmpty(keyList)) {
 		            for (String key : keyList) {
@@ -125,7 +129,7 @@ public class BaseFlowService implements FlowService {
 		                    initial.put(key, value);
 		                }
 		            }
-		        } 
+		        }
 		        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
         	} else {
         		initial = Collections.emptyMap();

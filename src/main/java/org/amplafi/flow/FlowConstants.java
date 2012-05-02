@@ -223,16 +223,10 @@ public interface FlowConstants {
     public static final String HANDLED = "handled";
     /**
      * If a {@link FlowRequest} contains such a parameter, then it considered to be information request. No flow state will be created, only
-     * information about flow structure and parameters will be sent back. 
+     * information about flow structure and parameters will be sent back.
      */
     public static final String DESCRIBE = "describe";
 
-    /**
-     * set this as a boolean flowState property when the flow is running as a api call.
-     * use flowAppearance : {@link org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider}
-     */
-    @Deprecated // use FlowAppearanceFlowPropertyDefinitionProvider
-    public static final String FSAPI_CALL = "fsApiCall";
 	/**
 	 * Being set, this property indicates that the flow is designed to return a single
 	 * property, the one specified by this one.
