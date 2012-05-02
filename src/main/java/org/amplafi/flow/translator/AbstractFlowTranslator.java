@@ -58,6 +58,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
     protected AbstractFlowTranslator() {
         serializedFormClasses.add(CharSequence.class);
+        serializedFormClasses.add(String.class);
         this.flowTranslatorJsonRenderer = JsonRenderer.class.isAssignableFrom(this.getClass());
     }
 
