@@ -518,18 +518,18 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     }
 
     protected <T extends FlowActivityImpl>void copyTo(T instance) {
-        instance.activatable = activatable;
-        instance.flowPropertyProviderName = flowPropertyProviderName;
-        instance.activityTitle = activityTitle;
-        instance.componentName = componentName;
+        instance.setActivatable(activatable);
+        instance.setFlowPropertyProviderName(flowPropertyProviderName);
+        instance.setActivityTitle(activityTitle);
+        instance.setComponentName(componentName);
         instance.setPageName(getPageName());
-        instance.finishingActivity = finishingActivity;
-        instance.invisible = invisible;
-        instance.persistFlow = persistFlow;
+        instance.setFinishingActivity(finishingActivity);
+        instance.setInvisible(invisible);
+        instance.setPersistFlow(persistFlow);
     }
 
     @Override
-    @SuppressWarnings({ "hiding", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public <T extends FlowActivityImplementor> T initInvisible(Boolean invisible) {
         this.invisible = invisible;
         return (T) this;
