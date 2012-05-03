@@ -21,6 +21,7 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
+import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.NotNullIterator;
 
 import static com.sworddance.util.CUtilities.*;
@@ -73,7 +74,9 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
      */
     public void add(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
-            for(String flowPropertyName : flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames()) {
+            List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames();
+            ApplicationIllegalArgumentException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
+            for(String flowPropertyName : outputFlowPropertyDefinitionNames) {
                 String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
                 FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
                 flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
