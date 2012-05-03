@@ -507,7 +507,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         instance.setPersistFlow(persistFlow);
     }
 
-    @SuppressWarnings({ "hiding", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public <T extends FlowActivityImplementor> T initInvisible(Boolean invisible) {
         this.invisible = invisible;
         return (T) this;
