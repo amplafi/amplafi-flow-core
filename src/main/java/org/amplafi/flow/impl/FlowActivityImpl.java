@@ -821,7 +821,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
                 flowPropertyDefinition = (FP)flowManagement.createFlowPropertyDefinition(flow, key, expected, sampleValue);
             }
         }
-        if (!flowPropertyDefinition.isFlowTranslatorSet()) {
+        if (flowPropertyDefinition != null &&!flowPropertyDefinition.isFlowTranslatorSet()) {
         	getFlowManagement().getFlowTranslatorResolver().resolve(null, flowPropertyDefinition);
         }
         return flowPropertyDefinition;
