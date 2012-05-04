@@ -91,6 +91,8 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
 
     FlowPropertyDefinitionImplementor initTranslator(FlowTranslator<?> flowTranslator);
     
+    FlowPropertyDefinitionImplementor initDefaultObject(Object o);
+    
     /**
      * @param propertyScope
      * @param propertyUsage

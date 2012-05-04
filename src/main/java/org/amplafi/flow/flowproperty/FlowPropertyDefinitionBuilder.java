@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.FlowTranslator;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -343,18 +345,6 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-    /**
-     * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is
-     * emitted it is not changed. (but best solution is FPD being truly immutable ) prevent further
-     * changes and return constructed {@link FlowPropertyDefinition}
-     *
-     * @return
-     */
-    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
-        //        flowPropertyDefinition.setTemplateFlowPropertyDefinition(); TODO
-        return (FPD) this.flowPropertyDefinition;
-    }
-
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
         return this;
@@ -373,6 +363,29 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyDefinitionBuilder initPropertyUsage(PropertyUsage propertyUsage) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
         return this;
+    }
+
+	public FlowPropertyDefinitionBuilder initDefaultObject(FlowAppearance defaultObject) {
+		this.flowPropertyDefinition = this.flowPropertyDefinition.initDefaultObject(defaultObject);
+		return this;
+	}
+
+	public  <FPD extends FlowPropertyDefinitionImplementor> FPD  toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
+		if (flowTranslatorResolver != null) {
+			flowTranslatorResolver.resolve(null, flowPropertyDefinition);
+		}
+		return (FPD) this.flowPropertyDefinition;
+	}
+	
+	  /**
+     * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is
+     * emitted it is not changed. (but best solution is FPD being truly immutable ) prevent further
+     * changes and return constructed {@link FlowPropertyDefinition}
+     *
+     * @return
+     */
+    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
+        return toFlowPropertyDefinition(null);
     }
 
 }

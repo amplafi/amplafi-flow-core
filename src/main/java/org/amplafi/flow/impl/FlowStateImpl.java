@@ -1683,7 +1683,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // (may not be assigned to a flowManagement any more -- historical FlowState )
             FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowManagement().getFactoryFlowPropertyDefinitionBuilder(key, null);
             if ( flowPropertyDefinitionBuilder !=null ) {
-                flowPropertyDefinition = (T) flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
+                flowPropertyDefinition = (T) flowPropertyDefinitionBuilder.toFlowPropertyDefinition(getFlowManagement().getFlowTranslatorResolver());
             }
         }
         return flowPropertyDefinition;
