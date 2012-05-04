@@ -117,11 +117,19 @@ public class FlowPropertyDefinitionBuilder {
      */
     public FlowPropertyDefinitionBuilder createApiReturnValueFlowPropertyDefinition(String name, Class<? extends Object> dataClass,
         Class<?>... collectionClasses) {
-        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, FlowActivityPhase.finish, collectionClasses).initAccess(
-            PropertyScope.flowLocal, PropertyUsage.suppliesIfMissing);
+        // HACK - TODO : using FlowActivityPhase.finish forces the property to be set even if not used.
+        // May need to fix if properties used in both api flows and as part of another flow.
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, FlowActivityPhase.finish, collectionClasses)
+            .initAccess(PropertyScope.flowLocal, PropertyUsage.initialize);
         return this;
     }
 
+    public FlowPropertyDefinitionBuilder createApiReturnValueFlowPropertyDefinition(String name,
+        DataClassDefinitionImpl dataClassDefinition) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name,dataClassDefinition).initPropertyRequired(FlowActivityPhase.finish)
+                .initAccess(PropertyScope.flowLocal, PropertyUsage.initialize);
+        return this;
+    }
     /**
      * create a {@link FlowPropertyDefinition} for a property whose value is recomputed for every
      * request. Use case: very dynamic properties for example, a status message.
@@ -366,4 +374,5 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
         return this;
     }
+
 }

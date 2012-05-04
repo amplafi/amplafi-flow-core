@@ -17,7 +17,6 @@ package org.amplafi.flow.impl;
 import static com.sworddance.util.CUtilities.isNotEmpty;
 import static org.amplafi.flow.FlowConstants.FAINVISIBLE;
 import static org.amplafi.flow.FlowConstants.FANEXT_TEXT;
-import static org.amplafi.flow.FlowConstants.FAPREV_TEXT;
 import static org.amplafi.flow.FlowConstants.FATITLE_TEXT;
 import static org.amplafi.flow.FlowConstants.FAUPDATE_TEXT;
 import static org.amplafi.flow.FlowConstants.FLOW_PROPERTY_PREFIX;
@@ -45,6 +44,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
@@ -55,6 +55,7 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -193,6 +194,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#initializeFlow()
      */
+    @Override
     public void initializeFlow() {
         //TODO: this needs to be the same as FlowImpl's initializeFlow() code
         Map<String, FlowPropertyDefinitionImplementor> props = this.getPropertyDefinitions();
@@ -204,6 +206,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#activate(FlowStepDirection)
      */
+    @Override
     public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
         FlowValidationResult activationValidationResult = getFlowValidationResult(FlowActivityPhase.activate, flowStepDirection);
@@ -229,6 +232,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#passivate(boolean, FlowStepDirection)
      */
+    @Override
     public FlowValidationResult passivate(boolean verifyValues, FlowStepDirection flowStepDirection) {
         if (verifyValues) {
             // HACK that needs to be fixed. -- we only need to verify when we go back because:
@@ -271,6 +275,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * Saves properties using the FlowPropertyValuePersister.
      * @see org.amplafi.flow.FlowActivity#saveChanges()
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveChanges() {
         // TODO: refactor so that FlowStateImpl can save the global flow Properties.
@@ -299,15 +304,18 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#finishFlow(org.amplafi.flow.FlowState)
      */
+    @Override
     public FlowState finishFlow(FlowState currentNextFlowState) {
         return currentNextFlowState;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public FlowImplementor getFlow() {
         return flow;
     }
 
+    @Override
     public void setPageName(String pageName) {
         setProperty(FSPAGE_NAME, pageName);
     }
@@ -315,6 +323,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getPageName()
      */
+    @Override
     public String getPageName() {
         return getProperty(FlowConstants.FSPAGE_NAME);
     }
@@ -322,10 +331,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getComponentName()
      */
+    @Override
     public String getComponentName() {
         return componentName;
     }
 
+    @Override
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }
@@ -349,6 +360,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * HACK really need to make it easy for a FA to just be interested in inPlace, and PropertyRequired.saveChanges, advance or finish
      * @return {@link #getFlowValidationResult(FlowActivityPhase, FlowStepDirection)}(FlowActivityPhase.advance, FlowStepDirection.forward)
      */
+    @Override
     public FlowValidationResult getFlowValidationResult() {
         return this.getFlowValidationResult(FlowActivityPhase.advance, FlowStepDirection.forward);
     }
@@ -356,6 +368,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getFlowValidationResult(org.amplafi.flow.FlowActivityPhase, FlowStepDirection)
      */
+    @Override
     public FlowValidationResult getFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         return FlowValidationResultProviderImpl.INSTANCE.getFlowValidationResult(this, flowActivityPhase, flowStepDirection);
     }
@@ -378,6 +391,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         }
     }
 
+    @Override
     public void setActivityTitle(String activityTitle) {
         this.activityTitle = activityTitle;
     }
@@ -385,6 +399,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getActivityTitle()
      */
+    @Override
     public String getActivityTitle() {
         String title = getString(FATITLE_TEXT);
         if (isNotBlank(title)) {
@@ -425,6 +440,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return this.fullActivityInstanceNamespace;
     }
 
+    @Override
     public boolean isNamed(String possibleName) {
         if ( isNotBlank(possibleName) ) {
             return possibleName.equals(getFlowPropertyProviderName()) || possibleName.equals(getFullActivityInstanceNamespace()) || possibleName.equals(getFlowPropertyProviderFullName());
@@ -433,6 +449,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         }
     }
 
+    @Override
     public void setActivatable(boolean activatable) {
         this.activatable = activatable;
     }
@@ -443,10 +460,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      *
      * @return true if this FlowActivity can be activated by the user.
      */
+    @Override
     public boolean isActivatable() {
         return activatable;
     }
 
+    @Override
     public void setFinishingActivity(boolean finishedActivity) {
         finishingActivity = finishedActivity;
     }
@@ -455,6 +474,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @return true if the user can finish the flow when this activity is
      *         current.
      */
+    @Override
     public boolean isFinishingActivity() {
         return finishingActivity;
     }
@@ -489,6 +509,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return (T) clone;
     }
 
+    @Override
     public FlowActivityImpl createInstance() {
         FlowActivityImpl instance = dup();
         copyTo(instance);
@@ -507,6 +528,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         instance.setPersistFlow(persistFlow);
     }
 
+    @Override
     @SuppressWarnings({ "unchecked" })
     public <T extends FlowActivityImplementor> T initInvisible(Boolean invisible) {
         this.invisible = invisible;
@@ -525,11 +547,22 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         this.invisible = invisible;
     }
 
+    private boolean isApiCall() {
+        if ( isPropertyValueSet(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE)) {
+            FlowAppearance flowAppearance = this.getProperty(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE);
+            return flowAppearance == FlowAppearance.apiCall;
+        } else {
+            return false;
+        }
+    }
     /**
      * @see org.amplafi.flow.FlowActivity#isInvisible()
      */
+    @Override
     public boolean isInvisible() {
-        if (isPropertyValueSet(FAINVISIBLE)) {
+        if ( isApiCall() ) {
+            return true;
+        } else if (isPropertyValueSet(FAINVISIBLE)) {
             // forced no matter what
             return isTrue(FAINVISIBLE);
         } else if (invisible != null ) {
@@ -540,10 +573,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         }
     }
 
+    @Override
     public boolean isPossiblyVisible() {
         return isNotBlank(getComponentName()) || isNotBlank(getPageName());
     }
 
+    @Override
     public void setPersistFlow(boolean persistFlow) {
         this.persistFlow = persistFlow;
     }
@@ -551,6 +586,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#isPersistFlow()
      */
+    @Override
     public boolean isPersistFlow() {
         return persistFlow;
     }
@@ -655,6 +691,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivityImplementor#setFlow(FlowImplementor)
      */
+    @Override
     public void setFlow(FlowImplementor flow) {
         this.flow = flow;
     }
@@ -662,11 +699,13 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getIndex()
      */
+    @Override
     public int getIndex() {
         return flow.indexOf(this);
     }
 
     // Duplicated in FlowStateImpl
+    @Override
     public boolean isPropertySet(String key) {
         // HACK : too problematic need better way to ask if a FlowPropertyValueProvider can actually return a value.
 //        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
@@ -686,6 +725,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return getRawProperty(key) != null;
     }
 
+    @Override
     public boolean isPropertyBlank(String key) {
         String v = getRawProperty(key);
         return isBlank(v);
@@ -705,6 +745,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @param key
      * @return raw string property.
      */
+    @Override
     public String getRawProperty(String key) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
         if (flowPropertyDefinition == null) {
@@ -789,10 +830,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.Class)
      */
+    @Override
     public <T> T getProperty(Class<? extends T> dataClass) {
         return getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), dataClass);
     }
 
+    @Override
     public String getString(String key) {
         return getProperty(key, String.class);
     }
@@ -801,6 +844,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return getProperty(key, Boolean.class);
     }
 
+    @Override
     public boolean isTrue(String key) {
         Boolean b = getBoolean(key);
         return b != null && b;
@@ -821,6 +865,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      *
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#setProperty(java.lang.String, java.lang.Object)
      */
+    @Override
     public <T> void setProperty(String key, T value) {
         if ( getFlowState() != null) { // TODO: why are we ignoring (probably a test that should be fixed )
             FlowPropertyDefinitionImplementor propertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
@@ -840,6 +885,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#setProperty(Object)
      */
+    @Override
     public <T> void setProperty(T value) {
         ApplicationNullPointerException.notNull(value, "value must not be null");
         setProperty(value.getClass(), value);
@@ -848,6 +894,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#setProperty(Class, Object)
      */
+    @Override
     public <T> void setProperty(Class<? extends T> dataClass, T value) {
         setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);
     }
@@ -894,12 +941,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @param value
      * @see #isPropertyValueSet(String)
      */
+    @Override
     public void initPropertyIfNull(String key, Object value) {
         if (!isPropertyValueSet(key)) {
             this.setProperty(key, value);
         }
     }
 
+    @Override
     public void initPropertyIfBlank(String key, Object value) {
         if (isPropertyBlank(key)) {
             this.setProperty(key, value);
@@ -919,6 +968,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      *         {@link FlowConstants#FLOW_PROPERTY_PREFIX}, otherwise look up the
      *         property value referenced and return that value.
      */
+    @Override
     public String resolveIndirectReference(String value) {
         if (value != null && value.startsWith(FLOW_PROPERTY_PREFIX)) {
             return getString(value.substring(FLOW_PROPERTY_PREFIX.length()));
@@ -940,6 +990,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * @see org.amplafi.flow.FlowActivity#refresh()
      */
+    @Override
     public void refresh() {
         saveBack();
     }
@@ -982,6 +1033,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      *
      */
+    @Override
     public void processDefinitions() {
         addStandardFlowPropertyDefinitions();
         pushPropertyDefinitionsToFlow();

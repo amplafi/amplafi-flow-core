@@ -23,6 +23,8 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
+import com.sworddance.util.NotNullIterator;
+
 import static com.sworddance.util.CUtilities.*;
 /**
  * @author patmoore
@@ -66,6 +68,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         this.propertyDefinitions = properties;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <FD extends FlowPropertyDefinition> Map<String, FD> getPropertyDefinitions() {
         if ( propertyDefinitions == null && this.isInstance() ) {
@@ -80,6 +83,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
      * @param flowPropertyDefinitionName
      * @return
      */
+    @Override
     @SuppressWarnings("unchecked")
     public final <FPD extends FlowPropertyDefinition> FPD getFlowPropertyDefinition(String flowPropertyDefinitionName) {
         return (FPD) getFlowPropertyDefinition(flowPropertyDefinitionName, true);
@@ -140,23 +144,20 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         putLocalPropertyDefinition(flowPropertyDefinition);
     }
     public void addPropertyDefinitions(Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions) {
-        if ( flowPropertyDefinitions != null ) {
-            for (FlowPropertyDefinitionImplementor flowPropertyDefinition : flowPropertyDefinitions) {
-                addPropertyDefinition(flowPropertyDefinition);
-            }
+        for (FlowPropertyDefinitionImplementor flowPropertyDefinition : NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
+            addPropertyDefinition(flowPropertyDefinition);
         }
     }
     public void addPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
-        if ( flowPropertyDefinitions != null && flowPropertyDefinitions.length > 0) {
-            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: flowPropertyDefinitions) {
-                this.addPropertyDefinition(flowPropertyDefinition);
-            }
+        for(FlowPropertyDefinitionImplementor flowPropertyDefinition: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
+            this.addPropertyDefinition(flowPropertyDefinition);
         }
     }
 
     public boolean isFlowPropertyProviderNameSet() {
         return this.flowPropertyProviderName != null;
     }
+    @Override
     public String getFlowPropertyProviderName() {
         return this.flowPropertyProviderName;
     }
@@ -165,6 +166,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         this.flowPropertyProviderName = flowPropertyProviderName;
     }
 
+    @Override
     public String getFlowPropertyProviderFullName() {
         return getFlowPropertyProviderName();
     }
