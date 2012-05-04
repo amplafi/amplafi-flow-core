@@ -79,7 +79,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
     void setFinishingActivity(boolean finishedActivity);
     <T extends FlowActivityImplementor> T initInvisible(Boolean invisible);
 
-    void setInvisible(boolean invisible);
+    void setInvisible(Boolean invisible);
 
     void setPersistFlow(boolean persistFlow);
 

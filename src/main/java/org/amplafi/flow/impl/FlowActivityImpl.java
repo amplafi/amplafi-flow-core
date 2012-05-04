@@ -513,7 +513,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return (T) this;
     }
 
-    public void setInvisible(boolean invisible) {
+    @Override
+    public void setInvisible(Boolean invisible) {
         // HACK -- larger problem this value is cached so the next FA looks invisible as well.
         // good test case complete the registration of a new user which transitions to the FinishSignUp.
         // the ChangePasswordFA acts as if it is invisible because of cached "faInvisible" value = true.
