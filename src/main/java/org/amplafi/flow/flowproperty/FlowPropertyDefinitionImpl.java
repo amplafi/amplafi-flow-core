@@ -497,11 +497,22 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         if ( this.getDataClassDefinition().getFlowTranslator() == null) {
             return null;
         } else {
-            Object serialized = this.getDataClassDefinition().serialize(this, object);
-            return ObjectUtils.toString(serialized, null);
+            try {
+                Object serialized = this.getDataClassDefinition().serialize(this, object);
+                return ObjectUtils.toString(serialized, null);
+            } catch (FlowPropertySerializationNotPossibleException e) {
+                return null;
+            }
         }
     }
-
+    @Override
+    public <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value) {
+        try {
+            return this.dataClassDefinition.serialize(this, jsonWriter, value);
+        } catch (FlowPropertySerializationNotPossibleException e) {
+            return jsonWriter;
+        }
+    }
     @Override
     @SuppressWarnings("unchecked")
     public <V> V parse(FlowPropertyProvider flowPropertyProvider, String value) throws FlowException {
@@ -1306,8 +1317,5 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 		return null;
 	}
 
-    @Override
-    public <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value) {
-        return this.dataClassDefinition.serialize(this, jsonWriter, value);
-    }
+
 }

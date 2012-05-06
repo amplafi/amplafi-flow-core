@@ -125,16 +125,13 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     @Override
     @SuppressWarnings("unchecked")
     public <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value) {
-    	try {
-    		return this.getFlowTranslator().serialize(flowPropertyDefinition, this, jsonWriter, value);
-    	} catch (FlowPropertySerializationNotPossibleException e) {
-    		return jsonWriter;
-    	}
+        return this.getFlowTranslator().serialize(flowPropertyDefinition, this, jsonWriter, value);
     }
 
     /**
      * @param dataClassDefinition
      */
+    @Override
     public void merge(DataClassDefinition dataClassDefinition) {
         if ( dataClassDefinition == null ) {
             return;
@@ -197,21 +194,25 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * if this represents a collection then the {@link #elementPropertyDefinition} will not be null.
      * @return the collection
      */
+    @Override
     public Class<?> getCollection() {
         return this.isCollection()?this.getDataClass():null;
     }
 
+    @Override
     public Class<?> getElementClass() {
         return this.isCollection()?this.getElementDataClassDefinition().getElementClass():this.getDataClass();
     }
 
     // TODO: should there be indexed collection concept? List: index is integer, map index is object ( therefore List is just special case of map?? )
+    @Override
     public Class<?> getKeyClass() {
         return this.isCollection() && this.getKeyDataClassDefinition() != null?this.getKeyDataClassDefinition().getDataClass():null;
     }
     /**
      * @param dataClass the dataClass to set
      */
+    @Override
     public void setDataClass(Class<?> dataClass) {
         super.setPropertyClass(dataClass != String.class && dataClass != CharSequence.class?dataClass:null);
         this.flowTranslator = null;
@@ -231,6 +232,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
             return String.class;
         }
     }
+    @Override
     public boolean isDataClassDefined() {
         return super.isPropertyClassDefined();
     }
@@ -261,6 +263,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     /**
      * @return the keyPropertyDefinition
      */
+    @Override
     public DataClassDefinition getKeyDataClassDefinition() {
         if ( isKeyPropertyDefinitionSet()) {
             return getKeyPropertyDefinition();
@@ -279,6 +282,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     /**
      * @return the elementPropertyDefinition
      */
+    @Override
     public DataClassDefinition getElementDataClassDefinition() {
         if ( isElementPropertyDefinitionSet() ) {
             return getElementPropertyDefinition();
@@ -300,6 +304,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     /**
      * @param flowTranslator the flowTranslator to set
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void setFlowTranslator(FlowTranslator flowTranslator) {
         this.flowTranslator = flowTranslator;
@@ -307,6 +312,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     /**
      * @return the flowTranslator
      */
+    @Override
     @SuppressWarnings("unchecked")
     public FlowTranslator getFlowTranslator() {
         if ( this.flowTranslator == null ) {
@@ -320,6 +326,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * @param clazz
      * @return true if objects of 'clazz' can be stored in the structure defined by this.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public boolean isAssignableFrom(Class<?> clazz) {
         return getFlowTranslator().isAssignableFrom(clazz);
@@ -341,6 +348,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         return name.toString();
     }
 
+    @Override
     public boolean isCollection() {
         return
             this.isElementPropertyDefinitionSet()
@@ -362,6 +370,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * @param value
      * @return true if value can be deserialized
      */
+    @Override
     public boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value) {
         return value == null || this.getFlowTranslator().isDeserializable(flowPropertyDefinition, this, value);
     }
@@ -369,6 +378,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     /**
      * @return true if the flowTranslator is set or {@link #getDataClass()} == String.class
      */
+    @Override
     public boolean isFlowTranslatorSet() {
         return this.flowTranslator != null || this.getDataClass() == String.class;
     }
