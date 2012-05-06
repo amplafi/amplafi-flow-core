@@ -63,16 +63,21 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         if ( isNotEmpty(propertyDefinitionsMap) ) {
             Collection<FlowPropertyDefinition> propertyDefinitions = propertyDefinitionsMap.values();
             for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
-                String propertyName = flowPropertyDefinition.getName();
-                if (flowState.isPropertyValueSet(propertyName)) {
-                    Object property = flowState.getProperty(propertyName);
-                    jsonWriter.key(propertyName);
-                    flowPropertyDefinition.serialize(jsonWriter, property);
-                }
+            	if (flowState.isPropertySet(flowPropertyDefinition.getName())) {
+            		renderProperty(jsonWriter, flowState, flowPropertyDefinition);
+            	}
             }
         }
         jsonWriter.endObject();
     }
+
+	protected void renderProperty(IJsonWriter jsonWriter, FlowState flowState,
+			FlowPropertyDefinition flowPropertyDefinition) {
+		String propertyName = flowPropertyDefinition.getName();
+	    Object property = flowState.getProperty(propertyName);
+	    jsonWriter.key(propertyName);
+	    flowPropertyDefinition.serialize(jsonWriter, property);
+	}
 
     /**
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
