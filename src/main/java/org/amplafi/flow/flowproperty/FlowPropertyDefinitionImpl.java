@@ -258,6 +258,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         ApplicationNullPointerException.notNull(flowPropertyProvider,this,"flowPropertyProvider cannot be null");
         FlowPropertyValueProvider<? extends FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
+            // 6 may 2012 - PATM - I forgot exact reason for this check. I believe it was for case where 2 different FlowActivities defined
+            // property with same name. This was important for proper interpretation of the serialized property.
+            // this code predated to a large extend the generic global use of FlowPropertyValueProviders. (it may no longer be useful).
+            // problem is that if a flow activity defined a property and then the property was promoted to be a flow wide property, (it appears)
+            // that the only the original flowactivity could get the default.
             Class<? extends FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             ApplicationIllegalArgumentException.valid(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()),
                 this,": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
@@ -304,6 +309,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
     }
 
+    @Override
     @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
     public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValueProvider, defaultObject);
