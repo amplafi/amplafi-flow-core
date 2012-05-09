@@ -90,7 +90,10 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
         if ( jsonWriter == null ) {
             jsonWriter = getJsonWriter();
         }
+
         if ( object == null ) {
+            // if jsonWriter is expecting a value ( because it just had a key set ) then we need to serialize a null.
+            // TODO: investigate serializing a null.
             return jsonWriter;
         } else if ( this.isSerializedForm(object.getClass())) {
             // already in a serialized form? (we hope )
