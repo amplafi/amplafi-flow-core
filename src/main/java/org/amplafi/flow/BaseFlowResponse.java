@@ -10,7 +10,6 @@ public class BaseFlowResponse implements FlowResponse {
 	private Exception exception;
 	private String errorMessage;
 	private FlowState flowState;
-	private String redirect;
 
 	public BaseFlowResponse(Writer writer) {
 		this.writer = writer;
