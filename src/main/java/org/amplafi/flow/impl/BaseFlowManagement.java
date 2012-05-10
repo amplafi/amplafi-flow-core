@@ -253,22 +253,6 @@ public class BaseFlowManagement implements FlowManagement {
     public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState, Object returnToFlow) {
         initialFlowState = initReturnToFlow(initialFlowState, returnToFlow);
         FS flowState = (FS) createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
-        /* If you want tapestry stuff injected here...
-        // set default page to go to after flow if flow is successful
-        if (flowState.getDefaultAfterPage() == null ) {
-            IPage currentCyclePage;
-            try {
-                currentCyclePage = cycle.getPage();
-            } catch(NullPointerException e) {
-                // because of the way cycle is injected - it is impossible to see if the cycle is null.
-                // (normal java checks are looking at the proxy object)
-                currentCyclePage = null;
-            }
-            if ( currentCyclePage != null) {
-                flowState.setDefaultAfterPage(currentCyclePage.getPageName());
-            }
-        }
-        */
         return (FS) beginFlowState(flowState);
     }
 
