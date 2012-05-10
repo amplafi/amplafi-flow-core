@@ -1,6 +1,7 @@
 package org.amplafi.flow.web;
 
 import java.io.Writer;
+import java.net.URI;
 
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
@@ -29,7 +30,9 @@ public interface FlowResponse {
 
 	void setFlowState(FlowState flowState);
 	
-	String getRedirect();
+	URI getRedirect();
 	
 	boolean isRedirectSet();
+
+	void setRedirectURI(URI redirectUri);
 }

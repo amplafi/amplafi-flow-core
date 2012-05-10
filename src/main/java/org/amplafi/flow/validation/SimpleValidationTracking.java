@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.validation;
 
+import java.net.URI;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -29,7 +31,7 @@ public class SimpleValidationTracking implements FlowValidationTracking {
         this.params = params;
     }
 
-    @SuppressWarnings({ "hiding", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     public <T extends SimpleValidationTracking> T initActivityKey(String activityKey) {
         this.setActivityKey(activityKey);
         return (T) this;
@@ -62,4 +64,9 @@ public class SimpleValidationTracking implements FlowValidationTracking {
     public String toString() {
         return getMessageKey()+"["+StringUtils.join(params, ",")+"]";
     }
+
+	@Override
+	public URI getRedirectUri() {
+		return null;
+	}
 }
