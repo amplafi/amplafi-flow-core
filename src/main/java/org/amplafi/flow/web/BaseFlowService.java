@@ -136,7 +136,10 @@ public class BaseFlowService implements FlowService {
         	}
 			doActualService(flowRequest, flowResponse, initial);
         }
-        flowResponse.render(renderer);
+        //Only render when client is supposed to see the result.
+        if (!flowResponse.isRedirectSet()) {
+        	flowResponse.render(renderer);
+        }
     }
 
     protected void doActualService(FlowRequest request, FlowResponse flowResponse, Map<String, String> initial) {
@@ -271,8 +274,9 @@ public class BaseFlowService implements FlowService {
                 flowResponse.setFlowState(flowState);
             }
         } catch (FlowValidationException e) {
-        	flowResponse.setError("Error", e);
+        	flowResponse.setError("Validation error", e);
         	flowResponse.setFlowState(e.getFlowState());
+        	flowResponse.setRedirectURI(e.getRedirectUri());
 		} catch (Exception e) {
         	flowResponse.setError("Error", e);
             if (flowState != null && !flowState.isPersisted()) {

@@ -1,6 +1,7 @@
 package org.amplafi.flow;
 
 import java.io.Writer;
+import java.net.URI;
 
 import org.amplafi.flow.web.FlowResponse;
 
@@ -10,6 +11,7 @@ public class BaseFlowResponse implements FlowResponse {
 	private Exception exception;
 	private String errorMessage;
 	private FlowState flowState;
+	private URI redirectUri;
 
 	public BaseFlowResponse(Writer writer) {
 		this.writer = writer;
@@ -57,16 +59,17 @@ public class BaseFlowResponse implements FlowResponse {
 	}
 
 	@Override
-	public String getRedirect() {
-		String redirect = null;
-		if (flowState != null && flowState.getCurrentPage() != null && flowState.getCurrentPage().startsWith("http")) {
-			redirect = flowState.getCurrentPage();
-		} 
-		return redirect;
+	public URI getRedirect() {
+		return redirectUri;
 	}
 
 	@Override
 	public boolean isRedirectSet() {
 		return getRedirect() != null;
+	}
+
+	@Override
+	public void setRedirectURI(URI redirectUri) {
+		this.redirectUri = redirectUri;
 	}
 }
