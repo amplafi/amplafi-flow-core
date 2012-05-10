@@ -268,17 +268,18 @@ public class BaseFlowService implements FlowService {
                     }
                 }
                 initializeRequestedParameters(flowRequest.getPropertiesToInitialize(), flowState);
+                flowResponse.setFlowState(flowState);
             }
         } catch (FlowValidationException e) {
         	flowResponse.setError("Error", e);
+        	flowResponse.setFlowState(e.getFlowState());
 		} catch (Exception e) {
         	flowResponse.setError("Error", e);
             if (flowState != null && !flowState.isPersisted()) {
                 getFlowManagement().dropFlowState(flowState);
+                flowResponse.setFlowState(flowState);
             }
-        } finally {
-        	flowResponse.setFlowState(flowState);
-        }
+        } 
         return flowState;
     }
 
