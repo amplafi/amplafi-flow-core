@@ -105,6 +105,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 		} catch (Exception e) {
 		    try {
                 writer.append("{" +ServicesConstants.ERROR_MESSAGE + ": 'Failed to render flow state. Cause: "+ e.getMessage() + "'}");
+                getLog().error("Failed to render flow state.", e);
             } catch (IOException e1) {
                 throw new IllegalStateException(e1);
             }
