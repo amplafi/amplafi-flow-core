@@ -210,7 +210,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     public boolean activate(FlowStepDirection flowStepDirection) {
         // Check for missing required parameters
         FlowValidationResult activationValidationResult = getFlowValidationResult(FlowActivityPhase.activate, flowStepDirection);
-        FlowValidationException.valid(activationValidationResult);
+        FlowValidationException.valid(getFlowState(), activationValidationResult);
 
         if ( flowStepDirection == FlowStepDirection.backward) {
             // skip back only through invisible steps.

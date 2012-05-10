@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowException;
+import org.amplafi.flow.FlowState;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -28,23 +29,25 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class FlowValidationException extends FlowException {
+	
     private final FlowValidationResult flowValidationResult;
 
-    public FlowValidationException(FlowValidationResult flowValidationResult) {
+    public FlowValidationException(FlowState flowState, FlowValidationResult flowValidationResult) {
+    	super(flowState);
         this.flowValidationResult = flowValidationResult;
     }
 
-    public FlowValidationException(FlowValidationTracking...flowValidationTrackings) {
-        super("Validation Problem");
+    public FlowValidationException(FlowState flowState, FlowValidationTracking...flowValidationTrackings) {
+        super(flowState, "Validation Problem");
         this.flowValidationResult = new ReportAllValidationResult(flowValidationTrackings);
     }
-    public FlowValidationException(Throwable cause, FlowValidationTracking...flowValidationTrackings) {
-        this(flowValidationTrackings);
+    public FlowValidationException(FlowState flowState, Throwable cause, FlowValidationTracking...flowValidationTrackings) {
+        this(flowState, flowValidationTrackings);
         initCause(cause);
     }
 
-    public FlowValidationException(String key, FlowValidationTracking...flowValidationTrackings) {
-        this(flowValidationTrackings);
+    public FlowValidationException(FlowState flowState, String key, FlowValidationTracking...flowValidationTrackings) {
+        this(flowState, flowValidationTrackings);
         this.flowValidationResult.addTracking(new SimpleValidationTracking(key));
     }
 
@@ -52,8 +55,8 @@ public class FlowValidationException extends FlowException {
      * @param currentActivity
      * @param flowValidationResult
      */
-    public FlowValidationException(FlowActivity currentActivity, FlowValidationResult flowValidationResult) {
-        super(currentActivity.getFlowPropertyProviderFullName());
+    public FlowValidationException(FlowState flowState, FlowActivity currentActivity, FlowValidationResult flowValidationResult) {
+        super(flowState, currentActivity.getFlowPropertyProviderFullName());
         this.flowValidationResult = flowValidationResult;
     }
 
@@ -81,12 +84,13 @@ public class FlowValidationException extends FlowException {
     }
 
     /**
+     * @param flowState 
      * @param flowValidationResult
      * @throws FlowValidationException thrown if flowValidationResult != null && !flowValidationResult.isValid()
      */
-    public static void valid(FlowValidationResult flowValidationResult) throws FlowValidationException {
+    public static void valid(FlowState flowState, FlowValidationResult flowValidationResult) throws FlowValidationException {
         if ( flowValidationResult != null && !flowValidationResult.isValid()) {
-            throw new FlowValidationException(flowValidationResult);
+            throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
 }

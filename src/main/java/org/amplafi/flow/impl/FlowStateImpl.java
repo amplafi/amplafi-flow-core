@@ -527,7 +527,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (verifyValues) {
             flowValidationResult = getFullFlowValidationResult(FlowActivityPhase.finish, FlowStepDirection.forward);
         }
-        FlowValidationException.valid(flowValidationResult);
+        FlowValidationException.valid(this, flowValidationResult);
         FlowState currentNextFlowState = getFlowManagement().transitionToFlowState(this, FSFLOW_TRANSITIONS);
         int size = this.size();
         for (int i = 0; i < size; i++) {
@@ -570,7 +570,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                 flowValidationResult = this.passivate(verifyValues, flowStepDirection);
                 if ( !flowValidationResult.isValid()) {
                     activateFlowActivity(getCurrentActivity(), FlowStepDirection.inPlace);
-                    throw new FlowValidationException(getCurrentActivity(), flowValidationResult);
+                    throw new FlowValidationException(this, getCurrentActivity(), flowValidationResult);
                 }
             }
             this.setCurrentActivityIndex(next);
@@ -638,7 +638,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < this.size(); i++) {
             FlowActivity flowActivity = getActivity(i);
             FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(FlowActivityPhase.saveChanges, FlowStepDirection.forward);
-            FlowValidationException.valid(flowActivityValidationResult);
+            FlowValidationException.valid(this, flowActivityValidationResult);
             flowActivity.saveChanges();
             // activity.refresh(); -- commented out because saves default values back to the flowState
             LapTimer.sLap(flowActivity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
@@ -670,7 +670,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             FlowValidationResult flowValidationResult = passivate(verifyValues, FlowStepDirection.inPlace);
 
             if (verifyValues) {
-                FlowValidationException.valid(flowValidationResult);
+                FlowValidationException.valid(this, flowValidationResult);
                 saveChanges();
             }
 

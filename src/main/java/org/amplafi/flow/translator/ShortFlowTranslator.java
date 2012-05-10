@@ -42,7 +42,7 @@ public class ShortFlowTranslator extends AbstractFlowTranslator<Short> {
         try {
             return new Short(s);
         } catch(NumberFormatException e) {
-            throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
+            throw new FlowValidationException(null, new InconsistencyTracking("cannot-be-parsed",
                     s,": contains non-numerics"));
         }
     }

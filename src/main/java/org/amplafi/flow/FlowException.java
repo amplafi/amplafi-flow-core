@@ -13,6 +13,9 @@
  */
 package org.amplafi.flow;
 
+import static com.sworddance.util.ApplicationIllegalArgumentException.notNull;
+import static com.sworddance.util.ApplicationIllegalStateException.checkState;
+
 /**
  * Base Exception for all flow issues.
  * @author patmoore
@@ -21,17 +24,14 @@ package org.amplafi.flow;
 public class FlowException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
-    private final FlowState flowState;
+    private FlowState flowState;
 
-    public FlowException() {
-        flowState = null;
-    }
-
-    public FlowException(String message) {
-        super(message);
-        flowState = null;
-    }
     public FlowException(FlowState flowState) {
+    	this.flowState = flowState;
+    }
+
+    public FlowException(FlowState flowState, String message) {
+        super(message);
         this.flowState = flowState;
     }
 
@@ -41,4 +41,19 @@ public class FlowException extends RuntimeException {
     public FlowState getFlowState() {
         return flowState;
     }
+
+	/**
+	 * Only allowed to be called when a flow state wasn't yet set.
+	 * 
+	 * @param flowState
+	 */
+	public void setFlowState(FlowState flowState) {
+		notNull(flowState, "Trying to set null flowState to the FlowException.");
+		checkState(!isFlowStateSet(), "Trying to override non-null flowState");
+		this.flowState = flowState;
+	}
+    
+	public boolean isFlowStateSet() {
+		return flowState != null;
+	}
 }

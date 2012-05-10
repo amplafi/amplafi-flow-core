@@ -41,7 +41,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
         try {
             return Long.valueOf(s);
         } catch(NumberFormatException e) {
-            throw new FlowValidationException(new InconsistencyTracking("cannot-be-parsed",
+            throw new FlowValidationException(null, new InconsistencyTracking("cannot-be-parsed",
                     s,": contains non-numerics"));
         }
     }

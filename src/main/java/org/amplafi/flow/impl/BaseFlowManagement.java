@@ -13,6 +13,12 @@
  */
 package org.amplafi.flow.impl;
 
+import static com.sworddance.util.CUtilities.isNotEmpty;
+import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
+import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
+import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,20 +55,15 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.PageProvider;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
 import com.sworddance.util.ApplicationGeneralException;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import static org.amplafi.flow.FlowConstants.*;
-import static org.apache.commons.lang.StringUtils.*;
-import static com.sworddance.util.CUtilities.*;
 /**
  * A basic implementation of FlowManagement.
  *
@@ -328,10 +329,11 @@ public class BaseFlowManagement implements FlowManagement {
             return (FS) flowState;
         } 
         catch (RuntimeException e) {
-            // HACK: when starting a flow that has a problem we lose the flow information.
-            // ideally we would have a general mechanism for capturing this flow information.
-            // ( more correctly we should store the data in the database for analysis )
             if (e instanceof FlowValidationException) {
+            	FlowValidationException flowValidationException = (FlowValidationException) e;
+				if (flowValidationException.isFlowStateSet()) {
+            		flowValidationException.setFlowState(flowState);
+            	}
                 throw e;
             }  else {
                 throw new ApplicationGeneralException(flowState.toString(), e);
