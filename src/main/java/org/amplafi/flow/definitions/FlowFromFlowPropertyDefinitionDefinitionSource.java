@@ -48,7 +48,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
             String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
             FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
             flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
-            FlowActivityImpl flowActivity = new FlowActivityImpl(capitalizedFlowPropertyName+"FlowActivity");
+            FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
             flowActivity.addPropertyDefinition(flowPropertyDefinitionImplementor);
             flow.addActivity(flowActivity);
             put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
@@ -59,7 +59,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
-        FlowActivityImpl flowActivity = new FlowActivityImpl(capitalizedFlowPropertyName+"FlowActivity");
+        FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
         flow.addActivity(flowActivity);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
@@ -80,7 +80,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
                 String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
                 FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
                 flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
-                FlowActivityImpl flowActivity = new FlowActivityImpl(capitalizedFlowPropertyName+"FlowActivity");
+                FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
                 flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish)));
                 flow.addActivity(flowActivity);
                 put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
