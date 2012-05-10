@@ -331,7 +331,7 @@ public class BaseFlowManagement implements FlowManagement {
         catch (RuntimeException e) {
             if (e instanceof FlowValidationException) {
             	FlowValidationException flowValidationException = (FlowValidationException) e;
-				if (flowValidationException.isFlowStateSet()) {
+				if (!flowValidationException.isFlowStateSet()) {
             		flowValidationException.setFlowState(flowState);
             	}
                 throw e;
