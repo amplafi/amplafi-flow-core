@@ -13,6 +13,7 @@
  */
 package org.amplafi.flow.validation;
 
+import java.net.URI;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivity;
@@ -20,6 +21,8 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowState;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.sworddance.util.NotNullIterator;
 
 
 /**
@@ -68,6 +71,18 @@ public class FlowValidationException extends FlowException {
         super.initCause(cause);
         setStackTrace(cause.getStackTrace());
         return this;
+    }
+    
+    public URI getRedirectUri() {
+    	URI redirectUri = null;
+    	List<FlowValidationTracking> trackings = getFlowValidationResult().getTrackings();
+    	for (FlowValidationTracking flowValidationTracking : NotNullIterator.<FlowValidationTracking>newNotNullIterator(trackings)) {
+    		redirectUri = flowValidationTracking.getRedirectUri();
+    		if (redirectUri != null) {
+    			break;
+    		}
+    	}
+		return redirectUri;
     }
 
     /**

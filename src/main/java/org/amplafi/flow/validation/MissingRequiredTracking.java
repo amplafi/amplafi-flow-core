@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.validation;
 
+import java.net.URI;
+
 
 /**
  * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for missing required values.
@@ -23,11 +25,18 @@ package org.amplafi.flow.validation;
  * parameter passed in the constructor.
  */
 public class MissingRequiredTracking extends SimpleValidationTracking {
-    /**
+	
+    private URI redirectUri;
+	/**
      * @param params The missing field
      */
     public MissingRequiredTracking(Object... params) {
         super(MissingRequiredTracking.class.getSimpleName(), params);
+    }
+    
+    public MissingRequiredTracking(URI redirectUri, Object... params) {
+    	this(params);
+    	this.redirectUri = redirectUri;
     }
     /**
      * Helps describing 'missing value' problems.
@@ -35,13 +44,22 @@ public class MissingRequiredTracking extends SimpleValidationTracking {
     * @param flowValidationResult keeps track of validation results
     * @param missingRequiredValue if true then the property is *NOT set correctly and we need
     *        a {@link MissingRequiredTracking}.
-    * @param property missing property's name
+    * @param properties missing property's name
      * @return flowValidationResult
     */
-    public static FlowValidationResult appendRequiredTrackingIfTrue(FlowValidationResult flowValidationResult, boolean missingRequiredValue, Object... property) {
-       if (missingRequiredValue) {
-           flowValidationResult.addTracking(new MissingRequiredTracking(property));
-       }
-       return flowValidationResult;
-   }
+    public static FlowValidationResult appendRequiredTrackingIfTrue(FlowValidationResult flowValidationResult, boolean missingRequiredValue, Object... properties) {
+       return appendRequiredTrackingIfTrue(flowValidationResult, missingRequiredValue, null, properties);
+    }
+    
+    public static FlowValidationResult appendRequiredTrackingIfTrue(FlowValidationResult flowValidationResult, boolean missingRequiredValue, URI redirectUri, Object... properties) {
+        if (missingRequiredValue) {
+            flowValidationResult.addTracking(new MissingRequiredTracking(redirectUri, properties));
+        }
+        return flowValidationResult;
+     }
+
+	@Override
+	public URI getRedirectUri() {
+		return redirectUri;
+	}
 }
