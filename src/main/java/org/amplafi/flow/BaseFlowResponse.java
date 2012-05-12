@@ -1,5 +1,7 @@
 package org.amplafi.flow;
 
+import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
+
 import java.io.Writer;
 import java.net.URI;
 
@@ -60,6 +62,11 @@ public class BaseFlowResponse implements FlowResponse {
 
 	@Override
 	public URI getRedirect() {
+		if (redirectUri == null && flowState != null 
+				&& flowState.isCompleted() && flowState.isPropertySet(FSREDIRECT_URL)) {
+			//If redirect URI wasn't explicitly set, see if the end flow redirect was planned.
+			return flowState.getProperty(FSREDIRECT_URL, URI.class);
+		}
 		return redirectUri;
 	}
 
