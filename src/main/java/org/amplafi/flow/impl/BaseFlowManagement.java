@@ -383,7 +383,7 @@ public class BaseFlowManagement implements FlowManagement {
 
                     // look for redirect before clearing the flow state
                     // why before cache clearing?
-                    URI redirect = fs.getProperty(FSREDIRECT_URL);
+                    URI redirect = fs.getProperty(FSREDIRECT_URL, URI.class);
                     String returnToFlowId = fs.getProperty(FSRETURN_TO_FLOW);
                     FlowState returnToFlow = getFlowState(returnToFlowId);
                     fs.clearCache();
