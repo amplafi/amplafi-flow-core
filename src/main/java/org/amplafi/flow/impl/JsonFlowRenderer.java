@@ -85,7 +85,7 @@ public class JsonFlowRenderer implements FlowRenderer {
             jsonWriter.object();
             jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
             if (flowState != null) {
-                jsonWriter.key(FLOW_STATE_JSON_KEY).value(flowState);
+                jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
                 // TODO : probably need to check on PropertyRequired.finish
                 Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
                 writeValidationResult(jsonWriter, result);
