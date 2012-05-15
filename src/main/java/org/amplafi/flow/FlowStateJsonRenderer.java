@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
+import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
 
 import com.sworddance.util.ApplicationIllegalStateException;
@@ -76,10 +77,9 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 
 	protected void renderProperty(IJsonWriter jsonWriter, FlowState flowState,
 			FlowPropertyDefinition flowPropertyDefinition) {
-		String propertyName = flowPropertyDefinition.getName();
+	    String propertyName = flowPropertyDefinition.getName();
 	    Object property = flowState.getProperty(propertyName);
-	    jsonWriter.key(propertyName);
-	    flowPropertyDefinition.serialize(jsonWriter, property);
+	    jsonWriter.keyValueIfNotBlankValue(propertyName, flowPropertyDefinition.serialize(new JSONWriter(), property).toString());
 	    ApplicationIllegalStateException.checkState(jsonWriter.isInKeyMode(), "Not in value mode after serializing key/value for ", flowPropertyDefinition.getName());
 	}
 
