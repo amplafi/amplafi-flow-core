@@ -81,7 +81,8 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
                 FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
                 flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
                 FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
-                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish)));
+                // make sure the property being returned has a value set.
+                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(flowPropertyName, FlowActivityPhase.finish, null, null, null)));
                 flow.addActivity(flowActivity);
                 put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
             }
