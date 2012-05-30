@@ -1,7 +1,9 @@
 package org.amplafi.flow;
 
-import org.amplafi.flow.web.FlowRequest;
+import java.io.Writer;
+
 import org.amplafi.flow.web.FlowResponse;
+import org.amplafi.flow.web.FlowService;
 
 /**
  * Implementations render the flow output for at the conclusion of processing a flow request.
@@ -17,10 +19,13 @@ public interface FlowRenderer {
 
 	/**
 	 * TODO
+	 * 
+	 * @deprecated use {@link #render(Writer, FlowState, String, Exception)} since we're getting rid of {@link FlowService}s in future.
 	 *
 	 * @param flowState
 	 * @param writer
 	 */
+	@Deprecated
 	public void render(FlowResponse flowResponse);
 
 	/**
@@ -28,5 +33,8 @@ public interface FlowRenderer {
 	 *
 	 */
 	public void describeFlow(FlowResponse flowRequest, String flowType);
+
+	void render(Writer writer, FlowState flowState, String errorMessage,
+			Exception exception);
 
 }

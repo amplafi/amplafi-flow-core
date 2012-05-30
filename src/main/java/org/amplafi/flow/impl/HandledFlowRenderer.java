@@ -1,7 +1,10 @@
 package org.amplafi.flow.impl;
 
+import java.io.Writer;
+
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowRenderer;
+import org.amplafi.flow.FlowState;
 import org.amplafi.flow.web.FlowResponse;
 
 /**
@@ -25,6 +28,11 @@ public class HandledFlowRenderer implements FlowRenderer {
 	@Override
 	public void describeFlow(FlowResponse flowRequest, String flowType) {
 		
+	}
+
+	@Override
+	public void render(Writer writer, FlowState flowState, String errorMessage,
+			Exception exception) {
 	}
 
 }

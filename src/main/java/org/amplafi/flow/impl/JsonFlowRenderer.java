@@ -51,10 +51,19 @@ public class JsonFlowRenderer implements FlowRenderer {
 
 	@Override
 	public void render(FlowResponse flowResponse) {
-		JSONWriter jsonWriter = getFlowStateWriter();
 		FlowState flowState = flowResponse.getFlowState();
-		if (flowResponse.hasErrors()) {
-			renderError(flowState, flowResponse.getErrorMessage(), flowResponse.getException(), flowResponse.getWriter());
+		Writer writer = flowResponse.getWriter();
+		String errorMessage = flowResponse.getErrorMessage();
+		Exception exception = flowResponse.getException();
+		render(writer, flowState, errorMessage, exception);
+	}
+
+	@Override
+	public void render(Writer writer, FlowState flowState, String errorMessage,
+			Exception exception) {
+		JSONWriter jsonWriter = getFlowStateWriter();
+		if (errorMessage != null || exception != null) {
+			renderError(flowState, errorMessage, exception, writer);
 		} else {
 			FlowImplementor flow = flowState.getFlow();
 			if (flow.isSinglePropertyFlow()) {
@@ -66,7 +75,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 				jsonWriter.endObject();
 			}
 			try {
-				flowResponse.getWriter().append(jsonWriter.toString());
+				writer.append(jsonWriter.toString());
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
 			}			
