@@ -43,6 +43,7 @@ import org.apache.commons.logging.Log;
 import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
 
+@Deprecated
 public class BaseFlowService implements FlowService {
 
     private static final String FLOW_NAME_SUFFIX = "Flow";

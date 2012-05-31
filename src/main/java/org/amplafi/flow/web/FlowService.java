@@ -18,7 +18,10 @@ package org.amplafi.flow.web;
 
 /**
  *
+ * @deprecated Looks like this and all impementors are not needed anymore, consider deletion.
+ *
  */
+@Deprecated
 public interface FlowService {
 
 	void service(FlowRequest flowRequest, FlowResponse flowResponse);
