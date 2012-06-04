@@ -79,7 +79,10 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 			FlowPropertyDefinition flowPropertyDefinition) {
 	    String propertyName = flowPropertyDefinition.getName();
 	    Object property = flowState.getProperty(propertyName);
-	    jsonWriter.keyValueIfNotBlankValue(propertyName, flowPropertyDefinition.serialize(new JSONWriter(), property).toString());
+	    if (property != null) {
+		    jsonWriter.key(propertyName);
+		    flowPropertyDefinition.serialize(jsonWriter, property);
+	    }
 	    ApplicationIllegalStateException.checkState(jsonWriter.isInKeyMode(), "Not in value mode after serializing key/value for ", flowPropertyDefinition.getName());
 	}
 
