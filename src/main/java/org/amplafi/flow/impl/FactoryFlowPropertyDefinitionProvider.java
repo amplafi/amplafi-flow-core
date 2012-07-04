@@ -90,11 +90,11 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         // HACK
         FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION.clone(),
 
-        new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
-        new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
+        new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(consume),
+        new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(consume),
         new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
         // TODO think about PropertyScope/PropertyUsage
-        new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
+        new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(consume),
         // HACK
         CancelTextFlowPropertyValueProvider.CANCEL_TEXT.clone().initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE)
     );

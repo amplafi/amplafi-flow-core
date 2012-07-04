@@ -35,28 +35,25 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     public DefaultFlowValuesMap() {
         this.map = Collections.synchronizedMap(new LinkedHashMap<DefaultFlowValuesMapKey, String>());
     }
-    public DefaultFlowValuesMap(Map<?,?> initialFlowState) {
-        this(initialFlowState, null);
-    }
-    public DefaultFlowValuesMap(FlowValuesMap<FlowValueMapKey, CharSequence> initialFlowState) {
+    public DefaultFlowValuesMap(Map<String, String> initialFlowState) {
         this();
         if ( isNotEmpty(initialFlowState)) {
-            for(Map.Entry entry: initialFlowState.entrySet()) {
+            for(Map.Entry<String, String> entry: initialFlowState.entrySet()) {
                 Object value = entry.getValue();
                 if ( value != null) {
-                    DefaultFlowValuesMapKey key = DefaultFlowValuesMapKey.toKey(entry.getKey());
+                    DefaultFlowValuesMapKey key = new DefaultFlowValuesMapKey(entry.getKey());
                     this.map.put(key, value.toString());
                 }
             }
         }
     }
-    public DefaultFlowValuesMap(Map<?, ?> initialFlowState, String flowLookupKey) {
-    	this();
+    public DefaultFlowValuesMap(FlowValuesMap<FlowValueMapKey, CharSequence> initialFlowState) {
+        this();
         if ( isNotEmpty(initialFlowState)) {
-            for(Map.Entry entry: initialFlowState.entrySet()) {
-                Object value = entry.getValue();
+            for(Map.Entry<FlowValueMapKey, CharSequence> entry: initialFlowState.entrySet()) {
+                CharSequence value = entry.getValue();
                 if ( value != null) {
-                    DefaultFlowValuesMapKey key = new DefaultFlowValuesMapKey(flowLookupKey, entry.getKey());
+                    DefaultFlowValuesMapKey key = DefaultFlowValuesMapKey.toKey(entry.getKey());
                     this.map.put(key, value.toString());
                 }
             }
@@ -88,6 +85,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
     public Map<String, String> getAsFlattenedStringMap() {
         return getAsStringMap(false, true);
     }
+    @Override
     public String remove(Object namespace, Object key) {
         return map.remove(toKey(namespace, key));
     }
@@ -168,6 +166,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
         }
     }
 
+    @Override
     public void putAll(Object namespace, Map<?,?> subMap) {
         if (isNotEmpty(subMap)) {
             for (Map.Entry<?, ?> entry : subMap.entrySet()) {

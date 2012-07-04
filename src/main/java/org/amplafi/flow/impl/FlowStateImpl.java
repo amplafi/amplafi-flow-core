@@ -337,7 +337,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @SuppressWarnings("unchecked")
     protected FlowValuesMap createFlowValuesMapCopy() {
-        return new DefaultFlowValuesMap(getFlowValuesMap());
+        return new DefaultFlowValuesMap((FlowValuesMap<FlowValueMapKey, CharSequence>)getFlowValuesMap());
     }
 
     /**
