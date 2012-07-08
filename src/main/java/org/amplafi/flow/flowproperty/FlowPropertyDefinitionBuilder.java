@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -365,7 +364,7 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-	public FlowPropertyDefinitionBuilder initDefaultObject(FlowAppearance defaultObject) {
+	public FlowPropertyDefinitionBuilder initDefaultObject(Object defaultObject) {
 		this.flowPropertyDefinition = this.flowPropertyDefinition.initDefaultObject(defaultObject);
 		return this;
 	}
@@ -376,7 +375,7 @@ public class FlowPropertyDefinitionBuilder {
 		}
 		return (FPD) this.flowPropertyDefinition;
 	}
-	
+
 	  /**
      * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is
      * emitted it is not changed. (but best solution is FPD being truly immutable ) prevent further

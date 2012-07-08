@@ -34,6 +34,9 @@ import com.sworddance.util.NotNullIterator;
 public abstract class AbstractFlowPropertyDefinitionProvider {
     private final Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
 
+    protected AbstractFlowPropertyDefinitionProvider() {
+        // for case when definitions are added in later.
+    }
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitions);
     }
