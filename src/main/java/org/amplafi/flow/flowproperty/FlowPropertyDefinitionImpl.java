@@ -1121,6 +1121,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
     }
 
+
+    @Override
+    public boolean isNamed(Class<?> byClassName) {
+        return this.isNamed(FlowPropertyDefinitionBuilder.toPropertyName(byClassName));
+    }
+
     @Override
     public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         return this.isNamed(flowPropertyDefinition.getName());

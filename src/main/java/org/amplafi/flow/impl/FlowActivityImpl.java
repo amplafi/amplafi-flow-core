@@ -56,6 +56,7 @@ import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -827,14 +828,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return flowPropertyDefinition;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.Class)
-     */
-    @Override
-    public <T> T getProperty(Class<? extends T> dataClass) {
-        return getProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), dataClass);
-    }
-
     @Override
     public String getString(String key) {
         return getProperty(key, String.class);
@@ -896,7 +889,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     @Override
     public <T> void setProperty(Class<? extends T> dataClass, T value) {
-        setProperty(FlowUtils.INSTANCE.toPropertyName(dataClass), value);
+        setProperty(FlowPropertyDefinitionBuilder.toPropertyName(dataClass), value);
     }
 
     /**

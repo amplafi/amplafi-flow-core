@@ -2,7 +2,7 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
@@ -10,8 +10,10 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.FlowTranslator;
 
+import com.sworddance.util.AbstractParameterizedCallableImpl;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.NotNullIterator;
+import com.sworddance.util.map.ConcurrentInitializedMap;
 
 /**
  * Designed to handle the problems of extending standard definitions. Notes:
@@ -29,6 +31,16 @@ public class FlowPropertyDefinitionBuilder {
 
     private FlowPropertyDefinitionImplementor flowPropertyDefinition;
 
+    private static final Map<Class<?>, String> propertyNameFromClassName = new ConcurrentInitializedMap<>(new AbstractParameterizedCallableImpl<String>() {
+        @Override
+        public String executeCall(Object... parameters) throws Exception {
+            Class<?> clazz = getKeyFromParameters(parameters);
+            String simpleName = clazz.getSimpleName();
+            String propertyName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1);
+            return propertyName;
+        }
+
+    });
     public FlowPropertyDefinitionBuilder() {
 
     }
@@ -163,6 +175,11 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>... collectionClasses) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
+        return this;
+    }
+    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(Class<? extends Object> dataClass, Class<?>... collectionClasses) {
+        String name = toPropertyName(dataClass);
         this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
         return this;
     }
@@ -369,7 +386,7 @@ public class FlowPropertyDefinitionBuilder {
 		return this;
 	}
 
-	public  <FPD extends FlowPropertyDefinitionImplementor> FPD  toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
+	public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
 		if (flowTranslatorResolver != null) {
 			flowTranslatorResolver.resolve(null, flowPropertyDefinition);
 		}
@@ -386,5 +403,7 @@ public class FlowPropertyDefinitionBuilder {
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
         return toFlowPropertyDefinition(null);
     }
-
+    public static String toPropertyName(Class<?> clazz) {
+        return propertyNameFromClassName.get(clazz);
+    }
 }

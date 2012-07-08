@@ -1634,6 +1634,10 @@ public class FlowStateImpl implements FlowStateImplementor {
             return (T) getPropertyWithDefinition(this, flowPropertyDefinition);
         }
     }
+    @Override
+    public <T> T getProperty(Class<? extends T> expected) {
+        return getProperty(FlowPropertyDefinitionBuilder.toPropertyName(expected), expected);
+    }
 
     /**
      * @see org.amplafi.flow.FlowState#isActive()

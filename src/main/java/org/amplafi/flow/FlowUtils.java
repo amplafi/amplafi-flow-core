@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.json.JSONStringer;
@@ -53,17 +54,7 @@ public class FlowUtils {
             }
         }
     }
-    /**
-     * Convert a simple class name to a default property name.
-     * For example, com.amplafi.core.BroadcastMessage has a default property name of
-     * "broadcastMessage".
-     * @param dataClass
-     * @return the default property name.
-     */
-    public String toPropertyName(Class<?> dataClass) {
-        String className = dataClass.getSimpleName();
-        return className.substring(0, 1).toLowerCase() + className.substring(1);
-    }
+
     /**
      * Converts a {@link Map} into a {@link List} of <em>key='value'</em> strings.
      *
@@ -157,7 +148,7 @@ public class FlowUtils {
         for (int i=0; i<evenSize; i+=2) {
             String key;
             if ( objects[i] instanceof Class<?>) {
-                key = toPropertyName((Class<?>) objects[i]);
+                key = FlowPropertyDefinitionBuilder.toPropertyName((Class<?>) objects[i]);
             } else {
                 key = objects[i].toString();
             }

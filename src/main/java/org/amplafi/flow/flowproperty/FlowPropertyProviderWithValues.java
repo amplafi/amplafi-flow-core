@@ -42,6 +42,7 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      */
     <T> T getProperty(String key);
     <T> T getProperty(String key, Class<? extends T> expected);
+    <T> T getProperty(Class<? extends T> expected);
 
     /**
      * override to treat some properties as special. This method is called by

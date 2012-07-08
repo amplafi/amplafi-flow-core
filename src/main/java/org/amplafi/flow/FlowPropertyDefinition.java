@@ -78,7 +78,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     String getValidators();
 
     boolean isAssignableFrom(Class<?> clazz);
-    
+
     boolean isFlowTranslatorSet();
 
     /**
@@ -87,6 +87,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * @return true if {@link #getName()} or {@link #getAlternates()} equals possiblePropertyName ( case sensitive check)
      */
     boolean isNamed(String possiblePropertyName);
+    boolean isNamed(Class<?> byClassName);
 
     /**
      * @return true if propertyScope has been explicitly set.
@@ -118,7 +119,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * @return
      */
     List<Object> getObjectsNeedingToBeWired();
-    
+
     <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value);
-    
+
 }

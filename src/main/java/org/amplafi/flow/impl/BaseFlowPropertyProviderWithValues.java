@@ -13,6 +13,7 @@
  */
 package org.amplafi.flow.impl;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 
 /**
@@ -44,9 +45,13 @@ public abstract class BaseFlowPropertyProviderWithValues<FPP extends FlowPropert
     /**
      * @see org.amplafi.flow.FlowActivity#getProperty(java.lang.String)
      */
+    @Override
     @SuppressWarnings("unchecked")
     public final <T> T getProperty(String key) {
         return (T) this.getProperty(key, null);
     }
-
+    public final <T> T getProperty(Class<? extends T> clazz) {
+        String key = FlowPropertyDefinitionBuilder.toPropertyName(clazz);
+        return this.getProperty(key, clazz);
+    }
 }
