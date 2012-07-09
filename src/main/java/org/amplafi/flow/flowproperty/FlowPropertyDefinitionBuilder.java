@@ -191,12 +191,18 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-    public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinitionWithDefault(String name, Class<? extends Object> dataClass,
+    public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinition(Class<? extends Object> dataClass,
         Class<?>... collectionClasses) {
-        return createInternalStateFlowPropertyDefinitionWithDefault(name, dataClass, PropertyScope.flowLocal, collectionClasses);
+        String name = toPropertyName(dataClass);
+        return createInternalStateFlowPropertyDefinition(name, dataClass, PropertyScope.flowLocal, collectionClasses);
     }
 
-    public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinitionWithDefault(String name, Class<? extends Object> dataClass,
+    public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinition(String name, Class<? extends Object> dataClass,
+        Class<?>... collectionClasses) {
+        return createInternalStateFlowPropertyDefinition(name, dataClass, PropertyScope.flowLocal, collectionClasses);
+    }
+
+    public FlowPropertyDefinitionBuilder createInternalStateFlowPropertyDefinition(String name, Class<? extends Object> dataClass,
         PropertyScope propertyScope, Class<?>... collectionClasses) {
         ApplicationIllegalArgumentException.valid(propertyScope != PropertyScope.global, "internalState cannot be global");
         this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, null, collectionClasses).initAccess(propertyScope,
