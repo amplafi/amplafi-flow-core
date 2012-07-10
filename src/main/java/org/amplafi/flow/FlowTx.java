@@ -31,6 +31,7 @@ public interface FlowTx {
 
     /**
      * @param entity
+     * @return the object in db on success, may not be entity.
      */
-    void saveOrUpdate(Object entity);
+    <T> T saveOrUpdate(T entity);
 }
