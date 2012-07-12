@@ -48,7 +48,7 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     void setPropertyScope(PropertyScope propertyScope);
 
     void setPropertyUsage(PropertyUsage propertyUsage);
-    <T extends FlowPropertyDefinitionImplementor> T clone();
+    Object clone();
 
     /**
      * @return collection of property that if changed should invalidate this property.
@@ -90,9 +90,9 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinitionImplementor initPropertyUsage(PropertyUsage propertyUsage);
 
     FlowPropertyDefinitionImplementor initTranslator(FlowTranslator<?> flowTranslator);
-    
+
     FlowPropertyDefinitionImplementor initDefaultObject(Object o);
-    
+
     /**
      * @param propertyScope
      * @param propertyUsage

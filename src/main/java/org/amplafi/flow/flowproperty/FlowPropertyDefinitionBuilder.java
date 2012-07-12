@@ -46,7 +46,7 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
-        this.flowPropertyDefinition = flowPropertyDefinitionImplementor.clone();
+        this.flowPropertyDefinition = (FlowPropertyDefinitionImplementor) flowPropertyDefinitionImplementor.clone();
         return this;
     }
 
