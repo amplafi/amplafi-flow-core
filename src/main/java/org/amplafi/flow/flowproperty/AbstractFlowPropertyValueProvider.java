@@ -93,12 +93,21 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
         return (T) getSafe(flowPropertyProvider, flowPropertyDefinition, propertyName, null);
     }
-    protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected) {
-        if ( flowPropertyDefinition.isNamed(propertyName)) {
-            return null;
-        } else {
-            return flowPropertyProvider.getProperty(propertyName, expected);
+    protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<T> propertyClass) {
+        return getSafe(flowPropertyProvider, flowPropertyDefinition, null, propertyClass);
+    }
+    protected <T> T getSafe(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> propertyClass) {
+        if ( propertyName != null ) {
+            if (!flowPropertyDefinition.isNamed(propertyName) ) {
+                return flowPropertyProvider.getProperty(propertyName, propertyClass);
+            }
+        } else if ( propertyClass != null ) {
+            if ( !flowPropertyDefinition.isNamed(propertyClass) ) {
+                return flowPropertyProvider.getProperty(propertyClass);
+            }
         }
+        // TODO throw exception?
+        return null;
     }
     /**
      *
@@ -118,6 +127,12 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         ApplicationNullPointerException.notNull(result, propertyName, messages);
         return result;
     }
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<? extends T> propertyClass, Object...messages) {
+        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyClass), propertyClass);
+        T result = flowPropertyProvider.getProperty(propertyClass);
+        ApplicationNullPointerException.notNull(result, propertyClass, messages);
+        return result;
+    }
 
     public Collection<String> getPropertiesHandled() {
         return this.getFlowPropertyDefinitionNames();
@@ -128,6 +143,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
      * @param flowPropertyDefinition
      * @return true if this {@link FlowPropertyDefinitionProvider} handles the {@link FlowPropertyDefinition}.
      */
+    @Override
     public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
         for(String propertyName: getPropertiesHandled()) {
             if (flowPropertyDefinition.isNamed(propertyName)) {
@@ -140,6 +156,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     /**
      * @return the flowPropertyProviderClass
      */
+    @Override
     public Class<FPP> getFlowPropertyProviderClass() {
         return this.flowPropertyProviderClass;
     }
