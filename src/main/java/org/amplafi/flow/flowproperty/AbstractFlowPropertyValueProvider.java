@@ -82,6 +82,8 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
      *
+     * ONLY use when in the get() method not when doing a saveChanges() call.
+     *
      * Use {@link #getRequired(FlowPropertyProviderWithValues, FlowPropertyDefinition, String, Object...)} if a value should always be returned.
      * @param <T>
      * @param flowPropertyProvider -- should this be FPP?
@@ -109,6 +111,23 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         // TODO throw exception?
         return null;
     }
+    @SuppressWarnings("unchecked")
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+        return (T) getProperty(flowPropertyProvider, flowPropertyDefinition, propertyName, null);
+    }
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<T> propertyClass) {
+        return getProperty(flowPropertyProvider, flowPropertyDefinition, null, propertyClass);
+    }
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> propertyClass) {
+        if ( propertyName != null ) {
+            return flowPropertyProvider.getProperty(propertyName, propertyClass);
+        } else if ( propertyClass != null ) {
+            return flowPropertyProvider.getProperty(propertyClass);
+        }
+        // TODO throw exception?
+        return null;
+    }
+
     /**
      *
      * @param <T>
@@ -159,5 +178,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     @Override
     public Class<FPP> getFlowPropertyProviderClass() {
         return this.flowPropertyProviderClass;
+    }
+
+    protected void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
+        throw new UnsupportedOperationException("no method defined");
+    }
+    public void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        Object property = flowPropertyProvider.getProperty(flowPropertyDefinition.getName());
+        saveChanges(flowPropertyProvider, flowPropertyDefinition, property);
     }
 }

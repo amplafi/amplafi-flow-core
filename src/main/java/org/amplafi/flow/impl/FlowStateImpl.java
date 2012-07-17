@@ -47,6 +47,7 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 
+import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
 import com.sworddance.util.map.NamespaceMapKey;
@@ -1715,6 +1716,19 @@ public class FlowStateImpl implements FlowStateImplementor {
             currentActivity.setProperty(key, value);
         } else {
             Class<T> expected = (Class<T>) (value == null?null:value.getClass());
+            FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
+            setPropertyWithDefinition(null, flowPropertyDefinition, value);
+        }
+    }
+    @Override
+    public <T> void setProperty(T value) {
+        ApplicationNullPointerException.notNull(value, "Cannot set by className if the property is null");
+        if (isActive()) {
+            FlowActivity currentActivity = getCurrentActivity();
+            currentActivity.setProperty(value);
+        } else {
+            Class<T> expected = (Class<T>) value.getClass();
+            String key = FlowPropertyDefinitionBuilder.toPropertyName(expected);
             FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
             setPropertyWithDefinition(null, flowPropertyDefinition, value);
         }
