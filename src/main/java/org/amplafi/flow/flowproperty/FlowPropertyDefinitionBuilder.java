@@ -143,6 +143,11 @@ public class FlowPropertyDefinitionBuilder {
                 .initAccess(PropertyScope.flowLocal, PropertyUsage.initialize);
         return this;
     }
+
+    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, DataClassDefinitionImpl dataClassDefinition) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name,dataClassDefinition);
+        return this;
+    }
     /**
      * create a {@link FlowPropertyDefinition} for a property whose value is recomputed for every
      * request. Use case: very dynamic properties for example, a status message.
