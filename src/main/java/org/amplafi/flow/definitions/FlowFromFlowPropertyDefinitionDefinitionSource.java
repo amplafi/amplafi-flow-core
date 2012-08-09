@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
@@ -45,9 +44,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     public FlowFromFlowPropertyDefinitionDefinitionSource(FlowPropertyDefinitionImplementor...flowPropertyDefinitionImplementors) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
             String flowPropertyName = flowPropertyDefinitionImplementor.getName();
-            String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
-            FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
-            flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
+            FlowImpl flow = createFlow(flowPropertyName);
             FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
             flowActivity.addPropertyDefinition(flowPropertyDefinitionImplementor);
             flow.addActivity(flowActivity);
@@ -57,8 +54,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
 
     // HACK having to pass in the property name seems weak.
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
-        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
+        FlowImpl flow = createFlow(flowPropertyName);
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
         flow.addActivity(flowActivity);
@@ -77,9 +73,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
             List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames();
             ApplicationIllegalArgumentException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
             for(String flowPropertyName : outputFlowPropertyDefinitionNames) {
-                String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
-                FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
-                flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FlowConstants.FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
+                FlowImpl flow = createFlow(flowPropertyName);
                 FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
                 // make sure the property being returned has a value set.
                 flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(flowPropertyName, FlowActivityPhase.finish, null, null, null)));
@@ -87,6 +81,12 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
                 put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
             }
         }
+    }
+    private FlowImpl createFlow(String flowPropertyName) {
+        String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
+        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
+        flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
+        return flow;
     }
     /**
      * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)
