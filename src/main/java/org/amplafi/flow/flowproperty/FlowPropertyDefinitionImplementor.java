@@ -109,4 +109,5 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
      * @return
      */
     FlowPropertyDefinitionImplementor initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider);
+    FlowPropertyDefinitionImplementor initSensitive();
 }

@@ -339,6 +339,11 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
+    public FlowPropertyDefinitionBuilder initSensitive() {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initSensitive();
+        return this;
+    }
+
     public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage,
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initAccess(propertyScope, propertyUsage, externalPropertyAccessRestriction);
