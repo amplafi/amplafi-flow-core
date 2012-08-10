@@ -1,6 +1,6 @@
 package org.amplafi.flow.definitions;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +12,6 @@ import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -21,8 +20,6 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
-import com.sworddance.util.NotNullIterator;
-
 import static com.sworddance.util.CUtilities.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
 import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
@@ -41,22 +38,20 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     public FlowFromFlowPropertyDefinitionDefinitionSource() {
 
     }
-    public FlowFromFlowPropertyDefinitionDefinitionSource(FlowPropertyDefinitionImplementor...flowPropertyDefinitionImplementors) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
-            String flowPropertyName = flowPropertyDefinitionImplementor.getName();
-            FlowImpl flow = createFlow(flowPropertyName);
-            FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
-            flowActivity.addPropertyDefinition(flowPropertyDefinitionImplementor);
-            flow.addActivity(flowActivity);
-            put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
-        }
-    }
 
-    // HACK having to pass in the property name seems weak.
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        FlowImpl flow = createFlow(flowPropertyName);
+        List<FlowPropertyExpectation>configurationParameters = new ArrayList<>();
+        if ( isNotEmpty(additionalConfigurationParameters)) {
+            configurationParameters.addAll(additionalConfigurationParameters);
+        }
+        configurationParameters.add(new FlowPropertyExpectationImpl(flowPropertyName, FlowActivityPhase.finish, null, null, null));
+
+        String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
+        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
+        flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
+
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
-        flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
+        flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, configurationParameters);
         flow.addActivity(flowActivity);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
     }
@@ -73,21 +68,11 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
             List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames();
             ApplicationIllegalArgumentException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
             for(String flowPropertyName : outputFlowPropertyDefinitionNames) {
-                FlowImpl flow = createFlow(flowPropertyName);
-                FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
-                // make sure the property being returned has a value set.
-                flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(flowPropertyName, FlowActivityPhase.finish, null, null, null)));
-                flow.addActivity(flowActivity);
-                put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
+                this.add(flowPropertyName, flowPropertyDefinitionProvider, null);
             }
         }
     }
-    private FlowImpl createFlow(String flowPropertyName) {
-        String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
-        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
-        flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
-        return flow;
-    }
+
     /**
      * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)
      */
