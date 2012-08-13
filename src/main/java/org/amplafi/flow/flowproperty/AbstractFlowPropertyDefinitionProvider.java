@@ -127,8 +127,8 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     	FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
         // TODO : also create a "read-only" v. writeable property mechanism
     	// TODO feels like it should be part of an 'FlowPropertyDefinitionBuilder.apply()' method
-        if ( !returnedFlowPropertyDefinition.isCacheOnly()) {
-        	// only set persisters on non-cache-only objects.
+        if ( !returnedFlowPropertyDefinition.isReadOnly()) {
+        	// only set persisters on non-read-only objects.
             FlowPropertyValuePersister<?> flowPropertyValuePersister = returnedFlowPropertyDefinition.getFlowPropertyValuePersister();
             if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider && flowPropertyValuePersister != this){
                 // TODO: note: infinite loop possibilities here if 2 different objects have mutually dependent FPDs

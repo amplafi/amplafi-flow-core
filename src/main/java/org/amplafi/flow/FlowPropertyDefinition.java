@@ -50,8 +50,23 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * @return true if {@link #getDefaultObject(FlowPropertyProvider)} will return a value
      */
     boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider);
-    // TODO: define circumstances where this is used as opposed to just not having a persister.
+    /**
+     * NOTE: an property could be cacheOnly AND !isReadOnly() this means the object must be saved before the current tx (request) completes.
+     * @return true this means the object cannot be serialized.
+     */
     boolean isCacheOnly();
+
+    /**
+     * A {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider} may provide a {@link org.amplafi.flow.flowproperty.FlowPropertyValuePersister}
+     * but the created {@link FlowPropertyDefinition} may often times be used in situations where the changes to the property should not be
+     * persisted.
+     *
+     * Usually such changes to a readonly property are a sign of a bug or hack attempt.
+     *
+     * TODO: log property changes that are not persisted.
+     * @return true if property changes are not to be persisted.
+     */
+    boolean isReadOnly();
 
     /**
      *

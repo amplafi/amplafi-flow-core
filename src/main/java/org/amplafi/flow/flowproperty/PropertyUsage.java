@@ -199,9 +199,11 @@ public enum PropertyUsage {
 
     /**
      * This differs from {@link #isOutputedProperty()} because the property previous value may be altered to null ( i.e. the property is unset ).
-     * This is the case for {@link #consume}.
+     * This is the case for {@link #consume} which sets the property to null but does not output a value.
      *
-     * @return
+     * For case of {@link #io}, the property may or may not change ( not known for certain.)
+     *
+     * @return null if not known if property is altered. Assume to be true when determining if property is readonly. Return true if property will for certain be altered.
      */
     public Boolean getAltersProperty() {
         return this.altersProperty;

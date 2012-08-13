@@ -46,7 +46,7 @@ public enum PropertyScope {
      *
      * TODO put in a flowState.lookupKey namespace
      */
-    flowLocal(true, use, false, PropertyUsage.values()),
+    flowLocal(use),
     /**
      * If {@link PropertyUsage} is NOT {@link PropertyUsage#initialize},
      * Initial value is copied from flow namespace or no value in flow namespace then the global namespace.
@@ -56,7 +56,7 @@ public enum PropertyScope {
      * This allows a FA to have a private namespace so it can save info knowing
      * that it will not impact another FA.
      */
-    activityLocal(true, use, false, PropertyUsage.values()),
+    activityLocal(use),
     /**
      * The property is not saved into the flowState map. It is available for the current request only
      * and is cleared when current transaction completes. It has the same scope as flowLocal
@@ -121,6 +121,9 @@ public enum PropertyScope {
      * this prevents passwords from being saved into the flowstate db table.
      */
     private final boolean cacheOnly;
+    private PropertyScope(PropertyUsage defaultPropertyUsage) {
+        this(true, defaultPropertyUsage, false, PropertyUsage.values());
+    }
     private PropertyScope(boolean localToFlow, PropertyUsage defaultPropertyUsage, boolean cacheOnly, PropertyUsage... allowedPropertyUsages) {
         this.localToFlow = localToFlow;
         this.defaultPropertyUsage = defaultPropertyUsage;

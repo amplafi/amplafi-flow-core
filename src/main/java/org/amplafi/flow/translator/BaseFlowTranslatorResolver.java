@@ -113,11 +113,13 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         if ( standardFlowPropertyDefinitionBuilder != null) {
             definition.merge(standardFlowPropertyDefinitionBuilder.toFlowPropertyDefinition());
         }
+        // TODO: do we need to look at definition.isReadOnly() ?
         if ( !resolve(context+definition.getName()+":", definition.getDataClassDefinition(), !definition.isCacheOnly())) {
             // TODO: anything special?
         }
         ((FlowPropertyDefinitionImplementor)definition).initialize();
     }
+    @Override
     public boolean resolve(String context, DataClassDefinition definition, boolean resolvedRequired) {
         if (definition == null || definition.isFlowTranslatorSet()) {
             return true;
@@ -181,6 +183,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     /**
      * @param flowPropertyProvider
      */
+    @Override
     public void resolve(FlowPropertyProvider flowPropertyProvider) {
         if ( flowPropertyProvider != null && (!(flowPropertyProvider instanceof Resolvable) || !((Resolvable)flowPropertyProvider).isResolved() )) {
             Map<String, FlowPropertyDefinition> propertyDefinitions = flowPropertyProvider.getPropertyDefinitions();
@@ -198,6 +201,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
             resolve(context, definition);
         }
     }
+    @Override
     public IJsonWriter getJsonWriter() {
         IJsonWriter writer = new JSONStringer(new MapByClass<JsonRenderer<?>>(this.jsonRenderers));
         return writer;

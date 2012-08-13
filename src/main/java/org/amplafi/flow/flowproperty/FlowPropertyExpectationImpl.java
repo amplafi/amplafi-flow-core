@@ -63,6 +63,9 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyExpectationImpl(String name, FlowPropertyValueProvider flowPropertyValueProvider) {
         this(name, null, null, null, null, flowPropertyValueProvider, null, null);
     }
+    public FlowPropertyExpectationImpl(String name, PropertyUsage propertyUsage) {
+        this(name, null, null, propertyUsage, null, null, null, null);
+    }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, null);
@@ -87,12 +90,14 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     /**
      * @return the flowPropertyValueChangeListeners
      */
+    @Override
     public List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners() {
         return flowPropertyValueChangeListeners;
     }
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -104,21 +109,25 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     /**
      * @return the propertyRequired
      */
+    @Override
     public FlowActivityPhase getPropertyRequired() {
         return propertyRequired;
     }
     /**
      * @return the propertyScope
      */
+    @Override
     public PropertyScope getPropertyScope() {
         return propertyScope;
     }
     /**
      * @return the propertyUsage
      */
+    @Override
     public PropertyUsage getPropertyUsage() {
         return propertyUsage;
     }
+    @Override
     @SuppressWarnings("unchecked")
     public <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider() {
         return (FlowPropertyValueProvider<FA>)flowPropertyValueProvider;
@@ -128,6 +137,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         return getName() == null || flowPropertyDefinition.isNamed(getName());
     }
+    @Override
     public FlowPropertyValuePersister getFlowPropertyValuePersister() {
         return flowPropertyValuePersister;
     }
@@ -145,10 +155,12 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     /**
      * @return the dataClassDefinition
      */
+    @Override
     public DataClassDefinition getDataClassDefinition() {
         return dataClassDefinition;
     }
 
+    @Override
     public Class<? extends Object> getDataClass() {
         return getDataClassDefinition().getDataClass();
     }

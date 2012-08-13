@@ -260,11 +260,6 @@ public class FlowPropertyDefinitionBuilder {
                     // forces a new valueProvider
                     initFlowPropertyValueProvider(flowPropertyValueProvider);
                 }
-                FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
-                if (flowPropertyValuePersister != null) {
-                    // forces a new flowPropertyValuePersister
-                    initFlowPropertyValuePersister(flowPropertyValuePersister);
-                }
 
                 // TODO: Need to do test and clone!!
                 FlowActivityPhase flowActivityPhase = flowPropertyExpectation.getPropertyRequired();
@@ -279,8 +274,16 @@ public class FlowPropertyDefinitionBuilder {
                 if (propertyUsage != null) {
                     this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
                 }
+                if ( !this.flowPropertyDefinition.isReadOnly()) {
+                    FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
+                    if (flowPropertyValuePersister != null) {
+                        // forces a new flowPropertyValuePersister
+                        initFlowPropertyValuePersister(flowPropertyValuePersister);
+                    }
+                }
             }
         }
+
         return this;
     }
 
@@ -351,7 +354,7 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder applyDefaultProviders(Object... defaultProviders) {
-        boolean needPersister = this.flowPropertyDefinition.getFlowPropertyValuePersister() == null && !this.flowPropertyDefinition.isCacheOnly();
+        boolean needPersister = this.flowPropertyDefinition.getFlowPropertyValuePersister() == null && !this.flowPropertyDefinition.isReadOnly();
         boolean needProvider = !this.flowPropertyDefinition.isDefaultAvailable();
         for (Object provider : NotNullIterator.<Object> newNotNullIterator(defaultProviders)) {
             if (needPersister && (provider instanceof FlowPropertyValuePersister)) {
@@ -405,6 +408,10 @@ public class FlowPropertyDefinitionBuilder {
 	public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
 		if (flowTranslatorResolver != null) {
 			flowTranslatorResolver.resolve(null, flowPropertyDefinition);
+		}
+		// additional cleanup
+		if ( this.flowPropertyDefinition.isReadOnly()) {
+		    this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(null);
 		}
 		return (FPD) this.flowPropertyDefinition;
 	}

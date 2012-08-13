@@ -905,6 +905,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return getPropertyScope().isCacheOnly();
     }
 
+    @Override
+    public boolean isReadOnly() {
+        return getPropertyUsage().getAltersProperty() == Boolean.FALSE;
+    }
     /**
      * Sets autoCreate to true - meaning that if the property does not exist in
      * the cache, a new instance is created. <p/> Uses
