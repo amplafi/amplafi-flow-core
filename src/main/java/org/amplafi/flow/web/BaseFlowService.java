@@ -134,12 +134,12 @@ public class BaseFlowService implements FlowService {
 		        put(initial, FSREFERRING_URL, flowRequest.getReferingUri());
         	} else {
         		initial = Collections.emptyMap();
+        		//Only render when client is supposed to see the result.
+        		if (!flowResponse.isRedirectSet()) {
+        			flowResponse.render(renderer);
+        		}
         	}
 			doActualService(flowRequest, flowResponse, initial);
-        }
-        //Only render when client is supposed to see the result.
-        if (!flowResponse.isRedirectSet()) {
-        	flowResponse.render(renderer);
         }
     }
 
