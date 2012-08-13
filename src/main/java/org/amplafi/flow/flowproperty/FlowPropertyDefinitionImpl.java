@@ -318,7 +318,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     @Override
-    public FlowPropertyDefinitionImplementor initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
+    public FlowPropertyDefinitionImpl initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
     	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, flowPropertyValueProvider);
     	flowPropertyDefinition.factoryFlowPropertyValueProvider = flowPropertyValueProvider;
     	return flowPropertyDefinition;
@@ -705,6 +705,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     	flowPropertyDefinition.setExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
         return flowPropertyDefinition;
     }
+    @Override
     public FlowPropertyDefinitionImpl initSensitive() {
     	return initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction.noAccess);
     }

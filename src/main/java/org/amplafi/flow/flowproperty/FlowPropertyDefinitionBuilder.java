@@ -29,7 +29,7 @@ import com.sworddance.util.map.ConcurrentInitializedMap;
  */
 public class FlowPropertyDefinitionBuilder {
 
-    private FlowPropertyDefinitionImplementor flowPropertyDefinition;
+    private FlowPropertyDefinitionImpl flowPropertyDefinition;
 
     private static final Map<Class<?>, String> propertyNameFromClassName = new ConcurrentInitializedMap<>(new AbstractParameterizedCallableImpl<String>() {
         @Override
@@ -46,7 +46,7 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
-        this.flowPropertyDefinition = (FlowPropertyDefinitionImplementor) flowPropertyDefinitionImplementor.clone();
+        this.flowPropertyDefinition = (FlowPropertyDefinitionImpl) flowPropertyDefinitionImplementor.clone();
         return this;
     }
 
@@ -421,5 +421,10 @@ public class FlowPropertyDefinitionBuilder {
     }
     public static String toPropertyName(Class<?> clazz) {
         return propertyNameFromClassName.get(clazz);
+    }
+
+    public FlowPropertyDefinitionBuilder initAutoCreate() {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initAutoCreate();
+        return null;
     }
 }
