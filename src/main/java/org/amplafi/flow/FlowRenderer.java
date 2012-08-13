@@ -30,9 +30,10 @@ public interface FlowRenderer {
 
 	/**
 	 * TODO
+	 * @param writer TODO
 	 *
 	 */
-	public void describeFlow(FlowResponse flowRequest, String flowType);
+	public void describeFlow(Writer writer, String flowType);
 
 	void render(Writer writer, FlowState flowState, String errorMessage,
 			Exception exception);

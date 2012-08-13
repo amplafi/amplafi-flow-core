@@ -34,9 +34,9 @@ import com.sworddance.util.CUtilities;
 public class JsonFlowRenderer implements FlowRenderer {
 
 	private FlowDefinitionsManager flowDefinitionsManager;
-	
+
  	private Log log;
-	
+
 	public JsonFlowRenderer() {
 	}
 
@@ -78,7 +78,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 				writer.append(jsonWriter.toString());
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
-			}			
+			}
 		}
 	}
 
@@ -98,7 +98,7 @@ public class JsonFlowRenderer implements FlowRenderer {
                 // TODO : probably need to check on PropertyRequired.finish
                 Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
                 writeValidationResult(jsonWriter, result);
-            } 
+            }
             if (exception instanceof FlowValidationException) {
                 FlowValidationException e = (FlowValidationException) exception;
                 Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
@@ -120,7 +120,7 @@ public class JsonFlowRenderer implements FlowRenderer {
             }
 		}
 	}
-	
+
 	private void writeValidationResult(JSONWriter jsonWriter, Map<String, FlowValidationResult> result) {
         if (result != null && !result.isEmpty()) {
             jsonWriter.key(ServicesConstants.VALIDATION_ERRORS).value(result);
@@ -128,9 +128,8 @@ public class JsonFlowRenderer implements FlowRenderer {
     }
 
 	@Override
-	public void describeFlow(FlowResponse flowResponse, String flowType) {
+	public void describeFlow(Writer writer, String flowType) {
 		try{
-			Writer writer = flowResponse.getWriter();
 			if (StringUtils.isBlank(flowType)) {
 				Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
 				JSONWriter jWriter = new JSONWriter();

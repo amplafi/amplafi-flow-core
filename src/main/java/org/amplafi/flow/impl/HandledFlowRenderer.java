@@ -26,7 +26,7 @@ public class HandledFlowRenderer implements FlowRenderer {
 	}
 
 	@Override
-	public void describeFlow(FlowResponse flowRequest, String flowType) {
+	public void describeFlow(Writer writer, String flowType) {
 		
 	}
 

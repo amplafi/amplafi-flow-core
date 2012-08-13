@@ -107,7 +107,7 @@ public class BaseFlowService implements FlowService {
     public void service(FlowRequest flowRequest, FlowResponse flowResponse)  {
     	FlowRenderer renderer = getRenderer(flowRequest.getRenderResultType());
         if (flowRequest.isDescribeRequest()) {
-			renderer.describeFlow(flowResponse, flowRequest.getFlowType());
+			renderer.describeFlow(flowResponse.getWriter(), flowRequest.getFlowType());
         } else {
         	Map<String, String> initial = null;
         	if (!flowRequest.hasFlowState()) {
@@ -284,7 +284,7 @@ public class BaseFlowService implements FlowService {
                 getFlowManagement().dropFlowState(flowState);
                 flowResponse.setFlowState(flowState);
             }
-        } 
+        }
         return flowState;
     }
 
