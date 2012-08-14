@@ -432,6 +432,6 @@ public class FlowPropertyDefinitionBuilder {
 
     public FlowPropertyDefinitionBuilder initAutoCreate() {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initAutoCreate();
-        return null;
+        return this;
     }
 }
