@@ -39,9 +39,14 @@ import org.amplafi.flow.FlowState;
  */
 public enum ExternalPropertyAccessRestriction {
     /**
-     * can be accessed externally both for modification, viewing
+     * no access. These are properties that are really internal state only.
+     * The value is usually a configuration property.
+     *
+     * Property must NOT be included in auto generated documentation.
+     * TODO maybe an explicit configOnly enum?
+     * TODO need method to allow setting secured parameters?
      */
-    noRestrictions(true, true),
+    noAccess(false, false),
     /**
      * property value is visible external to the user. property value cannot be modified even during the Flow.
      * The change prohibition during the flow
@@ -56,12 +61,10 @@ public enum ExternalPropertyAccessRestriction {
      */
     writeonly(false, true),
     /**
-     * no access. These are properties that are really internal state only.
-     * Property must NOT be included in auto generated documentation.
-     *
-     * TODO need method to allow setting secured parameters?
+     * can be accessed externally both for modification, viewing
      */
-    noAccess(false, false);
+    noRestrictions(true, true);
+
     private final boolean externalReadAccessAllowed;
     private final boolean externalWriteAccessAllowed;
     /**

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
+
 import static com.sworddance.util.CUtilities.*;
 import com.sworddance.util.NotNullIterator;
 
@@ -139,7 +140,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     /**
-     *
+     * called in {@link org.amplafi.flow.impl.FlowActivityImpl#addStandardFlowPropertyDefinitions} or a {@link org.amplafi.flow.impl.FlowActivityImpl} subclass's method.
      * @param flowPropertyProvider
      */
     public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
@@ -147,7 +148,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     /**
-     *
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters - a list because we want consistent fixed order that the additionalConfigurationParameters are applied.
      */

@@ -123,6 +123,7 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * Used to create a value that must be available by the time the flow completes.
      *
+     * TODO use {@link FlowPropertyExpectationImpl#API_RETURN_VALUE}
      * @param name
      * @param dataClass
      * @param collectionClasses

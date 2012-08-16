@@ -27,6 +27,8 @@ import com.sworddance.util.map.MapKeyed;
 /**
  * Describes a property that is expected AND the characteristics of the expected property to the extent desired.
  * This additional pattern matching avoids false positives.
+ *
+ * TODO:Also used to describe properties that another FlowProperty needs.
  * @author patmoore
  *
  */

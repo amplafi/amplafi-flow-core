@@ -21,10 +21,6 @@ package org.amplafi.flow;
  */
 public enum FlowActivityPhase {
     /**
-     * explicit declaration that it is optional.
-     */
-    optional(false),
-    /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
      * Use for properties that must be set by prior steps for the FlowActivity to function correctly.
      *
@@ -50,7 +46,11 @@ public enum FlowActivityPhase {
     /**
      * FlowProperty is required to be set prior to calling the {@link org.amplafi.flow.FlowActivity#finishFlow(org.amplafi.flow.FlowState)}.
      */
-    finish(true);
+    finish(true),
+    /**
+     * explicit declaration that it is optional.
+     */
+    optional(false);
     private final boolean advancing;
     FlowActivityPhase(boolean advancing) {
         this.advancing = advancing;
@@ -76,5 +76,22 @@ public enum FlowActivityPhase {
             return true;
         }
         return false;
+    }
+    /**
+     * will be used to resolve
+     * @param flowActivityPhase1
+     * @param flowActivityPhase2
+     * @return
+     */
+    public static FlowActivityPhase earliest(FlowActivityPhase flowActivityPhase1, FlowActivityPhase flowActivityPhase2) {
+        if (flowActivityPhase1 == null || flowActivityPhase1 == flowActivityPhase2) {
+            return flowActivityPhase2;
+        } else if ( flowActivityPhase2 == null ) {
+            return flowActivityPhase1;
+        } else if ( flowActivityPhase1.ordinal() < flowActivityPhase2.ordinal()) {
+            return flowActivityPhase1;
+        } else {
+            return flowActivityPhase2;
+        }
     }
 }
