@@ -34,6 +34,7 @@
         <service id="JsonSelfRendererFlowTranslator"/>
         <service id="FlowAwareJsonSelfRendererFlowTranslator"/>
         <service id="JSONObjectFlowTranslator"/>
+        <service id="JSONArrayFlowTranslator"/>
         <service id="LongFlowTranslator"/>
         <service id="IntegerFlowTranslator"/>
         <service id="BooleanFlowTranslator"/>
@@ -77,6 +78,12 @@
     <service-point id="JSONObjectFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
         <invoke-factory>
             <construct class="org.amplafi.flow.translator.JSONObjectFlowTranslator">
+            </construct>
+        </invoke-factory>
+    </service-point>
+    <service-point id="JSONArrayFlowTranslator" interface="org.amplafi.flow.translator.FlowTranslator">
+        <invoke-factory>
+            <construct class="org.amplafi.flow.translator.JSONArrayFlowTranslator">
             </construct>
         </invoke-factory>
     </service-point>

@@ -131,10 +131,10 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
                 resolved &= resolve(context+definition.getKeyClass()+"(key):", definition.getKeyDataClassDefinition(), resolvedRequired);
                 return resolved;
             } else if (resolvedRequired) {
-                getLog().warn(context+definition+ " was not able to determine the correct FlowTranslator.");
+                getLog().warn(context+":"+definition+ " was not able to determine the correct FlowTranslator.");
                 return false;
             } else {
-                getLog().debug(context+definition+ " was not able to determine the correct FlowTranslator. But resolving class was not required, so it may not matter. ( usually this means FlowProperty is cache only)");
+                getLog().debug(context+":"+definition+ " was not able to determine the correct FlowTranslator. But resolving class was not required, so it may not matter. ( usually this means FlowProperty is cache only)");
                 return false;
             }
         }
