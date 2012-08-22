@@ -411,7 +411,7 @@ public class FlowPropertyDefinitionBuilder {
 			flowTranslatorResolver.resolve(null, flowPropertyDefinition);
 		}
 		// additional cleanup
-		if ( this.flowPropertyDefinition.isReadOnly()) {
+		if ( this.flowPropertyDefinition.isReadOnly() && this.flowPropertyDefinition.getFlowPropertyValuePersister() != null) {
 		    this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(null);
 		}
 		return (FPD) this.flowPropertyDefinition;
