@@ -47,10 +47,11 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
 
     public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
-            flowPropertyDefinitionBuilder.applyDefaultProviders(this);
             FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             outputed.setTemplateFlowPropertyDefinition();
             put(this.flowPropertyDefinitions, outputed);
+            // Apply default of the defining FlowPropertyValueProvider.
+            flowPropertyDefinitionBuilder.applyDefaultProviders(this);
         }
     }
     public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
@@ -99,10 +100,18 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionImplementor>flowPropertyDefinitions, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: flowPropertyDefinitions) {
-            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
-        	FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = initPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
-            flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
+            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionImplementor, additionalConfigurationParameters);
         }
+    }
+    protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
+        FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+        addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
+    }
+    protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+        FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = initPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
+        flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
     }
 
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
