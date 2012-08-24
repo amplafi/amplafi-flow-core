@@ -41,6 +41,15 @@ public class FlowPropertyDefinitionBuilder {
         }
 
     });
+
+    /**
+     * To return a api value,
+     * 1) the property must be initialized when the call completes,
+     * 2) the property must local to at least flow
+     */
+    public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
+    public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, PropertyUsage.io, null));
+
     public FlowPropertyDefinitionBuilder() {
 
     }
@@ -123,7 +132,7 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * Used to create a value that must be available by the time the flow completes.
      *
-     * TODO use {@link FlowPropertyExpectationImpl#API_RETURN_VALUE}
+     * TODO use {@link #API_RETURN_VALUE}
      * @param name
      * @param dataClass
      * @param collectionClasses
@@ -377,9 +386,14 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder initTranslator(FlowTranslator<?> flowTranslator) {
-        this.flowPropertyDefinition.initTranslator(flowTranslator);
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initTranslator(flowTranslator);
         return this;
     }
+    public FlowPropertyDefinitionBuilder initElementFlowTranslator(FlowTranslator<?> flowTranslator) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initElementFlowTranslator(flowTranslator);
+        return this;
+    }
+
 
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);

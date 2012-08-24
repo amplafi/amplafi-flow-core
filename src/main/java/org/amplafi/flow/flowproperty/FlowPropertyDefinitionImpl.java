@@ -398,6 +398,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return flowPropertyDefinition;
     }
 
+    public FlowPropertyDefinitionImpl initElementFlowTranslator(FlowTranslator<?> flowTranslator) {
+        FlowTranslator elementFlowTranslator = this.getDataClassDefinition().getElementDataClassDefinition().getFlowTranslator();
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(elementFlowTranslator, flowTranslator);
+        flowPropertyDefinition.getDataClassDefinition().getElementDataClassDefinition().setFlowTranslator(flowTranslator);
+        return flowPropertyDefinition;
+    }
     /**
      * This is used to handle case of parameter name change and 'short' names
      * for uris and the like.

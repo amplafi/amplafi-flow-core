@@ -44,13 +44,6 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     private DataClassDefinition dataClassDefinition;
 
     /**
-     * To return a api value,
-     * 1) the property must be initialized when the call completes,
-     * 2) the property must local to at least flow
-     */
-    public static FlowPropertyExpectation API_RETURN_VALUE = new FlowPropertyExpectationImpl(null, FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly);
-
-    /**
      * All properties should have the
      * @param flowActivityPhase
      */
