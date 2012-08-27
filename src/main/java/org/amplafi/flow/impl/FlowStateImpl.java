@@ -262,30 +262,30 @@ public class FlowStateImpl implements FlowStateImplementor {
         // or just clear out the alternate names of their values.
         List<String> namespaces = flowPropertyDefinition.getNamespaceKeySearchList(this, flowPropertyProvider, true);
         String value = null;
-        boolean valueSet = false;
+        boolean valueExternallySet = false;
         PropertyUsage propertyUsage = flowPropertyDefinition.getPropertyUsage();
+        // make sure property clean up happens even for properties that cannot be set externally.
         for(String namespace: namespaces) {
             for (String alternateName : flowPropertyDefinition.getAllNames()) {
                 if ( getFlowValuesMap().containsKey(namespace, alternateName)) {
-                    if ( !valueSet ) {
+                    if ( !valueExternallySet ) {
                         value = getRawProperty(namespace, alternateName);
-                        valueSet = true;
+                        valueExternallySet = true;
                     }
                     if ( propertyUsage.isCleanOnInitialization()) {
                         // if clearing then we need to clear all possible matches - so we continue with loop.
                         remove(namespace, alternateName);
-                    } else if ( valueSet ) {
+                    } else if ( valueExternallySet ) {
                         break;
                     }
                 }
             }
         }
-      if ( valueSet && !propertyUsage.isExternallySettable()) {
-          valueSet = false;
-      }
-      if ( !valueSet) {
-          value = flowPropertyDefinition.getInitial();
-      }
+        boolean valueSet = valueExternallySet;
+        if ( !valueExternallySet || !propertyUsage.isExternallySettable()) {
+            value = flowPropertyDefinition.getInitial();
+            valueSet = true;
+        }
 //    if ( !valueSet || !propertyUsage.isExternallySettable()) {
 //        if ( !valueSet || !propertyUsage.isExternallySettable()) {
 //            // if property is not set  OR
@@ -305,10 +305,14 @@ public class FlowStateImpl implements FlowStateImplementor {
 //        }
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String currentValue = getRawProperty(namespace, flowPropertyDefinition.getName());
-        if (!StringUtils.equals(value, currentValue)) {
+        if (valueSet && !StringUtils.equals(value, currentValue)) {
             // This code allows FlowPropertyChangeListeners to be triggered when the flow starts up.
-            if (!propertyUsage.isExternallySettable() && currentValue != null) {
+            if (!propertyUsage.isExternallySettable() && valueExternallySet) {
+                // TODO use ExternalPropertyAccessRestriction
                 // property cannot be overridden.
+                // note: this can happen when transitioning (morphing between 2 different flows).
+                // In this case internalState properties are being copied not just user externally supplied values.
+                // TODO: investigate to see if we can clean this up.
                 getLog().info(
                     (flowPropertyProvider==null?getFlow().getFlowPropertyProviderName():flowPropertyProvider.getFlowPropertyProviderFullName())
                                 + '.'
