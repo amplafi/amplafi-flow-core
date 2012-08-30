@@ -14,6 +14,7 @@
 
 package org.amplafi.flow;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.amplafi.flow.impl.BaseFlowManagement;
@@ -22,6 +23,9 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
 import org.amplafi.flow.translator.EnumFlowTranslator;
+import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.JSONArrayFlowTranslator;
+import org.amplafi.flow.translator.JSONObjectFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
 
 import org.apache.commons.logging.Log;
@@ -78,11 +82,15 @@ public class FlowTestingUtils {
     @SuppressWarnings("unchecked")
     private void initializeService() {
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowDefinitionsManager(this.flowDefinitionsManager);
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowTranslators(Arrays.<FlowTranslator<?>>asList(
+            new ShortFlowTranslator(),
+            new EnumFlowTranslator(),
+            new JSONObjectFlowTranslator(),
+            new JSONArrayFlowTranslator()
+            ));
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).addStandardFlowTranslators();
-        ((BaseFlowTranslatorResolver)flowTranslatorResolver).initializeService();
-        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new ShortFlowTranslator());
-        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addFlowTranslator(new EnumFlowTranslator());
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).setFlowTranslatorResolver(flowTranslatorResolver);
+        ((BaseFlowTranslatorResolver)flowTranslatorResolver).initializeService();
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).initializeService();
         ((BaseFlowManagement)this.flowManagement).setFlowManager(flowManager);
         ((BaseFlowManagement)this.flowManagement).setFlowTranslatorResolver(flowTranslatorResolver);
