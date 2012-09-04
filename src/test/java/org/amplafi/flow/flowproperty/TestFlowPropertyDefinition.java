@@ -748,7 +748,7 @@ public class TestFlowPropertyDefinition {
         		return false;
         	}
         };
-        new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("foo", Object.class).initFlowPropertyValueProvider(flowPropertyValueProvider);
+        new FlowPropertyDefinitionBuilder("foo", Object.class).initFlowPropertyValueProvider(flowPropertyValueProvider);
     }
 
     /**

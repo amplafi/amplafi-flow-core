@@ -42,7 +42,7 @@ public enum PropertyScope {
      * Need to make sure that callee Flows get their initial property settings from the caller flow.
      * Do we want flowLocal with inheritance?
      *
-     * Changes are copied back to global namespace if {@link PropertyUsage} is {@link PropertyUsage#io}
+     * On flow success, changes are copied back to global namespace if {@link PropertyUsage} is {@link PropertyUsage#io}
      *
      * TODO put in a flowState.lookupKey namespace
      */
@@ -78,7 +78,10 @@ public enum PropertyScope {
      */
     requestFlowLocal(true, internalState, true),
     /**
-     * A global property represents a property that the current flow has no knowledge of.
+     * A global property represents a property that:
+     * 1) the current flow has no knowledge of the data ( passthrough case )
+     * 2) OR can be changed by the flow in a publicly visible way even if the flow fails.
+     * ( see {@link #flowLocal} )
      *
      * Use cases:
      * 1) a value that is set by called subflow that will be made available to subsequent flows.

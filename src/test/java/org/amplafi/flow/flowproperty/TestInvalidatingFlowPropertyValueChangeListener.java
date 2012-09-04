@@ -14,8 +14,8 @@ public class TestInvalidatingFlowPropertyValueChangeListener {
 
     @Test
     public void testSettingDependentOnProperties() {
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilderDependent = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("dep1", Boolean.class);
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("test", Boolean.class);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilderDependent = new FlowPropertyDefinitionBuilder("dep1", Boolean.class);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder("test", Boolean.class);
         flowPropertyDefinitionBuilder.addPropertiesDependentOn(flowPropertyDefinitionBuilderDependent.toFlowPropertyDefinition());
 
         FlowPropertyDefinitionImplementor flowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
@@ -29,8 +29,8 @@ public class TestInvalidatingFlowPropertyValueChangeListener {
     @Test
     public void testClearingDependentProperties() {
         InvalidatingFlowPropertyValueChangeListener invalidatingFlowPropertyValueChangeListener = new InvalidatingFlowPropertyValueChangeListener();
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilderDependent = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("dep1", Boolean.class);
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition("test", Boolean.class);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilderDependent = new FlowPropertyDefinitionBuilder("dep1", Boolean.class);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder("test", Boolean.class);
         final FlowPropertyDefinitionImplementor flowPropertyDefinitionDependent = flowPropertyDefinitionBuilderDependent.toFlowPropertyDefinition();
         flowPropertyDefinitionBuilder.addPropertiesDependentOn(flowPropertyDefinitionDependent);
 

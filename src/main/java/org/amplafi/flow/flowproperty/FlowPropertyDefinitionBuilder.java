@@ -16,13 +16,20 @@ import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.map.ConcurrentInitializedMap;
 
 /**
- * Designed to handle the problems of extending standard definitions. Notes:
+ * Designed to handle the problems of extending standard definitions.
+ *
+ * Notes:
  * FlowPropertyDefinitionBuilder was introduced because of the problems of having a
  * FlowPropertyDefinition that can be endlessly modified, which then resulted in FPD deciding if
  * they were templates (immutable) or not. With a builder, all {@link FlowPropertyDefinition}s
- * become immutable. Any changes to a FPD require a builder to construct a new FPD. TODO: ? add a
- * way to make an attempt to read an unset property fail rather than return null? Useful for
- * {@link PropertyUsage#getAltersProperty()} == TRUE TODO: should really be a builder ( 1 per FPD )
+ * become immutable.
+ *
+ * TODO: make {@link FlowPropertyDefinitionImpl} immutible.
+ * Any changes to a FPD require a builder to construct a new FPD.
+ *
+ * TODO: ? add a way to make an attempt to read an unset property fail rather than return null? Useful for
+ * {@link PropertyUsage#getAltersProperty()} == TRUE
+ *
  * TODO: remove initDefaultObject() Handles some common use cases
  *
  * @author patmoore
@@ -53,10 +60,22 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyDefinitionBuilder() {
 
     }
+    public FlowPropertyDefinitionBuilder(String name) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name);
+    }
+    public FlowPropertyDefinitionBuilder(String name, DataClassDefinitionImpl dataClassDefinition) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name,dataClassDefinition);
+    }
 
     public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
         this.flowPropertyDefinition = (FlowPropertyDefinitionImpl) flowPropertyDefinitionImplementor.clone();
         return this;
+    }
+    public FlowPropertyDefinitionBuilder(String name, Class<? extends Object> dataClass, Class<?>... collectionClasses) {
+        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
+    }
+    public FlowPropertyDefinitionBuilder(Class<? extends Object> dataClass, Class<?>... collectionClasses) {
+        this(toPropertyName(dataClass), dataClass, collectionClasses);
     }
 
     /**
@@ -154,10 +173,6 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, DataClassDefinitionImpl dataClassDefinition) {
-        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name,dataClassDefinition);
-        return this;
-    }
     /**
      * create a {@link FlowPropertyDefinition} for a property whose value is recomputed for every
      * request. Use case: very dynamic properties for example, a status message.
@@ -186,16 +201,6 @@ public class FlowPropertyDefinitionBuilder {
         FlowActivityPhase whenCreated, Class<?>... collectionClasses) {
         this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, whenCreated, collectionClasses).initAccess(
             PropertyScope.flowLocal, PropertyUsage.suppliesIfMissing);
-        return this;
-    }
-
-    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Class<?>... collectionClasses) {
-        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
-        return this;
-    }
-    public FlowPropertyDefinitionBuilder createFlowPropertyDefinition(Class<? extends Object> dataClass, Class<?>... collectionClasses) {
-        String name = toPropertyName(dataClass);
-        this.flowPropertyDefinition = new FlowPropertyDefinitionImpl(name, dataClass, collectionClasses);
         return this;
     }
 
@@ -447,6 +452,15 @@ public class FlowPropertyDefinitionBuilder {
 
     public FlowPropertyDefinitionBuilder initAutoCreate() {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initAutoCreate();
+        return this;
+    }
+
+    public FlowPropertyDefinitionBuilder addNames(String... alternateNames) {
+        this.flowPropertyDefinition.addAlternateNames(alternateNames);
+        return this;
+    }
+    public FlowPropertyDefinitionBuilder initList(Class<?> elementClass) {
+        this.flowPropertyDefinition.setDataClassDefinition(new DataClassDefinitionImpl(elementClass, List.class));
         return this;
     }
 }

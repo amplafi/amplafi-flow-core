@@ -521,7 +521,7 @@ public class BaseFlowManagement implements FlowManagement {
         // Note: because of read then write possibility then we need to assume that property will be set even if it is not now.
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = getFactoryFlowPropertyDefinitionBuilder(key, expectedClass);
         if (flowPropertyDefinitionBuilder == null) {
-            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFlowPropertyDefinition(key, expectedClass);
+            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expectedClass);
         }
         flowPropertyDefinitionBuilder.initAccess(PropertyScope.global, PropertyUsage.io);
         FlowPropertyDefinitionImplementor propertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();

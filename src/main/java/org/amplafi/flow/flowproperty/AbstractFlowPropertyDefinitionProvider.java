@@ -24,6 +24,9 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 
 import static com.sworddance.util.CUtilities.*;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
+import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
 
 /**
@@ -162,5 +165,56 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters );
+    }
+
+    // -------------------------
+    // convenient default method if subclass implements FlowPropertyValuePersister
+    protected void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
+        throw new UnsupportedOperationException("no method defined");
+    }
+    public void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        Object property = flowPropertyProvider.getProperty(flowPropertyDefinition.getName());
+        saveChanges(flowPropertyProvider, flowPropertyDefinition, property);
+    }
+    // ------------------------
+    @SuppressWarnings("unchecked")
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+        return (T) getProperty(flowPropertyProvider, flowPropertyDefinition, propertyName, null);
+    }
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<T> propertyClass) {
+        return getProperty(flowPropertyProvider, flowPropertyDefinition, null, propertyClass);
+    }
+    protected <T> T getProperty(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> propertyClass) {
+        if ( propertyName != null ) {
+            return flowPropertyProvider.getProperty(propertyName, propertyClass);
+        } else if ( propertyClass != null ) {
+            return flowPropertyProvider.getProperty(propertyClass);
+        }
+        // TODO throw exception?
+        return null;
+    }
+    /**
+     *
+     * @param <T>
+     * @param flowPropertyProvider -- should this be FPP?
+     * @param flowPropertyDefinition
+     * @param propertyName
+     * @return will not be null.
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Object...messages) {
+        return (T) this.getRequired(flowPropertyProvider, flowPropertyDefinition, propertyName, null, messages);
+    }
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected, Object...messages) {
+        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyName), propertyName);
+        T result = flowPropertyProvider.getProperty(propertyName, expected);
+        ApplicationNullPointerException.notNull(result, propertyName, messages);
+        return result;
+    }
+    protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<? extends T> propertyClass, Object...messages) {
+        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyClass), propertyClass);
+        T result = flowPropertyProvider.getProperty(propertyClass);
+        ApplicationNullPointerException.notNull(result, propertyClass, messages);
+        return result;
     }
 }

@@ -8,7 +8,7 @@ import org.amplafi.flow.FlowAppearance;
 
 /**
  * Defines property the {@link FlowAppearance}.
- * 
+ *
  * @author Konstantin Burov (aectann@gmail.com)
  */
 public class FlowAppearanceFlowPropertyDefinitionProvider extends
@@ -18,8 +18,7 @@ public class FlowAppearanceFlowPropertyDefinitionProvider extends
 	public static final FlowAppearanceFlowPropertyDefinitionProvider INSTANCE = new FlowAppearanceFlowPropertyDefinitionProvider();
 
 	public FlowAppearanceFlowPropertyDefinitionProvider() {
-		super(new FlowPropertyDefinitionBuilder()
-				.createFlowPropertyDefinition(FLOW_APPEARANCE, FlowAppearance.class)
+		super(new FlowPropertyDefinitionBuilder(FLOW_APPEARANCE, FlowAppearance.class)
 				.initDefaultObject(normal)
 				.initAccess(flowLocal, suppliesIfMissing));
 	}
