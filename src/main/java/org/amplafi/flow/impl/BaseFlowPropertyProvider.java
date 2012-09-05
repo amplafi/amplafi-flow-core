@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
@@ -149,11 +150,15 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         }
     }
     public void addPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinition: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
-            this.addPropertyDefinition(flowPropertyDefinition);
+        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
+            this.addPropertyDefinition(flowPropertyDefinitionImplementor);
         }
     }
-
+    public void addPropertyDefinitions(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
+        for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
+            this.addPropertyDefinition(flowPropertyDefinitionBuilder.toFlowPropertyDefinition());
+        }
+    }
     public boolean isFlowPropertyProviderNameSet() {
         return this.flowPropertyProviderName != null;
     }
