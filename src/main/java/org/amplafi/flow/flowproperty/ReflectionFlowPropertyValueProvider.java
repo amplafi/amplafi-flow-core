@@ -88,8 +88,10 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     }
     @Override
     public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
-        for(String propertyName:this.getPropertyNames()) {
-            if ( flowPropertyDefinition.isNamed(propertyName)) {
+        for(String complexPropertyName:this.getPropertyNames()) {
+            int beginIndex = complexPropertyName.lastIndexOf('.');
+            String simplePropertyName = beginIndex < 0?complexPropertyName:complexPropertyName.substring(beginIndex+1);
+            if ( flowPropertyDefinition.isNamed(simplePropertyName)) {
                 return true;
             }
         }
