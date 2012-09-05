@@ -457,8 +457,16 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition.addAlternateNames(alternateNames);
         return this;
     }
-    public FlowPropertyDefinitionBuilder initList(Class<?> elementClass) {
+    public FlowPropertyDefinitionBuilder list(Class<?> elementClass) {
         this.flowPropertyDefinition.setDataClassDefinition(new DataClassDefinitionImpl(elementClass, List.class));
+        return this;
+    }
+    public FlowPropertyDefinitionBuilder map(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
+        this.flowPropertyDefinition.setDataClassDefinition(DataClassDefinitionImpl.map(keyClass, elementClass, collectionClasses));
+        return this;
+    }
+    public FlowPropertyDefinitionBuilder initSaveBack(Boolean saveBack) {
+        this.flowPropertyDefinition.initSaveBack(saveBack);
         return this;
     }
 }
