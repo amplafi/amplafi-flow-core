@@ -149,28 +149,30 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      * TODO: see about using this more -- allows disconnecting names from properties ..
      * unintended side-effects?
      * Convert dataClass to a string using
-     * {@link FlowUtils#toPropertyName(Class)} and use that string to look up
+     * {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder#toPropertyName(Class)} and use that string to look up
      * the property.
      *
      * @param <T> type of property
      * @param dataClass type of property
      * @return the value converted to dataClass.
      */
+    @Override
     <T> T getProperty(Class<? extends T> dataClass);
 
     /**
      * Convert value.getClass() to string using
-     * {@link FlowUtils#toPropertyName(Class)} and use that string as the
+     * {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder#toPropertyName(Class)} and use that string as the
      * property name for the value being set.
      *
      * @param <T>
      * @param value must not be null
      */
+    @Override
     <T> void setProperty(T value);
 
     /**
      * Convert value.getClass() to string using
-     * {@link FlowUtils#toPropertyName(Class)} and use that string as the
+     * {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder#toPropertyName(Class)} and use that string as the
      * property name for the value being set.
      *
      * @param <T> value's type

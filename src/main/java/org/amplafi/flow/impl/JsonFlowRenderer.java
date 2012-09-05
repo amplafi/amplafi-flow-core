@@ -22,7 +22,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
-import org.amplafi.flow.web.FlowResponse;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
@@ -47,15 +46,6 @@ public class JsonFlowRenderer implements FlowRenderer {
 	@Override
 	public String getRenderResultType() {
 		return FlowConstants.JSON;
-	}
-
-	@Override
-	public void render(FlowResponse flowResponse) {
-		FlowState flowState = flowResponse.getFlowState();
-		Writer writer = flowResponse.getWriter();
-		String errorMessage = flowResponse.getErrorMessage();
-		Exception exception = flowResponse.getException();
-		render(writer, flowState, errorMessage, exception);
 	}
 
 	@Override

@@ -117,8 +117,6 @@ public class FlowPropertyDefinitionBuilder {
      * A property that cannot be configured by the initialFlowState map, but is alterable by a
      * {@link FlowPropertyValueProvider} and can be changed by the user during the flow. This
      * property is guaranteed to have a value if the flow completes normally.
-     * {@link #createInternalStateFlowPropertyDefinitionWithDefault(String, Class, Class...)} to
-     * create a property that is not visible for exporting.
      *
      * @param name
      * @param dataClass
