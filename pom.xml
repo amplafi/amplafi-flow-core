@@ -6,10 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.amplafi</groupId>
     <artifactId>amplafi-flow-core</artifactId>
+    <version>0.9.4-SNAPSHOT</version>
     <parent>
         <groupId>org.amplafi</groupId>
         <artifactId>amplafi-opensource-parent</artifactId>
-        <version>0.9.3-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../amplafi-opensource-parent/pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>
