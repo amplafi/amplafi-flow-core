@@ -218,7 +218,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public void initializeFlow() {
         this.setFlowLifecycleState(initializing);
-        FlowStateLifecycle nextFlowLifecycleState = initialized;
+        FlowStateLifecycle nextFlowLifecycleState = failed;
         try {
             Map<String, FlowPropertyDefinitionImplementor> propertyDefinitions = this.getFlow().getPropertyDefinitions();
             if (propertyDefinitions != null) {
@@ -232,11 +232,9 @@ public class FlowStateImpl implements FlowStateImplementor {
                 activity.initializeFlow();
                 LapTimer.sLap(activity.getFlowPropertyProviderFullName(), ".initializeFlow() completed");
             }
-        } catch(RuntimeException e) {
-            nextFlowLifecycleState = failed;
-            throw e;
+            nextFlowLifecycleState = initialized;
         } finally {
-            // because may throw flow validation exception
+            // because may throw flow validation exception - which could have already changed the flowStateLifecycle.
             if ( this.getFlowStateLifecycle() == initializing) {
                 this.setFlowLifecycleState(nextFlowLifecycleState);
             }
@@ -555,52 +553,32 @@ public class FlowStateImpl implements FlowStateImplementor {
         if (isCompleted()) {
             return null;
         }
-        // used to help determine if the flow is not altering which FlowActivity is current. ( refresh case )
-        int originalIndex = getCurrentActivityIndex();
-        int next = newActivity;
-        FlowActivity currentActivity;
-        // if true, currentActivity indicated that it has finished processing and the FlowState should immediately advanced. Used primarily for invisible FlowActivities.
-        boolean lastFlowActivityActivateAutoFinished;
-        FlowStepDirection flowStepDirection = FlowStepDirection.get(originalIndex, newActivity);
-        // based on the flowStepDirection. if true, then there another FlowActivity in the same direction as the current flowActivity
-        boolean canContinue;
+        FlowActivityIterator flowActivityIterator = new FlowActivityIterator(newActivity);
+
         do {
             if(this.isActive()) {
                 FlowValidationResult flowValidationResult;
                 // call passivate even if just returning to the current
                 // activity. but not if we are going back to a previous step
-                flowValidationResult = this.passivate(verifyValues, flowStepDirection);
+                flowValidationResult = this.passivate(verifyValues, flowActivityIterator.getFlowStepDirection());
                 if ( !flowValidationResult.isValid()) {
                     activateFlowActivity(getCurrentActivity(), FlowStepDirection.inPlace);
                     throw new FlowValidationException(this, getCurrentActivity(), flowValidationResult);
                 }
             }
-            this.setCurrentActivityIndex(next);
-
-            currentActivity = getCurrentActivity();
-            switch(flowStepDirection) {
-            case forward:
-                next = nextIndex();
-                canContinue = hasNext();
-                break;
-            case backward:
-                next = previousIndex();
-                canContinue = hasPrevious();
-                break;
-            default:
-                canContinue = false;
-                break;
+            if ( flowActivityIterator.hasNext()) {
+                flowActivityIterator.activate();
             }
-            lastFlowActivityActivateAutoFinished = activateFlowActivity(currentActivity, flowStepDirection);
-        } while (lastFlowActivityActivateAutoFinished && canContinue);
-        if (lastFlowActivityActivateAutoFinished && flowStepDirection == FlowStepDirection.forward && !canContinue) {
+        } while (flowActivityIterator.hasNext());
+        if (flowActivityIterator.isTimeToFinish()) {
             // ran out .. time to complete...
             // if chaining FlowStates the actual page may be from another
             // flowState.
             finishFlow();
-            currentActivity = null;
+            return null;
+        } else {
+            return (T) getCurrentActivity();
         }
-        return (T) currentActivity;
     }
 
     /**
@@ -1875,4 +1853,70 @@ public class FlowStateImpl implements FlowStateImplementor {
     	return false;
     }
 
+    protected class FlowActivityIterator implements Iterator<FlowActivityImplementor> {
+
+        private FlowStepDirection flowStepDirection;
+        private int next;
+        // based on the flowStepDirection. if true, then there another FlowActivity in the same direction as the current flowActivity
+        private boolean canContinue;
+        // if true, currentActivity indicated that it has finished processing and the FlowState should immediately advanced. Used primarily for invisible FlowActivities.
+        // true by default to handle 0 FA flows.
+        private boolean lastFlowActivityActivateAutoFinished =true;
+
+        FlowActivityIterator(int next) {
+            // used to help determine if the flow is not altering which FlowActivity is current. ( refresh case )
+            int originalIndex = getCurrentActivityIndex();
+            FlowStepDirection flowStepDirection = FlowStepDirection.get(originalIndex, next);
+            this.flowStepDirection= flowStepDirection;
+            this.next = next;
+            this.canContinue = FlowStateImpl.this.size() > 0;
+        }
+        public boolean isTimeToFinish() {
+            return isLastFlowActivityActivateAutoFinished() && getFlowStepDirection() == FlowStepDirection.forward && !isCanContinue();
+        }
+        public void activate() {
+            FlowActivityImplementor currentActivity = next();
+
+            lastFlowActivityActivateAutoFinished = activateFlowActivity(currentActivity, flowStepDirection);
+        }
+        @Override
+        public boolean hasNext() {
+            return lastFlowActivityActivateAutoFinished && canContinue;
+        }
+
+        @Override
+        public FlowActivityImplementor next() {
+            setCurrentActivityIndex(next);
+
+            FlowActivityImplementor currentActivity = FlowStateImpl.this.getCurrentActivity();
+            switch(flowStepDirection) {
+            case forward:
+                next = FlowStateImpl.this.nextIndex();
+                canContinue = FlowStateImpl.this.hasNext();
+                break;
+            case backward:
+                next = FlowStateImpl.this.previousIndex();
+                canContinue = FlowStateImpl.this.hasPrevious();
+                break;
+            default:
+                canContinue = false;
+                break;
+            }
+            return currentActivity;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+        public boolean isCanContinue() {
+            return canContinue;
+        }
+        public boolean isLastFlowActivityActivateAutoFinished() {
+            return lastFlowActivityActivateAutoFinished;
+        }
+        public FlowStepDirection getFlowStepDirection() {
+            return flowStepDirection;
+        }
+    }
 }
