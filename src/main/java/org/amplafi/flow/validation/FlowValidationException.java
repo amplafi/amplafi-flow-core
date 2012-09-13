@@ -32,7 +32,7 @@ import com.sworddance.util.NotNullIterator;
  *
  */
 public class FlowValidationException extends FlowException {
-	
+
     private final FlowValidationResult flowValidationResult;
 
     public FlowValidationException(FlowState flowState, FlowValidationResult flowValidationResult) {
@@ -72,7 +72,7 @@ public class FlowValidationException extends FlowException {
         setStackTrace(cause.getStackTrace());
         return this;
     }
-    
+
     public URI getRedirectUri() {
     	URI redirectUri = null;
     	List<FlowValidationTracking> trackings = getFlowValidationResult().getTrackings();
@@ -99,12 +99,18 @@ public class FlowValidationException extends FlowException {
     }
 
     /**
-     * @param flowState 
+     * @param flowState
      * @param flowValidationResult
      * @throws FlowValidationException thrown if flowValidationResult != null && !flowValidationResult.isValid()
      */
     public static void valid(FlowState flowState, FlowValidationResult flowValidationResult) throws FlowValidationException {
         if ( flowValidationResult != null && !flowValidationResult.isValid()) {
+            throw new FlowValidationException(flowState, flowValidationResult);
+        }
+    }
+    public static void valid(FlowState flowState, boolean condition, Object...messages) throws FlowValidationException {
+        if ( !condition) {
+            FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(messages));
             throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
