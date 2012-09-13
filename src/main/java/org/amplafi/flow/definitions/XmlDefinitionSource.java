@@ -32,6 +32,8 @@ import org.amplafi.flow.translator.FlowTranslator;
 
 import com.sworddance.util.AbstractXmlParser;
 import com.sworddance.util.ApplicationGeneralException;
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -362,7 +364,9 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();
             String nodeValue = attribute.getNodeValue();
-            if ("initial".equals(nodeName)) {
+            if ( NAME_ATTR.equals(nodeName)) {
+                continue;
+            } else if ("initial".equals(nodeName)) {
                 flowPropertyDefinition.setInitial(nodeValue);
             } else if ("default".equals(nodeName)) {
                 flowPropertyDefinition.initDefaultObject(nodeValue);
@@ -384,6 +388,8 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 flowPropertyDefinition.setPropertyUsage(propertyUsage);
             } else if (PARAMETER_NAME.equals(nodeName)) {
                 flowPropertyDefinition.setUiComponentParameterName(nodeValue);
+            } else {
+                ApplicationIllegalArgumentException.fail(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
             }
         }
         return flowPropertyDefinition;
