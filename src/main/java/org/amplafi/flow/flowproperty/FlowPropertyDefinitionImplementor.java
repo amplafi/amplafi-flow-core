@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -30,8 +29,6 @@ import org.amplafi.flow.translator.FlowTranslator;
  */
 public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinition {
 
-    <T> String serialize(T object);
-
     FlowPropertyDefinition initialize();
 
     void setPropertyRequired(FlowActivityPhase flowActivityPhase);
@@ -43,7 +40,6 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinitionImplementor initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
     <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister);
-    <V> V parse(FlowPropertyProvider flowPropertyProvider, String value) throws FlowException;
 
     void setPropertyScope(PropertyScope propertyScope);
 

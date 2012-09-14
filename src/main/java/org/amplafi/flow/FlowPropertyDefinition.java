@@ -137,4 +137,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
 
     <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value);
 
+    <T> String serialize(T object);
+    <V> V deserialize(FlowPropertyProvider flowPropertyProvider, Object serializedObject) throws FlowException;
+
 }

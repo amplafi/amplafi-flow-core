@@ -123,7 +123,7 @@ public class TestFlowPropertyDefinition {
         assertEquals(definition.getDataClass(), Boolean.class);
 
         new FlowTestingUtils().resolveAndInit(definition);
-        Boolean t = (Boolean) definition.parse(flowPropertyProvider, null);
+        Boolean t = (Boolean) definition.deserialize(flowPropertyProvider, null);
         assertNull(t);
         t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
@@ -135,7 +135,7 @@ public class TestFlowPropertyDefinition {
         definition.initDefaultObject("true");
         definition.setDataClass(Boolean.class);
         new FlowTestingUtils().resolveAndInit(definition);
-        t = (Boolean) definition.parse(flowPropertyProvider, null);
+        t = (Boolean) definition.deserialize(flowPropertyProvider, null);
         assertNull(t);
         t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
@@ -235,7 +235,7 @@ public class TestFlowPropertyDefinition {
         FlowPropertyDefinitionImpl def = new FlowPropertyDefinitionImpl("test");
         FlowPropertyProvider flowPropertyProvider = null;
 
-        String result = def.parse(flowPropertyProvider, def.serialize(original));
+        String result = def.deserialize(flowPropertyProvider, def.serialize(original));
         assertEquals(result, original);
     }
 
@@ -255,7 +255,7 @@ public class TestFlowPropertyDefinition {
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV = definition.serialize(list);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
-        List<URI> result = (List<URI>) definition.parse(flowPropertyProvider, strV);
+        List<URI> result = (List<URI>) definition.deserialize(flowPropertyProvider, strV);
         assertTrue(list.containsAll(result));
         assertTrue(result.containsAll(list));
     }
@@ -272,7 +272,7 @@ public class TestFlowPropertyDefinition {
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV = definition.serialize(set);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
-        Set<URI> result = (Set<URI>) definition.parse(flowPropertyProvider, strV);
+        Set<URI> result = (Set<URI>) definition.deserialize(flowPropertyProvider, strV);
         assertTrue(set.containsAll(result));
         assertTrue(set.containsAll(set));
     }
@@ -288,7 +288,7 @@ public class TestFlowPropertyDefinition {
         map.put("second", new URI("http://gg.gov"));
         String strV = definition.serialize(map);
         assertEquals(strV, "{\"first\":\"http://foo.com\",\"second\":\"http://gg.gov\"}");
-        Map<String, URI> result = (Map<String, URI>) definition.parse(flowPropertyProvider, strV);
+        Map<String, URI> result = (Map<String, URI>) definition.deserialize(flowPropertyProvider, strV);
         assertTrue(result.equals(map));
     }
     /**

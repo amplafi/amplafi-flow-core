@@ -521,8 +521,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
     @Override
     @SuppressWarnings("unchecked")
-    public <V> V parse(FlowPropertyProvider flowPropertyProvider, String value) throws FlowException {
-        return (V) this.getDataClassDefinition().deserialize(flowPropertyProvider, this, value);
+    public <V> V deserialize(FlowPropertyProvider flowPropertyProvider, Object serializedObject) throws FlowException {
+        return (V) this.getDataClassDefinition().deserialize(flowPropertyProvider, this, serializedObject);
     }
     /**
      * @param flowActivityPhase the propertyRequired to set

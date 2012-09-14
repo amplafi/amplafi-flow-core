@@ -129,7 +129,7 @@ public class TestFlowTranslatorResolver extends Assert {
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
 
         FlowPropertyProvider flowPropertyProvider = null;
-        List<URI> result = definition.parse(flowPropertyProvider, strV);
+        List<URI> result = definition.deserialize(flowPropertyProvider, strV);
         assertTrue(list.containsAll(result));
         assertTrue(result.containsAll(list));
     }
@@ -142,7 +142,7 @@ public class TestFlowTranslatorResolver extends Assert {
         String strV =definition.serialize(set);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
         FlowPropertyProvider flowPropertyProvider = null;
-        Set<URI> result =(Set<URI>) definition.parse(flowPropertyProvider, strV);
+        Set<URI> result =(Set<URI>) definition.deserialize(flowPropertyProvider, strV);
         assertTrue(set.containsAll(result));
         assertTrue(set.containsAll(set));
     }
@@ -157,7 +157,7 @@ public class TestFlowTranslatorResolver extends Assert {
         String strV =definition.serialize(map);
         assertEquals(strV, "{\"first\":\"http://foo.com\",\"second\":\"http://gg.gov\"}");
         FlowPropertyProvider flowPropertyProvider = null;
-        Map<String, URI> result = (Map<String,URI>) definition.parse(flowPropertyProvider, strV);
+        Map<String, URI> result = (Map<String,URI>) definition.deserialize(flowPropertyProvider, strV);
         assertTrue(result.equals(map));
     }
 
