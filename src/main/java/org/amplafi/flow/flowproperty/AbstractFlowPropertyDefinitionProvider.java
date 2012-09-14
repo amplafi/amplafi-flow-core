@@ -106,6 +106,11 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
             addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionImplementor, additionalConfigurationParameters);
         }
     }
+    protected void addFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionBuilder>flowPropertyDefinitionBuilders, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+        for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
+            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
+        }
+    }
     protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);

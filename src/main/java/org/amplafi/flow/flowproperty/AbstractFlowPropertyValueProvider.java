@@ -58,25 +58,29 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         }
         return flowPropertyDefinitionBuilder;
     }
-   /**
-    * @return
-    *
-    */
-   @SuppressWarnings("unchecked")
-   private Class<FPP> initFlowPropertyProviderClass() {
-       Class<FPP> clazz;
-       // TODO: is there a way to find out the class of FPP - last I checked there wasn't
-       try {
-           clazz = (Class<FPP>) FlowPropertyProviderWithValues.class;
-       } catch (ClassCastException e) {
-           clazz = (Class<FPP>) FlowPropertyProvider.class;
-       }
-       return clazz;
-   }
+    @SuppressWarnings("unchecked")
+    private Class<FPP> initFlowPropertyProviderClass() {
+        Class<FPP> clazz;
+        // TODO: is there a way to find out the class of FPP - last I checked there wasn't
+        try {
+            clazz = (Class<FPP>) FlowPropertyProviderWithValues.class;
+        } catch (ClassCastException e) {
+            clazz = (Class<FPP>) FlowPropertyProvider.class;
+        }
+        return clazz;
+    }
 
     protected void check(FlowPropertyDefinition flowPropertyDefinition) {
-        ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition),
-            flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
+       ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition),
+           flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
+    }
+    /**
+     * used after a chain of isHandling() checks
+     * @param flowPropertyDefinition
+     */
+    protected ApplicationIllegalArgumentException fail(FlowPropertyDefinition flowPropertyDefinition) {
+        return ApplicationIllegalArgumentException.fail("Hard coded fail: ", isHandling(flowPropertyDefinition),
+           flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
     }
     /**
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
