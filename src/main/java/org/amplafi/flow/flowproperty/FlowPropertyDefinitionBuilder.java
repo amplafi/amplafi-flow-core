@@ -3,6 +3,8 @@ package org.amplafi.flow.flowproperty;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
@@ -463,8 +465,12 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition.setDataClassDefinition(new DataClassDefinitionImpl(elementClass, List.class));
         return this;
     }
-    public FlowPropertyDefinitionBuilder map(Class<?> keyClass, Class<?> elementClass, Class<?>... collectionClasses) {
-        this.flowPropertyDefinition.setDataClassDefinition(DataClassDefinitionImpl.map(keyClass, elementClass, collectionClasses));
+    public FlowPropertyDefinitionBuilder set(Class<?> elementClass) {
+        this.flowPropertyDefinition.setDataClassDefinition(new DataClassDefinitionImpl(elementClass, Set.class));
+        return this;
+    }
+    public FlowPropertyDefinitionBuilder map(Class<?> keyClass, Class<?> elementClass, Class<?>... elementCollectionClasses) {
+        this.flowPropertyDefinition.setDataClassDefinition(DataClassDefinitionImpl.map(keyClass, elementClass, elementCollectionClasses));
         return this;
     }
     public FlowPropertyDefinitionBuilder initSaveBack(Boolean saveBack) {
