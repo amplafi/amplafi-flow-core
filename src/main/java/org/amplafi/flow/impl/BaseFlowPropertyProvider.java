@@ -16,7 +16,6 @@ package org.amplafi.flow.impl;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
@@ -65,6 +64,10 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         this.definition = definition;
     }
 
+    /**
+     * Use supplied Map so that way caller can control sort order of map.
+     * @param properties
+     */
     public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties) {
         this.propertyDefinitions = properties;
     }
