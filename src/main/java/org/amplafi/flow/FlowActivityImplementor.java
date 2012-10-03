@@ -81,7 +81,6 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
 
     void setInvisible(Boolean invisible);
 
-    void setPersistFlow(boolean persistFlow);
 
     /**
      * @param pageName The pageName to set.

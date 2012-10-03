@@ -146,9 +146,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     @Deprecated // use FlowPropertyDefinition
     private Boolean invisible;
 
-    @Deprecated // use FlowPropertyDefinition
-    private boolean persistFlow;
-
     /**
      * if this is an instance, this is the {@link org.amplafi.flow.Flow} instance.
      */
@@ -526,7 +523,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         instance.setPageName(getPageName());
         instance.setFinishingActivity(finishingActivity);
         instance.setInvisible(invisible);
-        instance.setPersistFlow(persistFlow);
     }
 
     @Override
@@ -577,19 +573,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     @Override
     public boolean isPossiblyVisible() {
         return isNotBlank(getComponentName()) || isNotBlank(getPageName());
-    }
-
-    @Override
-    public void setPersistFlow(boolean persistFlow) {
-        this.persistFlow = persistFlow;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivity#isPersistFlow()
-     */
-    @Override
-    public boolean isPersistFlow() {
-        return persistFlow;
     }
 
     /**

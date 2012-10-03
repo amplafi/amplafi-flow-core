@@ -140,8 +140,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
      */
     boolean isPossiblyVisible();
 
-    boolean isPersistFlow();
-
     int getIndex();
     String getString(String key);
 

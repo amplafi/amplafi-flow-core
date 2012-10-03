@@ -280,8 +280,6 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 flowActivity.setFinishingActivity(booleanValue);
             } else if (INVISIBLE.equals(nodeName)) {
                 flowActivity.setInvisible(booleanValue);
-            } else if ("persistFlow".equals(nodeName)) {
-                flowActivity.setPersistFlow(booleanValue);
             } else if ( !transition ) {
                 throw new FlowException("attribute is unknown "+attribute);
             } else if ( "finish-key".equals(nodeName)) {
