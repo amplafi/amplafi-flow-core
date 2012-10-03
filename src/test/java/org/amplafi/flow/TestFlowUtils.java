@@ -32,11 +32,10 @@ public class TestFlowUtils {
 
     @Test
     public void testCreateInitialValuesFromArray() {
-        List<String> values = FlowUtils.INSTANCE.createInitialValues("id", 1L, Boolean.class, true);
-        System.out.println(values);
+        List<String> values = FlowUtils.INSTANCE.createInitialValues("id", 1L, "b", true);
         assertEquals(values.size(), 2);
         assertEquals(values.get(0), "id='1'");
-        assertEquals(values.get(1), "boolean='true'");
+        assertEquals(values.get(1), "b='true'");
     }
 
     @DataProvider(name="lowerCase")
