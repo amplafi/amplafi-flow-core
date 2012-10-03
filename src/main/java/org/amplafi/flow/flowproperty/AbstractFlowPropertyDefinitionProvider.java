@@ -15,11 +15,10 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 
@@ -36,7 +35,8 @@ import com.sworddance.util.NotNullIterator;
  *
  */
 public abstract class AbstractFlowPropertyDefinitionProvider {
-    private final Map<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new ConcurrentHashMap<String, FlowPropertyDefinitionImplementor>();
+    // Forcing a fixed order so getting the default first FPD will be consistent (TODO save first FPD explicitly)
+    private final LinkedHashMap<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinitionImplementor>();
 
     protected AbstractFlowPropertyDefinitionProvider() {
         // for case when definitions are added in later.
@@ -77,6 +77,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
             if ( flowPropertyDefinition.getPropertyUsage().isOutputedProperty()) {
                 outputFlowPropertyDefinitionNames.add(flowPropertyDefinition.getName());
             }
+        }
+        if ( isEmpty(outputFlowPropertyDefinitionNames)) {
+            FlowPropertyDefinitionImplementor byDefaultFirst = get(this.flowPropertyDefinitions.values(),0);
+            outputFlowPropertyDefinitionNames.add(byDefaultFirst.getName());
         }
         return outputFlowPropertyDefinitionNames;
     }

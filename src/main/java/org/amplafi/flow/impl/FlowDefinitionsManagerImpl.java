@@ -28,6 +28,7 @@ import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
+import org.amplafi.flow.definitions.FlowFromFlowPropertyDefinitionDefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
@@ -79,6 +80,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
             }
         }
     }
+    @Override
     public void addDefinition(FlowImplementor flow) {
         ApplicationIllegalStateException.checkState(!flow.isInstance(), flow, " is an instance not a definition");
         getFlowDefinitions().put(flow.getFlowPropertyProviderFullName(), flow);
@@ -92,6 +94,9 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         ApplicationIllegalArgumentException.notNull(flowTypeName, "null flowTypeName");
         FlowImplementor flow = this.getFlowDefinitions().get(flowTypeName);
         if (flow==null) {
+            flow = this.getFlowDefinitions().get(flowTypeName+FlowFromFlowPropertyDefinitionDefinitionSource.FLOW_PREFIX);
+        }
+        if ( flow == null) {
             throw new FlowValidationException(null, "flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
         } else {
             // cannot do this any more at initializeService() time because of infinite-loop.
@@ -116,10 +121,12 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
         return this.log;
     }
 
+    @Override
     public void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
         addIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
     }
 
+    @Override
     public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = null;
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider: this.factoryFlowPropertyDefinitionProviders) {

@@ -29,6 +29,7 @@ import static com.sworddance.util.CUtilities.*;
  */
 public class FlowFromFlowPropertyDefinitionDefinitionSource implements DefinitionSource<FlowImplementor> {
 
+    public static final String FLOW_PREFIX = "Flow";
     private final Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();
 
     public FlowFromFlowPropertyDefinitionDefinitionSource() {
@@ -46,7 +47,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         }
 
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
-        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
+        FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+FLOW_PREFIX);
         flow.addPropertyDefinition(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initDefaultObject(flowPropertyName).toFlowPropertyDefinition());
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
