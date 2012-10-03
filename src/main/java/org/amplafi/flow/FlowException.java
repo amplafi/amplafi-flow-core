@@ -13,11 +13,15 @@
  */
 package org.amplafi.flow;
 
-import static com.sworddance.util.ApplicationIllegalArgumentException.notNull;
 import static com.sworddance.util.ApplicationIllegalStateException.checkState;
 
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import static org.apache.commons.lang3.StringUtils.*;
+
 /**
- * Base Exception for all flow issues.
+ * Base Exception for all exceptions that are like caused by bad input i.e. USER level errors.
+ * For example, missing data.
+ *
  * @author patmoore
  *
  */
@@ -30,8 +34,11 @@ public class FlowException extends RuntimeException {
     	this.flowState = flowState;
     }
 
-    public FlowException(FlowState flowState, String message) {
-        super(message);
+    public FlowException(Object... messages) {
+        super(join(messages));
+    }
+    public FlowException(FlowState flowState, Object... messages) {
+        this(messages);
         this.flowState = flowState;
     }
 
@@ -44,16 +51,28 @@ public class FlowException extends RuntimeException {
 
 	/**
 	 * Only allowed to be called when a flow state wasn't yet set.
-	 * 
+	 *
 	 * @param flowState
 	 */
 	public void setFlowState(FlowState flowState) {
-		notNull(flowState, "Trying to set null flowState to the FlowException.");
 		checkState(!isFlowStateSet(), "Trying to override non-null flowState");
 		this.flowState = flowState;
 	}
-    
+
 	public boolean isFlowStateSet() {
 		return flowState != null;
 	}
+
+	public static FlowException notNull(Object notNull, FlowState flowState, Object...messages) {
+	    if (notNull == null) {
+	        throw new FlowException(flowState, join(messages));
+	    }
+	    return null;
+	}
+    public static FlowException notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object...messages) {
+        if (notNull == null) {
+            throw new FlowException(null, flowPropertyProvider, messages);
+        }
+        return null;
+    }
 }

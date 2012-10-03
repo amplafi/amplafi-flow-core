@@ -269,6 +269,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             try {
             	// HACK : casting. fix definition later.
                 value = ((FlowPropertyValueProvider<FlowPropertyProvider>)propertyValueProvider).get(flowPropertyProvider, this);
+            } catch(FlowException e) {
+                throw e;
             } catch(Exception e) {
                 throw new ApplicationIllegalStateException(this+": PropertyValueProvider threw an exception. propertyValueProvider="+propertyValueProvider, e);
             }
@@ -287,11 +289,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         FlowPropertyValueProvider<? extends FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             Class<? extends FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
-            if (  expected.isAssignableFrom(flowPropertyProvider.getClass())) {
-                return true;
-            } else {
-                return false;
-            }
+            return expected.isAssignableFrom(flowPropertyProvider.getClass());
         } else {
             // slight HACK as we should really check first and not actually get the default object.
             return false;//this.getDataClassDefinition().getFlowTranslator().getDefaultObject(flowPropertyProvider) != null;

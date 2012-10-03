@@ -29,6 +29,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
@@ -48,7 +49,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
-import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -339,11 +339,11 @@ public class BaseFlowManagement implements FlowManagement {
                 }
             }
             return (FS) flowState;
-        } catch (FlowValidationException flowValidationException) {
-            if (!flowValidationException.isFlowStateSet()) {
-                flowValidationException.setFlowState(flowState);
+        } catch (FlowException flowException) {
+            if (!flowException.isFlowStateSet()) {
+                flowException.setFlowState(flowState);
             }
-            throw flowValidationException;
+            throw flowException;
         } catch (RuntimeException e) {
             throw new ApplicationGeneralException(flowState.toString(), e);
         } finally {
