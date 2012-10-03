@@ -1,7 +1,6 @@
 package org.amplafi.flow.flowproperty;
 
 import org.easymock.EasyMock;
-import org.easymock.IMockBuilder;
 import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
@@ -35,7 +34,6 @@ public class TestInvalidatingFlowPropertyValueChangeListener {
         flowPropertyDefinitionBuilder.addPropertiesDependentOn(flowPropertyDefinitionDependent);
 
         FlowPropertyDefinitionImplementor flowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
-        IMockBuilder<FlowPropertyProviderWithValues> mockBuilder = EasyMock.createMockBuilder(FlowPropertyProviderWithValues.class);
         FlowPropertyProviderWithValues flowPropertyProviderWithValues = EasyMock.createMock(FlowPropertyProviderWithValues.class);
         flowPropertyProviderWithValues.setProperty(EasyMock.eq("test"), EasyMock.isNull());
         EasyMock.replay(flowPropertyProviderWithValues);

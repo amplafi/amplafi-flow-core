@@ -5,15 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
@@ -21,8 +19,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import static com.sworddance.util.CUtilities.*;
-import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
-import static org.amplafi.flow.flowproperty.PropertyUsage.internalState;
 
 /**
  * Define flows only needed to provide a property that is used by the ui of another flow. but is not needed by the execution of the flow itself.
@@ -40,15 +36,18 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     }
 
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        List<FlowPropertyExpectation>configurationParameters = new ArrayList<>();
+        List<FlowPropertyExpectation>configurationParameters;
         if ( isNotEmpty(additionalConfigurationParameters)) {
+            configurationParameters = new ArrayList<>();
             configurationParameters.addAll(additionalConfigurationParameters);
+            configurationParameters.addAll(FlowPropertyDefinitionBuilder.API_RETURN_VALUE);
+        } else {
+            configurationParameters = FlowPropertyDefinitionBuilder.API_RETURN_VALUE;
         }
-        configurationParameters.add(new FlowPropertyExpectationImpl(flowPropertyName, FlowActivityPhase.finish, null, null, null));
 
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+"Flow");
-        flow.addPropertyDefinition(new FlowPropertyDefinitionImpl(FSSINGLE_PROPERTY_NAME).initAccess(flowLocal, internalState).initDefaultObject(flowPropertyName));
+        flow.addPropertyDefinition(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initDefaultObject(flowPropertyName).toFlowPropertyDefinition());
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, configurationParameters);
