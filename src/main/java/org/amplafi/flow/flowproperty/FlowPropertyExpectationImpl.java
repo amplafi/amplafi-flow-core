@@ -71,6 +71,10 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, null);
     }
+    public FlowPropertyExpectationImpl(FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
+        ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
+        this(null, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, null);
+    }
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
             ExternalPropertyAccessRestriction externalPropertyAccessRestriction, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, Arrays.asList(flowPropertyValueChangeListener));

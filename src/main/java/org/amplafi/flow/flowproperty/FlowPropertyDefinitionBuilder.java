@@ -56,11 +56,12 @@ public class FlowPropertyDefinitionBuilder {
      * 1) the property must be initialized when the call completes,
      * 2) the property must local to at least flow
      */
-    public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
-    public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, PropertyUsage.io, null));
-    public static List<FlowPropertyExpectation> REQUIRED_INPUT_CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, FlowActivityPhase.activate, null, PropertyUsage.consume, null));
-    public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, PropertyUsage.consume, null));
-    public static List<FlowPropertyExpectation> INTERNAL_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, PropertyUsage.internalState, ExternalPropertyAccessRestriction.noAccess));
+    public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
+    public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.io, null));
+    public static List<FlowPropertyExpectation> REQUIRED_INPUT_CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.activate, null, PropertyUsage.consume, null));
+    public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, null));
+    public static List<FlowPropertyExpectation> INTERNAL_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.internalState, ExternalPropertyAccessRestriction.noAccess));
+    public static List<FlowPropertyExpectation> GENERATED_KNOWN_FA = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess));
     public FlowPropertyDefinitionBuilder() {
 
     }
@@ -449,6 +450,9 @@ public class FlowPropertyDefinitionBuilder {
         return toFlowPropertyDefinition(null);
     }
     public static String toPropertyName(Class<?> clazz) {
+        ApplicationIllegalArgumentException.valid(!clazz.isPrimitive(), clazz, ": must supply property name if clazz is a primitive");
+        String packageName = clazz.getPackage().getName();
+        ApplicationIllegalArgumentException.valid(!packageName.startsWith("java.") && !packageName.startsWith("javax."), clazz, ": must supply property name if clazz is java[x] class");
         return propertyNameFromClassName.get(clazz);
     }
 
