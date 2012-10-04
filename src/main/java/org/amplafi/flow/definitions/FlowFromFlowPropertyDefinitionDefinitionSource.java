@@ -1,6 +1,5 @@
 package org.amplafi.flow.definitions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,21 +36,13 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     }
 
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        List<FlowPropertyExpectation>configurationParameters;
-        if ( isNotEmpty(additionalConfigurationParameters)) {
-            configurationParameters = new ArrayList<>();
-            configurationParameters.addAll(additionalConfigurationParameters);
-            configurationParameters.addAll(FlowPropertyDefinitionBuilder.API_RETURN_VALUE);
-        } else {
-            configurationParameters = FlowPropertyDefinitionBuilder.API_RETURN_VALUE;
-        }
-
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+FLOW_PREFIX);
-        flow.addPropertyDefinition(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initDefaultObject(flowPropertyName).toFlowPropertyDefinition());
+        flow.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).
+            applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initDefaultObject(flowPropertyName));
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
-        flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, configurationParameters);
+        flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
         flow.addActivity(flowActivity);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
     }
