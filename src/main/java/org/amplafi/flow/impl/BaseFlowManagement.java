@@ -328,6 +328,7 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     protected <FS extends FlowState> FS beginFlowState(FlowState flowState) {
         boolean success = false;
+        getLog().debug("Starting "+flowState);
         LapTimer.sLap(flowState, "beginning");
         try {
             flowState.begin();
@@ -352,6 +353,7 @@ public class BaseFlowManagement implements FlowManagement {
             } else {
                 LapTimer.sLap(flowState, "begun");
             }
+            getLog().debug("Ending "+flowState);
         }
     }
 

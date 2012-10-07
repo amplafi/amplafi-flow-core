@@ -19,9 +19,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.validation.FlowValidationException;
 import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.util.ApplicationIllegalStateException;
@@ -116,7 +116,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         try {
             FlowState flowState = getFlowManagementWithCheck().startFlowState(getFlowTypeName(), true, launchMap, getReturnToFlow());
             return flowState;
-        } catch(FlowValidationException e) {
+        } catch(FlowException e) {
         	throw e;
         } catch(RuntimeException e) {
             throw new ApplicationIllegalStateException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
