@@ -71,7 +71,7 @@ public class FlowException extends RuntimeException {
 	}
     public static FlowException notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object...messages) {
         if (notNull == null) {
-            throw new FlowException(null, flowPropertyProvider, messages);
+            throw new FlowException(null, messages);
         }
         return null;
     }
