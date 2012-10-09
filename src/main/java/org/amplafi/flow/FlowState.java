@@ -21,6 +21,7 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.json.JSONWriter;
 
 
 
@@ -199,6 +200,7 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getFlowTypeName();
 
+    @Override
     boolean isTrue(String key);
 
     Boolean getBoolean(String key);
@@ -313,4 +315,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @return
      */
 	public boolean isPersisted();
+    public boolean isSinglePropertyFlow();
+    public void serializeSinglePropertyValue(JSONWriter jsonWriter);
 }

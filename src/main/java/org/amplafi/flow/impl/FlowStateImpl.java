@@ -46,6 +46,7 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
+import org.amplafi.json.JSONWriter;
 
 import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
@@ -1840,6 +1841,24 @@ public class FlowStateImpl implements FlowStateImplementor {
         Log log = getLog();
         if ( log != null ) {
             log.warn(message);
+        }
+    }
+
+    @Override
+    public boolean isSinglePropertyFlow() {
+        return flow.isSinglePropertyFlow();
+    }
+
+    @Override
+    public void serializeSinglePropertyValue(JSONWriter jsonWriter) {
+        String singlePropertyName = flow.getSinglePropertyName();
+        FlowPropertyDefinition flowPropertyDefinition = this.getFlowPropertyDefinition(singlePropertyName);
+        // TODO : SECURITY : HACK This important security check to make sure that secure properties are not released
+        // to users. This security check needs to built in to the flow code itself. We must not rely on the renderer to do
+        // security checks.
+        // this is an important valid use case for generating a temp api key that is returned via a callback uri not directly
+        if ( flowPropertyDefinition.isExportable()) {
+            flowPropertyDefinition.serialize(jsonWriter, this.getProperty(singlePropertyName));
         }
     }
 

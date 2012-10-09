@@ -1,6 +1,6 @@
 package org.amplafi.flow.impl;
 
-import static com.sworddance.util.CUtilities.isNotEmpty;
+import static com.sworddance.util.CUtilities.*;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
 
 import java.io.IOException;
@@ -13,7 +13,6 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowDefinitionsManager;
-import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
@@ -55,17 +54,20 @@ public class JsonFlowRenderer implements FlowRenderer {
 		if (errorMessage != null || exception != null) {
 			renderError(flowState, errorMessage, exception, writer);
 		} else {
-			FlowImplementor flow = flowState.getFlow();
-			if (flow.isSinglePropertyFlow()) {
-				String singlePropertyName = flow.getSinglePropertyName();
-				flowState.getPropertyDefinitions().get(singlePropertyName).serialize(jsonWriter, flowState.getProperty(singlePropertyName));
+		    if ( flowState.isSinglePropertyFlow() ) {
+		        flowState.serializeSinglePropertyValue(jsonWriter);
 			} else {
+			    // HACK : NEED SECURITY CHECKS to make sure only visible values are exported.
+			    // TODO : use flowState.getExportedValuesMap()
 				jsonWriter.object();
 				jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
 				jsonWriter.endObject();
 			}
 			try {
-				writer.append(jsonWriter.toString());
+				String string = jsonWriter.toString();
+				if ( StringUtils.isNotBlank(string)) {
+				    writer.append(string);
+				}
 			} catch (IOException e) {
 				throw new IllegalStateException(e);
 			}

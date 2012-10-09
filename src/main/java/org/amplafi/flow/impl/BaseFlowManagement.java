@@ -353,7 +353,7 @@ public class BaseFlowManagement implements FlowManagement {
             } else {
                 LapTimer.sLap(flowState, "begun");
             }
-            getLog().debug("Ending "+flowState);
+            getLog().debug("Started "+flowState);
         }
     }
 

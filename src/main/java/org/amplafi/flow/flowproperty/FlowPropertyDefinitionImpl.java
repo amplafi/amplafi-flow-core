@@ -701,7 +701,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     @Override
     public boolean isExportable() {
-        return this.getExternalPropertyAccessRestriction() != ExternalPropertyAccessRestriction.noAccess;
+        return this.getExternalPropertyAccessRestriction().isExternalReadAccessAllowed();
     }
 
     public FlowPropertyDefinitionImpl initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
