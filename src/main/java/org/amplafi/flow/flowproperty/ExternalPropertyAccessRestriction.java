@@ -17,8 +17,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 
 /**
- * Controls visibility and external access to the property while the flow is active.
- *
+ * Controls external access and visibility to the property from an untrusted source (like a browser or plugin).
  *
  * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed via external clients.
  *
@@ -29,6 +28,20 @@ import org.amplafi.flow.FlowState;
  * This differs from how the property is initialized and exported ( {@link PropertyUsage} ) and how
  * broad any changes to the property are spread. ( PropertyScope )
  * but this may overlap with {@link PropertyUsage#isExternallySettable()}
+ *
+ * ========================================================================================
+ * Additionally clarification about difference between PropertyUsage and ExternalPropertyAccessRestriction:
+ *
+ * Example #1:
+ *
+ * a property may be allowed to be set via another flow ( PropertyUsage.io )
+ * But the property value cannot be shared with an external client ( ExternalPropertyAccessRestriction.noAccess)
+ *
+ * Example #2:
+ *
+ * a property may be only used (but not set by a flow). This does NOT mean that the property is not externally settable.
+ * For example, most security parameters or parameters that come from the environment (i.e. http session)
+ * =======================================================================================
  *
  * TODO: what about security levels based on if the data is provided by a potentially tainted source (clients) vs. another flow?
  * so "external" means another flow and "client" means to a browser client or api client.

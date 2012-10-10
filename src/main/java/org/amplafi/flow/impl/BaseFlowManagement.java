@@ -8,7 +8,7 @@
  */
 package org.amplafi.flow.impl;
 
-import static com.sworddance.util.CUtilities.isNotEmpty;
+import static com.sworddance.util.CUtilities.*;
 import static org.amplafi.flow.FlowConstants.FSCONTINUE_WITH_FLOW;
 import static org.amplafi.flow.FlowConstants.FSREDIRECT_URL;
 import static org.amplafi.flow.FlowConstants.FSRETURN_TO_FLOW;

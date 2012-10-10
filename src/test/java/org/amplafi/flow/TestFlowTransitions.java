@@ -116,12 +116,13 @@ public class TestFlowTransitions {
         flowState2.setProperty(copiedBackProperty.getName(), A_VALUE_THAT_IS_COPIED_BACK);
         assertEquals(flowState2.getCurrentPage(), defaultPage2);
         String lookupKey1 = flowState2.getProperty(FSRETURN_TO_FLOW);
+        assertEquals(flowState2.getFlowTypeName(), FLOW_TYPE_2, flowState2.toString());
         assertEquals(flowState1.getLookupKey(), lookupKey1, "the child flow does not have the parent flow as the return-to-flow ");
         flowState2.setProperty(FSNEXT_FLOW, FLOW_TYPE_3);
         String pageName = flowState2.finishFlow();
 
         FlowState flowState3 = baseFlowManagement.getCurrentFlowState();
-        assertEquals(flowState3.getFlowTypeName(), FLOW_TYPE_3);
+        assertEquals(flowState3.getFlowTypeName(), FLOW_TYPE_3, flowState3.toString());
         assertEquals(flowState3.getProperty(copiedBackProperty.getName()), A_VALUE_THAT_IS_COPIED_BACK);
         assertEquals(pageName, defaultPage3, "the child flow when it completed did not redirect to the parent flow's page. flowState2="+flowState2);
         lookupKey1 = flowState3.getProperty(FSRETURN_TO_FLOW);

@@ -105,7 +105,13 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
             new FlowPropertyDefinitionImpl(FAPREV_TEXT).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
         );
+    public FactoryFlowPropertyDefinitionProvider() {
+
+    }
     public FactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
+        super(flowPropertyDefinitions);
+    }
+    public FactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitions) {
         super(flowPropertyDefinitions);
     }
     /**

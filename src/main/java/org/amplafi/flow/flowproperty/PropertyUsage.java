@@ -208,5 +208,4 @@ public enum PropertyUsage {
     public Boolean getAltersProperty() {
         return this.altersProperty;
     }
-
 }

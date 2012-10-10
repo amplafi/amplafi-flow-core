@@ -60,6 +60,7 @@ public class FlowPropertyDefinitionBuilder {
     public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.io, null));
     public static List<FlowPropertyExpectation> REQUIRED_INPUT_CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.activate, null, PropertyUsage.consume, null));
     public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, null));
+    // not externally settable by user but can be set by previous flow.
     public static List<FlowPropertyExpectation> INTERNAL_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.internalState, ExternalPropertyAccessRestriction.noAccess));
     public static List<FlowPropertyExpectation> GENERATED_KNOWN_FA = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess));
     public FlowPropertyDefinitionBuilder() {
@@ -472,6 +473,14 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyDefinitionBuilder set(Class<?> elementClass) {
         this.flowPropertyDefinition.setDataClassDefinition(new DataClassDefinitionImpl(elementClass, Set.class));
         return this;
+    }
+    /**
+     * Handles case where the key class is a string.
+     * @param elementClass
+     * @return
+     */
+    public FlowPropertyDefinitionBuilder map(Class<?> elementClass) {
+        return this.map(String.class, elementClass);
     }
     public FlowPropertyDefinitionBuilder map(Class<?> keyClass, Class<?> elementClass, Class<?>... elementCollectionClasses) {
         this.flowPropertyDefinition.setDataClassDefinition(DataClassDefinitionImpl.map(keyClass, elementClass, elementCollectionClasses));

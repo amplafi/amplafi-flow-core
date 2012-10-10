@@ -58,7 +58,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 		        flowState.serializeSinglePropertyValue(jsonWriter);
 			} else {
 			    // HACK : NEED SECURITY CHECKS to make sure only visible values are exported.
-			    // TODO : use flowState.getExportedValuesMap()
+			    // TODO : filter by ExternalPropertyAccessRestriction.isReadable() on each property
 				jsonWriter.object();
 				jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
 				jsonWriter.endObject();
