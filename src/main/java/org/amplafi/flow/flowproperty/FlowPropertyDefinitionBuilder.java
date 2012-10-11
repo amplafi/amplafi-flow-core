@@ -266,38 +266,40 @@ public class FlowPropertyDefinitionBuilder {
      * @param additionalConfigurationParameters a list because order matters.
      * @return this
      */
-    public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        for (FlowPropertyExpectation flowPropertyExpectation : NotNullIterator
-            .<FlowPropertyExpectation> newNotNullIterator(additionalConfigurationParameters)) {
-            if (flowPropertyExpectation.isApplicable(this.flowPropertyDefinition)) {
-                // FlowPropertyExpectation expectation applies
+    public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(List<FlowPropertyExpectation>... additionalConfigurationParameters) {
+        for (List<FlowPropertyExpectation> additionalConfigurationParameterList : NotNullIterator.<List<FlowPropertyExpectation>> newNotNullIterator(additionalConfigurationParameters)) {
+            for (FlowPropertyExpectation flowPropertyExpectation : NotNullIterator.<FlowPropertyExpectation> newNotNullIterator(additionalConfigurationParameterList)) {
+                if (flowPropertyExpectation.isApplicable(this.flowPropertyDefinition)) {
+                    // FlowPropertyExpectation expectation applies
 
-                // TODO: use init so that if the flowPropertyDefinition already has a different value then a new flowPD can be created.
-                this.flowPropertyDefinition.addFlowPropertyValueChangeListeners(flowPropertyExpectation.getFlowPropertyValueChangeListeners());
-                FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = flowPropertyExpectation.getFlowPropertyValueProvider();
-                if (flowPropertyValueProvider != null) {
-                    // forces a new valueProvider
-                    initFlowPropertyValueProvider(flowPropertyValueProvider);
-                }
+                    // TODO: use init so that if the flowPropertyDefinition already has a different value then a new flowPD can be created.
+                    this.flowPropertyDefinition.addFlowPropertyValueChangeListeners(flowPropertyExpectation.getFlowPropertyValueChangeListeners());
+                    FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = flowPropertyExpectation
+                        .getFlowPropertyValueProvider();
+                    if (flowPropertyValueProvider != null) {
+                        // forces a new valueProvider
+                        initFlowPropertyValueProvider(flowPropertyValueProvider);
+                    }
 
-                // TODO: Need to do test and clone!!
-                FlowActivityPhase flowActivityPhase = flowPropertyExpectation.getPropertyRequired();
-                if (flowActivityPhase != null) {
-                    this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
-                }
-                PropertyScope propertyScope = flowPropertyExpectation.getPropertyScope();
-                if (propertyScope != null) {
-                    this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyScope(propertyScope);
-                }
-                PropertyUsage propertyUsage = flowPropertyExpectation.getPropertyUsage();
-                if (propertyUsage != null) {
-                    this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
-                }
-                if ( !this.flowPropertyDefinition.isReadOnly()) {
-                    FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
-                    if (flowPropertyValuePersister != null) {
-                        // forces a new flowPropertyValuePersister
-                        initFlowPropertyValuePersister(flowPropertyValuePersister);
+                    // TODO: Need to do test and clone!!
+                    FlowActivityPhase flowActivityPhase = flowPropertyExpectation.getPropertyRequired();
+                    if (flowActivityPhase != null) {
+                        this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
+                    }
+                    PropertyScope propertyScope = flowPropertyExpectation.getPropertyScope();
+                    if (propertyScope != null) {
+                        this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyScope(propertyScope);
+                    }
+                    PropertyUsage propertyUsage = flowPropertyExpectation.getPropertyUsage();
+                    if (propertyUsage != null) {
+                        this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
+                    }
+                    if (!this.flowPropertyDefinition.isReadOnly()) {
+                        FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();
+                        if (flowPropertyValuePersister != null) {
+                            // forces a new flowPropertyValuePersister
+                            initFlowPropertyValuePersister(flowPropertyValuePersister);
+                        }
                     }
                 }
             }
