@@ -1785,10 +1785,16 @@ public class FlowStateImpl implements FlowStateImplementor {
     public String getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition propertyDefinition) {
         String key = propertyDefinition.getName();
         String namespace = ((FlowPropertyDefinitionImplementor)propertyDefinition).getNamespaceKey(this, flowPropertyProvider);
-        String value = getRawProperty(namespace, key);
-        if (isBlank(value) && propertyDefinition.getPropertyUsage().isExternallySettable()) {
+        String value;
+        if ( getFlowValuesMap().containsKey(namespace, key)) {
+            // A flow may set a value to null that is *not* copied out to the global namespace (yet or depending on PropertyUsage never)
+            // this is a reasonable use case, so allow for the (namespace,key) to have a null value.
+            value = getRawProperty(namespace, key);
+        } else if (propertyDefinition.getPropertyUsage().isExternallySettable()) {
         	//Property is externally settable so trying default namespace..
         	value = getRawProperty(NamespaceMapKey.NO_NAMESPACE, key);
+        } else {
+            value = null;
         }
         return value;
     }

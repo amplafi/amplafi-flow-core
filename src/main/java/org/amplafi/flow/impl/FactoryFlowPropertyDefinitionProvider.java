@@ -96,12 +96,12 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         new FlowPropertyDefinitionBuilder().createFromTemplate(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY)
     );
     public static final FactoryFlowPropertyDefinitionProvider FLOW_ACTIVITY_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
-            new FlowPropertyDefinitionBuilder(FATITLE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionBuilder(FANEXT_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionBuilder(FAPREV_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-            new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, consume)
-        );
+        new FlowPropertyDefinitionBuilder(FATITLE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FANEXT_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAPREV_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, consume)
+    );
     public FactoryFlowPropertyDefinitionProvider() {
 
     }
