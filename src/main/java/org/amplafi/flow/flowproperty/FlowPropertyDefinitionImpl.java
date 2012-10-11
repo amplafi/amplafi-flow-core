@@ -690,9 +690,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
         if( this.externalPropertyAccessRestriction != null) {
             return this.externalPropertyAccessRestriction;
-        } else if ( this.name.startsWith("fs") || this.name.startsWith("fa")) {
-            // HACK: PATM : To TIRIS: Start applying ExternalPropertyAccessRestriction.noAccess to these properties
-            return ExternalPropertyAccessRestriction.noAccess;
         } else {
             return getPropertyUsage() == PropertyUsage.internalState? ExternalPropertyAccessRestriction.noAccess :
                 ExternalPropertyAccessRestriction.noRestrictions;
