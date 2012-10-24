@@ -19,7 +19,7 @@ public @interface RegisteredStandardClass {
 	 * The default is the property name. Any "Impl" is removed.
 	 * @return the propertyName
 	 */
-	String propertyName() default "";
+	String[] propertyNames() default {};
 	ExternalPropertyAccessRestriction defaultExternalPropertyAccessRestriction() default ExternalPropertyAccessRestriction.noRestrictions;
 	PropertyUsage defaultPropertyUsage() default PropertyUsage.use;
 	/**
