@@ -368,7 +368,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     @Override
     public FlowValidationResult getFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
-        return FlowValidationResultProviderImpl.INSTANCE.getFlowValidationResult(this, flowActivityPhase, flowStepDirection);
+        return FlowValidationResultProviderImpl.INSTANCE.getFlowValidationResult(new ReportAllValidationResult(), this, flowActivityPhase, flowStepDirection);
     }
 
     @Override

@@ -23,8 +23,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.MissingRequiredTracking;
-import org.amplafi.flow.validation.ReportAllValidationResult;
-
 import com.sworddance.util.ApplicationIllegalArgumentException;
 
 import static com.sworddance.util.CUtilities.*;
@@ -45,14 +43,13 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
     // TODO: should be singleton service?
     public static final FlowValidationResultProviderImpl<FlowPropertyProviderWithValues> INSTANCE = new FlowValidationResultProviderImpl<FlowPropertyProviderWithValues>();
     /**
-     * @see org.amplafi.flow.validation.FlowValidationResultProvider#getFlowValidationResult(org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowActivityPhase, org.amplafi.flow.FlowStepDirection)
+     * @see org.amplafi.flow.validation.FlowValidationResultProvider#getFlowValidationResult(FlowValidationResult, org.amplafi.flow.flowproperty.FlowPropertyProvider, org.amplafi.flow.FlowActivityPhase, org.amplafi.flow.FlowStepDirection)
      */
     @Override
-    public FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider, FlowActivityPhase flowActivityPhase,
-        FlowStepDirection flowStepDirection) {
+    public FlowValidationResult getFlowValidationResult(FlowValidationResult flowValidationResult, FPP flowPropertyProvider,
+        FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         // TODO : Don't validate if user is going backwards.
         // Need to handle case where user enters invalid data, backs up and then tries to complete the flow
-        FlowValidationResult result = new ReportAllValidationResult();
         ApplicationIllegalArgumentException.notNull(flowActivityPhase, "FlowActivityPhase must be set.");
         Map<String, FlowPropertyDefinition> propDefs = flowPropertyProvider.getPropertyDefinitions();
         if (isNotEmpty(propDefs)) {
@@ -68,14 +65,14 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
                         	// Note: This actually enforces the expectation that the property can in fact be supplied.
                             flowPropertyProvider.getProperty(def.getName());
                         }
-                        MissingRequiredTracking.appendRequiredTrackingIfTrue(result,
+                        MissingRequiredTracking.appendRequiredTrackingIfTrue(flowValidationResult,
                                 !flowPropertyProvider.isPropertySet(def.getName()),
                                 def.getUiComponentParameterName());
                     }
                 }
             }
         }
-        return result;
+        return flowValidationResult;
     }
 
 }

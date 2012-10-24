@@ -31,5 +31,5 @@ import org.amplafi.flow.validation.FlowValidationResult;
  */
 public interface FlowValidationResultProvider<FPP extends FlowPropertyProvider> {
 
-    FlowValidationResult getFlowValidationResult(FPP flowPropertyProvider, FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
+    FlowValidationResult getFlowValidationResult(FlowValidationResult flowValidationResult, FPP flowPropertyProvider, FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection);
 }
