@@ -26,7 +26,7 @@ import com.sworddance.util.map.ConcurrentInitializedMap;
  * they were templates (immutable) or not. With a builder, all {@link FlowPropertyDefinition}s
  * become immutable.
  *
- * TODO: make {@link FlowPropertyDefinitionImpl} immutible.
+ * TODO: make {@link FlowPropertyDefinitionImpl} immutable.
  * Any changes to a FPD require a builder to construct a new FPD.
  *
  * TODO: ? add a way to make an attempt to read an unset property fail rather than return null? Useful for
