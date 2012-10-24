@@ -22,10 +22,7 @@ import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
-import org.amplafi.flow.translator.EnumFlowTranslator;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.flow.translator.JSONArrayFlowTranslator;
-import org.amplafi.flow.translator.JSONObjectFlowTranslator;
 import org.amplafi.flow.translator.ShortFlowTranslator;
 
 import org.apache.commons.logging.Log;
@@ -83,12 +80,8 @@ public class FlowTestingUtils {
     private void initializeService() {
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowDefinitionsManager(this.flowDefinitionsManager);
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).setFlowTranslators(Arrays.<FlowTranslator<?>>asList(
-            new ShortFlowTranslator(),
-            new EnumFlowTranslator(),
-            new JSONObjectFlowTranslator(),
-            new JSONArrayFlowTranslator()
+            new ShortFlowTranslator()
             ));
-        ((BaseFlowTranslatorResolver)flowTranslatorResolver).addStandardFlowTranslators();
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).setFlowTranslatorResolver(flowTranslatorResolver);
         ((BaseFlowTranslatorResolver)flowTranslatorResolver).initializeService();
         ((FlowDefinitionsManagerImpl)flowDefinitionsManager).initializeService();

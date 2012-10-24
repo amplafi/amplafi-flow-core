@@ -60,6 +60,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
         translators = new MapByClass<FlowTranslator<?>>();
 
         jsonRenderers = new MapByClass<JsonRenderer<?>>();
+        this.addStandardFlowTranslators();
         for(FlowTranslator<?> flowTranslator: getFlowTranslators() ) {
             addFlowTranslator(flowTranslator);
         }
@@ -69,18 +70,22 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      *
      */
     @SuppressWarnings("unchecked")
-    public void addStandardFlowTranslators() {
-        getFlowTranslators().add(new ListFlowTranslator());
-        getFlowTranslators().add(new SetFlowTranslator());
-        getFlowTranslators().add(new MapFlowTranslator());
-        getFlowTranslators().add(new IntegerFlowTranslator());
-        getFlowTranslators().add(new LongFlowTranslator());
-        getFlowTranslators().add(new BooleanFlowTranslator());
+    private void addStandardFlowTranslators() {
+        getFlowTranslators().add(new UriFlowTranslator());
+        getFlowTranslators().add(new EnumFlowTranslator());
         getFlowTranslators().add(new CalendarFlowTranslator());
         getFlowTranslators().add(new JsonSelfRendererFlowTranslator());
         getFlowTranslators().add(new FlowAwareJsonSelfRendererFlowTranslator());
-        getFlowTranslators().add(new UriFlowTranslator());
-        getFlowTranslators().add(new EnumFlowTranslator());
+        getFlowTranslators().add(new JSONObjectFlowTranslator());
+        getFlowTranslators().add(new JSONArrayFlowTranslator());
+        getFlowTranslators().add(new LongFlowTranslator());
+        getFlowTranslators().add(new IntegerFlowTranslator());
+        getFlowTranslators().add(new BooleanFlowTranslator());
+        getFlowTranslators().add(new TimezoneFlowTranslator());
+        getFlowTranslators().add(new ListFlowTranslator());
+        getFlowTranslators().add(new SetFlowTranslator());
+        getFlowTranslators().add(new MapFlowTranslator(java.util.Map.class, java.util.LinkedHashMap.class));
+        getFlowTranslators().add(new MapFlowTranslator(java.util.NavigableMap.class, java.util.TreeMap.class));
         for(FlowTranslator<?> flowTranslator: this.flowTranslators) {
             if ( flowTranslator instanceof AbstractFlowTranslator) {
                 ((AbstractFlowTranslator<?>)flowTranslator).setFlowTranslatorResolver(this);

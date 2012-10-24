@@ -96,7 +96,6 @@ public abstract class AbstractTestFlowTranslators<T> {
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         if ( flowTranslatorResolver == null) {
             this.flowTranslatorResolver = new BaseFlowTranslatorResolver();
-            ((BaseFlowTranslatorResolver)this.flowTranslatorResolver).addStandardFlowTranslators();
             ((BaseFlowTranslatorResolver)this.flowTranslatorResolver).initializeService();
         }
         return flowTranslatorResolver;

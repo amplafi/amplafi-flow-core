@@ -25,6 +25,8 @@ import org.amplafi.json.JSONObject;
 import org.amplafi.json.renderers.MapJsonRenderer;
 import org.apache.commons.collections.MapUtils;
 
+import com.sworddance.util.ApplicationIllegalStateException;
+
 
 /**
  * {@link org.amplafi.flow.translator.FlowTranslator} that serializes/deserializes {@link Map}s for flows.
@@ -34,17 +36,28 @@ import org.apache.commons.collections.MapUtils;
  * @param <V>
  */
 public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends K, ? extends V>> {
-    private Class<?> translatedClass = Map.class;
-    private Class<?> defaultObjectClass = LinkedHashMap.class;
-    public MapFlowTranslator() {
+    private Class<?> translatedClass;
+    private Class<?> defaultObjectClass;
+    public MapFlowTranslator(Class<? extends Map>translatedClass, Class<? extends Map>defaultObjectClass) {
         super(new MapJsonRenderer());
+        this.addSerializedFormClasses(JSONObject.class);
+        this.setDefaultObjectClass(defaultObjectClass);
+        this.setTranslatedClass(translatedClass);
+    }
+    public MapFlowTranslator() {
+        this(Map.class, LinkedHashMap.class);
         this.addSerializedFormClasses(JSONObject.class);
     }
     @SuppressWarnings("unchecked")
     @Override
     protected Map<? extends K, ? extends V> doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) {
         JSONObject jsonObject = JSONObject.toJsonObject(serializedObject);
-        Map<K, V> map = new LinkedHashMap<K, V>();
+        Map<K, V> map;
+        try {
+            map = (Map<K, V>) defaultObjectClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ApplicationIllegalStateException(e);
+        }
         for(String key : jsonObject.keys() ) {
             Object object = jsonObject.get(key);
             DataClassDefinition keyDataClassDefinition = dataClassDefinition.getKeyDataClassDefinition();

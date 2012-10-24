@@ -50,7 +50,6 @@ public class TestFlowTranslatorResolver extends Assert {
     public FlowTranslatorResolver getFlowTranslatorResolver() {
         BaseFlowTranslatorResolver flowTranslatorResolver = new BaseFlowTranslatorResolver();
         flowTranslatorResolver.setFlowDefinitionsManager(new FlowDefinitionsManagerImpl());
-        flowTranslatorResolver.addStandardFlowTranslators();
         flowTranslatorResolver.initializeService();
         return flowTranslatorResolver;
     }
