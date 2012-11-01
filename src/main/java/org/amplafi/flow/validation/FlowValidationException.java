@@ -19,8 +19,10 @@ import java.util.List;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import com.sworddance.util.NotNullIterator;
 
@@ -108,10 +110,14 @@ public class FlowValidationException extends FlowException {
             throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
-    public static void valid(FlowState flowState, boolean condition, Object...messages) throws FlowValidationException {
+    public static void valid(FlowState flowState, boolean condition, Object property, Object...messages) throws FlowValidationException {
         if ( !condition) {
-            FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(messages));
+            String[] actual = new String[] {ObjectUtils.toString(property, ""), StringUtils.join(messages)};
+            FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(actual));
             throw new FlowValidationException(flowState, flowValidationResult);
         }
+    }
+    public static void notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
+        valid(null, notNull != null, property, messages);
     }
 }

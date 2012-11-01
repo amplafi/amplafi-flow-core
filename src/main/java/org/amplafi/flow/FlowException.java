@@ -15,7 +15,6 @@ package org.amplafi.flow;
 
 import static com.sworddance.util.ApplicationIllegalStateException.checkState;
 
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -69,10 +68,4 @@ public class FlowException extends RuntimeException {
 	    }
 	    return null;
 	}
-    public static FlowException notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object...messages) {
-        if (notNull == null) {
-            throw new FlowException(null, messages);
-        }
-        return null;
-    }
 }

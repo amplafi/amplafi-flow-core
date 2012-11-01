@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.validation.FlowValidationException;
 
 import static com.sworddance.util.CUtilities.*;
 
@@ -218,13 +218,13 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected, Object...messages) {
         ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyName), propertyName);
         T result = flowPropertyProvider.getProperty(propertyName, expected);
-        FlowException.notNull(result, flowPropertyProvider, propertyName, messages);
+        FlowValidationException.notNull(result, flowPropertyProvider, propertyName, messages);
         return result;
     }
     protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<? extends T> propertyClass, Object...messages) {
         ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyClass), propertyClass);
         T result = flowPropertyProvider.getProperty(propertyClass);
-        FlowException.notNull(result, flowPropertyProvider, propertyClass, messages);
+        FlowValidationException.notNull(result, flowPropertyProvider, propertyClass, messages);
         return result;
     }
 }
