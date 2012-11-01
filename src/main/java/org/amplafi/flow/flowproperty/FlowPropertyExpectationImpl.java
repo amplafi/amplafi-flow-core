@@ -58,6 +58,9 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyExpectationImpl(String name) {
         this(name, null, null, null, null, null, null, null);
     }
+    public FlowPropertyExpectationImpl(RegisteredStandardClass registeredStandardClassAnnotation) {
+        this(null, registeredStandardClassAnnotation.defaultFlowActivityPhase(), null, registeredStandardClassAnnotation.defaultPropertyUsage(), registeredStandardClassAnnotation.defaultExternalPropertyAccessRestriction());
+    }
     public FlowPropertyExpectationImpl(String name, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this(name, null, null, null, null, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
