@@ -62,10 +62,9 @@ public class TestFlowTransitions {
         flow.addActivity(fa1);
         definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
         assertNotNull(definition);
-        String returnToFlowLookupKey = null;
         definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
         FlowManagement baseFlowManagement = getFlowManagement(flow);
-        FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null, returnToFlowLookupKey);
+        FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null);
 
         Map<String, FlowTransition> propValue = flowState.getCurrentActivity().getProperty(FSFLOW_TRANSITIONS);
         assertTrue( propValue.keySet().contains("foo"));

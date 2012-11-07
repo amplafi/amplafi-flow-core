@@ -319,7 +319,7 @@ public class TestFlowPropertyDefinition {
 
 
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState, null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState);
 
         // now make sure that only the properties allowed to be set externally are set.
         for (PropertyScope propertyScope: PropertyScope.values()) {
@@ -374,7 +374,7 @@ public class TestFlowPropertyDefinition {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
             "outside-property", "out-1",
             key, "false");
-        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState, null);
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState);
         // TODO : decide how to handle undeclared properties - use case is when one flow is an intermediary between 2 flows.
         flowState.setProperty("not-a-property", true);
         flowState.setProperty(key, true);
@@ -470,7 +470,7 @@ public class TestFlowPropertyDefinition {
 
         // now as part of a running flow
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowStateImpl flowStateImpl = flowManagement.startFlowState(flowTypeName, true, null, null);
+        FlowStateImpl flowStateImpl = flowManagement.startFlowState(flowTypeName, true, null);
         FlowActivityImpl flowActivity = flowStateImpl.getCurrentActivity();
         for(FlowPropertyProvider flowPropertyProvider: new FlowPropertyProvider[] {flowActivity, flowStateImpl.getFlow()}) {
             namespace = flowLocalProperty.getNamespaceKey(flowStateImpl, flowPropertyProvider);
@@ -546,7 +546,7 @@ public class TestFlowPropertyDefinition {
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "true");
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState);
         assertNotNull(flowState);
         // expect null because propertyName is set to initialize
         assertFalse(flowState.isPropertySet(propertyName), flowState.toString());
@@ -598,7 +598,7 @@ public class TestFlowPropertyDefinition {
         flowActivity0.addPropertyDefinitions(flowNotAutoCreatedProperty, flowLocalProperty );
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null , null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null);
         assertNotNull(flowState);
         assertFalse(flowState.isPropertySet(autoCreated));
         assertFalse(flowState.isPropertySet(notAutoCreated));
@@ -634,7 +634,7 @@ public class TestFlowPropertyDefinition {
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState);
         assertNotNull(flowState);
         String propertyValue = flowState.getProperty(propertyName, String.class);
         assertEquals("true",propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);
@@ -673,8 +673,7 @@ public class TestFlowPropertyDefinition {
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
         flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        String returnToFlowLookupKey = null;
-        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
+        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState);
         SampleEnum type =flowState.getCurrentActivity().getProperty("foo");
         assertEquals(type, SampleEnum.EXTERNAL, "(looking for property 'foo') FlowState="+flowState);
         type =flowState.getProperty("fa1fp", SampleEnum.class);
@@ -715,7 +714,7 @@ public class TestFlowPropertyDefinition {
         flowActivity0.addPropertyDefinitions(flowPropertyDefinition);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null , null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null);
         assertEquals(flowState.getProperty("hasdefault"), Boolean.TRUE);
         FlowPropertyDefinition actualFixed = flowState.getFlowPropertyDefinition("hasdefault");
         assertTrue(actualFixed.getFlowPropertyValueProvider() instanceof FixedFlowPropertyValueProvider);
@@ -791,7 +790,7 @@ public class TestFlowPropertyDefinition {
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, false, null, null);
+        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, false, null);
         assertNotNull(flowState);
         flowState.setProperty("user", new UserObject(1));
         Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
@@ -832,7 +831,7 @@ public class TestFlowPropertyDefinition {
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(propertyName, "maybe");
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState , null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, false, initialFlowState);
         assertNotNull(flowState);
         Boolean propertyValue = flowState.getProperty(propertyName, Boolean.class);
         assertEquals(Boolean.TRUE,propertyValue, "flowState="+flowState+" propertyValue="+propertyValue);

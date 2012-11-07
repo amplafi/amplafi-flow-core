@@ -27,18 +27,18 @@ public class TestOneOfManyFlowPropertyValueProvider {
         OneOfManyFlowPropertyValueProvider oneOfManyFlowPropertyValueProvider = new OneOfManyFlowPropertyValueProvider("prop", String.class, "prop1", "prop2");
         oneOfManyFlowPropertyValueProvider.defineFlowPropertyDefinitions(activity);
         flowTestingUtils.addFlowDefinition("foo", activity);
-        FlowState flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, null, null);
+        FlowState flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, null);
         assertNull(flowState.getProperty("prop"), "should not be set");
 
         // prop1 ( the first choice ) is null
         HashMap<String, String> initialFlowState = new HashMap<>();
         initialFlowState.put("prop2", "value2");
-        flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, initialFlowState, null);
+        flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, initialFlowState);
         assertEquals(flowState.getProperty("prop"), "value2", "should be set");
 
         // prop1 overrides prop2
         initialFlowState.put("prop1", "value1");
-        flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, initialFlowState, null);
+        flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, initialFlowState);
         assertEquals(flowState.getProperty("prop"), "value1", "should be set");
     }
 }

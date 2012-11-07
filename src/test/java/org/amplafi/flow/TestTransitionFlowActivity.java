@@ -38,13 +38,12 @@ public class TestTransitionFlowActivity {
 
     @Test(enabled=TEST_ENABLED)
     public void testTransitionFinishFlow() {
-        String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         TransitionFlowActivity obj = new TransitionFlowActivity();
         String flowTypeName = "foo";
         flowTestingUtils.addFlowDefinition(flowTypeName, obj);
         Map<String, String> initialFlowState = null;
-        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState, returnToFlowLookupKey);
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState);
         assertTrue(flowState.isCompleted());
     }
 
@@ -53,7 +52,6 @@ public class TestTransitionFlowActivity {
      */
     @Test(enabled=TEST_ENABLED)
     public void testTransitionFlowActivityWithFlowTransitions() {
-        String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType = flowTestingUtils.addFlowDefinition(newFlowActivity());
         TransitionFlowActivity transitionFlowActivity = new TransitionFlowActivity();
@@ -61,13 +59,13 @@ public class TestTransitionFlowActivity {
         transitionFlowActivity.setNextFlowType(nextFlowType);
         String flowTypeName = flowTestingUtils.addFlowDefinition(newFlowActivity(), transitionFlowActivity);
         FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
-        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        FlowStateImplementor flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
         // the alternate condition was not met.
         assertNull(nextFlowState);
 
-        flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowState.setFinishKey(TransitionType.alternate.toString());
         // make sure cache can't help 'cheat'
         flowState.clearCache();
@@ -82,14 +80,13 @@ public class TestTransitionFlowActivity {
      */
     @Test(enabled=TEST_ENABLED)
     public void testTransitionFlowActivityWithNormalFinish() {
-        String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType = flowTestingUtils.addFlowDefinition(newFlowActivity());
         TransitionFlowActivity transitionFlowActivity = new TransitionFlowActivity();
         transitionFlowActivity.setNextFlowType(nextFlowType);
         String flowTypeName = flowTestingUtils.addFlowDefinition(newFlowActivity(), transitionFlowActivity);
         FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
@@ -101,7 +98,6 @@ public class TestTransitionFlowActivity {
      */
     @Test(enabled=TEST_ENABLED)
     public void testTransitionFlowActivityWithMultipleFlowTransitions() {
-        String returnToFlowLookupKey = null;
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String nextFlowType0 = flowTestingUtils.addFlowDefinition(newFlowActivity());
         TransitionFlowActivity transitionFlowActivity0 = new TransitionFlowActivity();
@@ -120,21 +116,21 @@ public class TestTransitionFlowActivity {
 
         String flowTypeName = flowTestingUtils.addFlowDefinition(newFlowActivity(), transitionFlowActivity0, transitionFlowActivity1, transitionFlowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowManager().getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowTestingUtils.advanceToEnd(flowState);
         FlowState nextFlowState = flowManagement.getCurrentFlowState();
         // the alternate condition was not met.
         assertNotNull(nextFlowState);
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType2);
 
-        flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowState.setFinishKey(TransitionType.alternate.toString());
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         assertEquals(nextFlowState.getFlowTypeName(), nextFlowType0);
 
-        flowState = flowManagement.startFlowState(flowTypeName, true, null, returnToFlowLookupKey);
+        flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowState.setFinishKey("foo1");
         flowTestingUtils.advanceToEnd(flowState);
         nextFlowState = flowManagement.getCurrentFlowState();

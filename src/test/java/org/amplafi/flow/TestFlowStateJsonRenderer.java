@@ -98,7 +98,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String flowTypeName = flowTestingUtils.addFlowDefinition(new FlowActivityImpl());
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowStateImpl flowState = flowManagement.startFlowState(flowTypeName, true, null, null);
+        FlowStateImpl flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowState.finishFlow();
         return flowState;
     }

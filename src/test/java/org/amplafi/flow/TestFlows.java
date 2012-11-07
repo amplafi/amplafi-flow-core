@@ -110,7 +110,7 @@ public class TestFlows {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(
             "key", "fs",
             FlowUtils.INSTANCE.toKey("fs0","key"), "fs0");
-        FlowStateImplementor fs = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, null);
+        FlowStateImplementor fs = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState);
 
         FlowActivityImplementor activity0 = fs.getActivity(0);
         assertEquals(activity0.getProperty("key"), "fs0", "flowState="+fs);
@@ -211,8 +211,7 @@ public class TestFlows {
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         Map<String, String> initialFlowState = new HashMap<String, String>();
         initialFlowState.put(PROPERTY2, SET_BY_MAP);
-        String returnToFlowLookupKey = null;
-        FlowStateImplementor flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
+        FlowStateImplementor flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState);
         assertEquals(flowState.getActivity(0).getProperty(PROPERTY1), INITIAL_VALUE, "flowState="+flowState);
         flowState.clearCache();
         assertEquals(flowState.getActivity(1).getProperty(PROPERTY2), SET_BY_MAP, "flowState="+flowState);
@@ -223,7 +222,6 @@ public class TestFlows {
 
     @Test(enabled=TEST_ENABLED)
     public void testConversion() {
-        String returnToFlowLookupKey = null;
         Map<String, String> initialFlowState = new HashMap<String, String>();
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
         FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Long.class);
@@ -234,7 +232,7 @@ public class TestFlows {
         flowTestingUtils.getFlowTranslatorResolver().resolve(fa1);
         flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
-        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState, returnToFlowLookupKey);
+        FlowState flowState = flowManagement.startFlowState(FLOW_TYPE, true, initialFlowState);
         flowState.setProperty("fee", true);
         Flow inst = flowState.getFlow();
         FlowPropertyDefinition flowPropertyDefinition = inst.getFlowPropertyDefinition("fee");
@@ -260,7 +258,7 @@ public class TestFlows {
         String prefix = chg2.getFlowPropertyProviderFullName();
         //TODO need mechanism to generate correct namespace/key for setting an override value.
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState(prefix + NamespaceMapKey.NAMESPACE_SEPARATOR + FAINVISIBLE, true);
-        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState, null);
+        FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState);
         FlowActivityImplementor newChg2 = flowState.getActivity("chg2");
         assertTrue(newChg2.isInvisible());
         List<FlowActivity> visibleActivities = flowState.getVisibleActivities();

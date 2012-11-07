@@ -22,13 +22,13 @@ public class TestFlowPropertyValuePersister {
     public void testToMakeSureOnlyChangedPropertiesGetPersisters() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.addFlowDefinition(FLOW_TYPE, new AFlowActivity().initInvisible(false));
-        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null, null);
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null);
         FlowPropertyDefinition flowPropertyDefinition = flowState.getPropertyDefinitions().get("property");
         assertNull(flowPropertyDefinition.getFlowPropertyValuePersister());
 
         flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.addFlowDefinition(FLOW_TYPE, new BFlowActivity().initInvisible(false));
-        flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null, null);
+        flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null);
         flowPropertyDefinition = flowState.getPropertyDefinitions().get("property");
         assertNotNull(flowPropertyDefinition.getFlowPropertyValuePersister());
     }
