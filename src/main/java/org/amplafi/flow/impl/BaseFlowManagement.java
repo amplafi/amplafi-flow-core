@@ -261,6 +261,10 @@ public class BaseFlowManagement implements FlowManagement {
     public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState,
         Object returnToFlow) {
         initialFlowState = initReturnToFlow(initialFlowState, returnToFlow);
+        return (FS) startFlowState(flowTypeName, makeNewStateCurrent, initialFlowState);
+    }
+    @Override
+    public <FS extends FlowState> FS startFlowState(String flowTypeName, boolean makeNewStateCurrent, Map<String, String> initialFlowState) {
         FS flowState = (FS) createFlowState(flowTypeName, initialFlowState, makeNewStateCurrent);
         return (FS) beginFlowState(flowState);
     }

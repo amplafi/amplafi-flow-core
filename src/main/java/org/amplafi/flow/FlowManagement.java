@@ -95,10 +95,11 @@ public interface FlowManagement extends FlowStateListener {
      * @param flowTypeName The name of the flow.
      * @param currentFlow Whether to make this the current active flow.
      * @param initialFlowState The initial state of the flow.
-     * @param returnToFlow TODO
+     * @param returnToFlow must be passed on starting a flow because the flow may run to completion once started.
      * @return the newly-started FlowState
      */
     <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow, Map<String, String> initialFlowState, Object returnToFlow);
+    <FS extends FlowState> FS startFlowState(String flowTypeName, boolean currentFlow, Map<String, String> initialFlowState);
 
     /**
      * Continue the flow with the given lookup key.
