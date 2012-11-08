@@ -24,7 +24,8 @@ import org.amplafi.flow.FlowActivityPhase;
  * While a flow is in progress no changes are visible to other flows ( except those invoked in a caller/callee relationship )
  *
  * TODO: How to handle caller/callee situations? Seems like internalState should be made available.
- *
+ * PropertyUsage is *NOT* a security mechanism. PropertyUsage focuses only on how a property should be initialized and outputed so that
+ * a property lifecycle can be determined.
  *
  * @author patmoore
  */
@@ -163,10 +164,10 @@ public enum PropertyUsage {
 
     /**
      * True means the property can be set externally.
-     * TODO: {@link ExternalPropertyAccessRestriction} should be used?
-     * @return true means the property can be initialized externally by previous flows or from clients.
-     * false means the property is always set by the flow itself. ( Use case: security parameters )
      *
+     * This is *NOT* a security mechanism. See {@link ExternalPropertyAccessRestriction} for security
+     * @return true means the property can be initialized externally.
+     * false means the property is always set by the flow itself.
      */
     public boolean isExternallySettable() {
         return this.externallySettable;

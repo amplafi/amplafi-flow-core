@@ -62,6 +62,7 @@ public class FlowPropertyDefinitionBuilder {
     public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, null));
     // not externally settable by user but can be set by previous flow.
     public static List<FlowPropertyExpectation> INTERNAL_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.internalState, ExternalPropertyAccessRestriction.noAccess));
+    public static List<FlowPropertyExpectation> SECURED = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, ExternalPropertyAccessRestriction.noAccess));
     public static List<FlowPropertyExpectation> GENERATED_KNOWN_FA = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess));
     public FlowPropertyDefinitionBuilder() {
 
@@ -293,6 +294,10 @@ public class FlowPropertyDefinitionBuilder {
                     PropertyUsage propertyUsage = flowPropertyExpectation.getPropertyUsage();
                     if (propertyUsage != null) {
                         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyUsage(propertyUsage);
+                    }
+                    ExternalPropertyAccessRestriction externalPropertyAccessRestriction = flowPropertyExpectation.getExternalPropertyAccessRestriction();
+                    if ( externalPropertyAccessRestriction != null) {
+                        this.flowPropertyDefinition.initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
                     }
                     if (!this.flowPropertyDefinition.isReadOnly()) {
                         FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyExpectation.getFlowPropertyValuePersister();

@@ -492,10 +492,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return getUiComponentParameterName();
     }
 
-    public static String toString(String paramName, String flowPropName) {
-        return " " + paramName + "=\"fprop:" + flowPropName + "\" ";
-    }
-
     @Override
     public <T> String serialize(T object) {
         if ( this.getDataClassDefinition().getFlowTranslator() == null) {
@@ -644,7 +640,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     private void checkInitial(String value) {
         if ( !this.getDataClassDefinition().isDeserializable(this, value)) {
-            throw new IllegalStateException(this + " while checking initial value="+ value);
+            throw new FlowException(this + " while checking initial value="+ value);
         }
     }
 
@@ -687,6 +683,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
     }
 
+    @Override
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
         if( this.externalPropertyAccessRestriction != null) {
             return this.externalPropertyAccessRestriction;

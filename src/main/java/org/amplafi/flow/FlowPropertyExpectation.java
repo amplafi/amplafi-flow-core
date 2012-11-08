@@ -15,6 +15,7 @@ package org.amplafi.flow;
 
 import java.util.List;
 
+import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
@@ -60,6 +61,7 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
 
     PropertyScope getPropertyScope();
 
+    ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction();
     <FA extends FlowPropertyProvider> FlowPropertyValueProvider<FA> getFlowPropertyValueProvider();
     /**
      *
