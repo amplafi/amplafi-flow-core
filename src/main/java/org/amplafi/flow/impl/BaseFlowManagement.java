@@ -41,7 +41,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.FlowTx;
-import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -235,7 +234,7 @@ public class BaseFlowManagement implements FlowManagement {
     @SuppressWarnings("unchecked")
     @Override
     public FlowState transitionToFlowState(FlowState flowState, String key) {
-        FlowState nextFlowState = null;
+        FlowStateImplementor nextFlowState = null;
         Map<String, FlowTransition> transitions = flowState.getProperty(key, Map.class);
         String finishKey = flowState.getFinishKey();
         if (isNotEmpty(transitions) && isNotBlank(finishKey)) {
@@ -244,8 +243,9 @@ public class BaseFlowManagement implements FlowManagement {
                 FlowActivityImplementor currentActivity = flowState.getCurrentActivity();
                 String flowType = currentActivity.resolveIndirectReference(flowTransition.getNextFlowType());
                 if (isNotBlank(flowType)) {
-                    nextFlowState = this.createFlowState(flowType, flowState.getExportedValuesMap(), false);
-                    FlowUtils.INSTANCE.copyMapToFlowState(nextFlowState, flowTransition.getInitialValues());
+                    Map<String, String> exportedValuesMap = flowState.getExportedValuesMap();
+                    nextFlowState = this.createFlowState(flowType, exportedValuesMap, false);
+                    nextFlowState.copyTrustedValuesMapToFlowState(flowTransition.getInitialValues());
                 }
             }
         }
@@ -306,19 +306,13 @@ public class BaseFlowManagement implements FlowManagement {
     @Override
     @SuppressWarnings("unchecked")
     public <FS extends FlowState> FS continueFlowState(String lookupKey, boolean makeStateCurrent, Map<String, String> initialFlowState) {
-        FS flowState = (FS) getFlowState(lookupKey);
+        FlowStateImplementor flowState = getFlowState(lookupKey);
         ApplicationIllegalArgumentException.notNull(lookupKey, ": no flow with this lookupKey found");
-        if (isNotEmpty(initialFlowState)) {
-            for (Map.Entry<String, String> entry : initialFlowState.entrySet()) {
-                // HACK this looks bad. At the very least shouldn't FlowUtils.copyState be used
-                // more likely PropertyUsage/PropertyScope
-                ((FlowStateImplementor) flowState).setRawProperty(entry.getKey(), entry.getValue());
-            }
-        }
+        flowState.copyTrustedValuesMapToFlowState(initialFlowState);
         if (makeStateCurrent) {
             makeCurrent(flowState);
         }
-        return flowState;
+        return (FS) flowState;
     }
 
     /**

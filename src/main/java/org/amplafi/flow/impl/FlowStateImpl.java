@@ -285,23 +285,6 @@ public class FlowStateImpl implements FlowStateImplementor {
             value = flowPropertyDefinition.getInitial();
             valueSet = true;
         }
-//    if ( !valueSet || !propertyUsage.isExternallySettable()) {
-//        if ( !valueSet || !propertyUsage.isExternallySettable()) {
-//            // if property is not set  OR
-//            // if the property is not allowed to be overridden then
-//            // initialize it.
-//            // TODO set valueSet if flowPropertyDefinition.isInitialSet() -- can't check for null because null may be initial value ( see note about PropertyUsage#initialize )
-//            value = flowPropertyDefinition.getInitial();
-//            // TODO: what about flowPropertyValueProviders -- but need to handle lazy initialization + and better handling of initializing to null.
-//            // TODO: should be able to pass FlowState to do a get property operation on a FlowState if there is no FlowActivity.
-//            if ( value == null && propertyUsage == PropertyUsage.initialize && flowPropertyDefinition.getFlowPropertyValueProvider() != null && flowPropertyProvider != null) {
-//                // trigger property
-//                @SuppressWarnings("unused")
-//                Object v = getPropertyWithDefinition(flowPropertyProvider, flowPropertyDefinition);
-//                // HACK we should? flow through?
-//                return;
-//            }
-//        }
         String namespace = flowPropertyDefinition.getNamespaceKey(this, flowPropertyProvider);
         String currentValue = getRawProperty(namespace, flowPropertyDefinition.getName());
         if (valueSet && !StringUtils.equals(value, currentValue)) {
@@ -420,7 +403,17 @@ public class FlowStateImpl implements FlowStateImplementor {
             }
         }
     }
-
+    @Override
+    public void copyTrustedValuesMapToFlowState(Map<String, String> trustedValues) {
+        if ( isNotEmpty(trustedValues)) {
+            for(Map.Entry<String, String> entry: trustedValues.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
+                setRawProperty(this, flowPropertyDefinition, value);
+            }
+        }
+    }
     /**
      *
      * @see org.amplafi.flow.FlowState#morphFlow(java.lang.String, java.util.Map)
@@ -452,7 +445,7 @@ public class FlowStateImpl implements FlowStateImplementor {
 
         // morph and initialize to next flow
         setFlowTypeName(morphingToFlowTypeName);
-        INSTANCE.copyMapToFlowState(this, initialFlowState);
+        copyTrustedValuesMapToFlowState(initialFlowState);
         this.setCurrentActivityIndex(0);
         // new flow will have different flow activities (and properties ) that needs to be
         initializeFlow();
@@ -1075,13 +1068,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         }
     }
 
-
-    @Deprecated
-    @Override
-    public boolean setRawProperty(String key, String value) {
-        FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, value);
-        return setRawProperty(null, flowPropertyDefinition, value);
-    }
 
     /**
      * @param key

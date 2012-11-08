@@ -22,9 +22,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
-import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.json.JSONStringer;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ObjectUtils;
 
 
@@ -36,24 +34,6 @@ import org.apache.commons.lang.ObjectUtils;
 public class FlowUtils {
 
     public static final FlowUtils INSTANCE = new FlowUtils();
-
-    public void copyMapToFlowState(FlowState flowState, Map<String, String> overrideValues, String...keys) {
-        if ( MapUtils.isNotEmpty(overrideValues)) {
-            Map<String, String> ret;
-            if (keys==null || keys.length == 0) {
-                ret = overrideValues;
-            } else {
-                ret = new LinkedHashMap<String, String>();
-                for (String key: keys) {
-                    ret.put(key, overrideValues.get(key));
-                }
-            }
-            for(Map.Entry<String, String> entry: ret.entrySet()) {
-                // HACK!!!
-                ((FlowStateImplementor)flowState).setRawProperty(entry.getKey(), entry.getValue());
-            }
-        }
-    }
 
     /**
      * Converts a {@link Map} into a {@link List} of <em>key='value'</em> strings.

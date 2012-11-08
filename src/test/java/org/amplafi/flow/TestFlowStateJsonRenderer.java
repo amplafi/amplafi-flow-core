@@ -28,7 +28,7 @@ import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.MapJsonRenderer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
+import static com.sworddance.util.CUtilities.*;
 
 public class TestFlowStateJsonRenderer extends Assert {
 
@@ -58,8 +58,10 @@ public class TestFlowStateJsonRenderer extends Assert {
     @Test
     public void testCompleteFlowState() {
         FlowStateImpl flowState = newFlowState();
-        flowState.setRawProperty("property1", "value1");
-        flowState.setRawProperty("property2", "value2");
+        Map<String, String> trustedValues = createMap(
+            "property1", "value1",
+            "property2", "value2");
+        flowState.copyTrustedValuesMapToFlowState(trustedValues);
         JSONWriter jsonWriter = getJsonWriter();
         jsonWriter.object().key("flowState").value(flowState).endObject();
         assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+

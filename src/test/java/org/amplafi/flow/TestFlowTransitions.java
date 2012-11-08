@@ -36,7 +36,7 @@ import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.easymock.EasyMock.*;
-
+import static com.sworddance.util.CUtilities.*;
 /**
  * Tests to see that transitioning between flows ( other than morphing ) happens correctly.
  *
@@ -174,7 +174,8 @@ public class TestFlowTransitions {
         FlowStateImplementor flowState = flowManagement.startFlowState("first", true, FlowUtils.INSTANCE.createState(privatePropertyForSecondFlow, globalSettingForSecondFlowPrivateProperty,
             initializedByFirst, "ShouldBeIgnored"), false);
         String opaqueValuePassedFromFirstToSecond = "opaque";
-        flowState.setRawProperty(opaqueSecondFlowProperty, opaqueValuePassedFromFirstToSecond);
+        Map<String, String> trustedValues = createMap(opaqueSecondFlowProperty, opaqueValuePassedFromFirstToSecond);
+        flowState.copyTrustedValuesMapToFlowState(trustedValues);
         assertEquals(flowState.getProperty(initializedByFirst, String.class), null, "flowState="+flowState);
         String propertyValueInitializedByFirst = "realvalue";
         flowState.setProperty(initializedByFirst, propertyValueInitializedByFirst);

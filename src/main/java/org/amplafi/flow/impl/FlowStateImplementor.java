@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.impl;
 
+import java.util.Map;
+
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -37,15 +39,6 @@ public interface FlowStateImplementor extends FlowState {
     String getRawProperty(String key);
 
     String getRawProperty(String namespace, String key);
-
-    /**
-     *
-     * @param key
-     * @param value
-     * @return true if the value has changed.
-     */
-    @Deprecated
-    boolean setRawProperty(String key, String value);
 
     /**
      * @param flowPropertyProvider
@@ -109,4 +102,12 @@ public interface FlowStateImplementor extends FlowState {
      * @return cached value
      */
     <T> T getCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider);
+
+    /**
+     * This bypasses ALL security checks. It *must* be only used for cases when the values are known to be safe. (i.e.
+     * nothing that came from the clients.)
+     *
+     * @param trustedValues
+     */
+    void copyTrustedValuesMapToFlowState(Map<String, String> trustedValues);
 }
