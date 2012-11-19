@@ -28,7 +28,6 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
 import static org.amplafi.flow.flowproperty.PropertyUsage.use;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
 import java.net.URI;
