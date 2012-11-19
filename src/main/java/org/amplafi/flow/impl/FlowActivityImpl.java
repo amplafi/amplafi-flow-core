@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.impl;
 
-import static com.sworddance.util.CUtilities.isNotEmpty;
+import static com.sworddance.util.CUtilities.*;
 import static org.amplafi.flow.FlowConstants.FAINVISIBLE;
 import static org.amplafi.flow.FlowConstants.FANEXT_TEXT;
 import static org.amplafi.flow.FlowConstants.FATITLE_TEXT;
@@ -31,8 +31,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNumeric;
 
-import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -59,11 +59,13 @@ import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvide
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -112,10 +114,7 @@ import com.sworddance.util.ApplicationNullPointerException;
  * fuzzy.flows.FooBarFlowActivity would have a default component of
  * 'fuzzy/FooBar'. <p/> TODO handle return to previous flow issues.
  */
-public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowActivity> implements Serializable, FlowActivityImplementor {
-
-    private static final long serialVersionUID = 5578715117421910908L;
-
+public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowActivity> implements FlowActivityImplementor {
     /**
      * The component name that this FlowActivity will activate.
      */
@@ -157,7 +156,11 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.activityLocal);
 
+    private List<FlowValidationResultProvider<FlowPropertyProviderWithValues>> flowValidationResultProviders;
     public FlowActivityImpl() {
+        this.flowValidationResultProviders = new ArrayList<>();
+        // TODO in future make this
+        this.flowValidationResultProviders.add(FlowValidationResultProviderImpl.INSTANCE);
         if (this.getClass() != FlowActivityImpl.class) {
             // a subclass -- therefore subclass name might be good for figuring out the ui component name.
             String name = this.getClass().getName();
@@ -368,7 +371,21 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     @Override
     public FlowValidationResult getFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
-        return FlowValidationResultProviderImpl.INSTANCE.getFlowValidationResult(new ReportAllValidationResult(), this, flowActivityPhase, flowStepDirection);
+        FlowValidationResult flowValidationResult = new ReportAllValidationResult();
+        for(FlowValidationResultProvider<FlowPropertyProviderWithValues> flowValidationResultProvider : this.flowValidationResultProviders) {
+            flowValidationResult = flowValidationResultProvider.getFlowValidationResult(flowValidationResult, this, flowActivityPhase, flowStepDirection);
+        }
+        return flowValidationResult;
+    }
+    public void addFlowValidationResultProvider(FlowValidationResultProvider flowValidationResultProvider) {
+        addIfNotContains(this.flowValidationResultProviders, flowValidationResultProvider);
+    }
+    public void setFlowValidationResultProviders(List<? extends FlowValidationResultProvider<FlowPropertyProviderWithValues>> flowValidationResultProviders) {
+        this.flowValidationResultProviders = new ArrayList<>();
+        addAllNotNull((List)this.flowValidationResultProviders, (List)flowValidationResultProviders);
+    }
+    public List<? extends FlowValidationResultProvider<FlowPropertyProviderWithValues>> getFlowValidationResultProviders() {
+        return this.flowValidationResultProviders;
     }
 
     @Override
@@ -510,7 +527,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     @Override
     public FlowActivityImpl createInstance() {
         FlowActivityImpl instance = dup();
-        copyTo(instance);
         instance.setDefinition(this);
         return instance;
     }
@@ -523,6 +539,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         instance.setPageName(getPageName());
         instance.setFinishingActivity(finishingActivity);
         instance.setInvisible(invisible);
+        instance.setFlowValidationResultProviders(this.flowValidationResultProviders);
     }
 
     @Override
@@ -1018,5 +1035,4 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     protected List<PropertyScope> getLocalPropertyScopes() {
         return LOCAL_PROPERTY_SCOPES;
     }
-
 }
