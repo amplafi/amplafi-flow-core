@@ -38,7 +38,7 @@ public class FlowValidationException extends FlowException {
     private final FlowValidationResult flowValidationResult;
 
     public FlowValidationException(FlowState flowState, FlowValidationResult flowValidationResult) {
-    	super(flowState);
+     	super(flowState);
         this.flowValidationResult = flowValidationResult;
     }
 

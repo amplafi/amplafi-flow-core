@@ -77,12 +77,18 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 	protected void renderProperty(IJsonWriter jsonWriter, FlowState flowState,
 			FlowPropertyDefinition flowPropertyDefinition) {
 	    String propertyName = flowPropertyDefinition.getName();
-	    Object property = flowState.getProperty(propertyName);
-	    if (property != null) {
-		    jsonWriter.key(propertyName);
-		    // This is needed because the flowPropertyDefinition may have a specialized flow serialization mechanism and so we can't rely on the default
-		    // serialization in the jsonWriter.
-		    flowPropertyDefinition.serialize(jsonWriter, property);
+	    try {
+    	    Object property = flowState.getProperty(propertyName);
+    	    if (property != null) {
+    		    jsonWriter.key(propertyName);
+    		    // This is needed because the flowPropertyDefinition may have a specialized flow serialization mechanism and so we can't rely on the default
+    		    // serialization in the jsonWriter.
+    		    flowPropertyDefinition.serialize(jsonWriter, property);
+    	    }
+	    } catch (Exception e) {
+	        // Don't let errors in serialization prevent the other properties from being serialized.
+	        // TODO : handle errors caused by bad user data.
+	        getFlowManagement().getLog().warn(flowState.getFlowPropertyProviderFullName()+": getting property "+propertyName+ " caused exception ",e);
 	    }
 	    ApplicationIllegalStateException.checkState(jsonWriter.isInKeyMode(), "Not in value mode after serializing key/value for ", flowPropertyDefinition.getName());
 	}
@@ -112,5 +118,4 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public FlowManagement getFlowManagement() {
         return flowManagement;
     }
-
 }
