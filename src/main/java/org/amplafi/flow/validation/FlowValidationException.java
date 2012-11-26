@@ -21,8 +21,8 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 import com.sworddance.util.NotNullIterator;
 
