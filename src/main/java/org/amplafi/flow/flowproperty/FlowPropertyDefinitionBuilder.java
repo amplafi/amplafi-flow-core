@@ -51,6 +51,7 @@ public class FlowPropertyDefinitionBuilder {
 
     });
 
+    public static List<FlowPropertyExpectation> READ_ONLY_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
     /**
      * To return a api value,
      * 1) the property must be initialized when the call completes,
@@ -495,6 +496,11 @@ public class FlowPropertyDefinitionBuilder {
     }
     public FlowPropertyDefinitionBuilder initSaveBack(Boolean saveBack) {
         this.flowPropertyDefinition.initSaveBack(saveBack);
+        return this;
+    }
+
+    public FlowPropertyDefinitionBuilder readOnly() {
+        this.applyFlowPropertyExpectations(READ_ONLY_VALUE);
         return this;
     }
 }
