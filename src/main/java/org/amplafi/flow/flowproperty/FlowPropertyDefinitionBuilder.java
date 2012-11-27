@@ -503,4 +503,8 @@ public class FlowPropertyDefinitionBuilder {
         this.applyFlowPropertyExpectations(READ_ONLY_VALUE);
         return this;
     }
+    public FlowPropertyDefinitionBuilder internalOnly() {
+        this.applyFlowPropertyExpectations(INTERNAL_ONLY);
+        return this;
+    }
 }

@@ -39,7 +39,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName+FLOW_PREFIX);
         flow.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).
-            applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initDefaultObject(flowPropertyName));
+            internalOnly().initDefaultObject(flowPropertyName));
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);

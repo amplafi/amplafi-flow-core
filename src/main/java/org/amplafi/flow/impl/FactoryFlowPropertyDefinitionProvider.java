@@ -63,44 +63,44 @@ import com.sworddance.util.ApplicationIllegalStateException;
 public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionProvider {
 
     public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
-        new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-        new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use),
-        new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-        new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).internalOnly().initAccess(flowLocal, use),
+        new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
         // io -- for now because need to communicate the next page to be displayed
         // TODO think about PropertyScope/PropertyUsage
-        new FlowPropertyDefinitionBuilder(FSPAGE_NAME).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(io),
+        new FlowPropertyDefinitionBuilder(FSPAGE_NAME).internalOnly().initPropertyUsage(io),
         // TODO think about PropertyScope/PropertyUsage
-        new FlowPropertyDefinitionBuilder(FSAFTER_PAGE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(io),
-        new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_PAGE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY),
-        new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_CANCEL_PAGE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY),
-        new FlowPropertyDefinitionBuilder(FSHIDE_FLOW_CONTROL, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyScope(flowLocal),
-        new FlowPropertyDefinitionBuilder(FSACTIVATABLE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, consume),
-        new FlowPropertyDefinitionBuilder(FSIMMEDIATE_SAVE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY),
+        new FlowPropertyDefinitionBuilder(FSAFTER_PAGE).internalOnly().initPropertyUsage(io),
+        new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_PAGE).internalOnly(),
+        new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_CANCEL_PAGE).internalOnly(),
+        new FlowPropertyDefinitionBuilder(FSHIDE_FLOW_CONTROL, boolean.class).internalOnly().initPropertyScope(flowLocal),
+        new FlowPropertyDefinitionBuilder(FSACTIVATABLE, boolean.class).internalOnly().initAccess(flowLocal, consume),
+        new FlowPropertyDefinitionBuilder(FSIMMEDIATE_SAVE, boolean.class).internalOnly(),
 
-        new FlowPropertyDefinitionBuilder(FSAUTO_COMPLETE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY),
-        new FlowPropertyDefinitionBuilder(FSALT_FINISHED).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use),
-        new FlowPropertyDefinitionBuilder(FSREDIRECT_URL, URI.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(io),
-        new FlowPropertyDefinitionBuilder(FSREFERRING_URL, URI.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(use),
-        new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(io),
-        new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS).map(FlowTransition.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use),
+        new FlowPropertyDefinitionBuilder(FSAUTO_COMPLETE, boolean.class).internalOnly(),
+        new FlowPropertyDefinitionBuilder(FSALT_FINISHED).internalOnly().initAccess(flowLocal, use),
+        new FlowPropertyDefinitionBuilder(FSREDIRECT_URL, URI.class).internalOnly().initPropertyUsage(io),
+        new FlowPropertyDefinitionBuilder(FSREFERRING_URL, URI.class).internalOnly().initPropertyUsage(use),
+        new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).internalOnly().initPropertyUsage(io),
+        new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS).map(FlowTransition.class).internalOnly().initAccess(flowLocal, use),
         // HACK
-        new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY),
+        new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION).internalOnly(),
 
-        new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(consume),
-        new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(consume),
-        new FlowPropertyDefinitionBuilder(FSSUGGESTED_NEXT_FLOW_TYPE).map(FlowTransition.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(flowLocal, use),
+        new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).internalOnly().initPropertyUsage(consume),
+        new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).internalOnly().initPropertyUsage(consume),
+        new FlowPropertyDefinitionBuilder(FSSUGGESTED_NEXT_FLOW_TYPE).map(FlowTransition.class).internalOnly().initAccess(flowLocal, use),
         // TODO think about PropertyScope/PropertyUsage
-        new FlowPropertyDefinitionBuilder(FSNEXT_FLOW).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initPropertyUsage(consume),
+        new FlowPropertyDefinitionBuilder(FSNEXT_FLOW).internalOnly().initPropertyUsage(consume),
         // HACK
-        new FlowPropertyDefinitionBuilder().createFromTemplate(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY)
+        new FlowPropertyDefinitionBuilder().createFromTemplate(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).internalOnly()
     );
     public static final FactoryFlowPropertyDefinitionProvider FLOW_ACTIVITY_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
-        new FlowPropertyDefinitionBuilder(FATITLE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-        new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-        new FlowPropertyDefinitionBuilder(FANEXT_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-        new FlowPropertyDefinitionBuilder(FAPREV_TEXT).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, use),
-        new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.INTERNAL_ONLY).initAccess(activityLocal, consume)
+        new FlowPropertyDefinitionBuilder(FATITLE_TEXT).internalOnly().initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).internalOnly().initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FANEXT_TEXT).internalOnly().initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAPREV_TEXT).internalOnly().initAccess(activityLocal, use),
+        new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).internalOnly().initAccess(activityLocal, consume)
     );
     public FactoryFlowPropertyDefinitionProvider() {
 
