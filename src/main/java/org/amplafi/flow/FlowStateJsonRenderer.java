@@ -19,9 +19,9 @@ import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONObject;
+import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
-
-import com.sworddance.util.ApplicationIllegalStateException;
+import org.apache.commons.lang.ObjectUtils;
 
 import static com.sworddance.util.CUtilities.*;
 
@@ -78,19 +78,28 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 			FlowPropertyDefinition flowPropertyDefinition) {
 	    String propertyName = flowPropertyDefinition.getName();
 	    try {
+	        // This is needed because the flowPropertyDefinition may have a specialized flow serialization mechanism and so we can't rely on the default
+	        // serialization in the jsonWriter.
+	        // TODO : explain above comment better. What is the exact use cases? Does it still apply?
+	        // note that not all property values may have been serialized - but may be we can look for
+	        // already serialized values? However, need to check to see if this would skip error checking
+	        // when property was passed as part of the request.
     	    Object property = flowState.getProperty(propertyName);
     	    if (property != null) {
+    	        // a property may be set but set to null - which we can skip handling.
+    	        // This reduces the clutter of optional values being outputed.
+    	        String serializedValue = ObjectUtils.toString(flowPropertyDefinition.serialize(new JSONWriter(), property), null);
     		    jsonWriter.key(propertyName);
-    		    // This is needed because the flowPropertyDefinition may have a specialized flow serialization mechanism and so we can't rely on the default
-    		    // serialization in the jsonWriter.
-    		    flowPropertyDefinition.serialize(jsonWriter, property);
+    		    // If the property is a string, the serialization of the property will already have "
+    		    // normal use of jsonWriter.value() would result in ""real string""
+    		    // Using append avoids such double quoting
+    		    jsonWriter.append(serializedValue);
     	    }
 	    } catch (Exception e) {
 	        // Don't let errors in serialization prevent the other properties from being serialized.
 	        // TODO : handle errors caused by bad user data.
 	        getFlowManagement().getLog().warn(flowState.getFlowPropertyProviderFullName()+": getting property "+propertyName+ " caused exception ",e);
 	    }
-	    ApplicationIllegalStateException.checkState(jsonWriter.isInKeyMode(), "Not in value mode after serializing key/value for ", flowPropertyDefinition.getName());
 	}
 
     /**
