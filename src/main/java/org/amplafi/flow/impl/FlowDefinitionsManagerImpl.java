@@ -65,9 +65,22 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
      *
      */
     public void initializeService() {
+        RuntimeException storedExceptions = null;
         for(String fileName: getFlowsFilenames()) {
-            XmlDefinitionSource definitionSource = new XmlDefinitionSource(fileName);
-            addDefinitions(definitionSource);
+            try {
+                XmlDefinitionSource definitionSource = new XmlDefinitionSource(fileName);
+                addDefinitions(definitionSource);
+            } catch(IllegalArgumentException e) {
+                if ( storedExceptions == null) {
+                    storedExceptions = e;
+                } else {
+                    storedExceptions.addSuppressed(e);
+                }
+                getLog().error("Problem reading flow definitions in file '"+fileName+"'", e);
+            }
+        }
+        if(storedExceptions !=null ) {
+            throw storedExceptions;
         }
     }
 

@@ -42,6 +42,9 @@ import org.amplafi.flow.flowproperty.PropertyScope;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+
+import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
@@ -235,7 +238,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         } else {
             for(FlowActivityImplementor existing: activities) {
                 if (existing.isFlowPropertyProviderNameSet() && activity.isFlowPropertyProviderNameSet() && StringUtils.equalsIgnoreCase(existing.getFlowPropertyProviderName(), activity.getFlowPropertyProviderName())) {
-                    throw new IllegalArgumentException(this.getFlowPropertyProviderName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
+                    throw new ApplicationIllegalArgumentException(this.getFlowPropertyProviderName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
                 }
             }
         }
