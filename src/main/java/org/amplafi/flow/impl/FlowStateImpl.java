@@ -63,6 +63,7 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNumeric;
 
 
 /**
@@ -1479,7 +1480,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public boolean isUpdatePossible() {
-        return StringUtils.isNotBlank(getUpdateText());
+        return isNotBlank(getUpdateText());
     }
 
     /**
