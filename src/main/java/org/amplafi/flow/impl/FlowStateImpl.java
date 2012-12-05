@@ -61,8 +61,8 @@ import org.apache.commons.logging.Log;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowStateLifecycle.*;
-import static org.amplafi.flow.FlowUtils.*;
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 
 /**
@@ -339,7 +339,7 @@ public class FlowStateImpl implements FlowStateImplementor {
     protected FlowValuesMap<? extends FlowValueMapKey, ? extends CharSequence> exportProperties(boolean clearFrom) {
         FlowValuesMap exportValueMap = createFlowValuesMapCopy();
         Map<String, FlowPropertyDefinitionImplementor> propertyDefinitions = this.getFlow().getPropertyDefinitions();
-        if (propertyDefinitions != null) {
+        if (isNotEmpty(propertyDefinitions)) {
             Collection<FlowPropertyDefinitionImplementor> flowPropertyDefinitions = propertyDefinitions.values();
             exportProperties(exportValueMap, flowPropertyDefinitions, null, clearFrom);
         }
@@ -348,7 +348,9 @@ public class FlowStateImpl implements FlowStateImplementor {
         for (int i = 0; i < size; i++) {
             FlowActivityImplementor activity = getActivity(i);
             Map<String, FlowPropertyDefinitionImplementor> activityFlowPropertyDefinitions = activity.getPropertyDefinitions();
-            exportProperties(exportValueMap, activityFlowPropertyDefinitions.values(), activity, clearFrom);
+            if ( isNotEmpty(activityFlowPropertyDefinitions)) {
+                exportProperties(exportValueMap, activityFlowPropertyDefinitions.values(), activity, clearFrom);
+            }
         }
         // TODO should we clear all non-global namespace values? We have slight leak through when undefined properties are set on a flow.
         return exportValueMap;
