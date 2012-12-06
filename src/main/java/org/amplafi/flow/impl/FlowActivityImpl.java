@@ -179,7 +179,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * subclasses should override to add their standard definitions.
      */
     protected void addStandardFlowPropertyDefinitions() {
-        // see #2179 #2192
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
@@ -400,8 +399,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     public String getFlowPropertyProviderName() {
         if ( isFlowPropertyProviderNameSet() ) {
             return super.getFlowPropertyProviderName();
-        } else {
+        } else if ( this.getFlow() != null ){
             return this.getClass().getSimpleName()+"_"+getIndex();
+        } else {
+            return this.getClass().getSimpleName();
         }
     }
 

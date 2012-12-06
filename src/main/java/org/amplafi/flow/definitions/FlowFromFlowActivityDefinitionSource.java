@@ -16,6 +16,9 @@ public class FlowFromFlowActivityDefinitionSource implements DefinitionSource<Fl
 
     public void add(FlowActivityImplementor flowActivityImplementor) {
         String capitalizedFlowActivityName = StringUtils.capitalize(flowActivityImplementor.getFlowPropertyProviderFullName());
+        if ( capitalizedFlowActivityName.endsWith("FlowActivity")) {
+            capitalizedFlowActivityName = capitalizedFlowActivityName.substring(0, capitalizedFlowActivityName.lastIndexOf("FlowActivity"));
+        }
         FlowImpl flow = new FlowImpl(capitalizedFlowActivityName+FLOW_PREFIX);
         flow.addActivity(flowActivityImplementor);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);

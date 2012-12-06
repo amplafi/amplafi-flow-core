@@ -54,7 +54,7 @@ import com.sworddance.util.ApplicationIllegalStateException;
  *
  * TODO: In order for the properties defined here to work completely, the FlowStateImpl.initializeFlowProperty() method must also look at the properties defined
  * implicitly by FactoryFlowPropertyDefinitionProviders and other FlowPropertyDefinitionProvider that supply system/application-wide default definitions.
- * Currently properties defined in FactoryFlowPropertyDefinitionProviders are not getting their initial state correctly copied over from the the initialFlowState when a flow is
+ * Currently properties defined in FactoryFlowPropertyDefinitionProviders are not getting their initial state correctly copied over from the initialFlowState when a flow is
  * started.
  *
  * @author patmoore
