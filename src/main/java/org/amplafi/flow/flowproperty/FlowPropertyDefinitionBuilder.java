@@ -507,4 +507,8 @@ public class FlowPropertyDefinitionBuilder {
         this.applyFlowPropertyExpectations(INTERNAL_ONLY);
         return this;
     }
+    public FlowPropertyDefinitionBuilder addValidator(String validator) {
+        this.flowPropertyDefinition.addValidator(validator);
+        return this;
+    }
 }
