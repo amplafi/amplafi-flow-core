@@ -48,30 +48,37 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     @Override
     public IJsonWriter toJson(IJsonWriter jsonWriter, FlowState flowState) {
         jsonWriter.object();
-        jsonWriter.key(FS_COMPLETE).value(flowState.isCompleted());
-        if (flowState.isActive()) {
-            jsonWriter.key(FS_CURRENT_ACTIVITY_BY_NAME).value(flowState.getCurrentActivityByName());
-        }
-        jsonWriter.keyValueIfNotBlankValue(FS_LOOKUP_KEY, flowState.getLookupKey());
+        try {
+            jsonWriter.key(FS_COMPLETE).value(flowState.isCompleted());
+            if (flowState.isActive()) {
+                jsonWriter.key(FS_CURRENT_ACTIVITY_BY_NAME).value(flowState.getCurrentActivityByName());
+            }
+            jsonWriter.keyValueIfNotBlankValue(FS_LOOKUP_KEY, flowState.getLookupKey());
 
-        renderState(jsonWriter, flowState);
-        return jsonWriter.endObject();
+            renderState(jsonWriter, flowState);
+        } finally {
+            jsonWriter.endObject();
+        }
+        return jsonWriter;
     }
 
 
     protected void renderState(IJsonWriter jsonWriter, FlowState flowState) {
         jsonWriter.key(FS_PARAMETERS);
         jsonWriter.object();
-        Map<String, FlowPropertyDefinition> propertyDefinitionsMap = flowState.getPropertyDefinitions();
-        if ( isNotEmpty(propertyDefinitionsMap) ) {
-            Collection<FlowPropertyDefinition> propertyDefinitions = propertyDefinitionsMap.values();
-            for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
-            	if (flowState.isPropertySet(flowPropertyDefinition.getName())) {
-            		renderProperty(jsonWriter, flowState, flowPropertyDefinition);
-            	}
+        try {
+            Map<String, FlowPropertyDefinition> propertyDefinitionsMap = flowState.getPropertyDefinitions();
+            if ( isNotEmpty(propertyDefinitionsMap) ) {
+                Collection<FlowPropertyDefinition> propertyDefinitions = propertyDefinitionsMap.values();
+                for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
+                	if (flowState.isPropertySet(flowPropertyDefinition.getName())) {
+                		renderProperty(jsonWriter, flowState, flowPropertyDefinition);
+                	}
+                }
             }
+        } finally {
+            jsonWriter.endObject();
         }
-        jsonWriter.endObject();
     }
 
 	protected void renderProperty(IJsonWriter jsonWriter, FlowState flowState,
