@@ -57,10 +57,14 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
     @Override
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, C object) {
         jsonWriter.array();
-        for(T element: object) {
-            dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, element);
+        try {
+            for(T element: object) {
+                dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, element);
+            }
+        } finally {
+            jsonWriter.endArray();
         }
-        return jsonWriter.endArray();
+        return jsonWriter;
     }
     /**
      * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)

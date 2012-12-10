@@ -72,18 +72,22 @@ public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends
     @Override
     public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Map<? extends K, ? extends V> map) {
         jsonWriter.object();
-        if ( MapUtils.isNotEmpty(map) ) {
-            for(Map.Entry<? extends K, ? extends V> entry: map.entrySet()) {
-                K key = entry.getKey();
-                V value = entry.getValue();
-                if ( key != null && value != null) {
-                    DataClassDefinition keyDataClassDefinition = dataClassDefinition.getKeyDataClassDefinition();
-                    jsonWriter.key(keyDataClassDefinition.serialize(flowPropertyDefinition, key).toString());
-                    dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, value);
+        try {
+            if ( MapUtils.isNotEmpty(map) ) {
+                for(Map.Entry<? extends K, ? extends V> entry: map.entrySet()) {
+                    K key = entry.getKey();
+                    V value = entry.getValue();
+                    if ( key != null && value != null) {
+                        DataClassDefinition keyDataClassDefinition = dataClassDefinition.getKeyDataClassDefinition();
+                        jsonWriter.key(keyDataClassDefinition.serialize(flowPropertyDefinition, key).toString());
+                        dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, value);
+                    }
                 }
             }
+        } finally {
+            jsonWriter.endObject();
         }
-        return jsonWriter.endObject();
+        return jsonWriter;
     }
 
     @Override
