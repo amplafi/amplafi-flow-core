@@ -503,6 +503,10 @@ public class FlowPropertyDefinitionBuilder {
         this.applyFlowPropertyExpectations(READ_ONLY_VALUE);
         return this;
     }
+    /**
+     * sets {@link #INTERNAL_ONLY} - {@link PropertyUsage#internalState} and {@link ExternalPropertyAccessRestriction#noAccess}
+     * @return this
+     */
     public FlowPropertyDefinitionBuilder internalOnly() {
         this.applyFlowPropertyExpectations(INTERNAL_ONLY);
         return this;
