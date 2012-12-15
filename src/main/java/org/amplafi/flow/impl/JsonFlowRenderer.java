@@ -5,7 +5,10 @@ import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.Flow;
@@ -124,8 +127,10 @@ public class JsonFlowRenderer implements FlowRenderer {
 		try{
 			if (StringUtils.isBlank(flowType)) {
 				Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
+				List<String> orderedList = new ArrayList<>(flowTypes);
+				Collections.sort(orderedList);
 				JSONWriter jWriter = new JSONWriter();
-				IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, flowTypes);
+				IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, orderedList);
 				writer.append(jWriter.toString());
 			} else {
 				Flow flow = flowDefinitionsManager.getFlowDefinition(flowType);
