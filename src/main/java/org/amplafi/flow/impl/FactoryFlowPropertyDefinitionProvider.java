@@ -62,6 +62,7 @@ import com.sworddance.util.ApplicationIllegalStateException;
  */
 public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionProvider {
 
+    @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
         new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
         new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).internalOnly().initAccess(flowLocal, use),
@@ -95,6 +96,7 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         // HACK
         new FlowPropertyDefinitionBuilder().createFromTemplate(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).internalOnly()
     );
+    @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_ACTIVITY_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
         new FlowPropertyDefinitionBuilder(FATITLE_TEXT).internalOnly().initAccess(activityLocal, use),
         new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).internalOnly().initAccess(activityLocal, use),

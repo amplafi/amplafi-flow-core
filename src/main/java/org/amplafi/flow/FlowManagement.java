@@ -34,9 +34,6 @@ import org.apache.commons.logging.Log;
  *
  */
 public interface FlowManagement extends FlowStateListener {
-
-    public static final String USER_INFORMATION = "sessionFlows";
-
     /**
      *  a user may have multiple concurrently active
      * requests.
