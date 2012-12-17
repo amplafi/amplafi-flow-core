@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.*;
 
+import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.impl.FlowStateImplementor;
@@ -48,9 +49,15 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
      * @see org.amplafi.flow.launcher.FlowLauncher#call()
      * @return the flow that was continued
      */
+    @Override
     public FlowState call() {
         // TODO: We should not need? to pass the flowState because this flow is already known (reapplying same values???)
-        return getFlowManagementWithCheck().continueFlowState(getExistingFlowStateLookupKey(), true, this.getInitialFlowState());
+        FlowState flowState = getFlowState();
+        if ( flowState == null ) {
+            throw new FlowException("No flowState with id:", getExistingFlowStateLookupKey());
+        } else {
+            return getFlowManagementWithCheck().continueFlowState(getExistingFlowStateLookupKey(), true, this.getInitialFlowState());
+        }
     }
     @Override
     public String getLinkTitle() {
