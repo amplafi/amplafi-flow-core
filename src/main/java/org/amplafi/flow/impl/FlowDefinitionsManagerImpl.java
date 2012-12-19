@@ -21,8 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.sworddance.util.CUtilities.*;
-
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowImplementor;
@@ -136,7 +134,11 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
 
     @Override
     public void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
-        addIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
+        addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
+    }
+    @Override
+    public void addFactoryFlowPropertyDefinitionProviders(Collection<FlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders) {
+        addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProviders);
     }
 
     @Override

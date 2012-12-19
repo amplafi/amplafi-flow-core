@@ -64,8 +64,6 @@ import com.sworddance.util.perf.LapTimer;
  */
 public class BaseFlowManagement implements FlowManagement {
 
-    private static final long serialVersionUID = -6759548552816525625L;
-
     protected SessionFlows sessionFlows = new SessionFlows();
 
     private transient FlowManager flowManager;
