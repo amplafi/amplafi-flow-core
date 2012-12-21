@@ -35,6 +35,7 @@ import org.amplafi.flow.validation.MissingRequiredTracking;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationIllegalStateException;
+import com.sworddance.util.CUtilities;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,11 +135,11 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
 
     @Override
     public void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
-        addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
+        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
     }
     @Override
     public void addFactoryFlowPropertyDefinitionProviders(Collection<FlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders) {
-        addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProviders);
+        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProviders);
     }
 
     @Override
