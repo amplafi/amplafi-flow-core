@@ -55,7 +55,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.sworddance.beans.ClassResolver;
 import com.sworddance.beans.DefaultClassResolver;
-import com.sworddance.util.ApplicationGeneralException;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.perf.LapTimer;
 
@@ -334,7 +333,7 @@ public class BaseFlowManagement implements FlowManagement {
             }
             throw flowException;
         } catch (RuntimeException e) {
-            throw new ApplicationGeneralException(flowState.toString(), e);
+            throw (FlowException) new FlowException(flowState).initCause(e);
         } finally {
             if (!success) {
                 this.dropFlowState(flowState);
