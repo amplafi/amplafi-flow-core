@@ -96,14 +96,6 @@ public class BaseFlowManagement implements FlowManagement {
         return collection;
     }
 
-    /**
-     * @see org.amplafi.flow.FlowManagement#dropFlowState(org.amplafi.flow.FlowState)
-     */
-    @Override
-    public String dropFlowState(FlowState flow) {
-        return this.dropFlowStateByLookupKey(flow.getLookupKey());
-    }
-
     @Override
     public String getCurrentPage() {
         FlowState flow = getCurrentFlowState();
@@ -381,12 +373,12 @@ public class BaseFlowManagement implements FlowManagement {
             }
         }
     }
-
     /**
-     * @see org.amplafi.flow.FlowManagement#dropFlowStateByLookupKey(java.lang.String)
+     * @see org.amplafi.flow.FlowManagement#dropFlowState(org.amplafi.flow.FlowState)
      */
     @Override
-    public synchronized String dropFlowStateByLookupKey(String lookupKey) {
+    public synchronized String dropFlowState(FlowState flow) {
+        String lookupKey = flow.getLookupKey();
         getLog().debug("Dropping flow " + lookupKey);
         boolean successful = false;
         try {

@@ -117,7 +117,9 @@ public interface FlowManagement extends FlowStateListener {
 
     /**
      * drop the indicated flow. This is not a canceling of the flow
-     * as a flow is dropped after it has completed.
+     * With "Cancel" a flow has a chance to do something in response.
+     * A flow is dropped after it has completed, but can also be dropped if
+     * the user is stuck.
      * @param flow
      * @return the page name to land on.
      */
@@ -131,16 +133,6 @@ public interface FlowManagement extends FlowStateListener {
      * @return the flow transitioning to.
      */
     <FS extends FlowState> FS transitionToFlowState(FlowState flowState, String key);
-
-    /**
-     * drop the indicated flow. This is not canceling the flow.
-     * With "Cancel" a flow has a chance to do something in response.
-     * A flow is dropped after it has completed, but can also be dropped if
-     * the user is stuck.
-     * @param lookupKey
-     * @return the page name to land on.
-     */
-    String dropFlowStateByLookupKey(String lookupKey);
 
     FlowImplementor getInstanceFromDefinition(String flowTypeName);
 

@@ -62,7 +62,7 @@ public class ClearFlowsFlowActivity extends FlowActivityImpl {
                     nextFlowState != null && lookupKey.equals(nextFlowState.getLookupKey()) ) {
                 continue;
             } else {
-                getFlowManagement().dropFlowStateByLookupKey(lookupKey);
+                getFlowManagement().dropFlowState(getFlowManagement().getFlowState(lookupKey));
             }
         }
         return nextFlowState;
