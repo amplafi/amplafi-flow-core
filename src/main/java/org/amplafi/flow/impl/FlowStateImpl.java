@@ -611,7 +611,7 @@ public class FlowStateImpl implements FlowStateImplementor {
      */
     @Override
     public void saveChanges() {
-        LapTimer.sLap(this.getActiveFlowLabel()," beginning saveChanges()");
+        LapTimer.sLap(this.getFlowPropertyProviderName()," beginning saveChanges()");
         for (int i = 0; i < this.size(); i++) {
             FlowActivity flowActivity = getActivity(i);
             FlowValidationResult flowActivityValidationResult  = flowActivity.getFlowValidationResult(FlowActivityPhase.saveChanges, FlowStepDirection.forward);
@@ -620,7 +620,7 @@ public class FlowStateImpl implements FlowStateImplementor {
             // activity.refresh(); -- commented out because saves default values back to the flowState
             LapTimer.sLap(flowActivity.getFlowPropertyProviderFullName(), ".saveChanges() completed");
         }
-        LapTimer.sLap(this.getActiveFlowLabel()," end saveChanges()");
+        LapTimer.sLap(this.getFlowPropertyProviderName()," end saveChanges()");
     }
 
     /**
@@ -802,27 +802,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public void setCurrentPage(String page) {
         setProperty(FSPAGE_NAME, page);
-    }
-
-    /**
-     *
-     * @see org.amplafi.flow.impl.FlowStateImplementor#setActiveFlowLabel(java.lang.String)
-     */
-    @Override
-    public void setActiveFlowLabel(String activeFlowLabel) {
-        this.activeFlowLabel = activeFlowLabel;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowState#getActiveFlowLabel()
-     */
-    @Override
-    public String getActiveFlowLabel() {
-        if (this.activeFlowLabel != null) {
-            return activeFlowLabel;
-        } else {
-            return getFlow().getContinueFlowTitle();
-        }
     }
 
     // TODO: merge? with activeFlowLabel?

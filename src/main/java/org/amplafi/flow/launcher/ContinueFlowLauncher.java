@@ -16,12 +16,9 @@ package org.amplafi.flow.launcher;
 
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.*;
-
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.impl.FlowStateImplementor;
 
 
 
@@ -58,25 +55,6 @@ public class ContinueFlowLauncher extends BaseFlowLauncher implements ListableFl
         } else {
             return getFlowManagementWithCheck().continueFlowState(getExistingFlowStateLookupKey(), true, this.getInitialFlowState());
         }
-    }
-    @Override
-    public String getLinkTitle() {
-        String linkLabel = null;
-        if ( getFlowState() != null ) {
-            linkLabel = getFlowState().getActiveFlowLabel();
-        }
-        if ( isBlank(linkLabel)) {
-            linkLabel = super.getLinkTitle();
-        }
-        return linkLabel;
-    }
-
-    @Override
-    public void setLinkTitle(String label) {
-        if ( getFlowState() != null ) {
-            ((FlowStateImplementor)getFlowState()).setActiveFlowLabel(label);
-        }
-        super.setLinkTitle(label);
     }
 
     @SuppressWarnings("unchecked")
