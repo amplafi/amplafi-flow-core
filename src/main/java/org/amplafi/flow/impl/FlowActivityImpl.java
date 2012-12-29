@@ -815,14 +815,19 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     @SuppressWarnings("unchecked")
     protected <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
         FP flowPropertyDefinition = (FP)getFlowPropertyDefinition(key);
+        FlowManagement flowManagement = getFlowManagement();
         if (flowPropertyDefinition == null) {
             FlowImplementor flow = getFlow();
-            FlowManagement flowManagement = getFlowManagement();
+            // HACK: TODO: really only happens on describe or some operation where the flow is not actually being run.
             if (flowManagement != null) {
                 flowPropertyDefinition = (FP)flowManagement.createFlowPropertyDefinition(flow, key, expected, sampleValue);
+            } else {
+                // TODO : we should always have access to the factory flow property providers.
+                FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expected);
+                flowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             }
         }
-        if (flowPropertyDefinition != null &&!flowPropertyDefinition.isFlowTranslatorSet()) {
+        if (flowManagement != null && flowPropertyDefinition != null &&!flowPropertyDefinition.isFlowTranslatorSet()) {
         	getFlowManagement().getFlowTranslatorResolver().resolve(null, flowPropertyDefinition);
         }
         return flowPropertyDefinition;

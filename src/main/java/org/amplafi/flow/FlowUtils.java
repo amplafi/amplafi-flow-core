@@ -41,19 +41,12 @@ public class FlowUtils {
      * @param map The map to convert
      * @return list of strings in <em>key='value'</em> form
      */
-    public List<String> createInitialValues(Map<String, String> map) {
+    private List<String> createInitialValues(Map<String, String> map) {
         List<String> result = new ArrayList<String>();
         for(Map.Entry<String, String> entry: map.entrySet()) {
             addInitialValues(result, entry.getKey(), entry.getValue());
         }
         return result;
-    }
-    /**
-     * @param values
-     * @param keyValue
-     */
-    public void addInitialValues(List<String> values, Object keyValue) {
-        addInitialValues(values, keyValue, keyValue);
     }
 
     /**
