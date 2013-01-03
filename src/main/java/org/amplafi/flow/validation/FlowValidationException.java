@@ -19,7 +19,6 @@ import java.util.List;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -117,7 +116,7 @@ public class FlowValidationException extends FlowException {
             throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
-    public static void notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
+    public static void notNull(Object notNull, Object property, Object...messages) {
         valid(null, notNull != null, property, messages);
     }
 }
