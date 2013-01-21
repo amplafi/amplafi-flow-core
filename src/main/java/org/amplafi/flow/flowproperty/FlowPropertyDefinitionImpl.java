@@ -130,6 +130,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     private ExternalPropertyAccessRestriction externalPropertyAccessRestriction;
 
     /**
+     * TODO: to be removed and replaced with server side validators collection.
+     * 
      * A string meaningful to the UI framework
      */
     private String validators;
