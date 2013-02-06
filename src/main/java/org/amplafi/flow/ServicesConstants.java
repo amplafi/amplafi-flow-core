@@ -33,7 +33,7 @@ public class ServicesConstants {
     /**
      * json object key containing an array of validation errors.
      */
-    public static final String VALIDATION_ERRORS = "validationErrors";
+    public static final String VALIDATION_ERRORS = "errors";
     /**
      * json object key for the errormessage text.
      */

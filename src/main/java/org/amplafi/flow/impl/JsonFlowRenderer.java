@@ -24,6 +24,8 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
+import org.amplafi.flow.validation.FlowValidationTracking;
+import org.amplafi.json.JSONArray;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
@@ -118,7 +120,26 @@ public class JsonFlowRenderer implements FlowRenderer {
 
 	private void writeValidationResult(JSONWriter jsonWriter, Map<String, FlowValidationResult> result) {
         if (result != null && !result.isEmpty()) {
-            jsonWriter.key(ServicesConstants.VALIDATION_ERRORS).value(result);
+            jsonWriter.key(ServicesConstants.VALIDATION_ERRORS);
+            jsonWriter.array();
+            for (FlowValidationResult flowValidationResult : result.values()) {
+                List<FlowValidationTracking> trackings = flowValidationResult.getTrackings();
+                for (FlowValidationTracking tracking : trackings) {
+                    jsonWriter.object();
+                    jsonWriter.keyValue("code", tracking.getMessageKey());
+                    Object[] messageParameters = tracking.getMessageParameters();
+                    if (CUtilities.isNotEmpty(messageParameters)) {
+                        jsonWriter.key("details");
+                        jsonWriter.array();
+                        for (Object parameter : messageParameters) {
+                            jsonWriter.value(parameter);
+                        }
+                        jsonWriter.endArray();
+                    }
+                    jsonWriter.endObject();
+                }
+            }
+            jsonWriter.endArray();
         }
     }
 
