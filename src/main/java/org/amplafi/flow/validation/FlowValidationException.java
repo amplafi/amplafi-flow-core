@@ -116,6 +116,12 @@ public class FlowValidationException extends FlowException {
             throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
+    
+    public static void fail(FlowState flowState, Object... messages) {
+        FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(messages));
+        throw new FlowValidationException(flowState, flowValidationResult);
+    }
+    
     public static void notNull(Object notNull, Object property, Object...messages) {
         valid(null, notNull != null, property, messages);
     }
