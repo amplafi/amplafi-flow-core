@@ -117,8 +117,8 @@ public class FlowValidationException extends FlowException {
         }
     }
     
-    public static void fail(FlowState flowState, Object... messages) {
-        FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(messages));
+    public static void fail(FlowState flowState, String key, String message) {
+        FlowValidationResult flowValidationResult = new ReportAllValidationResult(new SimpleValidationTracking(key, message));
         throw new FlowValidationException(flowState, flowValidationResult);
     }
     
