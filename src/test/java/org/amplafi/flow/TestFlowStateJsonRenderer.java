@@ -42,13 +42,8 @@ public class TestFlowStateJsonRenderer extends Assert {
     public void testSimpleFlowState() {
         FlowStateImpl flowState = newFlowState();
         JSONWriter jsonWriter = getJsonWriter();
-        jsonWriter.object().key("flowState").value(flowState).endObject();
-        assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\"" +
-        		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{" +
-                		EMPTY_FLOW_TRANSITIONS +
-                		"}" +
-        		"}}");
+        jsonWriter.object().value(flowState).endObject();
+        assertEquals(jsonWriter.toString(), "{}");
 
     }
 
@@ -63,12 +58,8 @@ public class TestFlowStateJsonRenderer extends Assert {
             "property2", "value2");
         flowState.copyTrustedValuesMapToFlowState(trustedValues);
         JSONWriter jsonWriter = getJsonWriter();
-        jsonWriter.object().key("flowState").value(flowState).endObject();
-        assertEquals(jsonWriter.toString(), "{\"flowState\":{\""+FlowStateJsonRenderer.FS_COMPLETE+"\":true,\""+
-        		FlowStateJsonRenderer.FS_LOOKUP_KEY+"\":\""+flowState.getLookupKey()+"\",\"" +
-                FlowStateJsonRenderer.FS_PARAMETERS+"\":{" +
-                EMPTY_FLOW_TRANSITIONS_FIRST +
-                		"\"property1\":\"value1\",\"property2\":\"value2\"}}}");
+        jsonWriter.object().value(flowState).endObject();
+        assertEquals(jsonWriter.toString(), "{\"property1\":\"value1\",\"property2\":\"value2\"}");
     }
 
     /**
@@ -87,13 +78,9 @@ public class TestFlowStateJsonRenderer extends Assert {
         flowState.<Map<String, String>> setProperty("objectProperty", testObject);
 
         JSONWriter jsonWriter = getJsonWriter();
-        jsonWriter.object().key("flowState").value(flowState).endObject();
-        assertEquals(jsonWriter.toString(), "{\"flowState\":{\"" + FlowStateJsonRenderer.FS_COMPLETE + "\":true,\""
-            + FlowStateJsonRenderer.FS_LOOKUP_KEY + "\":\"" + flowState.getLookupKey() + "\",\"" + FlowStateJsonRenderer.FS_PARAMETERS
-            + "\":{" +
-            EMPTY_FLOW_TRANSITIONS_FIRST +
-            "\"property1\":\"value1\",\"property2\":\"value2\""
-            + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}}}");
+        jsonWriter.object().value(flowState).endObject();
+        assertEquals(jsonWriter.toString(), "{\"property1\":\"value1\",\"property2\":\"value2\""
+            + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}");
     }
 
     private FlowStateImpl newFlowState() {
