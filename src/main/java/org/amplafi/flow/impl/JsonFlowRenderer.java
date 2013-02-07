@@ -65,7 +65,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 			    // HACK : NEED SECURITY CHECKS to make sure only visible values are exported.
 			    // TODO : filter by ExternalPropertyAccessRestriction.isReadable() on each property
 				jsonWriter.object();
-				jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
+				jsonWriter.value(flowState);
 				jsonWriter.endObject();
 			}
 			try {
@@ -91,7 +91,7 @@ public class JsonFlowRenderer implements FlowRenderer {
             jsonWriter.object();
             jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
             if (flowState != null) {
-                jsonWriter.keyValueIfNotNullValue(FLOW_STATE_JSON_KEY, flowState);
+                jsonWriter.value(flowState);
                 // TODO : probably need to check on PropertyRequired.finish
                 Map<String, FlowValidationResult> result = flowState.getFlowValidationResults(FlowActivityPhase.advance, FlowStepDirection.forward);
                 writeValidationResult(jsonWriter, result);
