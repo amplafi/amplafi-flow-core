@@ -131,7 +131,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     /**
      * TODO: to be removed and replaced with server side validators collection.
-     * 
+     *
      * A string meaningful to the UI framework
      */
     private String validators;
@@ -402,6 +402,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         FlowTranslator elementFlowTranslator = this.getDataClassDefinition().getElementDataClassDefinition().getFlowTranslator();
         FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(elementFlowTranslator, flowTranslator);
         flowPropertyDefinition.getDataClassDefinition().getElementDataClassDefinition().setFlowTranslator(flowTranslator);
+        return flowPropertyDefinition;
+    }
+    public FlowPropertyDefinitionImpl initKeyFlowTranslator(FlowTranslator<?> flowTranslator) {
+        FlowTranslator keyFlowTranslator = this.getDataClassDefinition().getKeyDataClassDefinition().getFlowTranslator();
+        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(keyFlowTranslator, flowTranslator);
+        flowPropertyDefinition.getDataClassDefinition().getKeyDataClassDefinition().setFlowTranslator(flowTranslator);
         return flowPropertyDefinition;
     }
     /**

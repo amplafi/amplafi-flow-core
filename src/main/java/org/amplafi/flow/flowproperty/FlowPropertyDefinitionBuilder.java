@@ -410,6 +410,10 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initElementFlowTranslator(flowTranslator);
         return this;
     }
+    public FlowPropertyDefinitionBuilder initKeyFlowTranslator(FlowTranslator<?> flowTranslator) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initKeyFlowTranslator(flowTranslator);
+        return this;
+    }
 
 
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
