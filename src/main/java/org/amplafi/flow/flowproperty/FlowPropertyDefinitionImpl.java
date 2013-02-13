@@ -994,8 +994,18 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public List<Object> getObjectsNeedingToBeWired() {
         List<Object> objectsNeedingToBeWired = new ArrayList<Object>();
         CUtilities.addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
-        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider(), this.factoryFlowPropertyValueProvider);
+        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider(), this.factoryFlowPropertyValueProvider);
         return objectsNeedingToBeWired;
+    }
+
+    private FlowTranslator getKeyFlowTranslator() {
+        DataClassDefinition keyDataClassDefinition = getDataClassDefinition().getKeyDataClassDefinition();
+        return keyDataClassDefinition != null ? keyDataClassDefinition.getFlowTranslator() : null;
+    }
+
+    private FlowTranslator getElementFlowTranslator() {
+        DataClassDefinition elementDataClassDefinition = getDataClassDefinition().getElementDataClassDefinition();
+        return elementDataClassDefinition != null ? elementDataClassDefinition.getFlowTranslator() : null;
     }
 
     /**
