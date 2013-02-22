@@ -87,7 +87,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 		JSONWriter jsonWriter = getFlowStateWriter();
 		try {
             jsonWriter.object();
-            jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR_MESSAGE, message);
+            jsonWriter.keyValueIfNotBlankValue(ServicesConstants.ERROR, message);
             if (flowState != null) {
                 jsonWriter.value(flowState);
                 // TODO : probably need to check on PropertyRequired.finish
@@ -108,7 +108,7 @@ public class JsonFlowRenderer implements FlowRenderer {
 			throw new IllegalStateException(e);
 		} catch (Exception e) {
 		    try {
-                writer.append("{" +ServicesConstants.ERROR_MESSAGE + ": 'Failed to render flow state. Cause: "+ e.getMessage() + "'}");
+                writer.append("{" +ServicesConstants.ERROR + ": 'Failed to render flow state. Cause: "+ e.getMessage() + "'}");
                 getLog().error("Failed to render flow state.", e);
             } catch (IOException e1) {
                 throw new IllegalStateException(e1);
