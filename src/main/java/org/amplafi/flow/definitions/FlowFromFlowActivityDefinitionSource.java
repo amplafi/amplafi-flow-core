@@ -10,7 +10,6 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
 public class FlowFromFlowActivityDefinitionSource implements DefinitionSource<FlowImplementor> {
-    public static final String FLOW_PREFIX = "Flow";
 
     private final Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();
 
@@ -19,7 +18,7 @@ public class FlowFromFlowActivityDefinitionSource implements DefinitionSource<Fl
         if ( capitalizedFlowActivityName.endsWith("FlowActivity")) {
             capitalizedFlowActivityName = capitalizedFlowActivityName.substring(0, capitalizedFlowActivityName.lastIndexOf("FlowActivity"));
         }
-        FlowImpl flow = new FlowImpl(capitalizedFlowActivityName+FLOW_PREFIX);
+        FlowImpl flow = new FlowImpl(capitalizedFlowActivityName);
         flow.addActivity(flowActivityImplementor);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
     }
