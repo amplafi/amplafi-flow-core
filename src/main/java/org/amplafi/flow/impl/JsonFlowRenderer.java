@@ -1,7 +1,6 @@
 package org.amplafi.flow.impl;
 
-import static com.sworddance.util.CUtilities.*;
-import static org.amplafi.flow.launcher.FlowLauncher.FLOW_STATE_JSON_KEY;
+import static com.sworddance.util.CUtilities.isNotEmpty;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -25,7 +24,6 @@ import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;
-import org.amplafi.json.JSONArray;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
