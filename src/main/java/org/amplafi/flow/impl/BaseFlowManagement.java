@@ -332,9 +332,11 @@ public class BaseFlowManagement implements FlowManagement {
                 flowException.setFlowState(flowState);
             }
             throw flowException;
-        } catch (RuntimeException e) {
-            throw (FlowException) new FlowException(flowState).initCause(e);
-        } finally {
+        } 
+//        catch (RuntimeException e) {
+//            throw (FlowException) new FlowException(flowState).initCause(e);
+//        } 
+    finally {
             if (!success) {
                 this.dropFlowState(flowState);
             } else {
