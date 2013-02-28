@@ -105,9 +105,7 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     public FlowImplementor getFlowDefinition(String flowTypeName) {
         ApplicationIllegalArgumentException.notNull(flowTypeName, "null flowTypeName");
         FlowImplementor flow = this.getFlowDefinitions().get(flowTypeName);
-        if ( flow == null) {
-            throw new FlowValidationException(null, "flow.definition-not-found", new MissingRequiredTracking(flowTypeName));
-        } else {
+        if ( flow != null) {
             // cannot do this any more at initializeService() time because of infinite-loop.
             // BaseFlowTranslatorResolver.resolveFlow() calls back to FlowDefinitionManager
             this.flowTranslatorResolver.resolveFlow(flow);
