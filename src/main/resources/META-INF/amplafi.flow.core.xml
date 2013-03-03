@@ -32,18 +32,18 @@
 	<contribution configuration-id="amplafi.flow.core.flowsFilenames">
 		<definition name="flows/amplafi.suppliedflows.xml" />
 	</contribution>
-	<service-point id="FlowManager" interface="org.amplafi.flow.FlowManager">
+	<!-- service-point id="FlowManager" interface="org.amplafi.flow.FlowManager">
 		<invoke-factory service-id="amplafi.factory.appServicesFactory">
 			<construct class="org.amplafi.flow.impl.FlowManagerImpl" />
 		</invoke-factory>
-	</service-point>
-	<service-point id="FlowManagement" interface="org.amplafi.flow.FlowManagement">
+	</service-point-->
+	<!-- service-point id="FlowManagement" interface="org.amplafi.flow.FlowManagement">
 		Expose the current FlowManagement
 
 		<invoke-factory service-id="hivemind.lib.ServicePropertyFactory">
 			<construct service-id="FlowManager" property="flowManagement" />
 		</invoke-factory>
-	</service-point>
+	</service-point-->
 	<service-point id="FlowDefinitionsManager" interface="org.amplafi.flow.FlowDefinitionsManager">
 		<invoke-factory>
 			<construct class="org.amplafi.flow.impl.FlowDefinitionsManagerImpl">
