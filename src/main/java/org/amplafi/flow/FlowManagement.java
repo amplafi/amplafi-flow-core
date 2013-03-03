@@ -198,6 +198,7 @@ public interface FlowManagement extends FlowStateListener {
      * object the value returned by this method may be customized to the session setting.
      * @return the default home to use when a flow ends and there is no other place to return.
      */
+    @Deprecated
     URI getDefaultHomePage();
 
     <T> FlowPropertyDefinitionImplementor createFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider, String key, Class<T> expected, T sampleValue);
