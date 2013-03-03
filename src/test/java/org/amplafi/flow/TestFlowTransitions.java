@@ -20,7 +20,6 @@ import static org.testng.Assert.*;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -207,7 +206,6 @@ public class TestFlowTransitions {
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
         FlowPropertyDefinitionImpl pageNameDefinition = new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class);
 		expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(pageNameDefinition).anyTimes();
-        expect(flow.getFlowPropertyDefinition(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE)).andReturn(new FlowPropertyDefinitionImpl(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE, FlowAppearance.class).initTranslator(new EnumFlowTranslator<>().resolveFlowTranslator(FlowAppearance.class))).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class).initTranslator(new BooleanFlowTranslator())).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class).initTranslator(new BooleanFlowTranslator())).anyTimes();
         activity.setFlow(flow);

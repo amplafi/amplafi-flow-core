@@ -43,7 +43,6 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
-import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
@@ -54,7 +53,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
-import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
@@ -562,12 +560,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     }
 
     private boolean isApiCall() {
-        if ( isPropertyValueSet(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE)) {
-            FlowAppearance flowAppearance = this.getProperty(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE);
-            return flowAppearance == FlowAppearance.apiCall;
-        } else {
-            return false;
-        }
+        return true;
     }
     /**
      * @see org.amplafi.flow.FlowActivity#isInvisible()

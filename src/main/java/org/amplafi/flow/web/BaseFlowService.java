@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.FlowAppearance;
 import org.amplafi.flow.FlowDefinitionsManager;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowManager;
@@ -35,7 +34,6 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateLifecycle;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.ServicesConstants;
-import org.amplafi.flow.flowproperty.FlowAppearanceFlowPropertyDefinitionProvider;
 import org.amplafi.flow.impl.JsonFlowRenderer;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.apache.commons.logging.Log;
@@ -112,9 +110,6 @@ public class BaseFlowService implements FlowService {
         	Map<String, String> initial = null;
         	if (!flowRequest.hasFlowState()) {
 		        initial = FlowUtils.INSTANCE.createState();
-		        if ( isAssumeApiCall()) {
-		            initial.put(FlowAppearanceFlowPropertyDefinitionProvider.FLOW_APPEARANCE, FlowAppearance.apiCall.toString());
-		        }
 		        // TODO map cookie to the json flow state.
 		        String cookieString = flowRequest.getParameter(ServicesConstants.COOKIE_OBJECT);
 		        if (isNotBlank(cookieString)) {
