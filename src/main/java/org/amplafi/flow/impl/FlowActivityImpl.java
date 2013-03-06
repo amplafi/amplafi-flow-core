@@ -559,17 +559,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         this.invisible = invisible;
     }
 
-    private boolean isApiCall() {
-        return true;
-    }
     /**
      * @see org.amplafi.flow.FlowActivity#isInvisible()
      */
     @Override
     public boolean isInvisible() {
-        if ( isApiCall() ) {
-            return true;
-        } else if (isPropertyValueSet(FAINVISIBLE)) {
+        if (isPropertyValueSet(FAINVISIBLE)) {
             // forced no matter what
             return isTrue(FAINVISIBLE);
         } else if (invisible != null ) {
