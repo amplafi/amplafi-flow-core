@@ -205,14 +205,6 @@ public class BaseFlowManagement implements FlowManagement {
         return flowState;
     }
 
-    @Override
-    @SuppressWarnings({ "unchecked" })
-    public <FS extends FlowState> FS createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues,
-        boolean makeNewStateCurrent) {
-        FS flowState = (FS) createFlowState(flowTypeName, initialFlowState.getFlowValuesMap(), makeNewStateCurrent);
-        return flowState;
-    }
-
     protected <FS extends FlowState> void initializeFlowState(FS flowState) {
         flowState.initializeFlow();
     }

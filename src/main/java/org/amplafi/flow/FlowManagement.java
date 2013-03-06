@@ -84,8 +84,6 @@ public interface FlowManagement extends FlowStateListener {
      */
     <FS extends FlowState> FS createFlowState(String flowTypeName, Map<String, String> initialFlowState, boolean makeNewStateCurrent);
 
-    <FS extends FlowState> FS createFlowState(String flowTypeName, FlowState initialFlowState, Map<String, String> initialValues, boolean makeNewStateCurrent);
-
     /**
      * Starts a flow by name.
      * @param <FS>
