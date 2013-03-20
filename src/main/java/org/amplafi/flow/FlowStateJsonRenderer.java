@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONObject;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonRenderer;
 import org.apache.commons.lang.ObjectUtils;
@@ -38,7 +37,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
     public static final String FS_COMPLETE = "fsComplete";
 
-    private FlowManagement flowManagement;
+//    private FlowManagement flowManagement;
 
     @Override
     public Class<FlowState> getClassToRender() {
@@ -101,33 +100,33 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 	    } catch (Exception e) {
 	        // Don't let errors in serialization prevent the other properties from being serialized.
 	        // TODO : handle errors caused by bad user data.
-	        getFlowManagement().getLog().warn(flowState.getFlowPropertyProviderFullName()+": getting property "+propertyName+ " caused exception ",e);
+	        //getFlowManagement().getLog().warn(flowState.getFlowPropertyProviderFullName()+": getting property "+propertyName+ " caused exception ",e);
 	    }
 	}
 
     /**
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
      */
-    @SuppressWarnings("unchecked")
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
-        JSONObject jsonObject = (JSONObject) value;
-        String lookupKey = jsonObject.getString(FS_LOOKUP_KEY);
-        // TODO apply any changes back to the flowState?
-        FlowState flowState = getFlowManagement().getFlowState(lookupKey);
-        return (K) flowState;
+//        JSONObject jsonObject = (JSONObject) value;
+//        String lookupKey = jsonObject.getString(FS_LOOKUP_KEY);
+//        // TODO apply any changes back to the flowState?
+//        FlowState flowState = getFlowManagement().getFlowState(lookupKey);
+//        return (K) flowState;
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * @param flowManagement the flowManagement to set
-     */
-    public void setFlowManagement(FlowManagement flowManagement) {
-        this.flowManagement = flowManagement;
-    }
-    /**
-     * @return the flowManagement
-     */
-    public FlowManagement getFlowManagement() {
-        return flowManagement;
-    }
+//    /**
+//     * @param flowManagement the flowManagement to set
+//     */
+//    public void setFlowManagement(FlowManagement flowManagement) {
+//        this.flowManagement = flowManagement;
+//    }
+//    /**
+//     * @return the flowManagement
+//     */
+//    public FlowManagement getFlowManagement() {
+//        return flowManagement;
+//    }
 }

@@ -19,9 +19,11 @@ public interface FlowRenderer {
 	 * @param writer TODO
 	 *
 	 */
-	public void describeFlow(Writer writer, String flowType);
+	public void describeFlow(Writer writer, Flow flowType);
 
 	void render(Writer writer, FlowState flowState, String errorMessage,
 			Exception exception);
+
+    void describeApi(Writer writer, FlowManagement flowManagement);
 
 }

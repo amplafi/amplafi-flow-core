@@ -14,7 +14,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
-import org.amplafi.flow.FlowDefinitionsManager;
+import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
@@ -34,15 +34,9 @@ import com.sworddance.util.CUtilities;
 
 public class JsonFlowRenderer implements FlowRenderer {
 
-	private FlowDefinitionsManager flowDefinitionsManager;
-
  	private Log log;
 
 	public JsonFlowRenderer() {
-	}
-
-	public JsonFlowRenderer(FlowDefinitionsManager flowDefinitionsManager) {
-		this.flowDefinitionsManager = flowDefinitionsManager;
 	}
 
 	@Override
@@ -142,27 +136,31 @@ public class JsonFlowRenderer implements FlowRenderer {
     }
 
 	@Override
-	public void describeFlow(Writer writer, String flowType) {
-		try{
-			if (StringUtils.isBlank(flowType)) {
-				Collection<String> flowTypes = flowDefinitionsManager.getFlowDefinitions().keySet();
-				List<String> orderedList = new ArrayList<>(flowTypes);
-				Collections.sort(orderedList);
-				JSONWriter jWriter = new JSONWriter();
-				IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, orderedList);
-				writer.append(jWriter.toString());
-			} else {
-				Flow flow = flowDefinitionsManager.getFlowDefinition(flowType);
-				JSONWriter jsonWriter = getFlowStateWriter();
-				jsonWriter.object();
-				renderFlowParameterJSON(jsonWriter, flow);
-				jsonWriter.endObject();
-				CharSequence description = jsonWriter.toString();
-				writer.append(description);
-			}
+	public void describeFlow(Writer writer, Flow flowType) {
+	    try{
+			JSONWriter jsonWriter = getFlowStateWriter();
+			jsonWriter.object();
+			renderFlowParameterJSON(jsonWriter, flowType);
+			jsonWriter.endObject();
+			CharSequence description = jsonWriter.toString();
+			writer.append(description);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+	
+	@Override
+    public void describeApi(Writer writer, FlowManagement flowManagement) {
+	    try {
+    	    Collection<String> flowTypes = flowManagement.listAvailableFlows();
+            List<String> orderedList = new ArrayList<>(flowTypes);
+            Collections.sort(orderedList);
+            JSONWriter jWriter = new JSONWriter();
+            IterableJsonOutputRenderer.INSTANCE.toJson(jWriter, orderedList);
+            writer.append(jWriter.toString());
+	    } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
 	}
 
 	/**
@@ -194,15 +192,6 @@ public class JsonFlowRenderer implements FlowRenderer {
 			}
 			jsonWriter.endArray();
 		}
-	}
-
-	public FlowDefinitionsManager getFlowDefinitionsManager() {
-		return flowDefinitionsManager;
-	}
-
-	public void setFlowDefinitionsManager(
-			FlowDefinitionsManager flowDefinitionsManager) {
-		this.flowDefinitionsManager = flowDefinitionsManager;
 	}
 
 	public Log getLog() {
