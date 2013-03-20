@@ -685,4 +685,9 @@ public class BaseFlowManagement implements FlowManagement {
         return classResolver;
     }
 
+    @Override
+    public Collection<String> listAvailableFlows() {
+        return flowManager.listAvailableFlows();
+    }
+
 }

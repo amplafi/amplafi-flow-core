@@ -15,6 +15,7 @@
 package org.amplafi.flow.impl;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -146,5 +147,10 @@ public class FlowManagerImpl implements FlowManager {
      */
     public FlowDefinitionsManager getFlowDefinitionsManager() {
         return flowDefinitionsManager;
+    }
+
+    @Override
+    public Collection<String> listAvailableFlows() {
+        return getFlowDefinitionsManager().getFlowDefinitions().keySet();
     }
 }

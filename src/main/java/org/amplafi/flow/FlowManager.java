@@ -14,6 +14,8 @@
 
 package org.amplafi.flow;
 
+import java.util.Collection;
+
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
 
@@ -42,4 +44,6 @@ public interface FlowManager {
      * @return (possibly new) FlowManagement object.
      */
     <FM extends FlowManagement> FM getFlowManagement();
+
+    Collection<String> listAvailableFlows();
 }

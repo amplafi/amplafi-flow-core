@@ -209,4 +209,6 @@ public interface FlowManagement extends FlowStateListener {
     ValueFromBindingProvider getValueFromBindingProvider();
 
     ClassResolver getClassResolver();
+
+    Collection<String> listAvailableFlows();
 }
