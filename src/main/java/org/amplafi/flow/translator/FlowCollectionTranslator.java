@@ -62,7 +62,9 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
                 dataClassDefinition.getElementDataClassDefinition().serialize(flowPropertyDefinition, jsonWriter, element);
             }
         } finally {
-            jsonWriter.endArray();
+            if(jsonWriter.isInArrayMode()) {
+                jsonWriter.endArray();
+            }
         }
         return jsonWriter;
     }
