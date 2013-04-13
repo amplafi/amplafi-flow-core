@@ -38,8 +38,8 @@ public class MismatchTracking extends SimpleValidationTracking {
      * @param data
      * @return adds a MismatchTracking if !first.equals(second)
      */
-    public static FlowValidationResult appendMismatchTrackingIfNotEqual(FlowValidationResult flowValidationResult, String detailKey, String first,
-        String second, Object... data) {
+    public static FlowValidationResult appendMismatchTrackingIfNotEqual(FlowValidationResult flowValidationResult, String detailKey,
+        String first, String second, Object... data) {
         if (!StringUtils.equals(first, second)) {
             flowValidationResult.addTracking(new MismatchTracking(detailKey, first, second));
         }
