@@ -45,7 +45,7 @@ public class TestReportAllValidationResult extends Assert {
         ReportAllValidationResult result = new ReportAllValidationResult(
                 new MissingRequiredTracking("firstname"),
                 new InconsistencyTracking("field not a number", "username"),
-                new MismatchTracking("field1", "field2"),
+                new MismatchTracking("field1", "field1", "field2"),
                 new ExceptionTracking("field", new RuntimeException())
         );
 

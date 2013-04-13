@@ -34,20 +34,20 @@ public class InconsistencyTracking extends SimpleValidationTracking {
     /**
      * Helps describing 'incorrect value' problems.
      *
-     * @param result keeps track of validation results
+     * @param flowValidationResult keeps track of validation results
      * @param value if true then we need to inform of an inconsistency (using
      *        {@link InconsistencyTracking}) described be the key and data
      *        parameters.
      * @param key The key that describes the inconsistency.
      * @param data Additional values to use for generating the message that
      *        describes the problem.
-     * @return result
+     * @return a FlowValidationResult (which may be the one passed in)
      */
-    public static FlowValidationResult appendInconsistencyTrackingIfTrue(FlowValidationResult result, boolean value,
+    public static FlowValidationResult appendInconsistencyTrackingIfTrue(FlowValidationResult flowValidationResult, boolean value,
             String key, Object... data) {
         if (value) {
-            result.addTracking(new InconsistencyTracking(key, data));
+            flowValidationResult.addTracking(new InconsistencyTracking(key, data));
         }
-        return result;
+        return flowValidationResult;
     }
 }
