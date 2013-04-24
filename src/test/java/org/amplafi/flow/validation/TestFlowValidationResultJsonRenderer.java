@@ -17,7 +17,7 @@ package org.amplafi.flow.validation;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
