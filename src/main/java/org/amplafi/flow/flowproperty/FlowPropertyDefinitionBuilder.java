@@ -528,4 +528,9 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition.addValidator(validator);
         return this;
     }
+    public FlowPropertyDefinitionBuilder initFlowPropertyValueChangeListener(
+        FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
+        this.flowPropertyDefinition.initFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
+        return this;
+    }
 }
