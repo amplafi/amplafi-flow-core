@@ -34,7 +34,6 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowUtils;
-import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
@@ -114,7 +113,6 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
      * Used to restore an existing definition or create an new definitions from XML
      */
     public FlowImpl() {
-        // see #2179 #2192
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
             new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
@@ -145,11 +143,8 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
             new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io),
-            // HACK
-            CancelTextFlowPropertyValueProvider.CANCEL_TEXT.clone().initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE)
+            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
         );
-//        CancelTextFlowPropertyValueProvider.INSTANCE.defineFlowPropertyDefinitions(this);
     }
 
     /**

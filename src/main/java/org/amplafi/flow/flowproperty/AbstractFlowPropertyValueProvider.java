@@ -44,11 +44,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     }
 
     protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
-        this((Class<FPP>)null, flowPropertyDefinitionBuilders);
+        super(flowPropertyDefinitionBuilders);
+        this.flowPropertyProviderClass = initFlowPropertyProviderClass();
     }
 
     protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        this((Class<FPP>)null, flowPropertyDefinitions);
+        super(flowPropertyDefinitions);
+        this.flowPropertyProviderClass = initFlowPropertyProviderClass();
     }
     @Override
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {

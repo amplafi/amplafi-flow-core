@@ -1,7 +1,6 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,6 +77,11 @@ public class FlowPropertyDefinitionBuilder {
 
     public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor) {
         this.flowPropertyDefinition = (FlowPropertyDefinitionImpl) flowPropertyDefinitionImplementor.clone();
+        return this;
+    }
+    // HACK going to FlowPropertyDefinition should not happen
+    public FlowPropertyDefinitionBuilder createFromTemplate(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder) {
+        this.flowPropertyDefinition = (FlowPropertyDefinitionImpl) flowPropertyDefinitionBuilder.toFlowPropertyDefinition().clone();
         return this;
     }
     public FlowPropertyDefinitionBuilder(String name, Class<? extends Object> dataClass, Class<?>... collectionClasses) {
@@ -179,7 +183,7 @@ public class FlowPropertyDefinitionBuilder {
                 .initAccess(PropertyScope.flowLocal, PropertyUsage.initialize);
         return this;
     }
-    
+
     public FlowPropertyDefinitionBuilder createApiReturnValueFlowPropertyDefinition(String propertyName) {
         return createApiReturnValueFlowPropertyDefinition(propertyName, String.class);
     }
