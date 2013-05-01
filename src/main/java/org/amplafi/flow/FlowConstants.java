@@ -209,14 +209,6 @@ public interface FlowConstants {
      */
     public static final String FSRENDER_RESULT = "fsRenderResult";
 
-    /**
-     *
-     * On calls to {@link BaseFlowService} these properties will be accessed via {@link FlowPropertyValueProvider}.get().
-     * KOSTYA - need comments here to describe reason for this property. (think of it as english practice :-)
-     *
-     */
-    public static final String FS_PROPS_TO_INIT = "fsPropsToInit";
-
     public static final String HTML = "html";
     public static final String JSON = "json";
     public static final String HANDLED = "handled";
