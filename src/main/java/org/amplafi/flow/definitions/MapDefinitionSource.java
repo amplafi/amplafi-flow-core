@@ -37,9 +37,9 @@ public class MapDefinitionSource<F extends FlowDefinition> implements Definition
     }
 
     /**
-     * @see org.amplafi.flow.definitions.
-     *                      DefinitionSource#getFlowDefinition(java.lang.String)
+     * @see org.amplafi.flow.definitions.DefinitionSource#getFlowDefinition(java.lang.String)
      */
+    @Override
     public F getFlowDefinition(String flowTypeName) {
         return this.flowDefinitions != null ? this.flowDefinitions.get(flowTypeName) : null;
     }
@@ -47,6 +47,7 @@ public class MapDefinitionSource<F extends FlowDefinition> implements Definition
     /**
      * @see org.amplafi.flow.definitions.DefinitionSource#isFlowDefined(java.lang.String)
      */
+    @Override
     public boolean isFlowDefined(String flowTypeName) {
         return this.flowDefinitions != null ? this.flowDefinitions.containsKey(flowTypeName) : false;
     }
@@ -61,6 +62,7 @@ public class MapDefinitionSource<F extends FlowDefinition> implements Definition
     /**
      * @return the flowDefinitions
      */
+    @Override
     public Map<String, F> getFlowDefinitions() {
         return flowDefinitions;
     }

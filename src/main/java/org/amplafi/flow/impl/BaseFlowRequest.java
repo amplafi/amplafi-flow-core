@@ -2,7 +2,6 @@ package org.amplafi.flow.impl;
 
 import static org.amplafi.flow.FlowConstants.DESCRIBE;
 import static org.amplafi.flow.FlowConstants.FSRENDER_RESULT;
-import static org.amplafi.flow.FlowConstants.FS_PROPS_TO_INIT;
 import static org.amplafi.flow.launcher.FlowLauncher.ADV_FLOW_ACTIVITY;
 import static org.amplafi.flow.launcher.FlowLauncher.COMPLETE_FLOW;
 import static org.amplafi.flow.launcher.FlowLauncher.FLOW_ID;
@@ -31,11 +30,6 @@ public abstract class BaseFlowRequest implements FlowRequest{
     @Override
     public boolean isDescribeRequest() {
         return hasParameter(DESCRIBE);
-    }
-
-    @Override
-    public Iterable<String> getPropertiesToInitialize() {
-        return getIterableParameter(FS_PROPS_TO_INIT);
     }
 
     @Override

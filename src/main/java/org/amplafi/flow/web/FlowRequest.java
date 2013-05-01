@@ -50,8 +50,6 @@ public interface FlowRequest {
 
 	boolean isBackground();
 
-	Iterable<String> getPropertiesToInitialize();
-
 	boolean hasFlowState();
 
 	FlowState getFlowState();
