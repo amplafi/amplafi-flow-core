@@ -14,7 +14,6 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.web.FlowRequest;
 
 
 /**
