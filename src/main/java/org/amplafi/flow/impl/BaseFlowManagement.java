@@ -79,8 +79,6 @@ public class BaseFlowManagement implements FlowManagement {
 
     private transient ClassResolver classResolver;
 
-    private URI defaultHomePage;
-
     public BaseFlowManagement() {
 
     }
@@ -578,21 +576,6 @@ public class BaseFlowManagement implements FlowManagement {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowManager().getFactoryFlowPropertyDefinitionBuilder(propertyName,
             dataClass);
         return flowPropertyDefinitionBuilder;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowManagement#getDefaultHomePage()
-     */
-    @Override
-    public URI getDefaultHomePage() {
-        return this.defaultHomePage;
-    }
-
-    /**
-     * @param defaultHomePage the defaultHomePage to set
-     */
-    public void setDefaultHomePage(URI defaultHomePage) {
-        this.defaultHomePage = defaultHomePage;
     }
 
     /**

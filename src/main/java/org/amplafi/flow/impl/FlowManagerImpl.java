@@ -14,7 +14,6 @@
 
 package org.amplafi.flow.impl;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ public class FlowManagerImpl implements FlowManager {
 
     private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
     private Log log;
-    private URI defaultHomePage;
 
     /**
      * @see org.amplafi.flow.FlowManager#getInstanceFromDefinition(java.lang.String)
@@ -74,7 +72,6 @@ public class FlowManagerImpl implements FlowManager {
     public FlowManagement getFlowManagement() {
         BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
         baseFlowManagement.setFlowManager(this);
-        baseFlowManagement.setDefaultHomePage(this.getDefaultHomePage());
         baseFlowManagement.setFlowTranslatorResolver(getFlowTranslatorResolver());
         return baseFlowManagement;
     }
@@ -90,6 +87,7 @@ public class FlowManagerImpl implements FlowManager {
     public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         return this.getFlowDefinitionsManager().getFactoryFlowPropertyDefinitionBuilder(propertyName, dataClass);
     }
+    @Override
     public Flow getFlowDefinition(String flowTypeName) {
         return this.getFlowDefinitionsManager().getFlowDefinition(flowTypeName);
     }
@@ -117,22 +115,6 @@ public class FlowManagerImpl implements FlowManager {
     }
     public void addFlowStateListener(FlowStateListener flowStateListener) {
         this.getFlowStateListeners().add(flowStateListener);
-    }
-
-    /**
-     * @param defaultHomePage the defaultHomePage to set
-     */
-    public void setDefaultHomePage(URI defaultHomePage) {
-        this.defaultHomePage = defaultHomePage;
-    }
-
-    /**
-     * If the URI is relative, then the URI is to refer to a local page. This is usually a static setting.
-     * @see FlowManagement#getDefaultHomePage()
-     * @return the default home to use when a flow ends and there is no other place to return.
-     */
-    public URI getDefaultHomePage() {
-        return defaultHomePage;
     }
 
     /**

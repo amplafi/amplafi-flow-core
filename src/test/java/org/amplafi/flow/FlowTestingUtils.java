@@ -66,7 +66,6 @@ public class FlowTestingUtils {
         }
         BaseFlowManagement baseFlowManagement = new BaseFlowManagement();
         this.flowManagement = baseFlowManagement;
-        baseFlowManagement.setDefaultHomePage(flowManager.getDefaultHomePage());
         this.flowManager = flowManager;
         flowManager.setFlowTranslatorResolver(flowTranslatorResolver);
         flowManager.setFlowDefinitionsManager(flowDefinitionsManager);
