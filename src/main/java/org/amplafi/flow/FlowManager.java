@@ -18,10 +18,11 @@ import java.util.Collection;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
-
-
 /**
  * FlowManager is a factory for creating and managing the standard {@link FlowManagement} implementations.
+ *
+ * FlowManagers combine the FlowDefinitionManager (and its definitions) with the services needed to execute flows
+ * For example, transaction services or {@link FlowTranslatorResolver}s
  *
  * @author Patrick Moore
  */

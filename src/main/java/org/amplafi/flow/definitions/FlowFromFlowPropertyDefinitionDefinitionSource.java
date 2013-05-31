@@ -20,7 +20,7 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
 import static com.sworddance.util.CUtilities.*;
 
 /**
- * Define flows only needed to provide a property that is used by the ui of another flow. but is not needed by the execution of the flow itself.
+ * Define simple flows that just need to access a single property
  *
  * TODO: looks like we should be able to refactor some of these methods that create the flow. Bothered by the lack of DRY.
  * @author patmoore
@@ -34,6 +34,16 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
 
     }
 
+    /**
+     * {@link FlowPropertyDefinitionProvider} can supply multiple properties. {@link #add(FlowPropertyDefinitionProvider...)} creates flows from
+     * {@link FlowPropertyDefinitionProvider#getOutputFlowPropertyDefinitionNames()} property list (if supplied) or the first property
+     * defined.
+     *
+     * Using this add() method allows the other properties to also be accessed in their own flow.
+     * @param flowPropertyName
+     * @param flowPropertyDefinitionProvider
+     * @param additionalConfigurationParameters
+     */
     public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName);

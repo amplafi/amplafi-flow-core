@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 
 import static com.sworddance.util.CUtilities.*;
@@ -111,6 +112,15 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
             addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionImplementor, additionalConfigurationParameters);
         }
     }
+    /**
+     * Add additional {@link FlowPropertyDefinition}s to the {@link FlowPropertyProviderImplementor}. This is used when
+     * a {@link FlowPropertyValueProvider} wishes to define a property that the {@link FlowPropertyValueProvider} does not supply
+     * a value for.
+     *
+     * @param flowPropertyProvider
+     * @param flowPropertyDefinitionBuilders
+     * @param additionalConfigurationParameters
+     */
     protected void addFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionBuilder>flowPropertyDefinitionBuilders, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
             addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
