@@ -13,14 +13,16 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
-
+import static com.sworddance.util.CUtilities.*;
 /**
  * Used to help configure properties created by {@link FlowPropertyDefinitionProvider}s.
  *
@@ -83,6 +85,37 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, Arrays.asList(flowPropertyValueChangeListener));
     }
 
+    public FlowPropertyExpectationImpl(FlowPropertyExpectation sourceFlowPropertyExpectation, FlowPropertyExpectation defaultFlowPropertyExpectation) {
+       this.name = sourceFlowPropertyExpectation.getName() !=  null?
+           sourceFlowPropertyExpectation.getName() :defaultFlowPropertyExpectation.getName();
+       this.propertyRequired = sourceFlowPropertyExpectation.getPropertyRequired() !=  null?
+           sourceFlowPropertyExpectation.getPropertyRequired() :defaultFlowPropertyExpectation.getPropertyRequired();
+       this.propertyScope = sourceFlowPropertyExpectation.getPropertyScope() !=  null?
+               sourceFlowPropertyExpectation.getPropertyScope() :defaultFlowPropertyExpectation.getPropertyScope();
+       this.propertyUsage = sourceFlowPropertyExpectation.getPropertyUsage() !=  null?
+           sourceFlowPropertyExpectation.getPropertyUsage() :defaultFlowPropertyExpectation.getPropertyUsage();
+       this.flowPropertyValueProvider = sourceFlowPropertyExpectation.getFlowPropertyValueProvider() !=  null?
+           sourceFlowPropertyExpectation.getFlowPropertyValueProvider() :defaultFlowPropertyExpectation.getFlowPropertyValueProvider();
+       this.flowPropertyValuePersister = sourceFlowPropertyExpectation.getFlowPropertyValuePersister() !=  null?
+           sourceFlowPropertyExpectation.getFlowPropertyValuePersister() :defaultFlowPropertyExpectation.getFlowPropertyValuePersister();
+
+       this.externalPropertyAccessRestriction= sourceFlowPropertyExpectation.getExternalPropertyAccessRestriction() !=  null?
+           sourceFlowPropertyExpectation.getExternalPropertyAccessRestriction() :defaultFlowPropertyExpectation.getExternalPropertyAccessRestriction();
+
+       this.dataClassDefinition= sourceFlowPropertyExpectation.getDataClassDefinition() !=  null?
+           sourceFlowPropertyExpectation.getDataClassDefinition() :defaultFlowPropertyExpectation.getDataClassDefinition();
+
+       List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = flowPropertyValueChangeListeners = new ArrayList<>();
+
+       if ( isNotEmpty(defaultFlowPropertyExpectation.getFlowPropertyValueChangeListeners())) {
+           flowPropertyValueChangeListeners.addAll(defaultFlowPropertyExpectation.getFlowPropertyValueChangeListeners());
+       }
+       if ( isNotEmpty(sourceFlowPropertyExpectation.getFlowPropertyValueChangeListeners())) {
+           flowPropertyValueChangeListeners.addAll(sourceFlowPropertyExpectation.getFlowPropertyValueChangeListeners());
+       }
+       this.flowPropertyValueChangeListeners = Collections.unmodifiableList(flowPropertyValueChangeListeners);
+    }
+
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
             ExternalPropertyAccessRestriction externalPropertyAccessRestriction,
             FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, FlowPropertyValuePersister flowPropertyValuePersister, List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
@@ -91,7 +124,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         this.propertyScope = propertyScope;
         this.propertyUsage = propertyUsage;
         this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
-        this.flowPropertyValueChangeListeners = flowPropertyValueChangeListeners;
+        this.flowPropertyValueChangeListeners = isNotEmpty(flowPropertyValueChangeListeners)?Collections.unmodifiableList(new ArrayList<>(flowPropertyValueChangeListeners)):null;
         this.flowPropertyValueProvider = flowPropertyValueProvider;
         this.flowPropertyValuePersister = flowPropertyValuePersister;
     }
@@ -149,6 +182,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyValuePersister getFlowPropertyValuePersister() {
         return flowPropertyValuePersister;
     }
+    @Override
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
         return externalPropertyAccessRestriction;
     }

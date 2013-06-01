@@ -1,5 +1,6 @@
 package org.amplafi.flow.flowproperty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -56,8 +57,10 @@ public class FlowPropertyDefinitionBuilder {
      * To return a api value,
      * 1) the property must be initialized when the call completes,
      * 2) the property must local to at least flow
+     * 3) the property will not be altered.
      */
     public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
+    public static List<FlowPropertyExpectation> CREATE_OR_EDIT = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.createsIfMissing, ExternalPropertyAccessRestriction.noRestrictions));
     public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.io, null));
     public static List<FlowPropertyExpectation> REQUIRED_INPUT_CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.activate, null, PropertyUsage.consume, null));
     public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, null));
@@ -268,6 +271,32 @@ public class FlowPropertyDefinitionBuilder {
             flowPropertyValuePersister, null);
     }
 
+    /**
+     * used to apply a standard set of expectations to a specific property.
+     * @param propertyName
+     * @param additionalConfigurationParameters
+     * @return a single condensed list of expectations.
+     */
+    public static List<FlowPropertyExpectation> merge(String propertyName, List<FlowPropertyExpectation>... additionalConfigurationParameters) {
+        return merge(new FlowPropertyExpectationImpl(propertyName), additionalConfigurationParameters);
+    }
+
+    /**
+     * create a new list of {@link FlowPropertyExpectation} that combine flowPropertyExpectation parameter with the default values the additionalConfigurationParameters lists.
+     * @param flowPropertyExpectation
+     * @param additionalConfigurationParameters
+     * @return a single condensed list of expectations.
+     */
+    public static List<FlowPropertyExpectation> merge(FlowPropertyExpectation flowPropertyExpectation, List<FlowPropertyExpectation>... additionalConfigurationParameters) {
+        List<FlowPropertyExpectation> results = new ArrayList<>();
+        for(List<FlowPropertyExpectation> additionalConfigurationParameter: additionalConfigurationParameters) {
+            for(FlowPropertyExpectation expectation: additionalConfigurationParameter) {
+                FlowPropertyExpectation propertyExpectation = new FlowPropertyExpectationImpl(flowPropertyExpectation, expectation);
+                results.add(propertyExpectation);
+            }
+        }
+        return results;
+    }
     /**
      * scans through all the {@link FlowPropertyExpectation}s looking for expectations that
      * {@link FlowPropertyExpectation#isApplicable(FlowPropertyDefinitionImplementor)} those
