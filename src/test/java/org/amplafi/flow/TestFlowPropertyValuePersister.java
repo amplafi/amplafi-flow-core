@@ -54,7 +54,7 @@ public class TestFlowPropertyValuePersister {
             super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionImpl("property", Boolean.class).initAutoCreate().initFlowPropertyValuePersister(this));
         }
         @Override
-        public void saveChanges(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+        public Object saveChanges(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
             throw new IllegalStateException("Should never be called");
         }
 

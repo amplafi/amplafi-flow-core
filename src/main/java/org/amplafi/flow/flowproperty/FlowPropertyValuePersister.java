@@ -28,7 +28,12 @@ import org.amplafi.flow.FlowPropertyDefinition;
  *
  */
 public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
-    void saveChanges(T flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
+    /**
+     * @param flowPropertyProvider
+     * @param flowPropertyDefinition
+     * @return value to be set back to flow state or null set is not needed.
+     */
+    Object saveChanges(T flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
 	boolean isHandling(FlowPropertyDefinition flowPropertyDefinition);
 }

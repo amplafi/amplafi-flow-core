@@ -284,14 +284,17 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         // so even if there is a bug that some how permits someone to change the data of a readonly object during the flow - that change is not persisted. ( watch out for things that
         // would allow user to upgrade their permissions.
         // 2) should persistence be sequenced?
-        Map<String, FlowPropertyDefinition> definitions = this.getPropertyDefinitions();
+        Map<String, FlowPropertyDefinitionImplementor> definitions = this.getPropertyDefinitions();
         if ( isNotEmpty(definitions)) {
-            for (Map.Entry<String, FlowPropertyDefinition> entry : definitions.entrySet()) {
-                FlowPropertyDefinition flowPropertyDefinition = entry.getValue();
+            for (Map.Entry<String, FlowPropertyDefinitionImplementor> entry : definitions.entrySet()) {
+                FlowPropertyDefinitionImplementor flowPropertyDefinition = entry.getValue();
                 FlowPropertyValuePersister flowPropertyValuePersister = flowPropertyDefinition.getFlowPropertyValuePersister();
                 if ( flowPropertyValuePersister != null) {
                     getFlowManagement().wireDependencies(flowPropertyValuePersister);
-                    flowPropertyValuePersister.saveChanges(this, flowPropertyDefinition);
+                    Object value = flowPropertyValuePersister.saveChanges(this, flowPropertyDefinition);
+                    if (value != null) {
+                        setProperty(flowPropertyDefinition, value);
+                    }
                 }
             }
         }

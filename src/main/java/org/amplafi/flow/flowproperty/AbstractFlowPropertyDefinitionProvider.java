@@ -189,12 +189,18 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
 
     // -------------------------
     // convenient default method if subclass implements FlowPropertyValuePersister
-    protected void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
+    protected Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
         throw new UnsupportedOperationException("no method defined");
     }
-    public void saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
+    
+    /**
+     * Kostya: Marked as  deprecated since descendants shoudl opt to override saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue)
+     * instead.
+     */
+    @Deprecated
+    public Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         Object property = flowPropertyProvider.getProperty(flowPropertyDefinition.getName());
-        saveChanges(flowPropertyProvider, flowPropertyDefinition, property);
+        return saveChanges(flowPropertyProvider, flowPropertyDefinition, property);
     }
     // ------------------------
     @SuppressWarnings("unchecked")
