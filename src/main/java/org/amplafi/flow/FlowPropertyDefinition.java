@@ -79,6 +79,10 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
 
     String getUiComponentParameterName();
 
+    /**
+     * HACK : we must not require manual checking of saveBack property should know if it should be copied back to the flow values map
+     * @return
+     */
     boolean isSaveBack();
 
     String getInitial();
