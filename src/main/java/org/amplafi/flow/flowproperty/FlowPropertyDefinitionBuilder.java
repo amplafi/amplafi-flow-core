@@ -120,7 +120,7 @@ public class FlowPropertyDefinitionBuilder {
      * @param dataClass
      * @param immutableValue
      * @param collectionClasses
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder createImmutableFlowPropertyDefinition(String name, Class<? extends Object> dataClass, Object immutableValue,
         Class<?>... collectionClasses) {
@@ -258,11 +258,11 @@ public class FlowPropertyDefinitionBuilder {
      * Use case : Create a new User Which should be used?
      * {@link #createCreatingFlowPropertyDefinition(String, Class, FlowActivityPhase, Class...)} ?
      *
-     * @param <FE>
+     * @param <FE> extends FlowPropertyExpectation
      * @param flowPropertyDefinition
      * @param flowPropertyValueProvider
      * @param flowPropertyValuePersister
-     * @return
+     * @return the created FlowPropertyExpectation
      */
     public <FE extends FlowPropertyExpectation> FE createFlowPropertyExpectationToCreateReadOnlyFlowPropertyDefinition(
         FlowPropertyDefinition flowPropertyDefinition, FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider,
@@ -431,7 +431,7 @@ public class FlowPropertyDefinitionBuilder {
                     this.flowPropertyDefinition = this.flowPropertyDefinition.initFactoryFlowPropertyValueProvider(flowPropertyValueProvider);
                     needProvider = false;
                 }
-                //    			needProvider= !_initFlowPropertyValueProvider((FlowPropertyValueProvider<? extends FlowPropertyProvider>)provider, false);
+                //                needProvider= !_initFlowPropertyValueProvider((FlowPropertyValueProvider<? extends FlowPropertyProvider>)provider, false);
             }
             if (provider instanceof FlowPropertyValueChangeListener) {
                 this.flowPropertyDefinition.addFlowPropertyValueChangeListeners(Arrays.asList((FlowPropertyValueChangeListener) provider));
@@ -474,28 +474,28 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-	public FlowPropertyDefinitionBuilder initDefaultObject(Object defaultObject) {
-		this.flowPropertyDefinition = this.flowPropertyDefinition.initDefaultObject(defaultObject);
-		return this;
-	}
+    public FlowPropertyDefinitionBuilder initDefaultObject(Object defaultObject) {
+        this.flowPropertyDefinition = this.flowPropertyDefinition.initDefaultObject(defaultObject);
+        return this;
+    }
 
-	public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
-		if (flowTranslatorResolver != null) {
-			flowTranslatorResolver.resolve(null, flowPropertyDefinition);
-		}
-		// additional cleanup
-		if ( this.flowPropertyDefinition.isReadOnly() && this.flowPropertyDefinition.getFlowPropertyValuePersister() != null) {
-		    this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(null);
-		}
-		return (FPD) this.flowPropertyDefinition;
-	}
+    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
+        if (flowTranslatorResolver != null) {
+            flowTranslatorResolver.resolve(null, flowPropertyDefinition);
+        }
+        // additional cleanup
+        if ( this.flowPropertyDefinition.isReadOnly() && this.flowPropertyDefinition.getFlowPropertyValuePersister() != null) {
+            this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(null);
+        }
+        return (FPD) this.flowPropertyDefinition;
+    }
 
-	  /**
+    /**
      * TODO: In future setTemplateFlowPropertyDefinition() will be called so that once the FPD is
      * emitted it is not changed. (but best solution is FPD being truly immutable ) prevent further
      * changes and return constructed {@link FlowPropertyDefinition}
      *
-     * @return
+     * @return the created FlowPropertyDefinitionImplementor by the builder
      */
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
         return toFlowPropertyDefinition(null);
@@ -527,7 +527,7 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * Handles case where the key class is a string.
      * @param elementClass
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder map(Class<?> elementClass) {
         return this.map(String.class, elementClass);

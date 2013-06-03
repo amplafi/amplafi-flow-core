@@ -14,11 +14,6 @@
 
 package org.amplafi.flow;
 
-
-/**
- * @author patmoore
- *
- */
 public enum FlowActivityPhase {
     /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
@@ -81,7 +76,7 @@ public enum FlowActivityPhase {
      * will be used to resolve
      * @param flowActivityPhase1
      * @param flowActivityPhase2
-     * @return
+     * @return the flowActivityPhase that comes earlier in the flow cycle.
      */
     public static FlowActivityPhase earliest(FlowActivityPhase flowActivityPhase1, FlowActivityPhase flowActivityPhase2) {
         if (flowActivityPhase1 == null || flowActivityPhase1 == flowActivityPhase2) {

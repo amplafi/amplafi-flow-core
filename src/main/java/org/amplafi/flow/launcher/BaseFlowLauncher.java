@@ -81,14 +81,14 @@ public abstract class BaseFlowLauncher implements FlowLauncher,
     }
     /**
      * No check is done to allow for auto wiring by DI frameworks
-     * @return
+     * @return flowManagement that is checked to be not null.
      */
     public FlowManagement getFlowManagement() {
         return flowManagement;
     }
     /**
      * Should be used by subclasses so that check happens
-     * @return
+     * @return flowManagement that is checked to be not null.
      */
     protected FlowManagement getFlowManagementWithCheck() {
         ApplicationNullPointerException.notNull(flowManagement,"no flowmanagement object supplied!");

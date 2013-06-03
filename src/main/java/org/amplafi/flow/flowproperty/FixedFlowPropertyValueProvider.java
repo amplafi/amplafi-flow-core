@@ -153,7 +153,7 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
      * @param defaultObject
      * @param flowPropertyDefinition
      * @param testAndConfigFlowPropertyDefinition if true then set the flowPropertyDefinition based on defaultObject.getClass()
-     * @return
+     * @return the created fixedFlowPropertyValueProvider
      */
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(Object defaultObject,
         FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
@@ -186,7 +186,7 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
      * @param <FPP>
      * @param flowPropertyDefinition
      * @param testAndConfigFlowPropertyDefinition
-     * @return
+     * @return the created fixedFlowPropertyValueProvider
      */
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(
         FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
