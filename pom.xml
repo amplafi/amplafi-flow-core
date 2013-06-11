@@ -50,20 +50,11 @@
             <artifactId>easymock</artifactId>
             <scope>test</scope>
         </dependency>
-          
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>${testng-build}</version>
-
             <scope>test</scope>
-            <exclusions>
-	    	<!-- exclude again when surefire 2.7 -->
-                <!--exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion-->
-            </exclusions>
         </dependency>
 
     </dependencies>
