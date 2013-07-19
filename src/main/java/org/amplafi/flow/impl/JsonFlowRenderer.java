@@ -25,6 +25,7 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;
 import org.amplafi.json.JSONWriter;
+import org.amplafi.json.JsonConstruct;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -124,6 +125,14 @@ public class JsonFlowRenderer implements FlowRenderer {
                         jsonWriter.key("details");
                         jsonWriter.array();
                         for (Object parameter : messageParameters) {
+                            if (parameter instanceof String) {
+                                //Try to convert to json first to avoid unneeded quotes escaping.
+                                String p = (String) parameter;
+                                parameter = JsonConstruct.Parser.toJsonConstruct(p);
+                                if (parameter == null) {
+                                    parameter = p;
+                                }
+                            }
                             jsonWriter.value(parameter);
                         }
                         jsonWriter.endArray();
