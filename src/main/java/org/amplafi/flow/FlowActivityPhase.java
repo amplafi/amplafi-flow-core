@@ -14,6 +14,13 @@
 
 package org.amplafi.flow;
 
+/**
+ * Signals at which stage in Flow processing a property must be set or can have a default value successfully set via
+ * {@link FlowPropertyDefinition#getDefaultObject(org.amplafi.flow.flowproperty.FlowPropertyProvider)}
+ *
+ * @author patmoore
+ *
+ */
 public enum FlowActivityPhase {
     /**
      * FlowProperty is required to be set before calling the {@link org.amplafi.flow.FlowActivity#activate(org.amplafi.flow.FlowStepDirection)}.
@@ -43,7 +50,7 @@ public enum FlowActivityPhase {
      */
     finish(true),
     /**
-     * explicit declaration that it is optional.
+     * explicit declaration that the FlowProperty is optional.
      */
     optional(false);
     private final boolean advancing;

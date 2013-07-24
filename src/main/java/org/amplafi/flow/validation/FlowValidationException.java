@@ -35,6 +35,7 @@ import com.sworddance.util.NotNullIterator;
  */
 public class FlowValidationException extends FlowException {
 
+    private static final long serialVersionUID = 1L;
     private final FlowValidationResult flowValidationResult;
 
     public FlowValidationException(FlowState flowState, FlowValidationResult flowValidationResult) {
