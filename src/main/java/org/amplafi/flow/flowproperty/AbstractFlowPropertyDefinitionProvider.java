@@ -192,7 +192,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
         throw new UnsupportedOperationException("no method defined");
     }
-    
+
     /**
      * Kostya: Marked as  deprecated since descendants shoudl opt to override saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue)
      * instead.
@@ -232,13 +232,17 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         return (T) this.getRequired(flowPropertyProvider, flowPropertyDefinition, propertyName, null, messages);
     }
     protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName, Class<? extends T> expected, Object...messages) {
-        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyName), propertyName);
+        if ( flowPropertyDefinition != null) {
+            ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyName), propertyName);
+        }
         T result = flowPropertyProvider.getProperty(propertyName, expected);
         FlowValidationException.notNull(result, flowPropertyProvider, propertyName, messages);
         return result;
     }
     protected <T> T getRequired(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Class<? extends T> propertyClass, Object...messages) {
-        ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyClass), propertyClass);
+        if ( flowPropertyDefinition != null) {
+            ApplicationIllegalArgumentException.valid(!flowPropertyDefinition.isNamed(propertyClass), propertyClass);
+        }
         T result = flowPropertyProvider.getProperty(propertyClass);
         FlowValidationException.notNull(result, flowPropertyProvider, propertyClass, messages);
         return result;
