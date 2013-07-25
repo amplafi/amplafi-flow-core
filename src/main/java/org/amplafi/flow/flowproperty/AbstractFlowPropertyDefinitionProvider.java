@@ -23,7 +23,9 @@ import java.util.Set;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
+import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.validation.FlowValidationException;
+import org.amplafi.flow.validation.FlowValidationResultProvider;
 
 import static com.sworddance.util.CUtilities.*;
 
@@ -187,6 +189,16 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters );
     }
 
+    /**
+     * This is a hack: but right now I am not certain we want to this in a global way for all FPDPs
+     * right now it is called from subclass's defineFlowPropertyDefinitions()
+     */
+    protected void handleFlowValidationResultProvider(FlowPropertyProviderImplementor flowPropertyProvider) {
+        // HACK - we need ability to provide this for FlowStateImpl and to use interfaces.
+        if ( flowPropertyProvider instanceof FlowActivityImpl) {
+            ((FlowActivityImpl)flowPropertyProvider).addFlowValidationResultProvider((FlowValidationResultProvider<FlowPropertyProviderImplementor>)this);
+        }
+    }
     // -------------------------
     // convenient default method if subclass implements FlowPropertyValuePersister
     protected Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
