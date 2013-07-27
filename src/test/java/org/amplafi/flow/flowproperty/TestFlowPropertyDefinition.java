@@ -51,7 +51,6 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
 import static org.amplafi.flow.flowproperty.PropertyUsage.*;
 import static org.testng.Assert.*;
-import static com.sworddance.util.CUtilities.*;
 /**
  * Tests {@link FlowPropertyDefinitionImpl}.
  */

@@ -33,8 +33,6 @@ import org.amplafi.flow.translator.FlowTranslator;
 
 import com.sworddance.util.AbstractXmlParser;
 import com.sworddance.util.ApplicationGeneralException;
-import com.sworddance.util.ApplicationIllegalArgumentException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -44,8 +42,6 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  */
 public class XmlDefinitionSource extends AbstractXmlParser implements DefinitionSource<FlowImplementor> {
-
-    private static final String MODULE_ELEMENT = "module";
     /**
      * element name that defines a property.
      */
