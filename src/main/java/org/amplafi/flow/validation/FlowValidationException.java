@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.validation;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import java.net.URI;
 import java.util.List;
 
@@ -20,7 +22,6 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -126,5 +127,9 @@ public class FlowValidationException extends FlowException {
 
     public static void notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
         valid(flowPropertyProvider instanceof FlowState?(FlowState)flowPropertyProvider:null, notNull != null, property, messages);
+    }
+    
+    public static void notBlank(String notBlank, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
+        valid(flowPropertyProvider instanceof FlowState?(FlowState)flowPropertyProvider:null, isNotBlank(notBlank), property, messages);
     }
 }
