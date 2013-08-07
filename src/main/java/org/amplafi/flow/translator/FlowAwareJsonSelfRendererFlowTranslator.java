@@ -21,8 +21,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JsonSelfRenderer;
-
 import com.sworddance.util.ApplicationIllegalStateException;
 
 

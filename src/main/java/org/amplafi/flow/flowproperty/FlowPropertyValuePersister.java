@@ -18,6 +18,10 @@ import org.amplafi.flow.FlowPropertyDefinition;
 /**
  * Implementors know how to save changes to the object represented by the FlowProperty in persistent storage.
  *
+ * Functionality to save property changes to the database is broken out from the functionality to retrieve the property.
+ *
+ * This allows the read-only {@link FlowPropertyDefinition#isReadOnly()} properties to be enforced as read-only: they have no persister and thus changes can not be saved to the database.
+ *
  * This may including creating a brand new object, or the persister may be restricted to only changing an existing object.
  *
  * Use case: Changing a user's first name/last name is completely different than creating a new user. Creating a new user must be more deliberate.
