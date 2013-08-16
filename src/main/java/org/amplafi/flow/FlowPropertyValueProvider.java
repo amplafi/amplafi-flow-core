@@ -33,7 +33,8 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  * <li>FlowActivities can just focus on what will be done with the properties, not how the properties are initialized.</li>
  * <li>Details about when the properties are initialized and how are encapsulated.</li>
  * </ul>
- * {@link FlowPropertyDefinitionProvider} is also usually implemented by FlowPropertyValueProvider.
+ * {@link FlowPropertyDefinitionProvider} is also usually implemented by FlowPropertyValueProvider, However, the separation must exist because
+ * there are valid reasons to have a property defined but not provided, or to have several providers that depend on the context
  *
  * TODO: enable FlowPropertyValueProvider to be registered so they can be singletons with needed services injected vis the DI framework.
  * TODO: enable the FPVP to provide a template {@link FlowPropertyDefinition} that can be then customized with a given flow's specific
