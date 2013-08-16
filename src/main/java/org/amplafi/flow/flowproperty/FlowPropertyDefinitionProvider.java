@@ -26,10 +26,10 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 /**
  * Implementers will add the needed FlowPropertyDefinitions to {@link FlowPropertyProvider}s.
  *
- * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity (for example
- * flow local), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define the property. 
- * Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider} or accessing 
- * - in a lower level - directly on a k/v map using getProperty, for example inside a {@link FlowActivity}
+ * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity 
+ * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define 
+ * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider} 
+ * or accessing - in a lower level - directly on a k/v map using getProperty, for example inside a {@link FlowActivity}
  *
  * 
  * The {@link FlowPropertyDefinition}s added are not to be shared. ( YET )

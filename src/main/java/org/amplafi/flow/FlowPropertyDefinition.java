@@ -16,7 +16,9 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
@@ -25,6 +27,11 @@ import org.amplafi.json.JsonSelfRenderer;
  * Defines a property that will be assigned as part of a {@link Flow} or
  * {@link FlowActivity}. This allows the value to be available to the component
  * or page referenced by a {@link FlowActivity}.
+ *
+ * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity 
+ * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define 
+ * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider} 
+ * or accessing - in a lower level - directly on a k/v map using getProperty, for example inside a {@link FlowActivity}
  *
  * TODO: split into 2 interfaces so that there can be immutable FlowPropertyDefinition
  */
