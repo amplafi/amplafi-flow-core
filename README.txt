@@ -1,6 +1,16 @@
-Amplafi-flow is a conversational state management library with an automatic API generation.
+Amplafi-flow-core is an API framework that offers these benefits:
 
-==Need (Conversational State Management) ==
+ 1. Self-describing api calls and parameters
+ 1. Enforced read-only parameters ( so security issues in a api call (flow) do not allow for database changes )
+ 1. Enforced data visibility ( can internal parameters be seen? )
+ 1. Standard serialization mechanism and caching
+ 1. Clear transaction boundaries :
+   1. force database changes to occur at a single defined point
+   1. allow cached objects to be discarded.
+ 1. Composable flows from individual properties.
+
+
+== Need (Conversational State Management) ==
 
  * Users typically have long running sessions. 
  * Websites will cache state in the user session in order to avoid expensive database queries. 
