@@ -24,7 +24,6 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.apache.commons.lang.StringUtils;
 
-import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.NotNullIterator;
 
 import static com.sworddance.util.CUtilities.*;
@@ -119,7 +118,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         } catch(FlowException e) {
         	throw e;
         } catch(RuntimeException e) {
-            throw new ApplicationIllegalStateException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
+            throw new FlowException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
         }
     }
     @Override

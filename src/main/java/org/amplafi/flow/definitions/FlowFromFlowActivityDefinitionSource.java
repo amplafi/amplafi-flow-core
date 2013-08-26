@@ -1,14 +1,24 @@
 package org.amplafi.flow.definitions;
 
 import static com.sworddance.util.CUtilities.put;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * 
+ * A FlowFromFlowActivityDefinitionSource is a {@link DefinitionSource} that packages {@link FlowActivity}
+ * into {@link FlowImplementor}. Used to avoid the boilerplate of flows when all you have are single flow activities, for example in
+ * stateless server-client exchanges
+ * 
+ *
+ */
 public class FlowFromFlowActivityDefinitionSource implements DefinitionSource<FlowImplementor> {
 
     private final Map<String, FlowImplementor> flows = new ConcurrentHashMap<String, FlowImplementor>();

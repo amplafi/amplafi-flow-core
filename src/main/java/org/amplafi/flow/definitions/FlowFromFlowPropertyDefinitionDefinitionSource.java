@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
+
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
@@ -16,11 +17,14 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
+import com.sworddance.beans.PropertyDefinition;
 import com.sworddance.util.ApplicationIllegalArgumentException;
+
 import static com.sworddance.util.CUtilities.*;
 
 /**
- * Define simple flows that just need to access a single property
+ * This class allows you to turn {@link PropertyDefinition} into {@link FlowImplementor}, avoiding the boilerplate of FlowImplementor
+ * when you only have a single property to access and no state.
  *
  * TODO: looks like we should be able to refactor some of these methods that create the flow. Bothered by the lack of DRY.
  * @author patmoore
