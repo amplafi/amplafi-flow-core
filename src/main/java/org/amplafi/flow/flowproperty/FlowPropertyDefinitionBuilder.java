@@ -39,6 +39,7 @@ import com.sworddance.util.map.ConcurrentInitializedMap;
  */
 public class FlowPropertyDefinitionBuilder {
 
+    // TODO: in future construct the flowPropertyDefinition at the very end. (currently managing the complex flow properties makes this difficult )
     private FlowPropertyDefinitionImpl flowPropertyDefinition;
 
     private static final Map<Class<?>, String> propertyNameFromClassName = new ConcurrentInitializedMap<>(new AbstractParameterizedCallableImpl<String>() {

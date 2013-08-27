@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
@@ -116,6 +118,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     @Deprecated // use FlowPropertyDefinition
     private String componentName;
+    private static final Pattern compNamePattern = Pattern.compile("([\\w]+)\\.flows\\.([\\w]+)FlowActivity$");
 
     /**
      * The flow title that the appears in the flow picture.
@@ -148,8 +151,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     private String fullActivityInstanceNamespace;
 
-//    private static final Pattern compNamePattern = Pattern.compile("([\\w]+)\\.flows\\.([\\w]+)FlowActivity$");
-
     private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.activityLocal);
 
     private List<FlowValidationResultProvider<FlowPropertyProviderWithValues>> flowValidationResultProviders;
@@ -157,14 +158,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         this.flowValidationResultProviders = new ArrayList<>();
         // TODO in future make this
         this.flowValidationResultProviders.add(FlowValidationResultProviderImpl.INSTANCE);
-//        if (this.getClass() != FlowActivityImpl.class) {
-//            // a subclass -- therefore subclass name might be good for figuring out the ui component name.
-//            String name = this.getClass().getName();
-//            Matcher m = compNamePattern.matcher(name);
-//            if (m.find()) {
-//                componentName = m.group(1) + "/" + m.group(2);
-//            }
-//        }
     }
 
     public FlowActivityImpl(String name) {
@@ -340,6 +333,22 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         this.componentName = componentName;
     }
 
+    /**
+     * @deprecated
+     * @return default UI component name
+     */
+    @Deprecated
+    public String getDefaultComponentName() {
+        if (this.getClass() != FlowActivityImpl.class) {
+            // a subclass -- therefore subclass name might be good for figuring out the ui component name.
+            String name = this.getClass().getName();
+            Matcher m = compNamePattern.matcher(name);
+            if (m.find()) {
+                return m.group(1) + "/" + m.group(2);
+            }
+        }
+        return null;
+    }
     /**
      * creates a new Flow instance. The flow definition of the new Flow is
      * spawnFlowTypeName. This is an optional flow from this current flow.

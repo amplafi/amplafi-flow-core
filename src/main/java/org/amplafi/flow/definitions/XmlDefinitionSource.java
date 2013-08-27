@@ -354,6 +354,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
     private FlowPropertyDefinitionImplementor parseProperty(Node flowPropertyDefinitionNode, PropertyScope propertyScope) {
         NamedNodeMap attributes = flowPropertyDefinitionNode.getAttributes();
         String name = getNameAttribute(attributes);
+        // TODO : use the FlowPropertyDefinitionBuilder
         FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initPropertyScope(propertyScope);
         for (int index = 0; index < attributes.getLength(); index++) {
             Node attribute = attributes.item(index);

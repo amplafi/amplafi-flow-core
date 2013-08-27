@@ -148,6 +148,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         }
     }
     /**
+     * TODO: put in the {@link FlowPropertyDefinitionBuilder} code so that universally available for all properties.
      * initialize a flowPropertyDefinition.
      * @param flowPropertyProvider
      * @param flowPropertyDefinitionBuilder will be modified (make sure not modifying the master definition)
