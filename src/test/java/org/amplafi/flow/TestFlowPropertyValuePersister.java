@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 
 public class TestFlowPropertyValuePersister {
+    private static final String PROPERTY = "property";
     private static final boolean TEST_ENABLED = true;
     private static final String FLOW_TYPE = "TestFlowPropertyValuePersister";
 
@@ -23,13 +24,13 @@ public class TestFlowPropertyValuePersister {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.addFlowDefinition(FLOW_TYPE, new AFlowActivity().initInvisible(false));
         FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null);
-        FlowPropertyDefinition flowPropertyDefinition = flowState.getPropertyDefinitions().get("property");
+        FlowPropertyDefinition flowPropertyDefinition = flowState.getPropertyDefinitions().get(PROPERTY);
         assertNull(flowPropertyDefinition.getFlowPropertyValuePersister());
 
         flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.addFlowDefinition(FLOW_TYPE, new BFlowActivity().initInvisible(false));
         flowState = flowTestingUtils.getFlowManagement().startFlowState(FLOW_TYPE, true, null);
-        flowPropertyDefinition = flowState.getPropertyDefinitions().get("property");
+        flowPropertyDefinition = flowState.getPropertyDefinitions().get(PROPERTY);
         assertNotNull(flowPropertyDefinition.getFlowPropertyValuePersister());
     }
 
@@ -44,14 +45,14 @@ public class TestFlowPropertyValuePersister {
         @Override
         protected void addStandardFlowPropertyDefinitions() {
             super.addStandardFlowPropertyDefinitions();
-            PropertyValuePersister.INSTANCE.defineFlowPropertyDefinitions(this, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl("property", PropertyUsage.io)));
+            PropertyValuePersister.INSTANCE.defineFlowPropertyDefinitions(this, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(PROPERTY, PropertyUsage.io)));
         }
     }
     private static class PropertyValuePersister extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValuePersister<FlowPropertyProvider> {
         public static final PropertyValuePersister INSTANCE = new PropertyValuePersister();
 
         PropertyValuePersister() {
-            super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionImpl("property", Boolean.class).initAutoCreate().initFlowPropertyValuePersister(this));
+            super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionImpl(PROPERTY, Boolean.class).initAutoCreate().initFlowPropertyValuePersister(this));
         }
         @Override
         public Object saveChanges(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {

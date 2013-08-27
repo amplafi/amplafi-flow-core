@@ -53,7 +53,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${testng-build}</version>
             <scope>test</scope>
         </dependency>
 

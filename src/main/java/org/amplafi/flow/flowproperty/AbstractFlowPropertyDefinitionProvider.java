@@ -56,7 +56,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
             FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             outputed.setTemplateFlowPropertyDefinition();
-            put(this.flowPropertyDefinitions, outputed);
+            put(this.getFlowPropertyDefinitions(), outputed);
             // Apply default of the defining FlowPropertyValueProvider.
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
         }
@@ -77,13 +77,13 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
     public List<String> getOutputFlowPropertyDefinitionNames() {
         List<String> outputFlowPropertyDefinitionNames = new ArrayList<String>();
-        for(FlowPropertyDefinition flowPropertyDefinition : this.flowPropertyDefinitions.values()) {
+        for(FlowPropertyDefinition flowPropertyDefinition : this.getFlowPropertyDefinitions().values()) {
             if ( flowPropertyDefinition.getPropertyUsage().isOutputedProperty()) {
                 outputFlowPropertyDefinitionNames.add(flowPropertyDefinition.getName());
             }
         }
         if ( isEmpty(outputFlowPropertyDefinitionNames)) {
-            FlowPropertyDefinitionImplementor byDefaultFirst = get(this.flowPropertyDefinitions.values(),0);
+            FlowPropertyDefinitionImplementor byDefaultFirst = get(this.getFlowPropertyDefinitions().values(),0);
             outputFlowPropertyDefinitionNames.add(byDefaultFirst.getName());
         }
         return outputFlowPropertyDefinitionNames;
@@ -94,9 +94,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      * @param additionalConfigurationParameters a list because order is significant
      */
     protected void addDefinedPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        if ( this.flowPropertyDefinitions != null) {
+        if ( this.getFlowPropertyDefinitions() != null) {
             List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
-            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.flowPropertyDefinitions.values()) {
+            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.getFlowPropertyDefinitions().values()) {
                 clonedFlowPropertyDefinitions.add(flowPropertyDefinition);
             }
             this.addPropertyDefinitions(flowPropertyProvider, clonedFlowPropertyDefinitions, additionalConfigurationParameters);
@@ -140,7 +140,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
-        FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor = this.flowPropertyDefinitions.get(propertyName);
+        FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor = this.getFlowPropertyDefinitions().get(propertyName);
         if ( flowPropertyDefinitionImplementor == null || (dataClass != null && !flowPropertyDefinitionImplementor.isAssignableFrom(dataClass))) {
             return null;
         } else {

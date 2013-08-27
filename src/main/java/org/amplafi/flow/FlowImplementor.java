@@ -22,7 +22,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
  * @author patmoore
  *
  */
-public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, DefinitionSource {
+public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, DefinitionSource<FlowImplementor> {
 
     /**
      * Create an instance of a Flow from Flow definition.
@@ -77,8 +77,8 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, 
     int indexOf(FlowActivity activity);
     void refresh();
     boolean isActivatable();
-    
+
     boolean isSinglePropertyFlow();
-    
+
     String getSinglePropertyName();
 }

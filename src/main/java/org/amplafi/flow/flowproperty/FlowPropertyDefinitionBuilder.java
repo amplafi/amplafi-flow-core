@@ -418,6 +418,14 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
+    /**
+     *
+     * @param defaultProviders set of objects that may implement {@link FlowPropertyValuePersister}, {@link FlowPropertyValueProvider},
+     * or {@link FlowPropertyValueChangeListener}. If the property being built is missing any of these helpers then the first defaultProvider is
+     * assigned.
+     * If the property is readonly ( {@link FlowPropertyDefinition#isReadOnly()} then no {@link FlowPropertyValuePersister} will be assigned.
+     * @return a possibly different {@link FlowPropertyDefinitionBuilder}
+     */
     public FlowPropertyDefinitionBuilder applyDefaultProviders(Object... defaultProviders) {
         boolean needPersister = this.flowPropertyDefinition.getFlowPropertyValuePersister() == null && !this.flowPropertyDefinition.isReadOnly();
         boolean needProvider = !this.flowPropertyDefinition.isDefaultAvailable();
@@ -444,16 +452,29 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initTranslator(flowTranslator);
         return this;
     }
+    /**
+     * for collection {@link FlowPropertyDefinition}'s - the {@link FlowTranslator} used to serialize the elements in the collection.
+     * @param flowTranslator used to serialize the elements.
+     * @return this
+     */
     public FlowPropertyDefinitionBuilder initElementFlowTranslator(FlowTranslator<?> flowTranslator) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initElementFlowTranslator(flowTranslator);
         return this;
     }
+    /**
+     * for map collections - the {@link FlowTranslator} used to serialize the map keys.
+     * @param flowTranslator
+     * @return this
+     */
     public FlowPropertyDefinitionBuilder initKeyFlowTranslator(FlowTranslator<?> flowTranslator) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initKeyFlowTranslator(flowTranslator);
         return this;
     }
 
-
+    /**
+     * @param flowActivityPhase the phase at which the property must be able to supply a value.
+     * @return
+     */
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
         this.flowPropertyDefinition = this.flowPropertyDefinition.initPropertyRequired(flowActivityPhase);
         return this;
@@ -483,7 +504,7 @@ public class FlowPropertyDefinitionBuilder {
         if (flowTranslatorResolver != null) {
             flowTranslatorResolver.resolve(null, flowPropertyDefinition);
         }
-        // additional cleanup
+        // Make sure that readonly properties do not have persisters.
         if ( this.flowPropertyDefinition.isReadOnly() && this.flowPropertyDefinition.getFlowPropertyValuePersister() != null) {
             this.flowPropertyDefinition = this.flowPropertyDefinition.initFlowPropertyValuePersister(null);
         }

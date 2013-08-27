@@ -40,8 +40,6 @@ public class TransitionFlowActivity extends FlowActivityImpl {
      */
     public static final String FS_FLOW_TRANSITION_LABEL = "fsFlowTransitionLabel";
 
-    private static final long serialVersionUID = 4407898586831855506L;
-
     private String nextFlowId;
 
     private String nextFlowType;

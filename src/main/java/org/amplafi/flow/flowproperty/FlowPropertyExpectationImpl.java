@@ -105,7 +105,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
        this.dataClassDefinition= sourceFlowPropertyExpectation.getDataClassDefinition() !=  null?
            sourceFlowPropertyExpectation.getDataClassDefinition() :defaultFlowPropertyExpectation.getDataClassDefinition();
 
-       List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = flowPropertyValueChangeListeners = new ArrayList<>();
+       List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new ArrayList<>();
 
        if ( isNotEmpty(defaultFlowPropertyExpectation.getFlowPropertyValueChangeListeners())) {
            flowPropertyValueChangeListeners.addAll(defaultFlowPropertyExpectation.getFlowPropertyValueChangeListeners());

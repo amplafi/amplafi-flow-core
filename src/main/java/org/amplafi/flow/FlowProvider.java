@@ -14,6 +14,7 @@
 package org.amplafi.flow;
 
 /**
+ * Implementors can provide the flow definition.
  * @author patmoore
  *
  */

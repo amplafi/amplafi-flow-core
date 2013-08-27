@@ -34,7 +34,6 @@ public class TestFlowStateJsonRenderer extends Assert {
 
     // when TODO in FactoryFlowPropertyDefinitionProvider is fixed, these values will not be in the outputed properties.
     private static final String EMPTY_FLOW_TRANSITIONS = "\"fsFlowTransitions\":{}";
-    private static final String EMPTY_FLOW_TRANSITIONS_FIRST = EMPTY_FLOW_TRANSITIONS+",";
     /**
      * This tests the JSON rendering of a flow state with no fsParameters.
      */
