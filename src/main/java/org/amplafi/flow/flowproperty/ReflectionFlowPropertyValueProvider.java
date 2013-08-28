@@ -29,7 +29,7 @@ import com.sworddance.beans.BeanWorker;
  * TODO need to be able to set base as a String and that is the property name that will act as the base.
  * example: "messagePoint" means:
  * 1) retrieve "messagePoint"
- * 2) do reflection using the propertyNames to get the value.
+ * 2) do reflection using the propertyName to get the value.
  *
  * TODO: Create ability to define the {@link FlowPropertyDefinitionImpl} Default property name would be the last property in the list. So "httpManager.cachedUris" would define
  * the "cachedUris" property (default)
@@ -40,18 +40,26 @@ import com.sworddance.beans.BeanWorker;
 public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
     private Object object;
+    private String alternate;
 
     /**
      * Use the {@link FlowPropertyProvider} that is passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} as the starting object to trace for
-     * using propertyNames.
+     * using propertyName.
      *
-     * @param propertyNames
+     * @param propertyName
      */
-    public ReflectionFlowPropertyValueProvider(String propertyNames) {
-        super(propertyNames);
+    public ReflectionFlowPropertyValueProvider(String propertyName) {
+        this(null, propertyName, propertyName);
     }
-    public ReflectionFlowPropertyValueProvider(Object object, String... propertyNames) {
-        super(propertyNames);
+    public ReflectionFlowPropertyValueProvider(String propertyName, String alternate) {
+        this(null, propertyName, alternate);
+    }
+    public ReflectionFlowPropertyValueProvider(Object object, String propertyName) {
+        this(object, propertyName, propertyName);
+    }
+    public ReflectionFlowPropertyValueProvider(Object object, String propertyName, String alternate) {
+        super(propertyName);
+        this.alternate = alternate;
         this.object = object;
     }
 
@@ -88,6 +96,9 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     }
     @Override
     public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        if ( flowPropertyDefinition.isNamed(this.alternate)) {
+            return true;
+        }
         for(String complexPropertyName:this.getPropertyNames()) {
             int beginIndex = complexPropertyName.lastIndexOf('.');
             String simplePropertyName = beginIndex < 0?complexPropertyName:complexPropertyName.substring(beginIndex+1);

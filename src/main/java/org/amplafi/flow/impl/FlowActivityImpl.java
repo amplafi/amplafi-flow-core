@@ -54,7 +54,6 @@ import org.amplafi.flow.FlowTx;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.flowproperty.ChainedFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -171,12 +170,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     protected void addStandardFlowPropertyDefinitions() {
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
-            new FlowPropertyDefinitionImpl(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
-            new FlowPropertyDefinitionImpl(FANEXT_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionBuilder(FATITLE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionBuilder(FAUPDATE_TEXT).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionBuilder(FANEXT_TEXT).initAccess(activityLocal, use, noAccess),
             //Having this property to be activityLocal we can allow each activity to manage redirects of its own..
-            new FlowPropertyDefinitionImpl(FSPAGE_NAME).initAccess(activityLocal, use, noAccess),
-            new FlowPropertyDefinitionImpl(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
+            new FlowPropertyDefinitionBuilder(FSPAGE_NAME).initAccess(activityLocal, use, noAccess),
+            new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
         );
     }
 

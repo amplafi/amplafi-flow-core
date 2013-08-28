@@ -46,7 +46,7 @@ public class TestReflectionFlowPropertyValueProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T get(Object object, String... properties) {
+    private <T> T get(Object object, String properties) {
         return (T)new ReflectionFlowPropertyValueProvider(object, properties).get(null, null);
     }
 

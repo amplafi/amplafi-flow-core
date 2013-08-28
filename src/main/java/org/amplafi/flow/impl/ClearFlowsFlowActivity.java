@@ -17,8 +17,8 @@ package org.amplafi.flow.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 
 
 /**
@@ -35,7 +35,7 @@ public class ClearFlowsFlowActivity extends FlowActivityImpl {
     @Override
     protected void addStandardFlowPropertyDefinitions() {
         super.addStandardFlowPropertyDefinitions();
-        addPropertyDefinitions(new FlowPropertyDefinitionImpl(FLOWS, List.class));
+        addPropertyDefinitions(new FlowPropertyDefinitionBuilder(FLOWS).list(String.class));
     }
 
     @Override

@@ -34,11 +34,10 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.FlowUtils;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -115,36 +114,37 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public FlowImpl() {
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionImpl(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
-            new FlowPropertyDefinitionImpl(FSFINISH_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             // io -- for now because need to communicate the next page to be displayed
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSPAGE_NAME).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSPAGE_NAME).initPropertyUsage(io),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSAFTER_PAGE).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_PAGE).initAccess(flowLocal, internalState),
-            new FlowPropertyDefinitionImpl(FSDEFAULT_AFTER_CANCEL_PAGE).initAccess(flowLocal, internalState),
-            new FlowPropertyDefinitionImpl(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyScope(flowLocal),
-            new FlowPropertyDefinitionImpl(FSACTIVATABLE, boolean.class).initAccess(flowLocal, consume),
-            new FlowPropertyDefinitionImpl(FSIMMEDIATE_SAVE, boolean.class).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionBuilder(FSAFTER_PAGE).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_PAGE).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionBuilder(FSDEFAULT_AFTER_CANCEL_PAGE).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionBuilder(FSHIDE_FLOW_CONTROL, boolean.class).initPropertyScope(flowLocal),
+            new FlowPropertyDefinitionBuilder(FSACTIVATABLE, boolean.class).initAccess(flowLocal, consume),
+            new FlowPropertyDefinitionBuilder(FSIMMEDIATE_SAVE, boolean.class).initAccess(flowLocal, internalState),
 
-            new FlowPropertyDefinitionImpl(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
-            new FlowPropertyDefinitionImpl(FSALT_FINISHED).initAccess(flowLocal, use),
-            new FlowPropertyDefinitionImpl(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSREFERRING_URL, URI.class).initPropertyUsage(use),
-            new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSAUTO_COMPLETE, boolean.class).initAccess(flowLocal, internalState),
+            new FlowPropertyDefinitionBuilder(FSALT_FINISHED).initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSREFERRING_URL, URI.class).initPropertyUsage(use),
+            new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // HACK
-            FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION.clone(),
+            new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION),
 
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
-            new FlowPropertyDefinitionImpl(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
+            new FlowPropertyDefinitionBuilder(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
-            new FlowPropertyDefinitionImpl(FSNEXT_FLOW).initPropertyUsage(io)
+            new FlowPropertyDefinitionBuilder(FSNEXT_FLOW).initPropertyUsage(io)
         );
+
     }
 
     /**

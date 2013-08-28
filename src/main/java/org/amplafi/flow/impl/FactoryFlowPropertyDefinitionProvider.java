@@ -119,7 +119,7 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
     * @param standardDefinitionClass
     */
    public void addStandardPropertyDefinition(String propertyName, Class<?> standardDefinitionClass) {
-       FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(propertyName, standardDefinitionClass);
+       FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionBuilder(propertyName, standardDefinitionClass).toFlowPropertyDefinition();
        addStandardPropertyDefinition(flowPropertyDefinition);
    }
 

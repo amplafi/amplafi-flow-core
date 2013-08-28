@@ -31,9 +31,9 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
 
     public FlowStateFlowPropertyValueProvider() {
         super(// TODO -- add a FLOW_STATE property ...
-                new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-                new FlowPropertyDefinitionImpl(FSRETURN_TO_FLOW_TYPE, String.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
-                new FlowPropertyDefinitionImpl(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io));
+                new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+                new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE, String.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io),
+                new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW, FlowStateImplementor.class).initAccess(PropertyScope.flowLocal, PropertyUsage.io));
     }
     @SuppressWarnings("unchecked")
     @Override

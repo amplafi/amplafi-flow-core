@@ -68,6 +68,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
      * Use supplied Map so that way caller can control sort order of map.
      * @param properties
      */
+    @Override
     public void setPropertyDefinitions(Map<String, FlowPropertyDefinition> properties) {
         this.propertyDefinitions = properties;
     }
@@ -134,6 +135,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
      * @param flowPropertyDefinition
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(FlowPropertyDefinitionImplementor)
      */
+    @Override
     public void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         if ( flowPropertyDefinition == null ) {
             return;
@@ -170,6 +172,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         return this.flowPropertyProviderName;
     }
 
+    @Override
     public void setFlowPropertyProviderName(String flowPropertyProviderName) {
         this.flowPropertyProviderName = flowPropertyProviderName;
     }
@@ -181,12 +184,14 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
     /**
      * @param resolved the resolved to set
      */
+    @Override
     public void setResolved(boolean resolved) {
         this.resolved = resolved;
     }
     /**
      * @return the resolved
      */
+    @Override
     public boolean isResolved() {
         return resolved;
     }
