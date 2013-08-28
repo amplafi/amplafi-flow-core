@@ -112,8 +112,8 @@ public class FlowValidationException extends FlowException {
             throw new FlowValidationException(flowState, flowValidationResult);
         }
     }
-    public static void valid(FlowState flowState, boolean condition, Object property, Object...messages) throws FlowValidationException {
-        if ( !condition) {
+    public static void valid(FlowState flowState, boolean failIfFalse, Object property, Object...messages) throws FlowValidationException {
+        if ( !failIfFalse) {
             String[] actual = new String[] {ObjectUtils.toString(property, ""), StringUtils.join(messages)};
             FlowValidationResult flowValidationResult = new ReportAllValidationResult(new MissingRequiredTracking(actual));
             throw new FlowValidationException(flowState, flowValidationResult);
