@@ -207,16 +207,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     /**
-     * Creates a string property of the given requirements.
-     *
-     * @param name
-     * @param requiredFlowActivityPhase
-     */
-    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase requiredFlowActivityPhase) {
-        this(name, null, requiredFlowActivityPhase);
-    }
-
-    /**
      * Creates a property of the given type and requirements.
      *
      * @param name

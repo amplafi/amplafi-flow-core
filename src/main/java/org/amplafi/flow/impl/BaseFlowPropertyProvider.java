@@ -19,7 +19,9 @@ import java.util.Map;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -31,7 +33,7 @@ import static com.sworddance.util.CUtilities.*;
  * @param <FPP>
  * {@link FlowPropertyProvider} comments should be read for clarification on how to use/subclass.
  */
-public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider> implements FlowPropertyProvider {
+public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider> implements FlowPropertyProviderImplementor {
 
     private FPP definition;
 
@@ -154,14 +156,21 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
             addPropertyDefinition(flowPropertyDefinition);
         }
     }
+    @Override
     public void addPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
             this.addPropertyDefinition(flowPropertyDefinitionImplementor);
         }
     }
+    @Deprecated // use
     public void addPropertyDefinitions(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
             this.addPropertyDefinition(flowPropertyDefinitionBuilder.toFlowPropertyDefinition());
+        }
+    }
+    public void addPropertyDefinitions(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
+        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider: NotNullIterator.<FlowPropertyDefinitionProvider>newNotNullIterator(flowPropertyDefinitionProviders)) {
+            flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(this);
         }
     }
     public boolean isFlowPropertyProviderNameSet() {

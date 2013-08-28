@@ -37,7 +37,7 @@ import com.sworddance.util.map.ConcurrentInitializedMap;
  *
  * @author patmoore
  */
-public class FlowPropertyDefinitionBuilder {
+public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProvider {
 
     // TODO: in future construct the flowPropertyDefinition at the very end. (currently managing the complex flow properties makes this difficult )
     private FlowPropertyDefinitionImpl flowPropertyDefinition;
@@ -584,4 +584,64 @@ public class FlowPropertyDefinitionBuilder {
         this.flowPropertyDefinition.initFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
         return this;
     }
+
+    /**
+     * called in {@link org.amplafi.flow.impl.FlowActivityImpl#addStandardFlowPropertyDefinitions} or a {@link org.amplafi.flow.impl.FlowActivityImpl} subclass's method.
+     * @param flowPropertyProvider
+     */
+    @Override
+    public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
+        this.defineFlowPropertyDefinitions(flowPropertyProvider, null);
+    }
+
+    /**
+     * @param flowPropertyProvider
+     * @param additionalConfigurationParameters - a list because we want consistent fixed order that the additionalConfigurationParameters are applied.
+     */
+    @Override
+    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+        FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = this.initPropertyDefinition(flowPropertyProvider, new FlowPropertyDefinitionBuilder().createFromTemplate(this), additionalConfigurationParameters);
+        flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
+    }
+    /**
+     * initialize a flowPropertyDefinition.
+     * @param flowPropertyProvider
+     * @param flowPropertyDefinitionBuilder will be modified (make sure not modifying the master definition)
+     * @param additionalConfigurationParameters
+     */
+    // BROKEN : borrowed code from AbstractFlowPropertyDefinitionProvider ( bad assumptions about this )
+    protected FlowPropertyDefinitionImplementor initPropertyDefinition(
+        FlowPropertyProviderImplementor flowPropertyProvider,
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+        flowPropertyDefinitionBuilder = flowPropertyDefinitionBuilder
+            .applyFlowPropertyExpectations(additionalConfigurationParameters)
+            .applyDefaultProviders(flowPropertyProvider, this); // BROKEN ( 'this' is not a FPVP ...)
+        FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
+        // TODO : also create a "read-only" v. writeable property mechanism
+        // TODO feels like it should be part of an 'FlowPropertyDefinitionBuilder.apply()' method
+        // should look for other helpers that need opportunity to get their definitions
+        if ( !returnedFlowPropertyDefinition.isReadOnly()) {
+            // only set persisters on non-read-only objects.
+            FlowPropertyValuePersister<?> flowPropertyValuePersister = returnedFlowPropertyDefinition.getFlowPropertyValuePersister();
+            // BROKEN ( 'this' is not a FPVP ...)
+            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider /*&& flowPropertyValuePersister != this*/){
+                // TODO: note: infinite loop possibilities here if 2 different objects have mutually dependent FPDs
+                ((FlowPropertyDefinitionProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
+            }
+        }
+        return returnedFlowPropertyDefinition;
+    }
+    @Override
+    public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
+        if (dataClass != null && !this.flowPropertyDefinition.isAssignableFrom(dataClass)) {
+            return null;
+        } else {
+            return new FlowPropertyDefinitionBuilder().createFromTemplate(this.flowPropertyDefinition);
+        }
+    }
+    @Override
+    public List<String> getOutputFlowPropertyDefinitionNames() {
+        return Arrays.asList(this.flowPropertyDefinition.getName());
+    }
+
 }
