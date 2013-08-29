@@ -21,7 +21,7 @@ import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
@@ -29,8 +29,6 @@ import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowGroupImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.TransitionFlowActivity;
-import org.amplafi.flow.translator.FlowTranslator;
-
 import com.sworddance.util.AbstractXmlParser;
 import com.sworddance.util.ApplicationGeneralException;
 import org.w3c.dom.Document;
@@ -350,7 +348,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
         NamedNodeMap attributes = flowPropertyDefinitionNode.getAttributes();
         String name = getNameAttribute(attributes);
         // TODO : use the FlowPropertyDefinitionBuilder
-        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(name).initPropertyScope(propertyScope);
+        FlowPropertyDefinitionBuilder flowPropertyDefinition = new FlowPropertyDefinitionBuilder(name).initPropertyScope(propertyScope);
         for (int index = 0; index < attributes.getLength(); index++) {
             Node attribute = attributes.item(index);
             String nodeName = attribute.getNodeName();
@@ -363,10 +361,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 flowPropertyDefinition.initDefaultObject(nodeValue);
             } else if("translator".equals(nodeName)) {
                 // TODO: need to do flowTranslator injection.
-                FlowTranslator<?> flowTranslator = null;
-                flowPropertyDefinition.setTranslator(flowTranslator );
             } else if ("data-class".equals(nodeName)) {
-
                 Class<? extends Object> dataClass;
                 try {
                     dataClass = Class.forName(nodeValue, true, this.getClass().getClassLoader());
@@ -376,12 +371,12 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 flowPropertyDefinition.setDataClass(dataClass);
             } else if ("usage".equals(nodeName)) {
                 PropertyUsage propertyUsage = PropertyUsage.valueOf(nodeValue);
-                flowPropertyDefinition.setPropertyUsage(propertyUsage);
+                flowPropertyDefinition.initPropertyUsage(propertyUsage);
             } else {
                 throw new FlowException(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
             }
         }
-        return flowPropertyDefinition;
+        return flowPropertyDefinition.toFlowPropertyDefinition();
     }
 
     /**

@@ -14,6 +14,7 @@
 package org.amplafi.flow;
 
 import java.util.List;
+import java.util.Set;
 
 import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -26,7 +27,9 @@ import com.sworddance.util.map.MapKeyed;
 /**
  * FlowPropertyExpectation are immutable.
  *
- * Describes a property that is expected AND/OR the characteristics of the expected property to the extent desired.
+ * Describes:
+ *  1) a set of conditions to be applied to 1 ( name specified ) or more ( no name specified )
+ *  2)  a property that is expected AND/OR the characteristics of the expected property to the extent desired.
  * This additional pattern matching avoids false positives.
  *
  * An FlowPropertyExpectation looks similar to a {@link FlowPropertyDefinition} but does not have the "completely-defined" constraints that
@@ -72,6 +75,10 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
      */
     FlowActivityPhase getPropertyRequired();
 
+    Boolean getSaveBack();
+    Set<String> getAlternates();
+    Boolean getAutoCreate();
+
     /**
      * @return listeners to be notified when the property changes value.
      */
@@ -84,8 +91,10 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
      */
     boolean isApplicable(FlowPropertyExpectation flowPropertyExpectation);
     boolean isNamed(String possibleName);
-
     // Kostya: switch the definitions here:
     <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
+    Set<FlowPropertyExpectation> getPropertiesDependentOn();
     FlowPropertyExpectation merge(FlowPropertyExpectation flowPropertyExpectation);
+    boolean isAssignableFrom(Class<?> suggestedClass);
+    String getInitial();
 }

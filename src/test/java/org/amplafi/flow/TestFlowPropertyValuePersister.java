@@ -2,7 +2,7 @@ package org.amplafi.flow;
 
 import java.util.Arrays;
 import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -52,7 +52,7 @@ public class TestFlowPropertyValuePersister {
         public static final PropertyValuePersister INSTANCE = new PropertyValuePersister();
 
         PropertyValuePersister() {
-            super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionImpl(PROPERTY, Boolean.class).initAutoCreate().initFlowPropertyValuePersister(this));
+            super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionBuilder(PROPERTY, Boolean.class).initAutoCreate().initFlowPropertyValuePersister(this));
         }
         @Override
         public Object saveChanges(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
@@ -60,7 +60,7 @@ public class TestFlowPropertyValuePersister {
         }
 
         @Override
-        public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+        public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
             return true;
         }
 

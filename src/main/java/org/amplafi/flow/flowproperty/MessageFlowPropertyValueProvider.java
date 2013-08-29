@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowProvider;
 import org.amplafi.flow.FlowUtils;
@@ -75,7 +76,7 @@ public class MessageFlowPropertyValueProvider implements FlowPropertyValueProvid
     }
 	@Override
 	@Deprecated // provide better definition
-	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
 		// not checking so sure.
 		return true;
 	}

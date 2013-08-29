@@ -14,19 +14,20 @@
 
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import static org.testng.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-
-import static org.testng.Assert.*;
-
-import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Recreate the {@link org.amplafi.flow.translator.FlowTranslator}s a bunch of times to make sure that
@@ -54,7 +55,7 @@ public abstract class AbstractTestFlowTranslators<T> {
     }
 
     protected FlowPropertyDefinitionImpl createFlowPropertyDefinition() {
-        return new FlowPropertyDefinitionImpl("foo", createDataClassDefinition());
+        return new FlowPropertyDefinitionBuilder("foo", createDataClassDefinition()).toFlowPropertyDefinition();
     }
 
     @Test(dataProvider="flowTranslatorExpectations")

@@ -14,14 +14,18 @@
 
 package org.amplafi.flow;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
+
 import java.util.HashMap;
 
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImplementor;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 public class TestFlowStateMorphing {
 
@@ -37,7 +41,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testPositiveStateFlowMorphingPositive() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate().toFlowPropertyDefinition();
         fa1.addPropertyDefinitions(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -73,7 +77,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testNegativeStateFlowMorphing() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate().toFlowPropertyDefinition();
         fa1.addPropertyDefinitions(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -100,7 +104,7 @@ public class TestFlowStateMorphing {
     @Test
     public void testNoCommonFAs() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate().toFlowPropertyDefinition();
         fa1.addPropertyDefinitions(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
@@ -131,7 +135,7 @@ public class TestFlowStateMorphing {
     @Test(expectedExceptions = IllegalStateException.class)
     public void testFAsNotInOrder() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionImpl(FS_MORPH_FLOW, Boolean.class).initAutoCreate();
+        FlowPropertyDefinitionImpl morphFlowFPD = new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate().toFlowPropertyDefinition();
         fa1.addPropertyDefinitions(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");

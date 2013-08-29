@@ -12,6 +12,9 @@
  * License.
  */
 package org.amplafi.flow.launcher;
+import static com.sworddance.util.CUtilities.isEmpty;
+import static com.sworddance.util.CUtilities.isNotEmpty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +29,6 @@ import org.amplafi.flow.FlowState;
 import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.util.NotNullIterator;
-
-import static com.sworddance.util.CUtilities.*;
 
 /**
  * {@link FlowLauncher} that starts a new {@link FlowState}.

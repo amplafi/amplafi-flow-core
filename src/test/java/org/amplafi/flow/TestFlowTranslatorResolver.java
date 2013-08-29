@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
@@ -32,7 +33,6 @@ import org.amplafi.flow.translator.ListFlowTranslator;
 import org.amplafi.flow.translator.LongFlowTranslator;
 import org.amplafi.flow.translator.MapFlowTranslator;
 import org.amplafi.flow.translator.SetFlowTranslator;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -121,7 +121,7 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testListCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, List.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).list(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         getFlowTranslatorResolver().resolve("", definition);
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV =definition.serialize(list);
@@ -135,7 +135,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, Set.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).set(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         getFlowTranslatorResolver().resolve("", definition);
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV =definition.serialize(set);
@@ -148,7 +148,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl(URI, URI.class, FlowActivityPhase.advance, Map.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).map(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         getFlowTranslatorResolver().resolve("", definition);
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));

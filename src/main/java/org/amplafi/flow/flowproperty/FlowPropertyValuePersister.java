@@ -14,6 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 
 /**
  * Implementors know how to save changes to the object represented by the FlowProperty in persistent storage.
@@ -39,5 +40,5 @@ public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
      */
     Object saveChanges(T flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
-	boolean isHandling(FlowPropertyDefinition flowPropertyDefinition);
+	boolean isHandling(FlowPropertyExpectation flowPropertyExpectation);
 }

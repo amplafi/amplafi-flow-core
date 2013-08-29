@@ -119,9 +119,6 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
                 }
             }
         }
-        if ( !isInstance()) {
-            flowPropertyDefinition.setTemplateFlowPropertyDefinition();
-        }
         return (FPD) getPropertyDefinitions().put(flowPropertyDefinition.getName(), flowPropertyDefinition);
     }
     @SuppressWarnings("unchecked")
@@ -137,6 +134,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
      * @param flowPropertyDefinition
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(FlowPropertyDefinitionImplementor)
      */
+    @Deprecated // use FBDB
     @Override
     public void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         if ( flowPropertyDefinition == null ) {
@@ -151,18 +149,13 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
         }
         putLocalPropertyDefinition(flowPropertyDefinition);
     }
-    public void addPropertyDefinitions(Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions) {
-        for (FlowPropertyDefinitionImplementor flowPropertyDefinition : NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
-            addPropertyDefinition(flowPropertyDefinition);
-        }
-    }
     @Override
+    @Deprecated // use FBDB
     public void addPropertyDefinitions(FlowPropertyDefinitionImplementor... flowPropertyDefinitions) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitions)) {
             this.addPropertyDefinition(flowPropertyDefinitionImplementor);
         }
     }
-    @Deprecated // use
     public void addPropertyDefinitions(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
             this.addPropertyDefinition(flowPropertyDefinitionBuilder.toFlowPropertyDefinition());

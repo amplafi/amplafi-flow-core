@@ -16,8 +16,6 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -30,6 +28,7 @@ import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowImplementor;
@@ -42,9 +41,6 @@ import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
 
-import com.sworddance.util.ApplicationIllegalArgumentException;
-import com.sworddance.util.ApplicationIllegalStateException;
-import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.CUtilities;
 import com.sworddance.util.NotNullIterator;
 
@@ -77,13 +73,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Initial is stored in the FlowState map and defaultObject is not.
      */
     private String initial;
-
-    /**
-     * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
-     * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
-     */
-    @Deprecated // FlowPropertyDefinitionBuilder solves this problem
-    private transient FlowPropertyValueProvider<? extends FlowPropertyProvider> factoryFlowPropertyValueProvider;
 
     // TODO: if a list of providers is defined then it becomes impossible to determine the minimum set of dependencies.
     // dependencies required by alternative FPVP may never be needed because the FPVP is never called.
@@ -120,99 +109,35 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     private FlowActivityPhase flowActivityPhase;
     private PropertyUsage propertyUsage;
     private PropertyScope propertyScope;
-    /**
-     * TODO: Need to make more extensive and correct use.
-     * once set no further changes to this {@link FlowPropertyDefinitionImpl} are permitted.
-     * calling init* methods will return a new {@link FlowPropertyDefinitionImpl} that can be modified.
-     * calling set* will result in an exception.
-     */
-    @Deprecated // need to use FlowPropertyDefinitionBuilder and make FPDI immutable.
-    private boolean templateFlowPropertyDefinition;
 
     /**
      * A set of {@link FlowPropertyExpectation}s that this property definition needs. Note that a {@link FlowPropertyExpectation} can be optional.
      */
     private Set<FlowPropertyExpectation> propertiesDependentOn;
 
-    /**
-     * Creates an unnamed String property.
-     */
-    public FlowPropertyDefinitionImpl() {
-        this.dataClassDefinition = new DataClassDefinitionImpl();
-    }
-
-    public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
-        this.setName(clone.name);
-        this.dataClassDefinition = (DataClassDefinition) clone.dataClassDefinition.clone();
-        if (isNotEmpty(clone.alternates)) {
-            this.alternates = new HashSet<String>();
-            this.alternates.addAll(clone.alternates);
+    public FlowPropertyDefinitionImpl(FlowPropertyExpectation clone) {
+        // TODO : validate there is a name
+        this.name = clone.getName();
+        if ( isBlank(this.name) ) {
+            throw new FlowConfigurationException("Property name cannot be null or blank");
         }
-        this.autoCreate = clone.autoCreate;
-        this.factoryFlowPropertyValueProvider = clone.factoryFlowPropertyValueProvider;
-        this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
-        this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
-        this.setInitial(clone.initial);
-        if (clone.externalPropertyAccessRestriction != null) {
-            this.setExternalPropertyAccessRestriction(clone.externalPropertyAccessRestriction);
+        // TODO : validate there are data types (but need to allow for the String.class being the data type)
+        this.dataClassDefinition = (DataClassDefinition) clone.getDataClassDefinition().clone();
+        if (isNotEmpty(clone.getAlternates())) {
+            this.alternates = new HashSet<String>(clone.getAlternates());
         }
-        this.saveBack = clone.saveBack;
-        this.flowActivityPhase = clone.flowActivityPhase;
-        this.propertyUsage = clone.propertyUsage;
-        this.propertyScope = clone.propertyScope;
-    }
-
-    /**
-     * Creates an optional string property.
-     *
-     * @param name The name of the property.
-     */
-    public FlowPropertyDefinitionImpl(String name) {
-        this.dataClassDefinition = new DataClassDefinitionImpl();
-        this.setName(name);
-    }
-
-    /**
-     * Creates an optional property of the given type.
-     *
-     * @param name
-     * @param dataClass
-     * @param collectionClasses
-     */
-    public FlowPropertyDefinitionImpl(String name, Class<?> dataClass, Class<?>...collectionClasses) {
-        this(name, dataClass, FlowActivityPhase.optional, collectionClasses);
-    }
-
-    /**
-     * Creates a property of the given type and requirements.
-     *
-     * @param name
-     * @param dataClass the underlying class that all the collection classes are wrapping.
-     * @param requiredFlowActivityPhase when is this property required to be set
-     * @param collectionClasses
-     */
-    public FlowPropertyDefinitionImpl(String name, Class<? extends Object> dataClass, FlowActivityPhase requiredFlowActivityPhase, Class<?>...collectionClasses) {
-        this(name, requiredFlowActivityPhase, new DataClassDefinitionImpl(dataClass, collectionClasses));
-    }
-    public FlowPropertyDefinitionImpl(String name, DataClassDefinition dataClassDefinition) {
-        this(name, FlowActivityPhase.optional, dataClassDefinition);
-    }
-    public FlowPropertyDefinitionImpl(String name, FlowActivityPhase requiredFlowActivityPhase, DataClassDefinition dataClassDefinition) {
-        super((FlowPropertyDefinitionImplementor)null);
-        this.setName(name);
-        this.flowActivityPhase = requiredFlowActivityPhase;
-        this.dataClassDefinition = dataClassDefinition;
-    }
-
-    @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
-    @SuppressWarnings("unchecked")
-    public void setDefaultObject(Object defaultObject) {
-        if ( !(defaultObject instanceof FlowPropertyValueProvider<?>)) {
-            FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = FixedFlowPropertyValueProvider.newFixedFlowPropertyValueProvider(defaultObject, this, true);
-            this.flowPropertyValueProvider = fixedFlowPropertyValueProvider;
-        } else {
-            this.flowPropertyValueProvider = (FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject;
+        this.autoCreate = clone.getAutoCreate();
+        this.flowPropertyValueProvider = clone.getFlowPropertyValueProvider();
+        this.flowPropertyValuePersister = clone.getFlowPropertyValuePersister();
+        this.initial =clone.getInitial();
+        if (clone.getExternalPropertyAccessRestriction() != null) {
+            this.externalPropertyAccessRestriction =clone.getExternalPropertyAccessRestriction();
         }
+        this.saveBack = clone.getSaveBack();
+        this.flowActivityPhase = clone.getPropertyRequired();
+        this.propertyUsage = clone.getPropertyUsage();
+        this.propertyScope = clone.getPropertyScope();
+        this.propertiesDependentOn = clone.getPropertiesDependentOn();
     }
 
     /**
@@ -224,7 +149,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Override
     public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         Object value = null;
-        ApplicationNullPointerException.notNull(flowPropertyProvider,this,"flowPropertyProvider cannot be null");
         FlowPropertyValueProvider<? extends FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
         if ( propertyValueProvider != null) {
             // 6 may 2012 - PATM - I forgot exact reason for this check. I believe it was for case where 2 different FlowActivities defined
@@ -233,8 +157,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             // problem is that if a flow activity defined a property and then the property was promoted to be a flow wide property, (it appears)
             // that the only the original flowactivity could get the default.
             Class<? extends FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
-            ApplicationIllegalArgumentException.valid(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()),
-                this,": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
+            if ( !(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()))) {
+                throw new FlowConfigurationException(
+                    this,": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
+            }
             try {
             	// HACK : casting. fix definition later.
                 value = ((FlowPropertyValueProvider<FlowPropertyProvider>)propertyValueProvider).get(flowPropertyProvider, this);
@@ -272,28 +198,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
       if (this.flowPropertyValueProvider != null ) {
             return this.flowPropertyValueProvider;
         } else {
-            return this.factoryFlowPropertyValueProvider;
+            return null;
         }
-    }
-
-    @Override
-    @Deprecated //  TODO: move initDefaultObject() to FlowPropertyDefinitionFactory
-    public FlowPropertyDefinitionImpl initDefaultObject(Object defaultObject) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValueProvider, defaultObject);
-        flowPropertyDefinition.setDefaultObject(defaultObject);
-        return flowPropertyDefinition;
-    }
-
-    @Deprecated
-    @Override
-    public FlowPropertyDefinitionImpl initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, flowPropertyValueProvider);
-    	flowPropertyDefinition.factoryFlowPropertyValueProvider = flowPropertyValueProvider;
-    	return flowPropertyDefinition;
-    }
-
-    public void setName(String name) {
-    	this.name = this.setCheckTemplateState(this.name, name);
     }
 
     @Override
@@ -316,63 +222,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     	return getDataClassDefinition().isFlowTranslatorSet();
     }
 
-    public void setTranslator(FlowTranslator<?> flowTranslator) {
-    	this.getDataClassDefinition().setFlowTranslator(
-    			this.setCheckTemplateState(getTranslator(), flowTranslator));
-    }
-
-    @Override
-    public FlowPropertyDefinitionImpl initTranslator(FlowTranslator<?> flowTranslator) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.getTranslator(), flowTranslator);
-    	flowPropertyDefinition.setTranslator(flowTranslator);
-        return flowPropertyDefinition;
-    }
-
-    public FlowPropertyDefinitionImpl initElementFlowTranslator(FlowTranslator<?> flowTranslator) {
-        FlowTranslator elementFlowTranslator = this.getDataClassDefinition().getElementDataClassDefinition().getFlowTranslator();
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(elementFlowTranslator, flowTranslator);
-        flowPropertyDefinition.getDataClassDefinition().getElementDataClassDefinition().setFlowTranslator(flowTranslator);
-        return flowPropertyDefinition;
-    }
-    public FlowPropertyDefinitionImpl initKeyFlowTranslator(FlowTranslator<?> flowTranslator) {
-        FlowTranslator keyFlowTranslator = this.getDataClassDefinition().getKeyDataClassDefinition().getFlowTranslator();
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(keyFlowTranslator, flowTranslator);
-        flowPropertyDefinition.getDataClassDefinition().getKeyDataClassDefinition().setFlowTranslator(flowTranslator);
-        return flowPropertyDefinition;
-    }
-    /**
-     * This is used to handle case of parameter name change and 'short' names
-     * for uris and the like.
-     *
-     * @param alternateNames
-     * @return this or clone
-     */
-    public FlowPropertyDefinitionImpl addAlternateNames(String... alternateNames) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.alternates, alternateNames);
-        Collections.addAll(flowPropertyDefinition.getAlternates(),alternateNames);
-        return flowPropertyDefinition;
-    }
-
-    public void setInitial(String initial) {
-        this.initial = this.setCheckTemplateState(this.initial, initial);
-        checkInitial(this.initial);
-    }
-
     @Override
     public String getInitial() {
         return this.initial;
     }
 
-    public FlowPropertyDefinitionImpl initInitial(String initialValue) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.initial, initialValue);
-        flowPropertyDefinition.setInitial(initialValue);
-        return flowPropertyDefinition;
-    }
-
-    public void setAutoCreate(boolean autoCreate) {
-        this.autoCreate = autoCreate;
-    }
-
+    @Override
     public Boolean getAutoCreate() {
         return this.autoCreate;
     }
@@ -438,27 +293,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public <V> V deserialize(FlowPropertyProvider flowPropertyProvider, Object serializedObject) throws FlowException {
         return (V) this.getDataClassDefinition().deserialize(flowPropertyProvider, this, serializedObject);
     }
-    /**
-     * @param flowActivityPhase the propertyRequired to set
-     * @return this
-     */
-    @Override
-    public FlowPropertyDefinitionImpl initPropertyRequired(FlowActivityPhase flowActivityPhase) {
-        if ( !FlowActivityPhase.isSameAs(this.flowActivityPhase, flowActivityPhase)){
-        	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowActivityPhase, flowActivityPhase);
-        	flowPropertyDefinition.setPropertyRequired(flowActivityPhase);
-            return flowPropertyDefinition;
-        } else {
-            return this;
-        }
-    }
-    /**
-     * @param flowActivityPhase the propertyRequired to set
-     */
-    @Override
-    public void setPropertyRequired(FlowActivityPhase flowActivityPhase) {
-    	this.flowActivityPhase = this.setCheckTemplateState(this.flowActivityPhase, flowActivityPhase);
-    }
 
     /**
      * @return the propertyRequired
@@ -466,18 +300,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Override
     public FlowActivityPhase getPropertyRequired() {
         return this.flowActivityPhase == null?FlowActivityPhase.optional:this.flowActivityPhase;
-    }
-
-    /**
-     * @param propertyUsage the propertyUsage to set
-     */
-    @Override
-    public void setPropertyUsage(PropertyUsage propertyUsage) {
-        if ( this.getPropertyScope().isAllowedPropertyUsage(propertyUsage)) {
-            this.propertyUsage = setCheckTemplateState(this.propertyUsage, propertyUsage);
-        } else {
-            // throw exception?
-        }
     }
 
     /**
@@ -499,20 +321,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     public boolean isPropertyUsageSet() {
         return this.propertyUsage != null;
     }
-    @Override
-    public FlowPropertyDefinitionImpl initPropertyUsage(PropertyUsage propertyUsage) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.propertyUsage, propertyUsage);
-    	flowPropertyDefinition.setPropertyUsage(propertyUsage);
-        return flowPropertyDefinition;
-    }
-
-    /**
-     * @param propertyScope the propertyScope to set
-     */
-    @Override
-    public void setPropertyScope(PropertyScope propertyScope) {
-        this.propertyScope = setCheckTemplateState(this.propertyScope, propertyScope);
-    }
 
     /**
      * @return the propertyScope
@@ -524,28 +332,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Override
     public boolean isPropertyScopeSet() {
         return this.propertyScope != null;
-    }
-    @Override
-    public FlowPropertyDefinitionImpl initPropertyScope(PropertyScope propertyScope) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.propertyScope, propertyScope);
-    	flowPropertyDefinition.setPropertyScope(propertyScope);
-        return flowPropertyDefinition;
-    }
-    @Override
-    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
-        return initAccess(propertyScope,propertyUsage,this.externalPropertyAccessRestriction.noRestrictions);
-    }
-    @Override
-    public FlowPropertyDefinitionImpl initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage, ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
-        return initPropertyScope(propertyScope).initPropertyUsage(propertyUsage).initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
-    }
-    /**
-     * affects isEntity()
-     *
-     * @param dataClass
-     */
-    public void setDataClass(Class<? extends Object> dataClass) {
-        this.getDataClassDefinition().setDataClass(dataClass);
     }
 
     // HACK -- to fix later...
@@ -565,13 +351,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     /**
-     * @param dataClassDefinition the dataClassDefinition to set
-     */
-    public void setDataClassDefinition(DataClassDefinition dataClassDefinition) {
-        this.dataClassDefinition = dataClassDefinition;
-    }
-
-    /**
      * @return the dataClassDefinition
      */
     @Override
@@ -586,21 +365,16 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     @Override
     public Set<String> getAlternates() {
-        if (this.alternates == null) {
-            this.alternates = new HashSet<String>();
-        }
         return this.alternates;
     }
     @Override
     public Set<String> getAllNames() {
         Set<String> allNames = new LinkedHashSet<String>();
         allNames.add(this.getName());
-        allNames.addAll(getAlternates());
+        if ( this.alternates != null) {
+            allNames.addAll(getAlternates());
+        }
         return allNames;
-    }
-
-    public void setExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
-        this.externalPropertyAccessRestriction = externalPropertyAccessRestriction;
     }
 
     @Override
@@ -618,56 +392,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return this.getExternalPropertyAccessRestriction().isExternalReadAccessAllowed();
     }
 
-    public FlowPropertyDefinitionImpl initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.externalPropertyAccessRestriction, externalPropertyAccessRestriction);
-    	flowPropertyDefinition.setExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
-        return flowPropertyDefinition;
-    }
-    @Override
-    public FlowPropertyDefinitionImpl initSensitive() {
-    	return initExternalPropertyAccessRestriction(ExternalPropertyAccessRestriction.noAccess);
-    }
-
     public boolean isSensitive() {
         return !getExternalPropertyAccessRestriction().isExternalReadAccessAllowed();
-    }
-    /**
-     * TODO: USE!
-     * not a reversible process.
-     */
-    @Override
-    public void setTemplateFlowPropertyDefinition() {
-        this.templateFlowPropertyDefinition = true;
-    }
-
-    /**
-     * @return the templateFlowPropertyDefinition
-     */
-    public boolean isTemplateFlowPropertyDefinition() {
-        return this.templateFlowPropertyDefinition;
-    }
-    protected <T> T setCheckTemplateState(T oldObject, T newObject) {
-        if ( this.templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject)) {
-            ApplicationIllegalStateException.checkState(false,
-                this, "Cannot change state of a Template FlowPropertyDefinition. A property was going from ", oldObject," to ", newObject);
-        }
-        return newObject;
-    }
-    protected <T> FlowPropertyDefinitionImpl cloneIfTemplate(T oldObject, T newObject) {
-        if ( this.templateFlowPropertyDefinition && !ObjectUtils.equals(oldObject, newObject) ) {
-            return this.clone();
-        }
-        return this;
-    }
-    protected <E, T extends Collection<E>> FlowPropertyDefinitionImpl cloneIfTemplateAndNeedToAdd(T oldObject, E newObject) {
-        if ( !this.templateFlowPropertyDefinition || newObject == null) {
-            return this;
-        } else if ( oldObject == null || !oldObject.contains(newObject)) {
-            return this.clone();
-        } else {
-            // already contains
-            return this;
-        }
     }
 
     @Override
@@ -726,7 +452,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         FlowPropertyDefinitionImpl source = (FlowPropertyDefinitionImpl)property;
         boolean noMergeConflict = isMergeable(source);
         if (this.autoCreate == null && source.autoCreate != null) {
-            this.setAutoCreate(source.autoCreate);
+            this.autoCreate = source.autoCreate;
         }
         this.getDataClassDefinition().merge(source.dataClassDefinition);
 
@@ -743,9 +469,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         }
         if ( this.flowPropertyValuePersister == null && source.flowPropertyValuePersister != null ) {
             this.flowPropertyValuePersister =source.flowPropertyValuePersister;
-        }
-        if ( this.factoryFlowPropertyValueProvider == null && source.factoryFlowPropertyValueProvider != null ) {
-            this.factoryFlowPropertyValueProvider =source.factoryFlowPropertyValueProvider;
         }
         // TODO: merging should handling chained notification.
         if ( this.flowPropertyValueChangeListeners == null && source.flowPropertyValueChangeListeners != null ) {
@@ -778,8 +501,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return new FlowPropertyDefinitionImpl(this);
     }
 
-    public void setSaveBack(Boolean saveBack) {
-    	this.saveBack = this.setCheckTemplateState(this.saveBack, saveBack);
+    @Override
+    public Boolean getSaveBack() {
+        return this.saveBack;
     }
 
     @Override
@@ -801,17 +525,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return b != null && b;
     }
 
-    /**
-     * @see #saveBack
-     * @param saveBack
-     * @return this or clone
-     */
-    public FlowPropertyDefinitionImpl initSaveBack(Boolean saveBack) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.saveBack, saveBack);
-    	flowPropertyDefinition.setSaveBack(saveBack);
-        return flowPropertyDefinition;
-    }
-
     @Override
     public boolean isCacheOnly() {
         return getPropertyScope().isCacheOnly();
@@ -820,18 +533,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Override
     public boolean isReadOnly() {
         return getPropertyUsage().getAltersProperty() == Boolean.FALSE;
-    }
-    /**
-     * Sets autoCreate to true - meaning that if the property does not exist in
-     * the cache, a new instance is created. <p/> Uses
-     * {@link #setAutoCreate(boolean)}
-     *
-     * @return this
-     */
-    public FlowPropertyDefinitionImpl initAutoCreate() {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.autoCreate, Boolean.TRUE);
-        flowPropertyDefinition.setAutoCreate(true);
-        return flowPropertyDefinition;
     }
 
     /**
@@ -856,17 +557,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     /**
-     * @param flowPropertyValueProvider
-     * @return this or a clone
-     */
-    @Override
-    public FlowPropertyDefinitionImpl initFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValueProvider, flowPropertyValueProvider);
-    	flowPropertyDefinition.setFlowPropertyValueProvider(flowPropertyValueProvider);
-        return flowPropertyDefinition;
-    }
-
-    /**
      * @return the flowPropertyValuePersister
      */
     @Override
@@ -874,33 +564,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return this.flowPropertyValuePersister;
     }
 
-    /**
-     * @param <FA>
-     * @param flowPropertyValuePersister the flowPropertyValuePersister to set
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public <FA extends FlowPropertyProvider> void setFlowPropertyValuePersister(FlowPropertyValuePersister<FA> flowPropertyValuePersister) {
-        this.flowPropertyValuePersister = (FlowPropertyValuePersister<FlowPropertyProvider>) flowPropertyValuePersister;
-    }
-
-    /**
-     * @param flowPropertyValuePersister
-     * @return this or a clone
-     */
-    @Override
-    public <FPP extends FlowPropertyProvider> FlowPropertyDefinitionImpl initFlowPropertyValuePersister(FlowPropertyValuePersister<FPP> flowPropertyValuePersister) {
-    	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.flowPropertyValuePersister, flowPropertyValuePersister);
-    	flowPropertyDefinition.setFlowPropertyValuePersister(flowPropertyValuePersister);
-        return flowPropertyDefinition;
-    }
-
-
     @Override
     public List<Object> getObjectsNeedingToBeWired() {
         List<Object> objectsNeedingToBeWired = new ArrayList<Object>();
         CUtilities.addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
-        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider(), this.factoryFlowPropertyValueProvider);
+        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider());
         return objectsNeedingToBeWired;
     }
 
@@ -923,71 +591,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     /**
-     * @param flowPropertyValueChangeListeners the flowPropertyValueChangeListener to set
-     */
-    public void setFlowPropertyValueChangeListeners(List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners) {
-        this.flowPropertyValueChangeListeners = this.setCheckTemplateState(this.flowPropertyValueChangeListeners, flowPropertyValueChangeListeners);
-    }
-
-    @Override
-    public FlowPropertyDefinitionImpl initFlowPropertyValueChangeListener(FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = this.cloneIfTemplateAndNeedToAdd(this.flowPropertyValueChangeListeners, flowPropertyValueChangeListener);
-        flowPropertyDefinition.flowPropertyValueChangeListeners.add(flowPropertyValueChangeListener);
-        return flowPropertyDefinition;
-    }
-    @Override
-    public FlowPropertyDefinitionImpl addFlowPropertyValueChangeListeners(Collection<FlowPropertyValueChangeListener> additionalFlowPropertyValueChangeListeners) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = this;
-        for(FlowPropertyValueChangeListener flowPropertyValueChangeListener: NotNullIterator.<FlowPropertyValueChangeListener>newNotNullIterator(additionalFlowPropertyValueChangeListeners)) {
-            flowPropertyDefinition = flowPropertyDefinition.initFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
-        }
-        return flowPropertyDefinition;
-    }
-    /**
-     * @param propertiesDependentOn the propertiesDependentOn to set
-     */
-    public void setPropertiesDependentOn(Set<FlowPropertyExpectation> propertiesDependentOn) {
-        this.propertiesDependentOn = this.setCheckTemplateState(this.propertiesDependentOn, propertiesDependentOn);
-    }
-
-    /**
      * @return the propertiesDependentOn
      */
     @Override
-    public Collection<FlowPropertyExpectation> getPropertiesDependentOn() {
+    public Set<FlowPropertyExpectation> getPropertiesDependentOn() {
         return this.propertiesDependentOn;
-    }
-    /**
-     * Used in resource code
-     * @param propertiesDependentOn
-     * @return
-     */
-    @Override
-    @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl addPropertiesDependentOn(Collection<FlowPropertyExpectation> propertiesDependentOn) {
-        if ( isNotEmpty(propertiesDependentOn)) {
-            if ( this.propertiesDependentOn == null) {
-                this.propertiesDependentOn = new HashSet<FlowPropertyExpectation>();
-            }
-            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
-        }
-        return this;
-    }
-    /**
-     * Used in resource code
-     * @param propertiesDependentOn
-     * @return
-     */
-    @Override
-    @SuppressWarnings("hiding")
-    public FlowPropertyDefinitionImpl addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn) {
-        if ( isNotEmpty(propertiesDependentOn)) {
-            if ( this.propertiesDependentOn == null) {
-                this.propertiesDependentOn = new HashSet<FlowPropertyExpectation>();
-            }
-            addAllNotNull(this.propertiesDependentOn, propertiesDependentOn);
-        }
-        return this;
     }
 
     @Override
@@ -1021,14 +629,17 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             .append(this.alternates, flowPropertyDefinition.alternates)
             .append(this.autoCreate, flowPropertyDefinition.autoCreate)
             .append(this.dataClassDefinition, flowPropertyDefinition.dataClassDefinition)
+            .append(this.getExternalPropertyAccessRestriction(), flowPropertyDefinition.getExternalPropertyAccessRestriction())
             .append(this.flowPropertyValueProvider, flowPropertyDefinition.flowPropertyValueProvider)
+            .append(this.flowPropertyValuePersister, flowPropertyDefinition.getFlowPropertyValuePersister())
+            .append(this.flowPropertyValueChangeListeners, flowPropertyDefinition.getFlowPropertyValueChangeListeners())
             .append(this.initial, flowPropertyDefinition.initial)
             .append(this.name, flowPropertyDefinition.name)
                 // use getter so that defaults can be calculated.
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
             .append(this.getPropertyScope(), flowPropertyDefinition.getPropertyScope())
-            .append(this.getExternalPropertyAccessRestriction(), flowPropertyDefinition.getExternalPropertyAccessRestriction())
+            .append(this.propertiesDependentOn, flowPropertyDefinition.getPropertiesDependentOn())
             .append(this.saveBack, flowPropertyDefinition.saveBack);
         return equalsBuilder.isEquals();
     }
@@ -1042,7 +653,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             return false;
         } else {
             return getName().equals(possiblePropertyName) ||
-                this.getAlternates().contains(possiblePropertyName);
+                    (this.getAlternates() != null && this.getAlternates().contains(possiblePropertyName));
         }
     }
 
@@ -1128,7 +739,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             } else if ( flowPropertyProvider instanceof FlowImplementor) {
                 flow = (FlowImplementor)flowPropertyProvider;
             } else {
-                throw ApplicationIllegalArgumentException.fail(flowPropertyProvider, " is not a FlowState or FlowImplementor");
+                throw new FlowConfigurationException(flowPropertyProvider, " is not a FlowState or FlowImplementor");
             }
             return this.getNamespaceKeySearchList(flow, forceAll);
         }
@@ -1233,11 +844,17 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
 
-	@Override
-    public FlowPropertyExpectation merge(FlowPropertyExpectation flowPropertyExpectation) {
+    @Override
+    public FlowPropertyDefinitionImpl merge(FlowPropertyExpectation flowPropertyExpectation) {
 	    throw new UnsupportedOperationException();
     }
-
+    public FlowPropertyDefinitionImpl merge(Iterable<FlowPropertyExpectation> flowPropertyExpectations) {
+        FlowPropertyDefinitionImpl result = this;
+        for(FlowPropertyExpectation flowPropertyExpectation : NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(flowPropertyExpectations)) {
+            result = result.merge(flowPropertyExpectation);
+        }
+        return result;
+    }
     @Override
 	public IJsonWriter toJson(IJsonWriter jsonWriter) {
 		jsonWriter.object();

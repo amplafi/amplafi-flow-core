@@ -64,10 +64,10 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
 
     @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
-        new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).internalOnly().initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
         new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).internalOnly().initAccess(flowLocal, use),
-        new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-        new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).internalOnly().initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).internalOnly().initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+        new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).internalOnly().initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
         // io -- for now because need to communicate the next page to be displayed
         // TODO think about PropertyScope/PropertyUsage
         new FlowPropertyDefinitionBuilder(FSPAGE_NAME).internalOnly().initPropertyUsage(io),
@@ -86,7 +86,7 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).internalOnly().initPropertyUsage(io),
         new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS).map(FlowTransition.class).internalOnly().initAccess(flowLocal, use),
         // HACK
-        new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION).internalOnly(),
+        new FlowPropertyDefinitionBuilder(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION).internalOnly(),
 
         new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).internalOnly().initPropertyUsage(consume),
         new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).internalOnly().initPropertyUsage(consume),
@@ -94,7 +94,7 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
         // TODO think about PropertyScope/PropertyUsage
         new FlowPropertyDefinitionBuilder(FSNEXT_FLOW).internalOnly().initPropertyUsage(consume),
         // HACK
-        new FlowPropertyDefinitionBuilder().createFromTemplate(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFactoryFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).internalOnly()
+        new FlowPropertyDefinitionBuilder(CancelTextFlowPropertyValueProvider.CANCEL_TEXT).initFlowPropertyValueProvider(CancelTextFlowPropertyValueProvider.INSTANCE).internalOnly()
     );
     @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_ACTIVITY_INSTANCE = new FactoryFlowPropertyDefinitionProvider(
@@ -130,7 +130,6 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
    public void addStandardPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
        String propertyName = flowPropertyDefinition.getName();
        ApplicationIllegalStateException.checkState(!this.getFlowPropertyDefinitionNames().contains(propertyName), "Cannot redefine '", propertyName, ". It was already defined as a standard property.");
-       flowPropertyDefinition.setTemplateFlowPropertyDefinition();
        this.addFlowPropertyDefinitionImplementators(flowPropertyDefinition);
        // Note: alternate names are not automatically added.
    }

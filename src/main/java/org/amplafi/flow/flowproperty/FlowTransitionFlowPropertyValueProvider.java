@@ -13,12 +13,12 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowTransition;
-
-import static org.amplafi.flow.FlowConstants.*;
+import static org.amplafi.flow.FlowConstants.FSFLOW_TRANSITION;
 import static org.amplafi.flow.flowproperty.PropertyScope.flowLocal;
 import static org.amplafi.flow.flowproperty.PropertyUsage.initialize;
+
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowTransition;
 /**
  * TODO: Take over the services provided by {@link org.amplafi.flow.impl.TransitionFlowActivity}
  * @author patmoore
@@ -26,7 +26,7 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.initialize;
  */
 public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProvider> {
 
-	public static final FlowPropertyDefinitionImpl FLOW_TRANSITION = new FlowPropertyDefinitionImpl(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize);
+	public static final FlowPropertyDefinitionImpl FLOW_TRANSITION = new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize).toFlowPropertyDefinition();
     public FlowTransitionFlowPropertyValueProvider() {
         super(FLOW_TRANSITION);
     }

@@ -114,10 +114,10 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     public FlowImpl() {
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(
-            new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSTITLE_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             new FlowPropertyDefinitionBuilder(FSNO_CANCEL, boolean.class).initAccess(flowLocal, use),
-            new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
-            new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFactoryFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSFINISH_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
+            new FlowPropertyDefinitionBuilder(FSRETURN_TO_TEXT).initAccess(flowLocal, use).initFlowPropertyValueProvider( MessageFlowPropertyValueProvider.INSTANCE ),
             // io -- for now because need to communicate the next page to be displayed
             // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionBuilder(FSPAGE_NAME).initPropertyUsage(io),
@@ -136,7 +136,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS).map(FlowTransition.class).initAutoCreate().initAccess(flowLocal, use),
             // HACK
-            new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION),
+            new FlowPropertyDefinitionBuilder(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION),
 
             new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),

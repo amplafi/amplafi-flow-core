@@ -16,6 +16,7 @@ package org.amplafi.flow.flowproperty;
 import java.util.concurrent.Callable;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 /**
@@ -71,7 +72,7 @@ public class FlowPropertyValueProviderCallableImpl<FPP extends FlowPropertyProvi
         return (Class<FPP>) flowPropertyProvider.getClass();
     }
 	@Override
-	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
-		return this.getFlowPropertyValueProvider().isHandling(flowPropertyDefinition);
+	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+		return this.getFlowPropertyValueProvider().isHandling(flowPropertyExpectation);
 	}
 }

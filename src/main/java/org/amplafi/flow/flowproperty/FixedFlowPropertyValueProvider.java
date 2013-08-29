@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -141,8 +142,8 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
         return FlowPropertyProvider.class;
     }
     @Override
-    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
-        return this.getDefaultObject() == null || flowPropertyDefinition.isAssignableFrom(this.getSuggestedClass());
+    public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+        return this.getDefaultObject() == null || flowPropertyExpectation.isAssignableFrom(this.getSuggestedClass());
     }
     @Override
     public String toString() {

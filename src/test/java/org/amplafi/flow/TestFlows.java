@@ -14,22 +14,27 @@
 
 package org.amplafi.flow;
 
+import static org.amplafi.flow.FlowConstants.FAINVISIBLE;
+import static org.amplafi.flow.flowproperty.PropertyScope.activityLocal;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertSame;
+import static org.testng.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.amplafi.flow.impl.FlowStateImpl;
-import org.amplafi.flow.impl.FlowImpl;
-import org.amplafi.flow.impl.FlowActivityImpl;
-import org.amplafi.flow.impl.FlowStateImplementor;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.impl.FlowActivityImpl;
+import org.amplafi.flow.impl.FlowImpl;
+import org.amplafi.flow.impl.FlowStateImpl;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.testng.annotations.Test;
 
 import com.sworddance.util.map.NamespaceMapKey;
-
-import static org.testng.Assert.*;
-import static org.amplafi.flow.flowproperty.PropertyScope.*;
-import static org.amplafi.flow.FlowConstants.*;
 
 /**
  * Tests around flows that don't require db.
@@ -99,7 +104,7 @@ public class TestFlows {
         {
             FlowActivityImpl flowActivity0 = new FlowActivityImpl();
             flowActivity0.setFlowPropertyProviderName("fs0");
-            flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionImpl("key").initPropertyScope(activityLocal));
+            flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("key").initPropertyScope(activityLocal).toFlowPropertyDefinition());
             FlowActivityImpl flowActivity1 = new FlowActivityImpl();
             flowActivity1.setFlowPropertyProviderName("fs1");
             FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1);
@@ -187,11 +192,9 @@ public class TestFlows {
     @Test(enabled=TEST_ENABLED)
     public void testInitialValuesOnFlow() {
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionImpl(PROPERTY1);
-        globalDef.setInitial(INITIAL_VALUE);
+        FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionBuilder(PROPERTY1).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(globalDef);
-        FlowPropertyDefinitionImpl globalDef1 = new FlowPropertyDefinitionImpl(PROPERTY2);
-        globalDef1.setInitial(INITIAL_VALUE);
+        FlowPropertyDefinitionImpl globalDef1 = new FlowPropertyDefinitionBuilder(PROPERTY2).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(globalDef1);
         // activity #0
         FlowActivityImpl activity = new FlowActivityImpl();
@@ -201,7 +204,7 @@ public class TestFlows {
         flow.addActivity(activity);
         // activity #2
         activity = new FlowActivityImpl();
-        FlowPropertyDefinitionImpl localDef1 = new FlowPropertyDefinitionImpl(PROPERTY1);
+        FlowPropertyDefinitionImpl localDef1 = new FlowPropertyDefinitionBuilder(PROPERTY1).toFlowPropertyDefinition();
         activity.addPropertyDefinitions(localDef1);
         flow.addActivity(activity);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -224,7 +227,7 @@ public class TestFlows {
     public void testConversion() {
         Map<String, String> initialFlowState = new HashMap<String, String>();
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl("foo", Long.class);
+        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo", Long.class).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
         flow.addActivity(fa1);

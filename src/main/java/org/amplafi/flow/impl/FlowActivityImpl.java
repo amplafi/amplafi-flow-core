@@ -154,10 +154,13 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     private static final List<PropertyScope> LOCAL_PROPERTY_SCOPES = Arrays.asList(PropertyScope.activityLocal);
 
     private List<FlowValidationResultProvider<FlowPropertyProviderWithValues>> flowValidationResultProviders;
+    // NOTE: annoying but can add FlowPropertyDefinitions in ctor because we need to do the processing that pushes them up to the FlowImpl
+    // see processDefinitions()
     public FlowActivityImpl() {
         this.flowValidationResultProviders = new ArrayList<>();
         // TODO in future make this
         this.flowValidationResultProviders.add(FlowValidationResultProviderImpl.INSTANCE);
+
     }
 
     public FlowActivityImpl(String name) {
@@ -638,6 +641,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             // this property may be from the Flow definition itself.
             FlowPropertyDefinition current = this.getFlowPropertyDefinitionDefinedInFlow(definition.getName());
             if ( current != null && !definition.merge(current)) {
+                FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(definition);
                 if ( definition.isDataClassMergeable(current)) {
                     getLog().debug(this.getFlowPropertyProviderFullName()
                                         + " has a FlowPropertyDefinition '"
@@ -648,9 +652,10 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
                         + " has a FlowPropertyDefinition '"
                         + definition.getName()
                         + "' that conflicts with flow's property definition. The data classes are NOT mergeable. This might cause problems so the FlowActivity's definition will be marked as 'activityLocal' and 'internalState'.");
-                    definition.setPropertyUsage(PropertyUsage.internalState);
+                    flowPropertyDefinitionBuilder.initPropertyUsage(PropertyUsage.internalState);
                 }
-                definition.setPropertyScope(activityLocal);
+                flowPropertyDefinitionBuilder.initPropertyScope(activityLocal);
+                definition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
             } else {
                 // no flow version of this property or no merge conflict with the flow version of the property.
                 // NOTE that this means the first FlowActivity to define this property sets the meaning for the whole flow.
@@ -665,10 +670,9 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     protected void pushPropertyDefinitionToFlow(FlowPropertyDefinitionImplementor definition) {
         if (getFlow() != null && !isLocal(definition)) {
-            definition.setTemplateFlowPropertyDefinition();
             FlowPropertyDefinitionImplementor flowProp = this.getFlow().getFlowPropertyDefinition( definition.getName());
             // the FAP requirement is removed because otherwise the FPD could prevent an earlier FA from advancing.
-            FlowPropertyDefinitionImplementor cloned = definition.initPropertyRequired(null);
+            FlowPropertyDefinitionImplementor cloned = new FlowPropertyDefinitionBuilder(definition).initPropertyRequired(null).toFlowPropertyDefinition();
             if (flowProp == null ) {
                 // push up to flow so that other can see it.
                 // seems like flows should handle this issue with properties.
@@ -1011,6 +1015,8 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * see #2179 / #2192
      *
      * TODO: make chaining more common
+     *
+     * HACK: should be part for the FlowPropertyDefinitionBuilder
      */
     @SuppressWarnings("unchecked")
     protected void handleFlowPropertyValueProvider(String key, FlowPropertyValueProvider flowPropertyValueProvider) {
@@ -1031,7 +1037,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     }
 
     /**
-     *
+     * HACK: We have to wait for the FlowActivityImpl to be attached to a flow to add flow properties
      */
     @Override
     public void processDefinitions() {

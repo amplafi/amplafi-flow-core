@@ -55,7 +55,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
             FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
-            outputed.setTemplateFlowPropertyDefinition();
             put(this.getFlowPropertyDefinitions(), outputed);
             // Apply default of the defining FlowPropertyValueProvider.
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
@@ -63,7 +62,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
     public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
-            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
             addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
         }
     }
@@ -130,7 +129,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
     protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
         addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
     }
     protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
@@ -144,7 +143,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         if ( flowPropertyDefinitionImplementor == null || (dataClass != null && !flowPropertyDefinitionImplementor.isAssignableFrom(dataClass))) {
             return null;
         } else {
-            return new FlowPropertyDefinitionBuilder().createFromTemplate(flowPropertyDefinitionImplementor);
+            return new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
         }
     }
     /**

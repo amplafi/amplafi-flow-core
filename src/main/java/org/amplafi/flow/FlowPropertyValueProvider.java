@@ -66,5 +66,5 @@ public interface FlowPropertyValueProvider<FPP extends FlowPropertyProvider> {
      */
     Class<FPP> getFlowPropertyProviderClass();
     // added so we can avoid bad assignments
-	boolean isHandling(FlowPropertyDefinition flowPropertyDefinition);
+	boolean isHandling(FlowPropertyExpectation flowPropertyExpectation);
 }

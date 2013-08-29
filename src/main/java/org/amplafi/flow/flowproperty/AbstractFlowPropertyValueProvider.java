@@ -15,6 +15,7 @@ package org.amplafi.flow.flowproperty;
 
 import java.util.Collection;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 
@@ -56,7 +57,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = super.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
         if (flowPropertyDefinitionBuilder != null) {
-            flowPropertyDefinitionBuilder.initFactoryFlowPropertyValueProvider(this);
+            flowPropertyDefinitionBuilder.initFlowPropertyValueProvider(this);
         }
         return flowPropertyDefinitionBuilder;
     }
@@ -122,13 +123,13 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
 
     /**
      *
-     * @param flowPropertyDefinition
+     * @param flowPropertyExpectation
      * @return true if this {@link FlowPropertyDefinitionProvider} handles the {@link FlowPropertyDefinition}.
      */
     @Override
-    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+    public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
         for(String propertyName: getPropertiesHandled()) {
-            if (flowPropertyDefinition.isNamed(propertyName)) {
+            if (flowPropertyExpectation.isNamed(propertyName)) {
                 return true;
             }
         }

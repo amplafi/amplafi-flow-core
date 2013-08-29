@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
 
 import static org.apache.commons.collections.CollectionUtils.*;
 /**
@@ -55,7 +56,7 @@ public class AddToListFlowPropertyValueProvider<V> extends AbstractChainedFlowPr
     }
 
 	@Override
-	public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
 		// not checking so sure.
 		return true;
 	}

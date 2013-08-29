@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowPropertyExpectation;
+
 import static com.sworddance.util.CUtilities.*;
 
 
@@ -70,7 +72,7 @@ public class AddToMapFlowPropertyValueProvider<FPP extends FlowPropertyProvider,
         return getClass()+": adding "+values + " chain: ["+this.getPrevious()+"]";
     }
     @Override
-    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
+    public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
         // not checking so sure.
         // TODO: maybe in future check the map keys?
         return true;

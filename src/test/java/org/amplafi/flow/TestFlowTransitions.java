@@ -20,6 +20,7 @@ import static org.testng.Assert.*;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.AddToMapFlowPropertyValueProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -47,25 +48,44 @@ public class TestFlowTransitions {
      *
      */
     private static final String A_VALUE_THAT_IS_COPIED_BACK = "a value that is copied back";
-    private static final String FLOW_TYPE_1 = "ftype1";
-    private static final String FLOW_TYPE_2 = "ftype2";
-    private static final String FLOW_TYPE_3 = "ftype3";
-    private static final boolean TEST_ENABLED = true;
-    @Test(enabled=TEST_ENABLED)
-    public void testSimpleFlowTransitionMapChecking() {
-        FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
-        FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
-        FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
-        assertNull(definition);
-        flow.addActivity(fa1);
-        definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
-        assertNotNull(definition);
-        definition.setFlowPropertyValueProvider(new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String,FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo", TransitionType.alternate, null)));
-        FlowManagement baseFlowManagement = getFlowManagement(flow);
-        FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null);
 
-        Map<String, FlowTransition> propValue = flowState.getCurrentActivity().getProperty(FSFLOW_TRANSITIONS);
-        assertTrue( propValue.keySet().contains("foo"));
+    private static final String FLOW_TYPE_1 = "ftype1";
+
+    private static final String FLOW_TYPE_2 = "ftype2";
+
+    private static final String FLOW_TYPE_3 = "ftype3";
+
+    private static final boolean TEST_ENABLED = true;
+
+    @Test(enabled = TEST_ENABLED)
+    public void testSimpleFlowTransitionMapChecking() {
+        {
+            FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
+            FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
+            FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
+            assertNull(definition);
+            flow.addActivity(fa1);
+            definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
+            assertNotNull(definition);
+        }
+        {
+            // also helps test overriding existing properties
+            FlowImpl flow = new FlowImpl(FLOW_TYPE_1);
+            FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
+            flow.addActivity(fa1);
+            FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
+            fa1.addPropertyDefinition(new FlowPropertyDefinitionBuilder(definition).initFlowPropertyValueProvider(
+                new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo",
+                    TransitionType.alternate, null))).toFlowPropertyDefinition());
+            definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
+            assertNotNull(definition);
+            FlowManagement baseFlowManagement = getFlowManagement(flow);
+            FlowState flowState = baseFlowManagement.startFlowState(FLOW_TYPE_1, false, null);
+
+            Map<String, FlowTransition> propValue = flowState.getCurrentActivity().getProperty(FSFLOW_TRANSITIONS);
+            assertTrue(propValue.keySet().contains("foo"));
+
+        }
     }
 
     /**
@@ -83,7 +103,8 @@ public class TestFlowTransitions {
         mainFlow.setPageName(defaultPage1);
         mainFlow.setDefaultAfterPage(defaultAfterPage1);
         FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
-        FlowPropertyDefinitionImpl copiedBackProperty = new FlowPropertyDefinitionImpl("copiedBackProperty").initAccess(PropertyScope.flowLocal, PropertyUsage.io);
+        FlowPropertyDefinitionImpl copiedBackProperty = new FlowPropertyDefinitionBuilder("copiedBackProperty").initAccess(PropertyScope.flowLocal,
+            PropertyUsage.io).toFlowPropertyDefinition();
         fa1.addPropertyDefinition(copiedBackProperty);
         mainFlow.addActivity(fa1);
 
@@ -143,70 +164,79 @@ public class TestFlowTransitions {
      * <li>make sure that cache is cleared on flow completion.</li>
      * </ul>
      */
-    @Test(enabled=TEST_ENABLED)
+    @Test(enabled = TEST_ENABLED)
     public void testAvoidConflictsOnFlowTransitions() {
         FlowActivityImpl flowActivity1 = new FlowActivityImpl().initInvisible(false);
         // initialized by "first" flow ignored by second flow.
         final String initializedByFirst = "initializedByFirst";
-        flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionImpl(initializedByFirst).initPropertyUsage(PropertyUsage.initialize));
+        flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(initializedByFirst).initPropertyUsage(PropertyUsage.initialize)
+            .toFlowPropertyDefinition());
 
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.addFlowDefinition("first", flowActivity1,
-            new TransitionFlowActivity(null, "second", TransitionType.normal));
+        flowTestingUtils.addFlowDefinition("first", flowActivity1, new TransitionFlowActivity(null, "second", TransitionType.normal));
 
         FlowActivityImpl flowActivity2 = new FlowActivityImpl().initInvisible(false);
         // this property name is unknown to "first" flow so "first" flow should not affect this property value at all.
         // for second flow, the property is flowLocal/ internalState so the setting should only affect the flowLocal copy.
         String privatePropertyForSecondFlow = "privateForSecond";
         String globalSettingForSecondFlowPrivateProperty = "global_for_privateForSecond";
-        FlowPropertyDefinitionImpl flowPropertyDefinition_secondflow_prop0 = new FlowPropertyDefinitionImpl(privatePropertyForSecondFlow, Boolean.class).initAccess(flowLocal, PropertyUsage.internalState);
+        FlowPropertyDefinitionImpl flowPropertyDefinition_secondflow_prop0 = new FlowPropertyDefinitionBuilder(privatePropertyForSecondFlow,
+            Boolean.class).initAccess(flowLocal, PropertyUsage.internalState).toFlowPropertyDefinition();
         // first flow doesn't understand this property but it sets it for the second flow to use.
         String opaqueSecondFlowProperty = "secondFlowProperty";
-        flowActivity2.addPropertyDefinitions(
-            flowPropertyDefinition_secondflow_prop0,
-            new FlowPropertyDefinitionImpl(opaqueSecondFlowProperty, String.class).initPropertyScope(flowLocal).initPropertyUsage(PropertyUsage.io)
-            );
+        flowActivity2.addPropertyDefinitions(flowPropertyDefinition_secondflow_prop0, new FlowPropertyDefinitionBuilder(opaqueSecondFlowProperty,
+            String.class).initPropertyScope(flowLocal).initPropertyUsage(PropertyUsage.io).toFlowPropertyDefinition());
         flowTestingUtils.addFlowDefinition("second", flowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
-        FlowStateImplementor flowState = flowManagement.startFlowState("first", true, FlowUtils.INSTANCE.createState(privatePropertyForSecondFlow, globalSettingForSecondFlowPrivateProperty,
-            initializedByFirst, "ShouldBeIgnored"), false);
+        FlowStateImplementor flowState = flowManagement.startFlowState("first", true, FlowUtils.INSTANCE.createState(privatePropertyForSecondFlow,
+            globalSettingForSecondFlowPrivateProperty, initializedByFirst, "ShouldBeIgnored"), false);
         String opaqueValuePassedFromFirstToSecond = "opaque";
         Map<String, String> trustedValues = createMap(opaqueSecondFlowProperty, opaqueValuePassedFromFirstToSecond);
         flowState.copyTrustedValuesMapToFlowState(trustedValues);
-        assertEquals(flowState.getProperty(initializedByFirst, String.class), null, "flowState="+flowState);
+        assertEquals(flowState.getProperty(initializedByFirst, String.class), null, "flowState=" + flowState);
         String propertyValueInitializedByFirst = "realvalue";
         flowState.setProperty(initializedByFirst, propertyValueInitializedByFirst);
         flowTestingUtils.advanceToEnd(flowState);
         FlowStateImplementor nextFlowState = flowManagement.getCurrentFlowState();
         assertNotNull(nextFlowState);
         // flowLocal namespace ignored the passed setting
-        assertNull(nextFlowState.getProperty(privatePropertyForSecondFlow, Boolean.class), "nextFlowState="+nextFlowState);
+        assertNull(nextFlowState.getProperty(privatePropertyForSecondFlow, Boolean.class), "nextFlowState=" + nextFlowState);
         String privatePropertyValueInSecondFlow = "true";
         nextFlowState.setProperty(privatePropertyForSecondFlow, privatePropertyValueInSecondFlow);
         assertEquals(nextFlowState.getFlowTypeName(), "second");
         // but it is still there for others.
-        assertEquals(nextFlowState.getRawProperty((String)null, privatePropertyForSecondFlow), globalSettingForSecondFlowPrivateProperty, "nextFlowState="+nextFlowState);
-        assertEquals(nextFlowState.getProperty(opaqueSecondFlowProperty, String.class), opaqueValuePassedFromFirstToSecond, "looking at="+opaqueSecondFlowProperty+"  nextFlowState="+nextFlowState);
-        assertEquals(nextFlowState.getProperty(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="+privatePropertyForSecondFlow+ "  nextFlowState="+nextFlowState);
-        assertEquals(nextFlowState.getRawProperty((String)null, initializedByFirst), propertyValueInitializedByFirst, "nextFlowState="+nextFlowState);
+        assertEquals(nextFlowState.getRawProperty((String) null, privatePropertyForSecondFlow), globalSettingForSecondFlowPrivateProperty,
+            "nextFlowState=" + nextFlowState);
+        assertEquals(nextFlowState.getProperty(opaqueSecondFlowProperty, String.class), opaqueValuePassedFromFirstToSecond, "looking at="
+            + opaqueSecondFlowProperty + "  nextFlowState=" + nextFlowState);
+        assertEquals(nextFlowState.getProperty(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="
+            + privatePropertyForSecondFlow + "  nextFlowState=" + nextFlowState);
+        assertEquals(nextFlowState.getRawProperty((String) null, initializedByFirst), propertyValueInitializedByFirst, "nextFlowState="
+            + nextFlowState);
         flowTestingUtils.advanceToEnd(flowState);
 
     }
+
     /**
-     * Test to make sure that a {@link FlowActivityImpl} returns true (advance to next {@link FlowActivity} ) in {@link FlowActivityImpl#activate(FlowStepDirection)} if there
-     * is no page or component name.
+     * Test to make sure that a {@link FlowActivityImpl} returns true (advance to next
+     * {@link FlowActivity} ) in {@link FlowActivityImpl#activate(FlowStepDirection)} if there is no
+     * page or component name.
      */
-    @Test(enabled=TEST_ENABLED)
+    @Test(enabled = TEST_ENABLED)
     public void testTransitionActivate() {
         FlowActivityImpl activity = new FlowActivityImpl();
         FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
         FlowStateImplementor flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
-        FlowPropertyDefinitionImpl pageNameDefinition = new FlowPropertyDefinitionImpl(FlowConstants.FSPAGE_NAME, String.class);
-		expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(pageNameDefinition).anyTimes();
-        expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FAINVISIBLE, boolean.class).initTranslator(new BooleanFlowTranslator())).anyTimes();
-        expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(new FlowPropertyDefinitionImpl(FlowConstants.FSAUTO_COMPLETE, boolean.class).initTranslator(new BooleanFlowTranslator())).anyTimes();
+        FlowPropertyDefinitionImpl pageNameDefinition = new FlowPropertyDefinitionBuilder(FlowConstants.FSPAGE_NAME, String.class).toFlowPropertyDefinition();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(pageNameDefinition).anyTimes();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(
+            new FlowPropertyDefinitionBuilder(FlowConstants.FAINVISIBLE, boolean.class).initTranslator(new BooleanFlowTranslator())
+                .toFlowPropertyDefinition()).anyTimes();
+        expect(flow.getFlowPropertyDefinition(FlowConstants.FSAUTO_COMPLETE)).andReturn(
+            new FlowPropertyDefinitionBuilder(FlowConstants.FSAUTO_COMPLETE, boolean.class).initTranslator(new BooleanFlowTranslator())
+                .toFlowPropertyDefinition()).anyTimes();
         activity.setFlow(flow);
         expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn(null);
         expect(flowState.getPropertyWithDefinition(activity, pageNameDefinition)).andReturn("foo");

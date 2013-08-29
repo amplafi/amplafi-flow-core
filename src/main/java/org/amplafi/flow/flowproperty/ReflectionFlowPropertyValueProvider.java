@@ -14,6 +14,7 @@
 
 package org.amplafi.flow.flowproperty;
 
+import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowPropertyDefinition;
 
@@ -95,14 +96,14 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
         return FlowPropertyProvider.class;
     }
     @Override
-    public boolean isHandling(FlowPropertyDefinition flowPropertyDefinition) {
-        if ( flowPropertyDefinition.isNamed(this.alternate)) {
+    public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+        if ( flowPropertyExpectation.isNamed(this.alternate)) {
             return true;
         }
         for(String complexPropertyName:this.getPropertyNames()) {
             int beginIndex = complexPropertyName.lastIndexOf('.');
             String simplePropertyName = beginIndex < 0?complexPropertyName:complexPropertyName.substring(beginIndex+1);
-            if ( flowPropertyDefinition.isNamed(simplePropertyName)) {
+            if ( flowPropertyExpectation.isNamed(simplePropertyName)) {
                 return true;
             }
         }
