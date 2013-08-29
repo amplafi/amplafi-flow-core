@@ -90,11 +90,6 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
     /**
      *
      */
-    private static final String PARAMETER_NAME = "parameter-name";
-
-    /**
-     *
-     */
     private static final String CLASS = "class";
 
     /**
@@ -382,8 +377,6 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             } else if ("usage".equals(nodeName)) {
                 PropertyUsage propertyUsage = PropertyUsage.valueOf(nodeValue);
                 flowPropertyDefinition.setPropertyUsage(propertyUsage);
-            } else if (PARAMETER_NAME.equals(nodeName)) {
-                flowPropertyDefinition.setUiComponentParameterName(nodeValue);
             } else {
                 throw new FlowException(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
             }

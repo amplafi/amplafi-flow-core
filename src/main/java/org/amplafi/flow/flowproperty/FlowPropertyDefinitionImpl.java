@@ -94,14 +94,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
     private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
-    /**
-     * Used if the UI component's parameter name is different from the FlowPropertyDefinition's name.
-     * Useful when using a FlowActivity with components that cannot be changed or have not been changed.
-     * For example, a standard tapestry or tacos component.
-     * Or a component that is used in multiple places and changing the UI component itself could cause a ripple of
-     * cascading problems and possible regressions.
-     */
-    private String uiComponentParameterName;
 
     /**
      * on {@link FlowActivity#passivate(boolean, FlowStepDirection)} the object should be saved
@@ -129,12 +121,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      */
     private ExternalPropertyAccessRestriction externalPropertyAccessRestriction;
 
-    /**
-     * TODO: to be removed and replaced with server side validators collection.
-     *
-     * A string meaningful to the UI framework
-     */
-    private String validators;
     private FlowActivityPhase flowActivityPhase;
     private PropertyUsage propertyUsage;
     private PropertyScope propertyScope;
@@ -171,11 +157,9 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         this.flowPropertyValueProvider = clone.flowPropertyValueProvider;
         this.flowPropertyValuePersister = clone.flowPropertyValuePersister;
         this.setInitial(clone.initial);
-        this.setUiComponentParameterName(clone.uiComponentParameterName);
         if (clone.externalPropertyAccessRestriction != null) {
             this.setExternalPropertyAccessRestriction(clone.externalPropertyAccessRestriction);
         }
-        this.validators = clone.validators;
         this.saveBack = clone.saveBack;
         this.flowActivityPhase = clone.flowActivityPhase;
         this.propertyUsage = clone.propertyUsage;
@@ -326,44 +310,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     @Override
-    public String getValidators() {
-        return this.validators;
-    }
-
-    public void setValidators(String validators) {
-    	this.validators = this.setCheckTemplateState(this.validators, validators);
-    }
-
-    // TODO fix with template check
-    public FlowPropertyDefinitionImpl addValidator(String validator) {
-    	if ( !StringUtils.isBlank(validator)) {
-	        if (StringUtils.isBlank(this.validators)) {
-	            return initValidators(validator);
-	        } else {
-	            return initValidators(this.validators + "," + validator);
-	        }
-	    }
-    	return this;
-    }
-
-    public FlowPropertyDefinitionImpl validateWith(String... fields) {
-        return initValidators("flowField="+join(fields,"-"));
-    }
-
-    /**
-     * Sets validators for this definition. <p/>
-     * Note that existing validators will be removed - if you
-     * don't want that behavior, consider using {@link #addValidator(String)}.
-     * @param validators
-     * @return this or flowPropertyDefinition
-     */
-    public FlowPropertyDefinitionImpl initValidators(String validators) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.validators, validators);
-        flowPropertyDefinition.setValidators(validators);
-        return flowPropertyDefinition;
-    }
-
-    @Override
     public FlowTranslator<?> getTranslator() {
         return this.getDataClassDefinition().getFlowTranslator();
     }
@@ -426,26 +372,13 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return flowPropertyDefinition;
     }
 
-    public void setUiComponentParameterName(String uiComponentParameterName) {
-    	this.uiComponentParameterName = this.setCheckTemplateState(this.uiComponentParameterName, uiComponentParameterName);
+    public void setAutoCreate(boolean autoCreate) {
+        this.autoCreate = autoCreate;
     }
 
     @Override
-    public String getUiComponentParameterName() {
-        if (this.uiComponentParameterName == null) {
-            return getName();
-        }
-        return this.uiComponentParameterName;
-    }
-
-    public FlowPropertyDefinitionImpl initParameterName(String uiComponentParameterName) {
-        FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.uiComponentParameterName, uiComponentParameterName);
-        flowPropertyDefinition.setUiComponentParameterName(uiComponentParameterName);
-        return flowPropertyDefinition;
-    }
-
-    public void setAutoCreate(boolean autoCreate) {
-        this.autoCreate = autoCreate;
+    public Boolean getAutoCreate() {
+        return this.autoCreate;
     }
 
     @Override
@@ -480,11 +413,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
 
     @Override
     public String toString() {
-        return toComponentDef() +"(scope="+getPropertyScope()+", usage="+getPropertyUsage()+") :"+this.dataClassDefinition;
-    }
-
-    public String toComponentDef() {
-        return getUiComponentParameterName();
+        return getName() +"(scope="+getPropertyScope()+", usage="+getPropertyUsage()+") :"+this.dataClassDefinition;
     }
 
     @Override
@@ -833,14 +762,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         if (this.saveBack == null && source.saveBack != null) {
             this.saveBack =source.saveBack;
         }
-        if (this.uiComponentParameterName == null && source.uiComponentParameterName != null) {
-            this.uiComponentParameterName = source.uiComponentParameterName;
-        }
         if (this.externalPropertyAccessRestriction == null && source.externalPropertyAccessRestriction != null) {
             this.externalPropertyAccessRestriction =source.externalPropertyAccessRestriction;
-        }
-        if (this.validators == null && source.validators != null) {
-            this.validators =source.validators;
         }
         if ( !isPropertyScopeSet() && source.isPropertyScopeSet()) {
             this.propertyScope =source.propertyScope;
@@ -1105,14 +1028,12 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             .append(this.flowPropertyValueProvider, flowPropertyDefinition.flowPropertyValueProvider)
             .append(this.initial, flowPropertyDefinition.initial)
             .append(this.name, flowPropertyDefinition.name)
-            .append(this.uiComponentParameterName, flowPropertyDefinition.uiComponentParameterName)
                 // use getter so that defaults can be calculated.
             .append(this.getPropertyRequired(), flowPropertyDefinition.getPropertyRequired())
             .append(this.getPropertyUsage(), flowPropertyDefinition.getPropertyUsage())
             .append(this.getPropertyScope(), flowPropertyDefinition.getPropertyScope())
             .append(this.getExternalPropertyAccessRestriction(), flowPropertyDefinition.getExternalPropertyAccessRestriction())
-            .append(this.saveBack, flowPropertyDefinition.saveBack)
-            .append(this.validators, flowPropertyDefinition.validators);
+            .append(this.saveBack, flowPropertyDefinition.saveBack);
         return equalsBuilder.isEquals();
     }
 

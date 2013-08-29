@@ -86,8 +86,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     boolean isMergeable(FlowPropertyDefinition source);
     boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition);
 
-    String getUiComponentParameterName();
-
     /**
      * HACK : we must not require manual checking of saveBack property should know if it should be copied back to the flow values map
      * @return
@@ -101,9 +99,8 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * {@link #getName()}.
      */
     Set<String> getAllNames();
+    @Override
     Set<String> getAlternates();
-
-    String getValidators();
 
     boolean isAssignableFrom(Class<?> clazz);
 
@@ -114,6 +111,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * @param possiblePropertyName
      * @return true if {@link #getName()} or {@link #getAlternates()} equals possiblePropertyName ( case sensitive check)
      */
+    @Override
     boolean isNamed(String possiblePropertyName);
     boolean isNamed(Class<?> byClassName);
 

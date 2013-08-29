@@ -66,8 +66,7 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
                             flowPropertyProvider.getProperty(def.getName());
                         }
                         MissingRequiredTracking.appendRequiredTrackingIfTrue(flowValidationResult,
-                                !flowPropertyProvider.isPropertySet(def.getName()),
-                                def.getUiComponentParameterName());
+                                !flowPropertyProvider.isPropertySet(def.getName()));
                     }
                 }
             }

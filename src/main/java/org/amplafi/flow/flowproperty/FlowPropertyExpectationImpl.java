@@ -215,13 +215,6 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
 
     /**
-     * @param dataClassDefinition the dataClassDefinition to set
-     */
-    public void setDataClassDefinition(DataClassDefinition dataClassDefinition) {
-        this.dataClassDefinition = dataClassDefinition;
-    }
-
-    /**
      * @return the dataClassDefinition
      */
     @Override

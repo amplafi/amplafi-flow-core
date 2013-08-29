@@ -602,10 +602,6 @@ public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProv
         this.applyFlowPropertyExpectations(INTERNAL_ONLY);
         return this;
     }
-    public FlowPropertyDefinitionBuilder addValidator(String validator) {
-        this.flowPropertyDefinition.addValidator(validator);
-        return this;
-    }
     public FlowPropertyDefinitionBuilder initFlowPropertyValueChangeListener(
         FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
         this.flowPropertyDefinition.initFlowPropertyValueChangeListener(flowPropertyValueChangeListener);
