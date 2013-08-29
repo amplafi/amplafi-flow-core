@@ -28,12 +28,14 @@ import org.amplafi.json.JsonSelfRenderer;
  * {@link FlowActivity}. This allows the value to be available to the component
  * or page referenced by a {@link FlowActivity}.
  *
- * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity 
- * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define 
- * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider} 
+ * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity
+ * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define
+ * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider}
  * or accessing - in a lower level - directly on a k/v map using getProperty, for example inside a {@link FlowActivity}
  *
  * TODO: split into 2 interfaces so that there can be immutable FlowPropertyDefinition
+ *
+ * A {@link FlowPropertyDefinition} is conceptual a {@link FlowPropertyExpectation} that has all attributes defined ( dataclass, name, et.al.)
  */
 public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSelfRenderer {
 

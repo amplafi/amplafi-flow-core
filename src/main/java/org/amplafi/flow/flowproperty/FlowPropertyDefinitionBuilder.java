@@ -50,9 +50,14 @@ public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProv
             String propertyName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1);
             return propertyName;
         }
-
     });
 
+    /**
+     * A property that is not allowed to be externally altered. (no external set is allowed) But the property is not
+     * immutable because a FPVP could supply different values. Use case: User id Specifically:
+     * PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly
+     * Expectation is that {@link FlowPropertyValueProvider} will be supplied later.
+     */
     public static List<FlowPropertyExpectation> READ_ONLY_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
     /**
      * To return a api value,
@@ -68,7 +73,19 @@ public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProv
     // not externally settable by user but can be set by previous flow.
     public static List<FlowPropertyExpectation> INTERNAL_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.internalState, ExternalPropertyAccessRestriction.noAccess));
     public static List<FlowPropertyExpectation> SECURED = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, null, ExternalPropertyAccessRestriction.noAccess));
+
+    /**
+     * create a {@link FlowPropertyDefinition} for a property whose value is recomputed for every
+     * request. Use case: very dynamic properties for example, a status message.
+     */
+    public static List<FlowPropertyExpectation> REQUEST_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, PropertyScope.requestFlowLocal, PropertyUsage.suppliesIfMissing, ExternalPropertyAccessRestriction.noRestrictions));
     public static List<FlowPropertyExpectation> GENERATED_KNOWN_FA = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess));
+    /**
+     * A security property Use case: a password
+     *
+     */
+    public static List<FlowPropertyExpectation> WRITE_ONLY = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.activate,
+        PropertyScope.flowLocal, PropertyUsage.consume, ExternalPropertyAccessRestriction.writeonly));
     public FlowPropertyDefinitionBuilder() {
 
     }
@@ -300,7 +317,7 @@ public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProv
     }
     /**
      * scans through all the {@link FlowPropertyExpectation}s looking for expectations that
-     * {@link FlowPropertyExpectation#isApplicable(FlowPropertyDefinitionImplementor)} those
+     * {@link FlowPropertyExpectation#isApplicable(FlowPropertyExpectation)} those
      * expectations have their values applied to flowPropertyDefinition in the order they are
      * encountered.
      *
@@ -501,6 +518,16 @@ public class FlowPropertyDefinitionBuilder implements FlowPropertyDefinitionProv
         return this;
     }
 
+    /**
+     * Only public access to the built {@link FlowPropertyDefinition}.
+     * As part of the final construction:
+     * <ol>
+     * <li>any persisters to non-persistent objects are removed.
+     * <li>any value providers to values that are expected to exist are removed.
+     * </ol>
+     * @param flowTranslatorResolver
+     * @return
+     */
     public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
         if (flowTranslatorResolver != null) {
             flowTranslatorResolver.resolve(null, flowPropertyDefinition);

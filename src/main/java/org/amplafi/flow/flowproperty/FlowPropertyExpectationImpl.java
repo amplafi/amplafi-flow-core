@@ -23,6 +23,7 @@ import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import static com.sworddance.util.CUtilities.*;
+import static org.apache.commons.lang.StringUtils.isBlank;
 /**
  * Used to help configure properties created by {@link FlowPropertyDefinitionProvider}s.
  *
@@ -45,6 +46,9 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
 
     private DataClassDefinition dataClassDefinition;
 
+    public FlowPropertyExpectationImpl() {
+        this(null, null, null, null, null, null, null, null);
+    }
     /**
      * All properties should have the
      * @param flowActivityPhase
@@ -128,6 +132,20 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         this.flowPropertyValueProvider = flowPropertyValueProvider;
         this.flowPropertyValuePersister = flowPropertyValuePersister;
     }
+
+    public static FlowPropertyExpectationImpl createDefaultExpectation(String name, Object defaultObject) {
+        return new FlowPropertyExpectationImpl(name, new FixedFlowPropertyValueProvider(defaultObject));
+    }
+
+    @Override
+    public FlowPropertyExpectationImpl merge(FlowPropertyExpectation flowPropertyExpectation) {
+        if ( this.isApplicable(flowPropertyExpectation)) {
+            return new FlowPropertyExpectationImpl(flowPropertyExpectation, this);
+        } else {
+            return this;
+        }
+    }
+
     /**
      * @return the flowPropertyValueChangeListeners
      */
@@ -141,6 +159,15 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isNamed(String possibleName) {
+        if (isBlank(getName())) {
+            return false;
+        } else {
+            return getName().equals(possibleName);
+        }
     }
 
     @Override
@@ -175,8 +202,8 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
 
     @Override
-    public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-        return getName() == null || flowPropertyDefinition.isNamed(getName());
+    public boolean isApplicable(FlowPropertyExpectation flowPropertyExpectation) {
+        return getName() == null || flowPropertyExpectation.isNamed(getName());
     }
     @Override
     public FlowPropertyValuePersister getFlowPropertyValuePersister() {
@@ -205,9 +232,5 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     @Override
     public Class<? extends Object> getDataClass() {
         return getDataClassDefinition().getDataClass();
-    }
-
-    public static FlowPropertyExpectationImpl createDefaultExpectation(String name, Object defaultObject) {
-    	return new FlowPropertyExpectationImpl(name, new FixedFlowPropertyValueProvider(defaultObject));
     }
 }

@@ -17,7 +17,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 
 /**
- * Controls external access and visibility to the property from an untrusted source (like a browser or plugin).
+ * Controls GLOBAL external access and visibility to the property from an untrusted source (like a browser or plugin).
  *
  * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed via external clients.
  *
@@ -35,10 +35,10 @@ import org.amplafi.flow.FlowState;
  * Example #1:
  *
  * a property may be allowed to be set via another flow ( PropertyUsage.io )
- * But the property value cannot be shared with an external client ( ExternalPropertyAccessRestriction.noAccess)
+ * But the property value cannot be shared with an external client ( {@link ExternalPropertyAccessRestriction#noAccess})
  *
  * Example #2:
- *
+ * {@link ExternalPropertyAccessRestriction#readonly} :
  * a property may be only used (but not set by a flow). This does NOT mean that the property is not externally settable.
  * For example, most security parameters or parameters that come from the environment (i.e. http session)
  * =======================================================================================
@@ -46,7 +46,6 @@ import org.amplafi.flow.FlowState;
  * TODO: what about security levels based on if the data is provided by a potentially tainted source (clients) vs. another flow?
  * so "external" means another flow and "client" means to a browser client or api client.
  *
- * Still experimental - not implemented.
  * @author patmoore
  *
  */
@@ -54,6 +53,8 @@ public enum ExternalPropertyAccessRestriction {
     /**
      * no access. These are properties that are really internal state only.
      * The value is usually a configuration property.
+     *
+     * TODO: This should be the default so that explicit exposure is required
      *
      * Property must NOT be included in auto generated documentation.
      * TODO maybe an explicit configOnly enum?

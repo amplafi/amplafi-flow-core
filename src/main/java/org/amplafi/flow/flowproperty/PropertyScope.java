@@ -148,6 +148,7 @@ public enum PropertyScope {
     /**
      * @return the defaultPropertyUsage
      */
+    @Deprecated // use FlowPropertyDefinitionBuilder to get the property explicitly set.
     public PropertyUsage getDefaultPropertyUsage() {
         return defaultPropertyUsage;
     }

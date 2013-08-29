@@ -156,12 +156,10 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Creates an unnamed String property.
      */
     public FlowPropertyDefinitionImpl() {
-        super((FlowPropertyDefinitionImplementor)null);
         this.dataClassDefinition = new DataClassDefinitionImpl();
     }
 
     public FlowPropertyDefinitionImpl(FlowPropertyDefinitionImpl clone) {
-        super((FlowPropertyDefinitionImplementor)null);
         this.setName(clone.name);
         this.dataClassDefinition = (DataClassDefinition) clone.dataClassDefinition.clone();
         if (isNotEmpty(clone.alternates)) {
@@ -190,7 +188,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * @param name The name of the property.
      */
     public FlowPropertyDefinitionImpl(String name) {
-        super((FlowPropertyDefinitionImplementor)null);
         this.dataClassDefinition = new DataClassDefinitionImpl();
         this.setName(name);
     }
@@ -1139,8 +1136,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
     @Override
-    public boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-        return this.isNamed(flowPropertyDefinition.getName());
+    public boolean isApplicable(FlowPropertyExpectation flowPropertyExpectation) {
+        return this.isNamed(flowPropertyExpectation.getName());
     }
     @Override
     public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
@@ -1320,6 +1317,11 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     }
 
 	@Override
+    public FlowPropertyExpectation merge(FlowPropertyExpectation flowPropertyExpectation) {
+	    throw new UnsupportedOperationException();
+    }
+
+    @Override
 	public IJsonWriter toJson(IJsonWriter jsonWriter) {
 		jsonWriter.object();
 		jsonWriter.keyValue("name", this.getName());

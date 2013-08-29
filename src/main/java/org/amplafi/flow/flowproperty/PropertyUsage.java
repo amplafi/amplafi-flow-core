@@ -27,6 +27,7 @@ import org.amplafi.flow.FlowActivityPhase;
  * PropertyUsage is *NOT* a security mechanism. PropertyUsage focuses only on how a property should be initialized and outputed so that
  * a property lifecycle can be determined.
  *
+ * TODO: rename to PropertyIO
  * @author patmoore
  */
 public enum PropertyUsage {
@@ -42,6 +43,7 @@ public enum PropertyUsage {
     internalState(false, false, false),
     /**
      * read if passed. not created. The original value is not altered even if the flow itself does alter the value.
+     * No {@link org.amplafi.flow.FlowPropertyValueProvider} are allowed
      */
     use(false, false, true),
     /**

@@ -527,7 +527,8 @@ public class TestFlowPropertyDefinition {
         		return true;
         	}
         };
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder().createNonconfigurableFlowPropertyDefinition(propertyName, Boolean.class, flowPropertyValueProvider).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initFlowPropertyValueProvider(flowPropertyValueProvider).initAccess(PropertyScope.flowLocal,
+            PropertyUsage.initialize).toFlowPropertyDefinition();
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
@@ -592,8 +593,8 @@ public class TestFlowPropertyDefinition {
         };
         FlowPropertyDefinitionImpl flowNotAutoCreatedProperty = new FlowPropertyDefinitionImpl(notAutoCreated, Object.class).initAccess(flowLocal,io).
         initFlowPropertyValueProvider(flowPropertyValueProvider);
-        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder().createApiReturnValueFlowPropertyDefinition(autoCreated, Object.class).
-            initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(autoCreated, Object.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.API_RETURN_VALUE)
+            .initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
         flowActivity0.addPropertyDefinitions(flowNotAutoCreatedProperty, flowLocalProperty );
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();

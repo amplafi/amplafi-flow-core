@@ -16,7 +16,6 @@ package org.amplafi.flow;
 import java.util.List;
 
 import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
@@ -26,8 +25,11 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import com.sworddance.util.map.MapKeyed;
 
 /**
- * Describes a property that is expected AND the characteristics of the expected property to the extent desired.
+ * Describes a property that is expected AND/OR the characteristics of the expected property to the extent desired.
  * This additional pattern matching avoids false positives.
+ *
+ * An FlowPropertyExpectation looks similar to a {@link FlowPropertyDefinition} but does not have the "completely-defined" constraints that
+ * a {@link FlowPropertyDefinition} has.
  *
  * TODO:Also used to describe properties that another FlowProperty needs.
  * @author patmoore
@@ -74,9 +76,15 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
      */
     List<FlowPropertyValueChangeListener> getFlowPropertyValueChangeListeners();
 
-    boolean isApplicable(FlowPropertyDefinitionImplementor flowPropertyDefinition);
+    /**
+     * if {@link #getName()} != null or "" and isNamed() returns true for all possible names this {@link FlowPropertyExpectation} has
+     * @param flowPropertyExpectation
+     * @return true if the flowPropertyExpectation can be merged with this.
+     */
+    boolean isApplicable(FlowPropertyExpectation flowPropertyExpectation);
+    boolean isNamed(String possibleName);
 
     // Kostya: switch the definitions here:
     <FA extends FlowPropertyProvider> FlowPropertyValuePersister<FA> getFlowPropertyValuePersister();
-//    FlowPropertyValuePersister<?> getFlowPropertyValuePersister();
+    FlowPropertyExpectation merge(FlowPropertyExpectation flowPropertyExpectation);
 }
