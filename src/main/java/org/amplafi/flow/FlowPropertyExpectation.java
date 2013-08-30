@@ -21,10 +21,11 @@ import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
-
 import com.sworddance.util.map.MapKeyed;
 
 /**
+ * FlowPropertyExpectation are immutable.
+ *
  * Describes a property that is expected AND/OR the characteristics of the expected property to the extent desired.
  * This additional pattern matching avoids false positives.
  *

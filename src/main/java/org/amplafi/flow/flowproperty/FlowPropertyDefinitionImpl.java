@@ -86,6 +86,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
      * Used when there is no explicit flowPropertyValueProvider. Primary usecase is FlowProperties that have a default
      * way of determining their value. But wish to allow that default method to be changed. (for example, fsFinishText )
      */
+    @Deprecated // FlowPropertyDefinitionBuilder solves this problem
     private transient FlowPropertyValueProvider<? extends FlowPropertyProvider> factoryFlowPropertyValueProvider;
 
     // TODO: if a list of providers is defined then it becomes impossible to determine the minimum set of dependencies.
@@ -287,6 +288,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         return flowPropertyDefinition;
     }
 
+    @Deprecated
     @Override
     public FlowPropertyDefinitionImpl initFactoryFlowPropertyValueProvider(FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
     	FlowPropertyDefinitionImpl flowPropertyDefinition = cloneIfTemplate(this.factoryFlowPropertyValueProvider, flowPropertyValueProvider);

@@ -134,13 +134,13 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
             new FlowPropertyDefinitionBuilder(FSREDIRECT_URL, URI.class).initPropertyUsage(io),
             new FlowPropertyDefinitionBuilder(FSREFERRING_URL, URI.class).initPropertyUsage(use),
             new FlowPropertyDefinitionBuilder(FSCONTINUE_WITH_FLOW).initPropertyUsage(io),
-            new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITIONS).map(FlowTransition.class).initAutoCreate().initAccess(flowLocal, use),
             // HACK
             new FlowPropertyDefinitionBuilder().createFromTemplate(FlowTransitionFlowPropertyValueProvider.FLOW_TRANSITION),
 
             new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW).initPropertyUsage(io),
             new FlowPropertyDefinitionBuilder(FSRETURN_TO_FLOW_TYPE).initPropertyUsage(io),
-            new FlowPropertyDefinitionBuilder(FSSUGGESTED_NEXT_FLOW_TYPE, FlowTransition.class, Map.class).initAutoCreate().initAccess(flowLocal, use),
+            new FlowPropertyDefinitionBuilder(FSSUGGESTED_NEXT_FLOW_TYPE).map(FlowTransition.class).initAutoCreate().initAccess(flowLocal, use),
             // TODO think about PropertyScope/PropertyUsage
             new FlowPropertyDefinitionBuilder(FSNEXT_FLOW).initPropertyUsage(io)
         );

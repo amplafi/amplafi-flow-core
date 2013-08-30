@@ -141,6 +141,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     boolean isExportable();
 
     /**
+     * This is the cumulative set of objects that need to be wired with services.
      * @return
      */
     List<Object> getObjectsNeedingToBeWired();

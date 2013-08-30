@@ -60,7 +60,7 @@ public class TestFlowPropertyDefinition {
     private static final boolean TEST_ENABLED = true;
 //    @Test(enabled=TEST_ENABLED)
 //    public void testValidateWith_empty() {
-//        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionImpl();
+//        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder();
 //        definition.validateWith("a", "b");
 //
 //        assertFalse(definition.isRequired());
