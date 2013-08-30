@@ -48,7 +48,6 @@ import com.sworddance.util.CUtilities;
 import com.sworddance.util.NotNullIterator;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -376,7 +375,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
         this.autoCreate = autoCreate;
     }
 
-    @Override
     public Boolean getAutoCreate() {
         return this.autoCreate;
     }

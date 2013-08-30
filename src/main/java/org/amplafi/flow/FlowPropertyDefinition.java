@@ -99,7 +99,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      * {@link #getName()}.
      */
     Set<String> getAllNames();
-    @Override
     Set<String> getAlternates();
 
     boolean isAssignableFrom(Class<?> clazz);
