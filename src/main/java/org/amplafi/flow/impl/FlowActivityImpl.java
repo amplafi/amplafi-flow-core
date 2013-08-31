@@ -44,6 +44,7 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -526,7 +527,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         try {
             clone = this.getClass().newInstance();
         } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+            throw new FlowExecutionException(this.getClass()+":could not be instantiated ( this can happen if trying to create an anonymous FlowActivityImpl)", e);
         }
         copyTo(clone);
         return (T) clone;

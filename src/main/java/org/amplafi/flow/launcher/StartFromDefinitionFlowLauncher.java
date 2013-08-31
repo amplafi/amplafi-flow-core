@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.FlowException;
+import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowState;
 import org.apache.commons.lang.StringUtils;
@@ -118,7 +119,7 @@ public class StartFromDefinitionFlowLauncher extends BaseFlowLauncher implements
         } catch(FlowException e) {
         	throw e;
         } catch(RuntimeException e) {
-            throw new FlowException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
+            throw new FlowExecutionException("While trying to start flow="+getFlowTypeName()+"; launchMap="+launchMap, e);
         }
     }
     @Override
