@@ -31,6 +31,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowException;
+import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
@@ -57,11 +58,6 @@ import static org.apache.commons.lang.StringUtils.*;
  * Defines a property that will be assigned as part of a {@link Flow} or
  * {@link FlowActivity}. This allows the value to be available to the component
  * or page referenced by a {@link FlowActivity}.
- *
- * TODO:
- * * FPD have a flag that makes them read-only
- * * if the FPD is "changed" then then method that changes the FPD should returned a cloned FPD with the modification. (see the FPD.init* methods() )
- * * necessary to allow instances of Flows to modify the values on a per flow-instance basis.
  *
  * @author Patrick Moore
  */
@@ -245,7 +241,7 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             } catch(FlowException e) {
                 throw e;
             } catch(Exception e) {
-                throw new ApplicationIllegalStateException(this+": PropertyValueProvider threw an exception. propertyValueProvider="+propertyValueProvider, e);
+                throw new FlowExecutionException(this.getName()+": PropertyValueProvider threw an exception. propertyValueProvider="+propertyValueProvider, e);
             }
         } else {
             // TODO -- may still want to call this if flowPropertyValueProvider returns null.
