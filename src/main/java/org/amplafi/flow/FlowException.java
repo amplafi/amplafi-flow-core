@@ -31,6 +31,12 @@ public class FlowException extends RuntimeException {
     	this.flowState = flowState;
     }
 
+    public FlowException(Exception exception) {
+        super(exception);
+    }
+    public FlowException(String message, Exception exception) {
+        super(message, exception);
+    }
     public FlowException(Object... messages) {
         super(join(messages));
     }
