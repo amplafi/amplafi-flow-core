@@ -33,8 +33,6 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
@@ -107,9 +105,6 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
     public FactoryFlowPropertyDefinitionProvider() {
 
     }
-    public FactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        super(flowPropertyDefinitions);
-    }
     public FactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitions) {
         super(flowPropertyDefinitions);
     }
@@ -119,18 +114,18 @@ public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyD
     * @param standardDefinitionClass
     */
    public void addStandardPropertyDefinition(String propertyName, Class<?> standardDefinitionClass) {
-       FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionBuilder(propertyName, standardDefinitionClass).toFlowPropertyDefinition();
-       addStandardPropertyDefinition(flowPropertyDefinition);
+       FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(propertyName, standardDefinitionClass);
+       addStandardPropertyDefinition(flowPropertyDefinitionBuilder);
    }
 
    /**
     * This property should be minimal.
-    * @param flowPropertyDefinition supply the default property.
+    * @param flowPropertyDefinitionBuilder supply the default property.
     */
-   public void addStandardPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
-       String propertyName = flowPropertyDefinition.getName();
+   public void addStandardPropertyDefinition(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder) {
+       String propertyName = flowPropertyDefinitionBuilder.getName();
        ApplicationIllegalStateException.checkState(!this.getFlowPropertyDefinitionNames().contains(propertyName), "Cannot redefine '", propertyName, ". It was already defined as a standard property.");
-       this.addFlowPropertyDefinitionImplementators(flowPropertyDefinition);
+       this.addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
        // Note: alternate names are not automatically added.
    }
 
