@@ -14,7 +14,6 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
 
 /**
@@ -50,8 +49,6 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
     void initPropertyIfNull(String key, Object value) ;
 
     void initPropertyIfBlank(String key, Object value);
-
-    void addPropertyDefinitions(Iterable<FlowPropertyDefinitionImplementor> flowPropertyDefinitions);
 
     String getRawProperty(String key);
     /**
