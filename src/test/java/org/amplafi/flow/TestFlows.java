@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
@@ -192,9 +192,9 @@ public class TestFlows {
     @Test(enabled=TEST_ENABLED)
     public void testInitialValuesOnFlow() {
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl globalDef = new FlowPropertyDefinitionBuilder(PROPERTY1).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor globalDef = new FlowPropertyDefinitionBuilder(PROPERTY1).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(globalDef);
-        FlowPropertyDefinitionImpl globalDef1 = new FlowPropertyDefinitionBuilder(PROPERTY2).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor globalDef1 = new FlowPropertyDefinitionBuilder(PROPERTY2).setInitial(INITIAL_VALUE).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(globalDef1);
         // activity #0
         FlowActivityImpl activity = new FlowActivityImpl();
@@ -204,7 +204,7 @@ public class TestFlows {
         flow.addActivity(activity);
         // activity #2
         activity = new FlowActivityImpl();
-        FlowPropertyDefinitionImpl localDef1 = new FlowPropertyDefinitionBuilder(PROPERTY1).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor localDef1 = new FlowPropertyDefinitionBuilder(PROPERTY1).toFlowPropertyDefinition();
         activity.addPropertyDefinitions(localDef1);
         flow.addActivity(activity);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
@@ -227,7 +227,7 @@ public class TestFlows {
     public void testConversion() {
         Map<String, String> initialFlowState = new HashMap<String, String>();
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo", Long.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo", Long.class).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl();
         flow.addActivity(fa1);

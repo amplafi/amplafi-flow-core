@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.impl.FlowDefinitionsManagerImpl;
 import org.amplafi.flow.translator.BaseFlowTranslatorResolver;
@@ -121,8 +120,7 @@ public class TestFlowTranslatorResolver extends Assert {
     }
     @Test
     public void testListCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).list(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
-        getFlowTranslatorResolver().resolve("", definition);
+        FlowPropertyDefinition definition = new FlowPropertyDefinitionBuilder(URI).list(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition(getFlowTranslatorResolver());
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV =definition.serialize(list);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
@@ -135,8 +133,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).set(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
-        getFlowTranslatorResolver().resolve("", definition);
+        FlowPropertyDefinition definition = new FlowPropertyDefinitionBuilder(URI).set(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition(getFlowTranslatorResolver());
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV =definition.serialize(set);
         assertEquals(strV, "[\"http://foo.com\",\"http://gg.gov\"]");
@@ -148,8 +145,7 @@ public class TestFlowTranslatorResolver extends Assert {
     @Test
     @SuppressWarnings("unchecked")
     public void testMapCollectionHandling() throws Exception {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).map(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
-        getFlowTranslatorResolver().resolve("", definition);
+        FlowPropertyDefinition definition = new FlowPropertyDefinitionBuilder(URI).map(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition(getFlowTranslatorResolver());
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));
         map.put("second", new URI("http://gg.gov"));

@@ -35,8 +35,6 @@ import org.apache.commons.lang.ObjectUtils;
 /**
  * {@link org.amplafi.flow.FlowPropertyValueProvider} that handles statically provided values.
  *
- * Exploring as alternative to {@link FlowPropertyDefinitionImpl#getInitial()}
- *
  */
 public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
@@ -157,7 +155,7 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
      * @return the created fixedFlowPropertyValueProvider
      */
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(Object defaultObject,
-        FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
+        FlowPropertyDefinitionImplementor flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
         FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = null;
         if ( defaultObject != null ) {
             fixedFlowPropertyValueProvider = new FixedFlowPropertyValueProvider(defaultObject);
@@ -190,12 +188,12 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
      * @return the created fixedFlowPropertyValueProvider
      */
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(
-        FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
+        FlowPropertyDefinitionImplementor flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
 
         return newFixedFlowPropertyValueProvider(flowPropertyDefinition.getDataClassDefinition().getPropertyClass(), flowPropertyDefinition, testAndConfigFlowPropertyDefinition);
     }
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(Class<?> defaultClass,
-        FlowPropertyDefinitionImpl flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
+        FlowPropertyDefinitionImplementor flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
         FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = null;
 
         ApplicationIllegalArgumentException.valid(!defaultClass.isAnnotation(), defaultClass, "is an annotation. Annotations cannot be instatiated.");

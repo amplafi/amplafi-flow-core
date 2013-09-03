@@ -62,7 +62,7 @@ import org.testng.annotations.Test;
 
 import com.sworddance.util.ApplicationIllegalArgumentException;
 /**
- * Tests {@link FlowPropertyDefinitionImpl}.
+ * Tests {@link FlowPropertyDefinitionBuilder} and resulting {@link FlowPropertyDefinitionImplementor}.
  */
 public class TestFlowPropertyDefinition {
 
@@ -71,7 +71,7 @@ public class TestFlowPropertyDefinition {
 
     @Test(enabled=TEST_ENABLED)
     public void testUriProperty() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("uri", URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("uri", URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         assertNull(definition.getDefaultObject(new Dummy()));
     }
@@ -96,7 +96,7 @@ public class TestFlowPropertyDefinition {
     public void testDefaultHandlingWithAutoCreate() throws Exception {
         FlowPropertyProvider flowPropertyProvider = null;
 
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo").toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo").toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         assertFalse(definition.isAutoCreate());
         definition = new FlowPropertyDefinitionBuilder(definition).initDefaultObject(Boolean.TRUE).toFlowPropertyDefinition();
@@ -120,7 +120,7 @@ public class TestFlowPropertyDefinition {
         assertEquals(t, Boolean.TRUE);
         assertTrue(definition.isAutoCreate());
 
-        final FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionBuilder("foo").toFlowPropertyDefinition();
+        final FlowPropertyDefinitionImplementor definition1 = new FlowPropertyDefinitionBuilder("foo").toFlowPropertyDefinition();
         definition1.setFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
             @Override
             @SuppressWarnings({ "unchecked" })
@@ -146,7 +146,7 @@ public class TestFlowPropertyDefinition {
     }
 
     private void assertDefaultObject(Class<?> clazz, Object value) {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("u", clazz).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("u", clazz).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         assertEquals(definition.getDefaultObject(new Dummy()), value);
     }
@@ -156,8 +156,8 @@ public class TestFlowPropertyDefinition {
      */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionSimpleMerging() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo", Boolean.class).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initDefaultObject(true).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo", Boolean.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition1 = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initDefaultObject(true).toFlowPropertyDefinition();
         assertTrue( definition.isMergeable(definition1));
         assertTrue( definition1.isMergeable(definition));
         definition.merge(definition1);
@@ -171,38 +171,38 @@ public class TestFlowPropertyDefinition {
      */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionComplexMergingBecauseOfDataClass() {
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo").set(Boolean.class).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImpl definition1 = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initDefaultObject(true).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo").set(Boolean.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition1 = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initDefaultObject(true).toFlowPropertyDefinition();
         assertFalse( definition.isMergeable(definition1));
         assertFalse( definition1.isMergeable(definition));
 
         // definition with unknown element in a set should be able to merge with a set that has a defined element type.
-        FlowPropertyDefinitionImpl definition2 = new FlowPropertyDefinitionBuilder("foo").set(null).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition2 = new FlowPropertyDefinitionBuilder("foo").set(null).toFlowPropertyDefinition();
         assertTrue( definition.isMergeable(definition2));
 
         // merge check will be false because List and Boolean are not assignable between each other.
-        FlowPropertyDefinitionImpl definition3 = new FlowPropertyDefinitionBuilder("foo", Long.class, Set.class, List.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition3 = new FlowPropertyDefinitionBuilder("foo", Long.class, Set.class, List.class).toFlowPropertyDefinition();
         assertFalse( definition.isMergeable(definition3));
         assertTrue(definition2.isMergeable(definition3));
         assertTrue(definition3.isMergeable(definition2));
 
-        FlowPropertyDefinitionImpl definition4 = new FlowPropertyDefinitionBuilder("foo").map(Boolean.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition4 = new FlowPropertyDefinitionBuilder("foo").map(Boolean.class).toFlowPropertyDefinition();
         assertFalse(definition4.isMergeable(definition));
         assertFalse(definition4.isMergeable(definition3));
-        FlowPropertyDefinitionImpl definition5 = new FlowPropertyDefinitionBuilder("foo", Boolean.class, Map.class, Set.class).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImpl definition6 = new FlowPropertyDefinitionBuilder("foo", null, Map.class, Set.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition5 = new FlowPropertyDefinitionBuilder("foo", Boolean.class, Map.class, Set.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition6 = new FlowPropertyDefinitionBuilder("foo", null, Map.class, Set.class).toFlowPropertyDefinition();
         assertTrue(definition5.isMergeable(definition6));
         assertTrue(definition6.isMergeable(definition5));
     }
 
     /**
-     * Make sure FlowPropertyDefinitionImpl cloning works.
+     * Make sure FlowPropertyDefinitionImplementor cloning works.
      */
     @Test(enabled=TEST_ENABLED)
     public void testFlowPropertyDefinitionCloning() {
-        FlowPropertyDefinitionImpl original = new FlowPropertyDefinitionBuilder("foo", Boolean.class, Set.class, List.class).initPropertyRequired(FlowActivityPhase.advance)
+        FlowPropertyDefinitionImplementor original = new FlowPropertyDefinitionBuilder("foo", Boolean.class, Set.class, List.class).initPropertyRequired(FlowActivityPhase.advance)
                 .initAccess(PropertyScope.activityLocal, PropertyUsage.consume, ExternalPropertyAccessRestriction.noAccess).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImpl cloned = new FlowPropertyDefinitionBuilder(original).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor cloned = new FlowPropertyDefinitionBuilder(original).toFlowPropertyDefinition();
         assertEquals(original, cloned, "cloning failed");
     }
 
@@ -212,7 +212,7 @@ public class TestFlowPropertyDefinition {
      */
     @Test(enabled=TEST_ENABLED, dataProvider="serializationData")
     public void testSerializeAndParse(String original) {
-        FlowPropertyDefinitionImpl def = new FlowPropertyDefinitionBuilder("test").toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor def = new FlowPropertyDefinitionBuilder("test").toFlowPropertyDefinition();
         FlowPropertyProvider flowPropertyProvider = null;
 
         String result = def.deserialize(flowPropertyProvider, def.serialize(original));
@@ -222,7 +222,7 @@ public class TestFlowPropertyDefinition {
     private static final String URI = "uri";
 
     /**
-     * Tests to make sure that {@link FlowPropertyDefinitionImpl} can handle serializing/deserializing lists.
+     * Tests to make sure that {@link FlowPropertyDefinition} can handle serializing/deserializing lists.
      * @throws Exception
      */
     @Test(enabled=TEST_ENABLED)
@@ -230,7 +230,7 @@ public class TestFlowPropertyDefinition {
     public void testListSerializing() throws Exception {
         FlowPropertyProvider flowPropertyProvider = null;
 
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).list(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder(URI).list(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         List<URI> list = Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov"));
         String strV = definition.serialize(list);
@@ -247,7 +247,7 @@ public class TestFlowPropertyDefinition {
     @SuppressWarnings("unchecked")
     public void testSetSerializing() throws Exception {
         FlowPropertyProvider flowPropertyProvider = null;
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).set(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder(URI).set(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         Set<URI> set = new LinkedHashSet<URI>(Arrays.asList(new URI("http://foo.com"), new URI("http://gg.gov")));
         String strV = definition.serialize(set);
@@ -261,7 +261,7 @@ public class TestFlowPropertyDefinition {
     @SuppressWarnings("unchecked")
     public void testMapSerializing() throws Exception {
         FlowPropertyProvider flowPropertyProvider = null;
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder(URI).map(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder(URI).map(URI.class).initPropertyRequired(FlowActivityPhase.advance).toFlowPropertyDefinition();
         new FlowTestingUtils().resolveAndInit(definition);
         Map<String, URI> map = new LinkedHashMap<String, URI>();
         map.put("first", new URI("http://foo.com"));
@@ -292,7 +292,6 @@ public class TestFlowPropertyDefinition {
             initialFlowState.put(name, externalInitial);
             flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
         }
-
 
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, true, initialFlowState);
@@ -397,8 +396,8 @@ public class TestFlowPropertyDefinition {
         String activityName = "activity";
         String namespace;
         String flowTypeName = "myflow";
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initPropertyScope(flowLocal).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initPropertyScope(activityLocal).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initPropertyScope(flowLocal).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor activityLocalProperty = new FlowPropertyDefinitionBuilder("foo", Boolean.class).initPropertyScope(activityLocal).toFlowPropertyDefinition();
         List<String> namespaces;
         {
             // static test using FlowActivity
@@ -510,7 +509,7 @@ public class TestFlowPropertyDefinition {
         		return true;
         	}
         };
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initFlowPropertyValueProvider(flowPropertyValueProvider).initAccess(PropertyScope.flowLocal,
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initFlowPropertyValueProvider(flowPropertyValueProvider).initAccess(PropertyScope.flowLocal,
             PropertyUsage.initialize).toFlowPropertyDefinition();
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
@@ -518,12 +517,12 @@ public class TestFlowPropertyDefinition {
 
         FlowActivityImpl flowActivity1 = newFlowActivity();
         flowActivity1.setFlowPropertyProviderName("activity1");
-        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Map.class).initAccess(activityLocal,internalState).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor activityLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Map.class).initAccess(activityLocal,internalState).toFlowPropertyDefinition();
         flowActivity1.addPropertyDefinitions(activityLocalProperty);
 
         FlowActivityImpl flowActivity2 = newFlowActivity();
         flowActivity2.setFlowPropertyProviderName("activity2");
-        FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,io).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor globalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,io).toFlowPropertyDefinition();
         flowActivity2.addPropertyDefinitions(globalProperty);
 
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
@@ -574,7 +573,7 @@ public class TestFlowPropertyDefinition {
         		return flowPropertyExpectation.isNamed(autoCreated) || flowPropertyExpectation.isNamed(notAutoCreated);
         	}
         };
-        FlowPropertyDefinitionImpl flowNotAutoCreatedProperty = new FlowPropertyDefinitionBuilder(notAutoCreated, Object.class).initAccess(flowLocal,io).
+        FlowPropertyDefinitionImplementor flowNotAutoCreatedProperty = new FlowPropertyDefinitionBuilder(notAutoCreated, Object.class).initAccess(flowLocal,io).
         initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
         FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(autoCreated, Object.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.API_RETURN_VALUE)
             .initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
@@ -599,19 +598,19 @@ public class TestFlowPropertyDefinition {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String propertyName = "propertyName";
 
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(flowLocal,initialize).setInitial("true").toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(flowLocal,initialize).setInitial("true").toFlowPropertyDefinition();
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
 
         FlowActivityImpl flowActivity1 = newFlowActivity();
         flowActivity1.setFlowPropertyProviderName("activity1");
-        FlowPropertyDefinitionImpl activityLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(activityLocal,internalState).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor activityLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(activityLocal,internalState).toFlowPropertyDefinition();
         flowActivity1.addPropertyDefinitions(activityLocalProperty);
 
         FlowActivityImpl flowActivity2 = newFlowActivity();
         flowActivity2.setFlowPropertyProviderName("activity2");
-        FlowPropertyDefinitionImpl globalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(flowLocal,io).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor globalProperty = new FlowPropertyDefinitionBuilder(propertyName, String.class).initAccess(flowLocal,io).toFlowPropertyDefinition();
         flowActivity2.addPropertyDefinitions(globalProperty);
 
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0, flowActivity1, flowActivity2);
@@ -640,13 +639,13 @@ public class TestFlowPropertyDefinition {
     /**
      * Test to see that serialization/deserialization of enum's
      *
-     * Also tests that {@link FlowPropertyDefinitionImpl#initInitial(String)} works.
+     * Also tests that {@link FlowPropertyDefinitionBuilder#setInitial(String)} works.
      */
     @Test(enabled=TEST_ENABLED)
     public void testEnumHandling() {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImpl definition = new FlowPropertyDefinitionBuilder("foo", SampleEnum.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo", SampleEnum.class).toFlowPropertyDefinition();
         flow.addPropertyDefinitions(definition);
         FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
         definition = new FlowPropertyDefinitionBuilder("fa1fp", SampleEnum.class).setInitial(SampleEnum.EMAIL.name()).toFlowPropertyDefinition();
@@ -675,8 +674,8 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     public void testDefaultProviderInitialization() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        final FlowPropertyDefinitionImpl noProvider = new FlowPropertyDefinitionBuilder("noProvider", PropertyUsage.class).toFlowPropertyDefinition();
-        final FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionBuilder("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE).toFlowPropertyDefinition();
+        final FlowPropertyDefinitionImplementor noProvider = new FlowPropertyDefinitionBuilder("noProvider", PropertyUsage.class).toFlowPropertyDefinition();
+        final FlowPropertyDefinitionImplementor flowPropertyDefinition = new FlowPropertyDefinitionBuilder("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE).toFlowPropertyDefinition();
         FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinition.getFlowPropertyValueProvider();
         AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>(flowPropertyDefinition) {
 
@@ -744,7 +743,7 @@ public class TestFlowPropertyDefinition {
         flowTestingUtils.getFlowDefinitionsManager().addFactoryFlowPropertyDefinitionProvider(factoryFlowPropertyDefinitionProvider);
         String propertyName = "propertyName";
 
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
             .initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProviderWithValues>() {
 
             @SuppressWarnings("unchecked")
@@ -787,7 +786,7 @@ public class TestFlowPropertyDefinition {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String propertyName = "propertyName";
 
-        FlowPropertyDefinitionImpl flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
         .initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @SuppressWarnings("unchecked")

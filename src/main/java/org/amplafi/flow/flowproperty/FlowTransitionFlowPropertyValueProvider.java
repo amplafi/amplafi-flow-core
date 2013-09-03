@@ -26,7 +26,7 @@ import org.amplafi.flow.FlowTransition;
  */
 public class FlowTransitionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProvider> {
 
-	public static final FlowPropertyDefinitionImpl FLOW_TRANSITION = new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize).toFlowPropertyDefinition();
+	public static final FlowPropertyDefinitionImplementor FLOW_TRANSITION = new FlowPropertyDefinitionBuilder(FSFLOW_TRANSITION, FlowTransition.class).initAccess(flowLocal, initialize).toFlowPropertyDefinition();
     public FlowTransitionFlowPropertyValueProvider() {
         super(FLOW_TRANSITION);
     }

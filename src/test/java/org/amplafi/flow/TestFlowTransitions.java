@@ -180,7 +180,7 @@ public class TestFlowTransitions {
         // for second flow, the property is flowLocal/ internalState so the setting should only affect the flowLocal copy.
         String privatePropertyForSecondFlow = "privateForSecond";
         String globalSettingForSecondFlowPrivateProperty = "global_for_privateForSecond";
-        FlowPropertyDefinitionImpl flowPropertyDefinition_secondflow_prop0 = new FlowPropertyDefinitionBuilder(privatePropertyForSecondFlow,
+        FlowPropertyDefinitionImplementor flowPropertyDefinition_secondflow_prop0 = new FlowPropertyDefinitionBuilder(privatePropertyForSecondFlow,
             Boolean.class).initAccess(flowLocal, PropertyUsage.internalState).toFlowPropertyDefinition();
         // first flow doesn't understand this property but it sets it for the second flow to use.
         String opaqueSecondFlowProperty = "secondFlowProperty";
@@ -229,7 +229,7 @@ public class TestFlowTransitions {
         FlowImplementor flow = EasyMock.createMock(FlowImplementor.class);
         FlowStateImplementor flowState = EasyMock.createNiceMock(FlowStateImplementor.class);
         expect(flow.getFlowState()).andReturn(flowState).anyTimes();
-        FlowPropertyDefinitionImpl pageNameDefinition = new FlowPropertyDefinitionBuilder(FlowConstants.FSPAGE_NAME, String.class).toFlowPropertyDefinition();
+        FlowPropertyDefinitionImplementor pageNameDefinition = new FlowPropertyDefinitionBuilder(FlowConstants.FSPAGE_NAME, String.class).toFlowPropertyDefinition();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FSPAGE_NAME)).andReturn(pageNameDefinition).anyTimes();
         expect(flow.getFlowPropertyDefinition(FlowConstants.FAINVISIBLE)).andReturn(
             new FlowPropertyDefinitionBuilder(FlowConstants.FAINVISIBLE, boolean.class).initTranslator(new BooleanFlowTranslator())
