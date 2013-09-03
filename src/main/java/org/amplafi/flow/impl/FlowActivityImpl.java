@@ -15,20 +15,12 @@
 package org.amplafi.flow.impl;
 
 import static com.sworddance.util.CUtilities.*;
-import static org.amplafi.flow.FlowConstants.FAINVISIBLE;
-import static org.amplafi.flow.FlowConstants.FANEXT_TEXT;
-import static org.amplafi.flow.FlowConstants.FATITLE_TEXT;
-import static org.amplafi.flow.FlowConstants.FAUPDATE_TEXT;
-import static org.amplafi.flow.FlowConstants.FLOW_PROPERTY_PREFIX;
-import static org.amplafi.flow.FlowConstants.FSAUTO_COMPLETE;
-import static org.amplafi.flow.FlowConstants.FSPAGE_NAME;
+import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction.noAccess;
 import static org.amplafi.flow.flowproperty.PropertyScope.activityLocal;
 import static org.amplafi.flow.flowproperty.PropertyUsage.consume;
 import static org.amplafi.flow.flowproperty.PropertyUsage.use;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNumeric;
+import static org.apache.commons.lang.StringUtils.*;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -43,6 +35,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowImplementor;
@@ -66,12 +59,8 @@ import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.sworddance.util.ApplicationIllegalStateException;
-import com.sworddance.util.ApplicationNullPointerException;
 
 
 /**
@@ -400,11 +389,12 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     @Override
     public void setFlowPropertyProviderName(String flowPropertyProviderName) {
-        if ( !StringUtils.equalsIgnoreCase(this.flowPropertyProviderName, flowPropertyProviderName)) {
-            ApplicationIllegalStateException.checkState(this.flowPropertyProviderName == null || this.flow == null,
+        if (this.flowPropertyProviderName != null && this.flow != null
+                && !this.flowPropertyProviderName.equalsIgnoreCase(flowPropertyProviderName)) {
+            new FlowConfigurationException(
                 this,": cannot change flowPropertyProviderName once it is part of a flow. Tried to change to =",flowPropertyProviderName);
-            this.flowPropertyProviderName = flowPropertyProviderName;
         }
+        this.flowPropertyProviderName = flowPropertyProviderName;
     }
 
     @Override
@@ -884,23 +874,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      */
     protected <T> void setProperty(FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         getFlowStateImplementor().setPropertyWithDefinition(this, propertyDefinition, value);
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivity#setProperty(Object)
-     */
-    @Override
-    public <T> void setProperty(T value) {
-        ApplicationNullPointerException.notNull(value, "value must not be null");
-        setProperty(value.getClass(), value);
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowActivity#setProperty(Class, Object)
-     */
-    @Override
-    public <T> void setProperty(Class<? extends T> dataClass, T value) {
-        setProperty(FlowPropertyDefinitionBuilder.toPropertyName(dataClass), value);
     }
 
     /**

@@ -157,28 +157,6 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
     @Override
     <T> T getProperty(Class<? extends T> dataClass);
 
-    /**
-     * Convert value.getClass() to string using
-     * {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder#toPropertyName(Class)} and use that string as the
-     * property name for the value being set.
-     *
-     * @param <T>
-     * @param value must not be null
-     */
-    @Override
-    <T> void setProperty(T value);
-
-    /**
-     * Convert value.getClass() to string using
-     * {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder#toPropertyName(Class)} and use that string as the
-     * property name for the value being set.
-     *
-     * @param <T> value's type
-     * @param value may be null
-     * @param dataClass
-     */
-    <T> void setProperty(Class<? extends T> dataClass, T value);
-
     boolean isFinishingActivity();
 
     /**

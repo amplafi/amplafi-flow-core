@@ -1671,19 +1671,6 @@ public class FlowStateImpl implements FlowStateImplementor {
             setPropertyWithDefinition(null, flowPropertyDefinition, value);
         }
     }
-    @Override
-    public <T> void setProperty(T value) {
-        ApplicationNullPointerException.notNull(value, "Cannot set by className if the property is null");
-        if (isActive()) {
-            FlowActivity currentActivity = getCurrentActivity();
-            currentActivity.setProperty(value);
-        } else {
-            Class<T> expected = (Class<T>) value.getClass();
-            String key = FlowPropertyDefinitionBuilder.toPropertyName(expected);
-            FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, value);
-            setPropertyWithDefinition(null, flowPropertyDefinition, value);
-        }
-    }
 
     @SuppressWarnings("unchecked")
     private <T, FP extends FlowPropertyDefinition> FP getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T value) {

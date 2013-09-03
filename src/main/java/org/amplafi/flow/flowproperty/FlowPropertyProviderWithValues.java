@@ -58,7 +58,6 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      * @throws IllegalStateException if the property cannot be modified ( but other properties maybe could be modified )
      */
     <T> void setProperty(String key, T value) throws UnsupportedOperationException, IllegalStateException;
-    <T> void setProperty(T value) throws UnsupportedOperationException, IllegalStateException;
 
     /**
      * checks to see if {@link #isPropertyValueSet(String)} or if the property has a {@link org.amplafi.flow.FlowPropertyValueProvider}.

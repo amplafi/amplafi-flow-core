@@ -29,9 +29,9 @@ public class OneOfManyFlowPropertyValueProvider<V> extends AbstractFlowPropertyV
         T result = null;
         for(Object alternativeProperty : this.alternativeProperties) {
             if ( alternativeProperty instanceof Class) {
-                result = (T)flowPropertyProvider.getProperty((Class)alternativeProperty);
+                result = (T)getProperty(flowPropertyProvider, flowPropertyDefinition, (Class)alternativeProperty);
             } else {
-                result = (T) flowPropertyProvider.getProperty(alternativeProperty.toString());
+                result = (T) getProperty(flowPropertyProvider, flowPropertyDefinition, alternativeProperty.toString());
             }
             if ( result != null) {
                 break;
