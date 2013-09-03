@@ -198,8 +198,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getFlowTypeName();
 
-    Long getLong(String key);
-
     /**
      * can the current activity be passivated.
      *

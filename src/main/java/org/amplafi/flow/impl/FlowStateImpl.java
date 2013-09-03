@@ -62,7 +62,6 @@ import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.FlowStateLifecycle.*;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNumeric;
 
 
 /**
@@ -1362,14 +1361,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         throw new UnsupportedOperationException("TODO: Auto generated");
     }
 
-    /**
-     * @see org.amplafi.flow.FlowState#getLong(java.lang.String)
-     */
-    @Override
-    @Deprecated
-    public Long getLong(String key) {
-        return getRawLong(null, key);
-    }
     @Override
     public FlowValidationResult getCurrentActivityFlowValidationResult(FlowActivityPhase flowActivityPhase, FlowStepDirection flowStepDirection) {
         FlowActivity currentActivity = this.getCurrentActivity();
@@ -1738,21 +1729,6 @@ public class FlowStateImpl implements FlowStateImplementor {
         // to a record in the database.  If we can figure out a way to validate the record actually exists then we can
         // switch this to use load() and not incur the up-front overhead.
         return getFlowManagement().getFlowTx().get(clazz, entityId, true);
-    }
-
-    /**
-     *
-     * @see org.amplafi.flow.impl.FlowStateImplementor#getRawLong(org.amplafi.flow.FlowActivity, java.lang.String)
-     */
-    @Override
-    public Long getRawLong(FlowActivity flowActivity, String key) {
-        String value = getRawProperty(flowActivity, key);
-        if (isNotEmpty(value) && isNumeric(value)) {
-            return Long.parseLong(value);
-        } else {
-            return null;
-        }
-
     }
 
     /**

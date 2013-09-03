@@ -34,9 +34,6 @@ public interface FlowStateImplementor extends FlowState {
 
     String getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
-    @Deprecated
-    Long getRawLong(FlowActivity flowActivity, String key);
-
     String getRawProperty(String key);
 
     String getRawProperty(String namespace, String key);
