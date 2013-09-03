@@ -108,6 +108,11 @@ public class FlowPropertyDefinitionBuilder {
         }
     });
 
+    // ========================================================================================================================
+    //  These are setup as separate FPE rather than conv. methods because these expectations are applied to property definitions
+    // for the specific use of the property. ( i.e. the same property could be an input, output, initialized,
+    // required, optional, etc depending on the specific flow using the property.
+    // ========================================================================================================================
     /**
      * A property that is not allowed to be externally altered. (no external set is allowed) But the property is not
      * immutable because a FPVP could supply different values. Use case: User id Specifically:

@@ -206,8 +206,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     /**
-     * Kostya: Marked as  deprecated since descendants shoudl opt to override saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue)
+     * Kostya: Marked as  deprecated since descendants should opt to override saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue)
      * instead.
+     * TODO: PAT: should really be final ( not deprecated)
      */
     @Deprecated
     public Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
