@@ -17,7 +17,13 @@ package org.amplafi.flow;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationResult;
 
-/*
+/**
+ * Used when multiple properties need to interact with each other.
+ *
+ * typical use case is when combining multiple properties to create a database object.
+ *
+ *  Every {@link Flow} must have at least 1 {@link FlowActivity}
+ *
  * @author patmoore
  */
 public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvider {

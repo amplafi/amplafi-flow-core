@@ -58,7 +58,6 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.ReportAllValidationResult;
-import org.amplafi.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -725,11 +724,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return isBlank(v);
     }
 
-    public boolean isPropertyNumeric(String key) {
-        String v = getRawProperty(key);
-        return isNotEmpty(v) && isNumeric(v);
-    }
-
     /**
      * Return the raw string value representation of the value indexed by key.
      * This should be used only rarely, as it bypasses all of the normal
@@ -760,11 +754,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             // TODO: initial not always set - for example, "invisible" -property.
             return flowPropertyDefinition.getInitial();
         }
-    }
-
-    public Boolean getRawBoolean(String key) {
-        String value = getRawProperty(key);
-        return Boolean.parseBoolean(value);
     }
 
     public Long getRawLong(String key) {
@@ -956,12 +945,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
 
     protected String getResolvedIndirectReferenceProperty(String key) {
         return resolveIndirectReference(getString(key));
-    }
-
-    // TODO refactor to FlowState ?
-    protected JSONObject getRawJsonObject(String key) {
-        String rawProperty = getRawProperty(key);
-        return JSONObject.toJsonObject(rawProperty);
     }
 
     /**
