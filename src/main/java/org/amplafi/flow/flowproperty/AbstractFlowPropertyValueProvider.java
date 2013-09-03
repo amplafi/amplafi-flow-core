@@ -35,24 +35,12 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
             this.flowPropertyProviderClass = flowPropertyProviderClass;
         }
     }
-    protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        super(flowPropertyDefinitions);
-        if ( flowPropertyProviderClass == null) {
-            this.flowPropertyProviderClass = initFlowPropertyProviderClass();
-        } else {
-            this.flowPropertyProviderClass = flowPropertyProviderClass;
-        }
-    }
 
     protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
         super(flowPropertyDefinitionBuilders);
         this.flowPropertyProviderClass = initFlowPropertyProviderClass();
     }
 
-    protected AbstractFlowPropertyValueProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        super(flowPropertyDefinitions);
-        this.flowPropertyProviderClass = initFlowPropertyProviderClass();
-    }
     @Override
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = super.getFlowPropertyDefinitionBuilder(propertyName, dataClass);

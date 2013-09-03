@@ -197,6 +197,7 @@ public class FlowPropertyDefinitionBuilder {
     * @return {@link FlowPropertyExpectation} with all fields supplied a value ( using defaults as needed)
     */
    public FlowPropertyExpectation toCompleteFlowPropertyExpectation() {
+
        FlowActivityPhase propertyRequired = getPropertyRequired();
        if ( propertyRequired == null ) {
            propertyRequired = FlowActivityPhase.optional;
@@ -205,11 +206,15 @@ public class FlowPropertyDefinitionBuilder {
        if ( propertyScope == null) {
            propertyScope = PropertyScope.flowLocal;
        }
+       FlowPropertyValuePersister flowPropertyValuePersister= this.getFlowPropertyValuePersister();
+       ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
        PropertyUsage propertyUsage = this.getPropertyUsage();
        if ( propertyUsage == null) {
+           // TODO: should default be different if there is a persister?
+           // also what about externalPropertyAccessRestriction?
+           // or should we just have simple defaults.
            propertyUsage = PropertyUsage.use;
        }
-       ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
        if ( externalPropertyAccessRestriction == null) {
            if ( !propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
                // not outputted nor set externally then by default internal
@@ -229,15 +234,17 @@ public class FlowPropertyDefinitionBuilder {
        if ( dataClassDefinition == null) {
            dataClassDefinition = new DataClassDefinitionImpl();
        }
-       FlowPropertyValuePersister flowPropertyValuePersister;
-       // is property read only?
+
        if ( propertyUsage.getAltersProperty() == Boolean.FALSE) {
+           // read-only properties MUST not have a persister.
            flowPropertyValuePersister = null;
-       } else {
-           flowPropertyValuePersister = this.getFlowPropertyValuePersister();
        }
+
        Boolean autoCreate = this.getAutoCreate();
        if ( autoCreate == null) {
+           // see note on #initAutoCreate()
+           // also if propertyRequired = activate / then we shouldn't create the property
+           // because it was expected to already be created.
            if (!dataClassDefinition.isCollection() ) {
                Class<?> dataClass = dataClassDefinition.getDataClass();
                if (dataClass.isPrimitive() ) {
@@ -245,6 +252,8 @@ public class FlowPropertyDefinitionBuilder {
                } else if (dataClass.isInterface() || dataClass.isEnum()) {
                    autoCreate = false;
                }
+           } else {
+               // shouldn't a collection object be automatically created?
            }
        }
        Boolean saveBack = getSaveBack();
@@ -594,10 +603,15 @@ public class FlowPropertyDefinitionBuilder {
 
     /**
      * Sets autoCreate to true - meaning that if the property does not exist in
-     * the cache, a new instance is created.
+     * the cache, a new instance is created. This avoids a property returning null.
+     * Only needed if the property does not have a {@link #initFlowPropertyValueProvider(FlowPropertyValueProvider)}
+     * set OR the {@link FlowPropertyValueProvider} may return null.
      *
+     * @deprecated replace with list of {@link FlowPropertyValueProvider} concept AND {@link #initDefaultObject(Object)}
+     * where there is standard defaults.
      * @return this
      */
+    @Deprecated
     public FlowPropertyDefinitionBuilder initAutoCreate() {
         this.autoCreate = true;
         return this;

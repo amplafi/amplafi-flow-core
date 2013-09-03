@@ -45,9 +45,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     protected AbstractFlowPropertyDefinitionProvider() {
         // for case when definitions are added in later.
     }
-    protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionImplementor...flowPropertyDefinitions) {
-        addFlowPropertyDefinitionImplementators(flowPropertyDefinitions);
-    }
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilders);
     }
@@ -58,12 +55,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
             put(this.getFlowPropertyDefinitions(), outputed);
             // Apply default of the defining FlowPropertyValueProvider.
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
-        }
-    }
-    public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionImplementor... flowPropertyDefinitionImplementors) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: NotNullIterator.<FlowPropertyDefinitionImplementor>newNotNullIterator(flowPropertyDefinitionImplementors)) {
-            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
-            addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
         }
     }
 
@@ -87,30 +78,18 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         }
         return outputFlowPropertyDefinitionNames;
     }
-    /**
-     * add ALL the {@link FlowPropertyDefinition}s provided by this definition provider to flowPropertyProvider.
-     * @param flowPropertyProvider
-     * @param additionalConfigurationParameters a list because order is significant
-     */
-    protected void addDefinedPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        if ( this.getFlowPropertyDefinitions() != null) {
-            List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
-            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.getFlowPropertyDefinitions().values()) {
-                clonedFlowPropertyDefinitions.add(flowPropertyDefinition);
-            }
-            this.addPropertyDefinitions(flowPropertyProvider, clonedFlowPropertyDefinitions, additionalConfigurationParameters);
-        }
-    }
-
 
     /**
+     * @deprecated Use the one with {@link FlowPropertyDefinitionBuilder}
      * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.
      * @param flowPropertyProvider
      * @param flowPropertyDefinitions
      */
+    @Deprecated
     protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionImplementor>flowPropertyDefinitions, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: flowPropertyDefinitions) {
-            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionImplementor, additionalConfigurationParameters);
+            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
+            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         }
     }
     /**
@@ -126,11 +105,6 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
             addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         }
-    }
-    protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
-        FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
-        addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
     }
     protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {
@@ -180,13 +154,22 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public final void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider) {
         this.defineFlowPropertyDefinitions(flowPropertyProvider, null);
     }
-
     /**
+     * add ALL the {@link FlowPropertyDefinition}s provided by this definition provider to flowPropertyProvider.
+     * in the constructor or {@link #addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder...)}
+     * methods.
+     *
      * @param flowPropertyProvider
      * @param additionalConfigurationParameters - a list because we want consistent fixed order that the additionalConfigurationParameters are applied.
      */
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        this.addDefinedPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters );
+        if ( this.getFlowPropertyDefinitions() != null) {
+            List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
+            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.getFlowPropertyDefinitions().values()) {
+                clonedFlowPropertyDefinitions.add(flowPropertyDefinition);
+            }
+            this.addPropertyDefinitions(flowPropertyProvider, clonedFlowPropertyDefinitions, additionalConfigurationParameters);
+        }
     }
 
     /**

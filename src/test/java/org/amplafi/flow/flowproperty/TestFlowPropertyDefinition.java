@@ -675,9 +675,9 @@ public class TestFlowPropertyDefinition {
     public void testDefaultProviderInitialization() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         final FlowPropertyDefinitionImplementor noProvider = new FlowPropertyDefinitionBuilder("noProvider", PropertyUsage.class).toFlowPropertyDefinition();
-        final FlowPropertyDefinitionImplementor flowPropertyDefinition = new FlowPropertyDefinitionBuilder("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE).toFlowPropertyDefinition();
-        FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinition.getFlowPropertyValueProvider();
-        AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>(flowPropertyDefinition) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE);
+        FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinitionBuilder.getFlowPropertyValueProvider();
+        AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>() {
 
         	@Override
         	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
@@ -690,10 +690,11 @@ public class TestFlowPropertyDefinition {
                 throw new UnsupportedOperationException("should not be called.");
             }
         };
+        flowPropertyValueProvider.addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowPropertyValueProvider.defineFlowPropertyDefinitions(flowActivity0);
-        flowActivity0.addPropertyDefinitions(flowPropertyDefinition);
+        flowActivity0.addPropertyDefinitions(flowPropertyDefinitionBuilder);
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowState flowState = flowManagement.startFlowState(flowTypeName, false, null);
