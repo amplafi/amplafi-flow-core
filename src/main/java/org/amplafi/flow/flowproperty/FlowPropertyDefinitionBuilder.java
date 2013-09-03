@@ -19,6 +19,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.json.JsonSelfRenderer;
 
 import com.sworddance.util.AbstractParameterizedCallableImpl;
 import com.sworddance.util.ApplicationIllegalArgumentException;
@@ -210,7 +211,19 @@ public class FlowPropertyDefinitionBuilder {
        }
        ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
        if ( externalPropertyAccessRestriction == null) {
-           externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noRestrictions;
+           if ( !propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
+               // not outputted nor set externally then by default internal
+               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noAccess;
+           } else if ( !propertyUsage.isExternallySettable()) {
+               // is not allowed to set
+               externalPropertyAccessRestriction =ExternalPropertyAccessRestriction.readonly;
+           } else if ( !propertyUsage.isOutputedProperty()) {
+               // cannot read externally but can be set externally ( something like a password )
+               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.writeonly;
+           } else {
+               // can be read/write externally
+               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noRestrictions;
+           }
        }
        DataClassDefinitionImpl dataClassDefinition = this.getDataClassDefinition();
        if ( dataClassDefinition == null) {
@@ -223,16 +236,20 @@ public class FlowPropertyDefinitionBuilder {
        } else {
            flowPropertyValuePersister = this.getFlowPropertyValuePersister();
        }
-       Boolean autoCreate = this.autoCreate;
-       if ( autoCreate != null) {
-           if (!getDataClassDefinition().isCollection() ) {
-               Class<?> dataClass = getDataClassDefinition().getDataClass();
+       Boolean autoCreate = this.getAutoCreate();
+       if ( autoCreate == null) {
+           if (!dataClassDefinition.isCollection() ) {
+               Class<?> dataClass = dataClassDefinition.getDataClass();
                if (dataClass.isPrimitive() ) {
                    autoCreate = true;
                } else if (dataClass.isInterface() || dataClass.isEnum()) {
                    autoCreate = false;
                }
            }
+       }
+       Boolean saveBack = getSaveBack();
+       if ( saveBack == null) {
+           saveBack = dataClassDefinition.isCollection() || JsonSelfRenderer.class.isAssignableFrom(dataClassDefinition.getDataClass());
        }
        return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
            flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(), dataClassDefinition, propertiesDependentOn, this.initial);
@@ -586,9 +603,8 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-
     public Boolean getAutoCreate() {
-        return autoCreate;
+        return this.autoCreate;
     }
     public FlowPropertyDefinitionBuilder addNames(String... alternateNames) {
         if ( this.getAlternates() == null) {

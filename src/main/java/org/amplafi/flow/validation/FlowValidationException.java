@@ -45,8 +45,7 @@ public class FlowValidationException extends FlowException {
     }
 
     public FlowValidationException(FlowState flowState, FlowValidationTracking...flowValidationTrackings) {
-        super(flowState, "Validation Problem");
-        this.flowValidationResult = new ReportAllValidationResult(flowValidationTrackings);
+        this(flowState, new ReportAllValidationResult(flowValidationTrackings));
     }
     public FlowValidationException(FlowState flowState, Throwable cause, FlowValidationTracking...flowValidationTrackings) {
         this(flowState, flowValidationTrackings);
@@ -55,7 +54,7 @@ public class FlowValidationException extends FlowException {
 
     public FlowValidationException(FlowState flowState, String key, FlowValidationTracking...flowValidationTrackings) {
         this(flowState, flowValidationTrackings);
-        this.flowValidationResult.addTracking(new SimpleValidationTracking(key));
+        this.getFlowValidationResult().addTracking(new SimpleValidationTracking(key));
     }
 
     /**
@@ -128,7 +127,7 @@ public class FlowValidationException extends FlowException {
     public static void notNull(Object notNull, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
         valid(flowPropertyProvider instanceof FlowState?(FlowState)flowPropertyProvider:null, notNull != null, property, messages);
     }
-    
+
     public static void notBlank(String notBlank, FlowPropertyProvider flowPropertyProvider, Object property, Object...messages) {
         valid(flowPropertyProvider instanceof FlowState?(FlowState)flowPropertyProvider:null, isNotBlank(notBlank), property, messages);
     }
