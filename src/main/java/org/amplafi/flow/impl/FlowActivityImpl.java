@@ -61,44 +61,10 @@ import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
- * defines one activity in the flow. This can be a definition of an activity or
- * the actual activity depending on the state of the Flow parent object.
- * FlowActivityImpl objects may be part of multiple definitions or multiple
- * instances (but not both instances and definitions).
+ * @see FlowActivity
+ * @author patmoore
  *
- * FlowActivities must be stateless. FlowActivityImpl instances can be reused
- * between different users and different {@link org.amplafi.flow.Flow}s.
- *
- * <p/> Lifecycle methods:
- * <ol>
- * <li>{@link #initializeFlow()} - used to initialize the FlowState with any
- * defaults for missing values. <b>No</b> modifications should occur in this
- * method.</li>
- * <li>{@link #activate(FlowStepDirection)} - called each time the FlowActivityImpl is made the
- * current FlowActivityImpl. Returns true if the Flow should immediately advance to
- * the next FlowActivityImpl. If this is the last FlowActivityImpl, then the Flow
- * completes. <b>No</b> modifications should occur in this method.</li>
- * <li>{@link #passivate(boolean, FlowStepDirection)} - called each time the FlowActivityImpl was the
- * current FlowActivityImpl and is now no longer the current FlowActivityImpl. Used to
- * validate input as needed. <b>No</b> modifications should occur in this
- * method.</li>
- * <li>{@link #saveChanges()} - called when the flow is completing. <i>Only
- * place where db modifications can be made.</i> This allows canceling the flow
- * to meaningfully revert all changes.</li>
- * <li>{@link #finishFlow(org.amplafi.flow.FlowState)} - called when the flow is finishing.</li>
- * </ol>
- * <p/> This structure is in place so that FlowActivities that create
- * relationships are not put into the position of having to be aware of the
- * surrounding Flow and previously created objects. Nor are they aware of the
- * state of the flow. <p/> By convention, FlowActivies are expected to be in a
- * 'flows' package and the FlowActivityImpl subclass' name ends with 'FlowActivityImpl'.
- * <p/> If a FlowActivityImpl is a visible step then the FlowActivityImpl needs a
- * component. The default component type is the grandparent package + the
- * FlowActivityImpl class name with 'FlowActivityImpl' stripped off. For example,
- * fuzzy.flows.FooBarFlowActivity would have a default component of
- * 'fuzzy/FooBar'. <p/> TODO handle return to previous flow issues.
  */
 public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowActivity> implements FlowActivityImplementor {
     /**
@@ -169,6 +135,16 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             new FlowPropertyDefinitionBuilder(FSPAGE_NAME).initAccess(activityLocal, use, noAccess),
             new FlowPropertyDefinitionBuilder(FAINVISIBLE, boolean.class).initAccess(activityLocal, consume, noAccess)
         );
+    }
+
+    /**
+     * HACK: We have to wait for the FlowActivityImpl to be attached to a flow to add flow properties
+     * We would like to have the properties defineable in the ctor
+     */
+    @Override
+    public void processDefinitions() {
+        addStandardFlowPropertyDefinitions();
+        pushPropertyDefinitionsToFlow();
     }
 
     /**
@@ -718,6 +694,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         return getRawProperty(key) != null;
     }
 
+    @Deprecated
     @Override
     public boolean isPropertyBlank(String key) {
         String v = getRawProperty(key);
@@ -754,10 +731,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             // TODO: initial not always set - for example, "invisible" -property.
             return flowPropertyDefinition.getInitial();
         }
-    }
-
-    public Long getRawLong(String key) {
-        return getFlowStateImplementor().getRawLong(this, key);
     }
 
     // TODO .. injected
@@ -819,15 +792,17 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     }
 
     @Override
+    @Deprecated
     public String getString(String key) {
         return getProperty(key, String.class);
     }
 
+    @Deprecated
     public Boolean getBoolean(String key) {
         return getProperty(key, Boolean.class);
     }
 
-    @Override
+    @Deprecated
     public boolean isTrue(String key) {
         Boolean b = getBoolean(key);
         return b != null && b;
@@ -907,6 +882,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @param value
      * @see #isPropertyValueSet(String)
      */
+    @Deprecated
     @Override
     public void initPropertyIfNull(String key, Object value) {
         if (!isPropertyValueSet(key)) {
@@ -914,6 +890,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         }
     }
 
+    @Deprecated
     @Override
     public void initPropertyIfBlank(String key, Object value) {
         if (isPropertyBlank(key)) {
@@ -992,14 +969,6 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         }
     }
 
-    /**
-     * HACK: We have to wait for the FlowActivityImpl to be attached to a flow to add flow properties
-     */
-    @Override
-    public void processDefinitions() {
-        addStandardFlowPropertyDefinitions();
-        pushPropertyDefinitionsToFlow();
-    }
     @Override
     protected List<PropertyScope> getLocalPropertyScopes() {
         return LOCAL_PROPERTY_SCOPES;

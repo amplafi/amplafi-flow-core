@@ -143,4 +143,14 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     public Class<FPP> getFlowPropertyProviderClass() {
         return this.flowPropertyProviderClass;
     }
+    protected boolean isTrue(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, String propertyName) {
+        Object value = getProperty(flowPropertyProvider, flowPropertyDefinition, propertyName);
+        if (value == null) {
+            return false;
+        } else if ( value instanceof Boolean ) {
+            return (Boolean) value;
+        } else {
+            return Boolean.valueOf(value.toString());
+        }
+    }
 }

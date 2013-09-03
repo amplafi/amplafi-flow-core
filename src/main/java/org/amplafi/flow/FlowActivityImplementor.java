@@ -37,6 +37,7 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
     /**
      *
      */
+    @Deprecated // only because FlowActivity can't handle properties in the ctor
     void processDefinitions();
     /**
      * If the property has no value stored in the flowState's keyvalueMap then

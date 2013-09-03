@@ -198,11 +198,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
 
     String getFlowTypeName();
 
-    @Override
-    boolean isTrue(String key);
-
-    Boolean getBoolean(String key);
-
     Long getLong(String key);
 
     /**
@@ -240,8 +235,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     boolean isUpdatePossible();
 
     String getUpdateText();
-
-    boolean isCancelPossible();
 
     String getCancelText();
 

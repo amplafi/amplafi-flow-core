@@ -18,11 +18,56 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationResult;
 
 /**
+ * defines one activity in the flow. This can be a definition of an activity or
+ * the actual activity depending on the state of the Flow parent object.
+ * FlowActivity objects may be part of multiple definitions or multiple
+ * instances (but not both instances and definitions).
+ *
  * Used when multiple properties need to interact with each other.
  *
  * typical use case is when combining multiple properties to create a database object.
  *
- *  Every {@link Flow} must have at least 1 {@link FlowActivity}
+ * Every {@link Flow} must have at least 1 {@link FlowActivity}
+ *
+ * FlowActivities must be stateless. FlowActivity instances can be reused
+ * between different users and different {@link org.amplafi.flow.Flow}s.
+ *
+ * <p> Lifecycle methods:</p>
+ * <ol>
+ * <li>{@link #initializeFlow()} - used to initialize the FlowState with any
+ * defaults for missing values. <b>No</b> modifications should occur in this
+ * method.</li>
+ * <li>{@link #activate(FlowStepDirection)} - called each time the FlowActivity is made the
+ * current FlowActivity. Returns true if the Flow should immediately advance to
+ * the next FlowActivity. If this is the last FlowActivity, then the Flow
+ * completes.
+ *
+ * <b>No</b> database modifications should occur in this method.</li>
+ * <li>{@link #passivate(boolean, FlowStepDirection)} - called each time the FlowActivity was the
+ * current FlowActivity and is now no longer the current FlowActivity. Used to
+ * validate input as needed. <b>No</b> modifications should occur in this
+ * method.</li>
+ * <li>{@link #saveChanges()} - called when the flow is completing. <i>Only
+ * place where db modifications can be made.</i> This allows canceling the flow
+ * to meaningfully revert all changes.</li>
+ * <li>{@link #finishFlow(org.amplafi.flow.FlowState)} - called when the flow is finishing.</li>
+ * </ol>
+ * <p> This structure is in place so that FlowActivities that create
+ * relationships are not put into the position of having to be aware of the
+ * surrounding Flow and previously created objects. Nor are they aware of the
+ * state of the flow.</p>
+ * <p>
+ * By convention, FlowActivies are expected to be in a
+ * 'flows' package and the FlowActivity subclass' name ends with 'FlowActivity'.
+ * </p><p>
+ * If a FlowActivity is a visible step then the FlowActivity needs a
+ * component. The default component type is the grandparent package + the
+ * FlowActivity class name with 'FlowActivity' stripped off. For example,
+ * fuzzy.flows.FooBarFlowActivity would have a default component of
+ * 'fuzzy/FooBar'.
+ *
+ * TODO handle return to previous flow issues.
+ *
  *
  * @author patmoore
  */

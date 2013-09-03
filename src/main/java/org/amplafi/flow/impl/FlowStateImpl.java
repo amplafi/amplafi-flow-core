@@ -1363,30 +1363,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     /**
-     * @see org.amplafi.flow.FlowState#isTrue(java.lang.String)
-     */
-    @Override
-    public boolean isTrue(String key) {
-        Boolean b = getBoolean(key);
-        return b != null && b;
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowState#getBoolean(java.lang.String)
-     */
-    @Override
-    public Boolean getBoolean(String key) {
-        Object value = getProperty(key);
-        if (value == null) {
-            return null;
-        } else if ( value instanceof Boolean ) {
-            return (Boolean) value;
-        } else {
-            return Boolean.valueOf(value.toString());
-        }
-    }
-
-    /**
      * @see org.amplafi.flow.FlowState#getLong(java.lang.String)
      */
     @Override
@@ -1467,15 +1443,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public String getUpdateText() {
         return this.getProperty(FAUPDATE_TEXT, String.class);
-    }
-
-    /**
-     * @see org.amplafi.flow.FlowState#isCancelPossible()
-     */
-    @Override
-    public boolean isCancelPossible() {
-        Boolean b = this.getBoolean(FSNO_CANCEL);
-        return b == null || !b;
     }
 
     /**
