@@ -48,7 +48,6 @@ import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONWriter;
 
-import com.sworddance.util.ApplicationNullPointerException;
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
 import com.sworddance.util.map.NamespaceMapKey;

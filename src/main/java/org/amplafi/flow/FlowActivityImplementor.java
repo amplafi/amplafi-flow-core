@@ -46,8 +46,10 @@ public interface FlowActivityImplementor extends FlowActivity, FlowPropertyProvi
      * @param value
      * @see #isPropertySet(String)
      */
+    @Deprecated // use FlowPropertyValueProvider with PropertyRequired set
     void initPropertyIfNull(String key, Object value) ;
 
+    @Deprecated // use FlowPropertyValueProvider with PropertyRequired set
     void initPropertyIfBlank(String key, Object value);
 
     String getRawProperty(String key);
