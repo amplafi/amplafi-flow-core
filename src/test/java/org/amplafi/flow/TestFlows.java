@@ -102,12 +102,12 @@ public class TestFlows {
     public void testPropertyPriority() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         {
-            FlowActivityImpl flowActivity0 = new FlowActivityImpl();
-            flowActivity0.setFlowPropertyProviderName("fs0");
-            flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("key").initPropertyScope(activityLocal).toFlowPropertyDefinition());
-            FlowActivityImpl flowActivity1 = new FlowActivityImpl();
-            flowActivity1.setFlowPropertyProviderName("fs1");
-            FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1);
+            FlowActivityImpl flowActivity0 = new FlowActivityImpl("fs0");
+            flowActivity0.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("key").initPropertyScope(activityLocal));
+            FlowActivityImpl flowActivity1 = new FlowActivityImpl("fs1");
+            FlowActivityImpl flowActivity2 = new FlowActivityImpl("fs2");
+            flowActivity2.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("key").initPropertyScope(activityLocal));
+            FlowImpl flow = new FlowImpl(FLOW_TYPE, flowActivity0, flowActivity1, flowActivity2);
             flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
             flowTestingUtils.getFlowDefinitionsManager().addDefinition(flow);
         }
@@ -120,7 +120,9 @@ public class TestFlows {
         FlowActivityImplementor activity0 = fs.getActivity(0);
         assertEquals(activity0.getProperty("key"), "fs0", "flowState="+fs);
         FlowActivityImplementor activity1 = fs.getActivity(1);
-        assertEquals(activity1.getProperty("key"), "fs");
+        assertEquals(activity1.getProperty("key"), null, "flowActivity1 did not declare 'key' so should not see the values");
+        FlowActivityImplementor activity2 = fs.getActivity(2);
+        assertEquals(activity2.getProperty("key"), "fs", "flowActivity2 declared 'key' as flowLocal so should not see flowActivity0's changes which are activityLocal");
 
         activity0.setProperty("key", "new-fs0");
         activity1.setProperty("key", "new-fs");

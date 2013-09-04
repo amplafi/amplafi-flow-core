@@ -339,6 +339,23 @@ public class TestFlowPropertyDefinition {
         }
         return testData;
     }
+
+    /**
+     * test to make sure that undeclared properties (which is a sign of an error or they represent internal state)
+     * don't leak out.
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testExportingUndeclaredProperties() {
+        FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
+        FlowActivityImpl flowActivity =newFlowActivity();
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity);
+        Map<String, String> initialFlowState = null;
+        FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState);
+        FlowValuesMap exportedMap = flowState.getExportedValuesMap();
+        assertFalse(exportedMap.containsKey("not-a-property"), exportedMap+" should contain ");
+        // undeclared properties are not exported.
+        flowState.setProperty("not-a-property", true);
+    }
     /**
      * explicit test to make sure that only properties that should be exported are exported.
      * @param propertyUsage
@@ -356,21 +373,18 @@ public class TestFlowPropertyDefinition {
             "outside-property", "out-1",
             key, "false");
         FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState);
-        // TODO : decide how to handle undeclared properties - use case is when one flow is an intermediary between 2 flows.
-        flowState.setProperty("not-a-property", true);
         flowState.setProperty(key, true);
         flowState.finishFlow();
         FlowValuesMap exportedMap = flowState.getExportedValuesMap();
-        assertTrue(exportedMap.containsKey("not-a-property"), exportedMap+" should contain ");
         if ( flowPropertyDefinition.isCopyBackOnFlowSuccess()) {
             assertEquals(exportedMap.get(key), "true");
-            assertEquals(exportedMap.size(), 3, "wrong size "+exportedMap);
+            assertEquals(exportedMap.size(), 2, "wrong size "+exportedMap);
         } else if ( propertyUsage == consume) {
             assertNull(exportedMap.get(key), "exportedMap="+exportedMap+" key="+key+ " flowState="+flowState);
-            assertEquals(exportedMap.size(), 2, "wrong size "+exportedMap);
+            assertEquals(exportedMap.size(), 1, "wrong size "+exportedMap);
         } else {
             assertEquals(exportedMap.get(key), "false", "exportedMap="+exportedMap+" key="+key+ " flowState="+flowState);
-            assertEquals(exportedMap.size(), 3, "wrong size "+exportedMap);
+            assertEquals(exportedMap.size(), 2, "wrong size "+exportedMap);
         }
     }
     @DataProvider(name="exportingPropertiesData")

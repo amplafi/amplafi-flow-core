@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
 import org.amplafi.flow.FlowStateJsonRenderer;
@@ -51,7 +53,7 @@ public class TestFlowStateJsonRenderer extends Assert {
      */
     @Test
     public void testCompleteFlowState() {
-        FlowStateImpl flowState = newFlowState();
+        FlowStateImpl flowState = newFlowState("property1", "property2");
         Map<String, String> trustedValues = createMap(
             "property1", "value1",
             "property2", "value2");
@@ -71,7 +73,7 @@ public class TestFlowStateJsonRenderer extends Assert {
         Map<String, String> testObject = new LinkedHashMap<String, String>();
         testObject.put("objectParameter1", "parameterValue1");
         testObject.put("objectParameter2", "parameterValue2");
-        FlowStateImpl flowState = newFlowState();
+        FlowStateImpl flowState = newFlowState("property1", "property2", "objectProperty");
         flowState.<String> setProperty("property1", "value1");
         flowState.<String> setProperty("property2", "value2");
         flowState.<Map<String, String>> setProperty("objectProperty", testObject);
@@ -82,9 +84,13 @@ public class TestFlowStateJsonRenderer extends Assert {
             + ",\"objectProperty\":{\"objectParameter1\":\"parameterValue1\",\"objectParameter2\":\"parameterValue2\"}}");
     }
 
-    private FlowStateImpl newFlowState() {
+    private FlowStateImpl newFlowState(String... propertyNames) {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        String flowTypeName = flowTestingUtils.addFlowDefinition(new FlowActivityImpl());
+        FlowActivityImpl flowActivityImpl = new FlowActivityImpl();
+        for(String propertyName: propertyNames) {
+            flowActivityImpl.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(propertyName).initPropertyUsage(PropertyUsage.io));
+        }
+        String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivityImpl);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
         FlowStateImpl flowState = flowManagement.startFlowState(flowTypeName, true, null);
         flowState.finishFlow();

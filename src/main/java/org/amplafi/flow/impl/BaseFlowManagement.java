@@ -45,8 +45,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
-import org.amplafi.flow.flowproperty.PropertyScope;
-import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
@@ -498,9 +496,12 @@ public class BaseFlowManagement implements FlowManagement {
         // Note: because of read then write possibility then we need to assume that property will be set even if it is not now.
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = getFactoryFlowPropertyDefinitionBuilder(key, expectedClass);
         if (flowPropertyDefinitionBuilder == null) {
-            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expectedClass);
+            // dynamically created properties should never be outputed ( probably internal )
+            // this also has the nice benefit of isolating the FlowActivity
+            // from accidentally accessing a property that exists in the flowstate as a residual from
+            // keyvaluemap but was not declared as flowLocal ( the property would not have been copied to the flowstate's namespace)
+            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expectedClass).internalOnly();
         }
-        flowPropertyDefinitionBuilder.initAccess(PropertyScope.global, PropertyUsage.io);
         FlowPropertyDefinitionImplementor propertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
         if (sampleValue != null) {
             // actually going to be setting this property

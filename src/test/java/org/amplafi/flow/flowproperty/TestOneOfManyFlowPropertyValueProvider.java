@@ -24,6 +24,10 @@ public class TestOneOfManyFlowPropertyValueProvider {
     public void testAlternative1() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         FlowActivityImpl activity = new FlowActivityImpl("FA");
+        activity.addPropertyDefinitions(
+                    new FlowPropertyDefinitionBuilder("prop1"),
+                    new FlowPropertyDefinitionBuilder("prop2")
+                    );
         OneOfManyFlowPropertyValueProvider oneOfManyFlowPropertyValueProvider = new OneOfManyFlowPropertyValueProvider("prop", String.class, "prop1", "prop2");
         oneOfManyFlowPropertyValueProvider.defineFlowPropertyDefinitions(activity);
         flowTestingUtils.addFlowDefinition("foo", activity);
