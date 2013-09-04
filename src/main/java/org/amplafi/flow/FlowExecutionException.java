@@ -11,4 +11,7 @@ public class FlowExecutionException extends FlowException {
     public FlowExecutionException(String message, Exception exception) {
         super(message, exception);
     }
+    public FlowExecutionException(String message) {
+        super(message);
+    }
 }

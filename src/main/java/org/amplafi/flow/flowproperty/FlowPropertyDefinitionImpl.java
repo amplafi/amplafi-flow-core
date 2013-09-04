@@ -15,7 +15,6 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,14 +40,12 @@ import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonSelfRenderer;
 
-import com.sworddance.util.CUtilities;
 import com.sworddance.util.NotNullIterator;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import static org.apache.commons.lang.StringUtils.*;
-
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -57,7 +54,7 @@ import static org.apache.commons.lang.StringUtils.*;
  *
  * @author Patrick Moore
  */
-public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionImplementor, Cloneable/*, FlowPropertyDefinitionProvider*/ {
+public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImplementor {
 
     /**
      * Name of the property as used in the flow code.
@@ -567,8 +564,8 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
     @Override
     public List<Object> getObjectsNeedingToBeWired() {
         List<Object> objectsNeedingToBeWired = new ArrayList<Object>();
-        CUtilities.addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
-        CUtilities.addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider());
+        addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
+        addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider());
         return objectsNeedingToBeWired;
     }
 
@@ -833,15 +830,6 @@ public class FlowPropertyDefinitionImpl extends AbstractFlowPropertyDefinitionPr
             }
         }
         return list;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        List<FlowPropertyDefinitionImplementor> clonedSelf = Arrays.asList((FlowPropertyDefinitionImplementor)this.clone());
-        super.addPropertyDefinitions(flowPropertyProvider, clonedSelf, additionalConfigurationParameters);
     }
 
     @Override

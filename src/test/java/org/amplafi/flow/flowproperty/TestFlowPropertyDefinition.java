@@ -31,7 +31,6 @@ import static org.testng.Assert.fail;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,6 +40,7 @@ import java.util.Set;
 
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivityPhase;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -51,7 +51,6 @@ import org.amplafi.flow.FlowTestingUtils;
 import org.amplafi.flow.FlowUtils;
 import org.amplafi.flow.FlowValueMapKey;
 import org.amplafi.flow.FlowValuesMap;
-import org.amplafi.flow.TestFlowTransitions;
 import org.amplafi.flow.impl.FactoryFlowPropertyDefinitionProvider;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
@@ -60,7 +59,6 @@ import org.amplafi.flow.impl.FlowStateImplementor;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.sworddance.util.ApplicationIllegalArgumentException;
 /**
  * Tests {@link FlowPropertyDefinitionBuilder} and resulting {@link FlowPropertyDefinitionImplementor}.
  */
@@ -567,13 +565,16 @@ public class TestFlowPropertyDefinition {
         FlowActivityImpl flowActivity0 = newFlowActivity();
         final String notAutoCreated = "notAutocreated";
         final String autoCreated = "autocreated";
-        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new FlowPropertyValueProvider<FlowPropertyProvider>() {
+        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new AbstractFlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider,
                     FlowPropertyDefinition flowPropertyDefinition) {
-            	ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition));
-            	ApplicationIllegalArgumentException.valid(flowPropertyDefinition.isNamed(autoCreated), "but test should only get the ",autoCreated," property");
+            	check(flowPropertyDefinition);
+            	if(flowPropertyDefinition.isNamed(autoCreated)) {
+            	} else {
+            	    throw new FlowConfigurationException("but test should only get the "+autoCreated+" property");
+            	}
                 CharSequence value = "ME: "+flowPropertyDefinition.getName();
                 return (T) value;
             }
@@ -589,7 +590,7 @@ public class TestFlowPropertyDefinition {
         };
         FlowPropertyDefinitionImplementor flowNotAutoCreatedProperty = new FlowPropertyDefinitionBuilder(notAutoCreated, Object.class).initAccess(flowLocal,io).
         initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
-        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(autoCreated, Object.class).applyFlowPropertyExpectations(FlowPropertyDefinitionBuilder.API_RETURN_VALUE)
+        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(autoCreated, Object.class).returned()
             .initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
         flowActivity0.addPropertyDefinitions(flowNotAutoCreatedProperty, flowLocalProperty );
         String flowTypeName = flowTestingUtils.addFlowDefinition(flowActivity0);
@@ -688,7 +689,7 @@ public class TestFlowPropertyDefinition {
     @Test(enabled=TEST_ENABLED)
     public void testDefaultProviderInitialization() {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        final FlowPropertyDefinitionImplementor noProvider = new FlowPropertyDefinitionBuilder("noProvider", PropertyUsage.class).toFlowPropertyDefinition();
+        final FlowPropertyDefinitionBuilder noProvider = new FlowPropertyDefinitionBuilder("noProvider", PropertyUsage.class);
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder("hasdefault", Boolean.class).initDefaultObject(Boolean.TRUE);
         FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinitionBuilder.getFlowPropertyValueProvider();
         AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>() {
@@ -696,8 +697,7 @@ public class TestFlowPropertyDefinition {
         	@Override
         	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         		super.defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
-				Collection<FlowPropertyDefinitionImplementor> flowPropertyDefinitions = Arrays.<FlowPropertyDefinitionImplementor>asList(noProvider);
-				super.addPropertyDefinitions(flowPropertyProvider, flowPropertyDefinitions, additionalConfigurationParameters);
+				super.addPropertyDefinition(flowPropertyProvider, noProvider, additionalConfigurationParameters);
         	}
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
@@ -726,13 +726,13 @@ public class TestFlowPropertyDefinition {
      * Make sure that a {@link FlowPropertyValueProvider} that cannot handle a FlowPropertyDefinition is not set as its default
      * Make sure the exception is thrown.
      */
-    @Test(enabled=TEST_ENABLED, expectedExceptions= {ApplicationIllegalArgumentException.class})
+    @Test(enabled=TEST_ENABLED, expectedExceptions= {FlowConfigurationException.class})
     public void testPreventAddingWrongFlowPropertyValueProvider() {
-        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new FlowPropertyValueProvider<FlowPropertyProvider>() {
+        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider =  new AbstractFlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider,  FlowPropertyDefinition flowPropertyDefinition) {
-            	throw ApplicationIllegalArgumentException.fail();
+            	throw fail(flowPropertyDefinition);
             }
 
             @Override

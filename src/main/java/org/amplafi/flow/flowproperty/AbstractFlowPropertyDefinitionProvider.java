@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
@@ -40,7 +41,7 @@ import com.sworddance.util.NotNullIterator;
  */
 public abstract class AbstractFlowPropertyDefinitionProvider {
     // Forcing a fixed order so getting the default first FPD will be consistent (TODO save first FPD explicitly)
-    private final LinkedHashMap<String, FlowPropertyDefinitionImplementor> flowPropertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinitionImplementor>();
+    private final LinkedHashMap<String, FlowPropertyDefinitionBuilder> flowPropertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinitionBuilder>();
 
     protected AbstractFlowPropertyDefinitionProvider() {
         // for case when definitions are added in later.
@@ -49,16 +50,18 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilders);
     }
 
-    public void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
+    protected void addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: NotNullIterator.<FlowPropertyDefinitionBuilder>newNotNullIterator(flowPropertyDefinitionBuilders)) {
-            FlowPropertyDefinitionImplementor outputed = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
-            put(this.getFlowPropertyDefinitions(), outputed);
+            if ( flowPropertyDefinitionBuilder.getName() == null ) {
+                throw new FlowConfigurationException("Only definitions with names can be provided "+flowPropertyDefinitionBuilder);
+            }
+            this.flowPropertyDefinitions.put(flowPropertyDefinitionBuilder.getName(), flowPropertyDefinitionBuilder);
             // Apply default of the defining FlowPropertyValueProvider.
             flowPropertyDefinitionBuilder.applyDefaultProviders(this);
         }
     }
 
-    protected Map<String, FlowPropertyDefinitionImplementor> getFlowPropertyDefinitions() {
+    protected Map<String, FlowPropertyDefinitionBuilder> getFlowPropertyDefinitions() {
         return this.flowPropertyDefinitions;
     }
 
@@ -67,31 +70,18 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
     public List<String> getOutputFlowPropertyDefinitionNames() {
         List<String> outputFlowPropertyDefinitionNames = new ArrayList<String>();
-        for(FlowPropertyDefinition flowPropertyDefinition : this.getFlowPropertyDefinitions().values()) {
-            if ( flowPropertyDefinition.getPropertyUsage().isOutputedProperty()) {
+        for(FlowPropertyDefinitionBuilder flowPropertyDefinition : this.getFlowPropertyDefinitions().values()) {
+            if ( flowPropertyDefinition.isOutputedProperty()) {
                 outputFlowPropertyDefinitionNames.add(flowPropertyDefinition.getName());
             }
         }
         if ( isEmpty(outputFlowPropertyDefinitionNames)) {
-            FlowPropertyDefinitionImplementor byDefaultFirst = get(this.getFlowPropertyDefinitions().values(),0);
+            FlowPropertyDefinitionBuilder byDefaultFirst = get(this.getFlowPropertyDefinitions().values(),0);
             outputFlowPropertyDefinitionNames.add(byDefaultFirst.getName());
         }
         return outputFlowPropertyDefinitionNames;
     }
 
-    /**
-     * @deprecated Use the one with {@link FlowPropertyDefinitionBuilder}
-     * adds in the initFlowPropertyValueProvider(this) since I keep forgetting.
-     * @param flowPropertyProvider
-     * @param flowPropertyDefinitions
-     */
-    @Deprecated
-    protected void addPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionImplementor>flowPropertyDefinitions, List<FlowPropertyExpectation>additionalConfigurationParameters) {
-        for(FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor: flowPropertyDefinitions) {
-            FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
-            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
-        }
-    }
     /**
      * Add additional {@link FlowPropertyDefinition}s to the {@link FlowPropertyProviderImplementor}. This is used when
      * a {@link FlowPropertyValueProvider} wishes to define a property that the {@link FlowPropertyValueProvider} does not supply
@@ -113,11 +103,11 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
-        FlowPropertyDefinitionImplementor flowPropertyDefinitionImplementor = this.getFlowPropertyDefinitions().get(propertyName);
-        if ( flowPropertyDefinitionImplementor == null || (dataClass != null && !flowPropertyDefinitionImplementor.isAssignableFrom(dataClass))) {
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowPropertyDefinitions().get(propertyName);
+        if ( flowPropertyDefinitionBuilder == null || (dataClass != null && !flowPropertyDefinitionBuilder.isAssignableFrom(dataClass))) {
             return null;
         } else {
-            return new FlowPropertyDefinitionBuilder(flowPropertyDefinitionImplementor);
+            return new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder);
         }
     }
     /**
@@ -164,11 +154,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         if ( this.getFlowPropertyDefinitions() != null) {
-            List<FlowPropertyDefinitionImplementor> clonedFlowPropertyDefinitions = new ArrayList<FlowPropertyDefinitionImplementor>();
-            for(FlowPropertyDefinitionImplementor flowPropertyDefinition: this.getFlowPropertyDefinitions().values()) {
-                clonedFlowPropertyDefinitions.add(flowPropertyDefinition);
+            for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: this.getFlowPropertyDefinitions().values()) {
+                addPropertyDefinition(flowPropertyProvider, new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder), additionalConfigurationParameters);
             }
-            this.addPropertyDefinitions(flowPropertyProvider, clonedFlowPropertyDefinitions, additionalConfigurationParameters);
         }
     }
 

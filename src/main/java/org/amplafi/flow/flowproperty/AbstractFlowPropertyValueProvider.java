@@ -14,10 +14,11 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.Collection;
+
+import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
-import com.sworddance.util.ApplicationIllegalArgumentException;
 
 /**
  * @author patmoore
@@ -44,6 +45,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     @Override
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = super.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+        // TODO: seems HACK: is this really a good idea to special case this ( i.e. what about persister? changelistener? etc. )
         if (flowPropertyDefinitionBuilder != null) {
             flowPropertyDefinitionBuilder.initFlowPropertyValueProvider(this);
         }
@@ -61,19 +63,29 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         return clazz;
     }
 
-    protected void check(FlowPropertyDefinition flowPropertyDefinition) {
-       ApplicationIllegalArgumentException.valid(isHandling(flowPropertyDefinition),
-           flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
-    }
     /**
-     * used after a chain of isHandling() checks
+     * called at the beginning of the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} to fail early if the property is not handled by this {@link FlowPropertyValueProvider}
      * @param flowPropertyDefinition
      */
-    protected ApplicationIllegalArgumentException fail(FlowPropertyDefinition flowPropertyDefinition) {
-        return ApplicationIllegalArgumentException.fail("Hard coded fail: ", isHandling(flowPropertyDefinition),
-           flowPropertyDefinition,": is not handled by ",this.getClass().getCanonicalName()," only ",getFlowPropertyDefinitionNames());
+    protected void check(FlowPropertyDefinition flowPropertyDefinition) {
+        if ( !isHandling(flowPropertyDefinition) ) {
+            throw new FlowExecutionException(
+                    flowPropertyDefinition + ": is not handled by "  + this.getClass().getCanonicalName() +" only " + getFlowPropertyDefinitionNames());
+        }
     }
     /**
+     * in {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} after a chain of {@link FlowPropertyDefinition#isNamed()} checks determine
+     * which property (of the possible many) that this {@link FlowPropertyValueProvider} is handling.
+     * @param flowPropertyDefinition
+     */
+    protected FlowExecutionException fail(FlowPropertyDefinition flowPropertyDefinition) {
+        throw new FlowExecutionException(this.getClass().getCanonicalName() +" did not handle "+ flowPropertyDefinition +
+                (isHandling(flowPropertyDefinition)?" even though it is supposed to.": " and was not supposed to be able to ( use check(flowPropertyDefinition) at beginning of get())")
+                +" only " + getFlowPropertyDefinitionNames());
+    }
+    /**
+     * Use when getting a property from the {@link FlowPropertyProviderWithValues}
+     *
      * avoids infinite loop by detecting when attempting to get the property that the FlowPropertyValueProvider is supposed to be supplying.
      *
      * ONLY use when in the get() method not when doing a saveChanges() call.

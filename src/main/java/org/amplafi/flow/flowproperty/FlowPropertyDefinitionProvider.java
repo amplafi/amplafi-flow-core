@@ -24,17 +24,21 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 
 
 /**
- * Implementers will add the needed FlowPropertyDefinitions to {@link FlowPropertyProvider}s.
+ * holds map of {@link FlowPropertyDefinitionBuilder}s (not {@link FlowPropertyDefinition}s).
+ * Converting to FlowPropertyDefinitions forced all the unspecified attributes to be defined.
+ * But in the FlowPropertyDefinitionProvider we are not yet ready to make that decision. We need to wait until putting the
+ * properties on a specific {@link FlowPropertyProvider} ( and the additional {@link FlowPropertyExpectation}s can be applied )
+ * before forcing all the unspecified attributes to a concrete setting.
  *
- * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity 
- * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define 
- * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider} 
+ * Implementers will use the {@link FlowPropertyDefinitionBuilder}s to generate the needed FlowPropertyDefinitions to {@link FlowPropertyProvider}s.
+ *
+ * A Flow Property is, once defined, a typed java 'attribute' that is managed by the flow framework. It has a scope of validity
+ * ({@link PropertyScope}), and other properties that might be altered by using a {@link FlowPropertyDefinitionBuilder} when you define
+ * the property. Depending on where you're standing, you have various interfaces to fetch them using {@link FlowPropertyValueProvider}
  * or accessing - in a lower level - directly on a k/v map using getProperty, for example inside a {@link FlowActivity}
  *
- * 
- * The {@link FlowPropertyDefinition}s added are not to be shared. ( YET )
+ * Before applied the {@link FlowPropertyDefinitionBuilder} must be cloned to avoid changing the stored definition.
  *
- * TODO: Allow immutable {@link FlowPropertyDefinition} to be returned.
  * @author patmoore
  *
  */

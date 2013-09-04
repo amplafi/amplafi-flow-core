@@ -94,7 +94,7 @@ public class TestFlowTransitions {
      * check to make sure the flow returns to the original flow
      * check to make sure the altered value is returned to
      */
-    @Test(enabled=false) // Need to re-enable
+    @Test(enabled=false) // 3 sept 2013 PAT: disabled because rules changed as to how undeclared properties can flow through flows. Need to re-enable
     public void testReturnToFlow() {
         FlowImpl mainFlow = new FlowImpl(FLOW_TYPE_1);
         String defaultAfterPage1 = "default-after-page-for-"+FLOW_TYPE_1;
@@ -164,7 +164,7 @@ public class TestFlowTransitions {
      * <li>make sure that cache is cleared on flow completion.</li>
      * </ul>
      */
-    @Test(enabled=false) // Need to re-enable
+    @Test(enabled=false) // 3 sept 2013 PAT: disabled because rules changed as to how undeclared properties can flow through flows. Need to re-enable
     public void testAvoidConflictsOnFlowTransitions() {
         FlowActivityImpl flowActivity1 = new FlowActivityImpl().initInvisible(false);
         // initialized by "first" flow ignored by second flow.
