@@ -183,6 +183,7 @@ public class FlowPropertyDefinitionBuilder {
         this.name = flowPropertyExpectation.getName();
         this.applyFlowPropertyExpectation(flowPropertyExpectation);
     }
+    @SafeVarargs
     public FlowPropertyDefinitionBuilder(String name, Class<? extends Object> dataClass, Class<? extends Object>... collectionClasses) {
         this.name = name;
         this.dataClassDefinition = new DataClassDefinitionImpl(dataClass, collectionClasses);
