@@ -45,6 +45,8 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor;
+import org.amplafi.flow.flowproperty.PropertyScope;
+import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.launcher.ValueFromBindingProvider;
 import org.amplafi.flow.web.PageProvider;
 import org.apache.commons.collections.CollectionUtils;
@@ -500,7 +502,9 @@ public class BaseFlowManagement implements FlowManagement {
             // this also has the nice benefit of isolating the FlowActivity
             // from accidentally accessing a property that exists in the flowstate as a residual from
             // keyvaluemap but was not declared as flowLocal ( the property would not have been copied to the flowstate's namespace)
-            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expectedClass).internalOnly();
+            // Kostya: setting property usage to consume to allow flow read properties which name is not known at the flow initialization step.
+            // Needed for example when handling callbacks from external services.
+            flowPropertyDefinitionBuilder = new FlowPropertyDefinitionBuilder(key, expectedClass).initAccess(PropertyScope.requestFlowLocal, PropertyUsage.consume);
         }
         FlowPropertyDefinitionImplementor propertyDefinition = flowPropertyDefinitionBuilder.toFlowPropertyDefinition();
         if (sampleValue != null) {
