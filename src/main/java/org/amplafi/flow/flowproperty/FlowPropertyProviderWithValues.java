@@ -43,7 +43,11 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
     <T> T getProperty(String key);
     <T> T getProperty(String key, Class<? extends T> expected);
     <T> T getProperty(Class<? extends T> expected);
-
+    /**
+     * @param key
+     * @return the serialized form of the property
+     */
+    String getRawProperty(String key);
     /**
      * override to treat some properties as special. This method is called by
      * FlowPropertyBinding. Default behavior caches value and sets the property

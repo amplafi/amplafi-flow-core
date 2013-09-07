@@ -157,8 +157,10 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
     /**
      * @return the pageName.
      */
+    @Deprecated
     String getPageName();
 
+    @Deprecated
     String getComponentName();
     /**
      *
