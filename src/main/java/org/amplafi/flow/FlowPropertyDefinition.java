@@ -92,9 +92,10 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
     boolean isDataClassMergeable(FlowPropertyDefinition flowPropertyDefinition);
 
     /**
-     * HACK : we must not require manual checking of saveBack property should know if it should be copied back to the flow values map
-     * @return
+     * HACK : we must not require manual checking of saveBack. Property should know if it should be copied back to the flow values map
+     * @return true if the property should be serialize into the FlowMap before being saved
      */
+    @Deprecated
     boolean isSaveBack();
 
     /**
@@ -105,13 +106,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
 
     boolean isFlowTranslatorSet();
 
-    /**
-     *
-     * @param possiblePropertyName
-     * @return true if {@link #getName()} or {@link #getAlternates()} equals possiblePropertyName ( case sensitive check)
-     */
-    @Override
-    boolean isNamed(String possiblePropertyName);
     boolean isNamed(Class<?> byClassName);
 
     /**
