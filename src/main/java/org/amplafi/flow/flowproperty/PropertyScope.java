@@ -76,7 +76,7 @@ public enum PropertyScope {
      * {@link org.amplafi.flow.FlowActivityPhase} requirement is done by checking to see if the property is set. We cannot just check to see if there is a {@link org.amplafi.flow.FlowPropertyValueProvider}
      * because a {@link org.amplafi.flow.FlowPropertyValueProvider} may not actually set a value.
      */
-    requestFlowLocal(true, internalState, true),
+    requestFlowLocal(true, io, true),
     /**
      * A global property represents a property that:
      * 1) the current flow has no knowledge of the data ( passthrough case )
