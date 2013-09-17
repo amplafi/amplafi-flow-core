@@ -209,18 +209,12 @@ public interface FlowConstants {
      */
     public static final String FSRENDER_RESULT = "fsRenderResult";
 
-    public static final String HTML = "html";
     public static final String JSON = "json";
     public static final String HANDLED = "handled";
-    /**
-     * If a {@link FlowRequest} contains such a parameter, then it considered to be information request. No flow state will be created, only
-     * information about flow structure and parameters will be sent back.
-     */
-    public static final String DESCRIBE = "describe";
 
-	/**
-	 * Being set, this property indicates that the flow is designed to return a single
-	 * property, the one specified by this one.
-	 */
-	public static final String FSSINGLE_PROPERTY_NAME = "fsSinglePropertyName";
+    /**
+     * Being set, this property indicates that the flow is designed to return a single
+     * property, the one specified by this one.
+     */
+    public static final String FSSINGLE_PROPERTY_NAME = "fsSinglePropertyName";
 }

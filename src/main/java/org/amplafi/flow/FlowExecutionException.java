@@ -8,10 +8,14 @@ package org.amplafi.flow;
  *
  */
 public class FlowExecutionException extends FlowException {
+    private static final long serialVersionUID = 1L;
     public FlowExecutionException(String message, Exception exception) {
         super(message, exception);
     }
     public FlowExecutionException(String message) {
         super(message);
+    }
+    public FlowExecutionException(Exception exception) {
+        super(exception);
     }
 }
