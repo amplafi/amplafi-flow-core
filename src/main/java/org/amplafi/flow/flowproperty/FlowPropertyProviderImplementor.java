@@ -33,4 +33,5 @@ public interface FlowPropertyProviderImplementor extends FlowPropertyProvider, R
     void addPropertyDefinitions(FlowPropertyDefinitionImplementor...flowPropertyDefinitions);
 
     void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition);
+    void addPropertyDefinitions(FlowPropertyDefinitionBuilder... flowPropertyDefinitionBuilders);
 }
