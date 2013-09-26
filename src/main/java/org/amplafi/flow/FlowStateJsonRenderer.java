@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONWriter;
+import org.amplafi.json.JsonConstruct;
 import org.amplafi.json.JsonRenderer;
 import org.apache.commons.lang.ObjectUtils;
 
@@ -86,16 +87,24 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 	        // note that not all property values may have been serialized - but may be we can look for
 	        // already serialized values? However, need to check to see if this would skip error checking
 	        // when property was passed as part of the request.
-    	    Object property = flowState.getProperty(propertyName);
+    	    Object property = flowState.getRawProperty(propertyName);
+    	    //Only request property from flow state when there is no raw (already serialized) property available. 
+    	    //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
+    	    if (property == null) {
+    	        //Only get the value if not serialized yet.
+    	        property = flowState.getProperty(propertyName);
+    	    } else {
+    	        //If serialized, try to get JsonConstruct out of it to avoid overqouting.
+    	        JsonConstruct json = JsonConstruct.Parser.toJsonConstruct((String) property);
+    	        if (json != null) {
+    	            property = json;
+    	        }
+    	    }
     	    if (property != null) {
     	        // a property may be set but set to null - which we can skip handling.
     	        // This reduces the clutter of optional values being outputed.
-    	        String serializedValue = ObjectUtils.toString(flowPropertyDefinition.serialize(new JSONWriter(), property), null);
     		    jsonWriter.key(propertyName);
-    		    // If the property is a string, the serialization of the property will already have "
-    		    // normal use of jsonWriter.value() would result in ""real string""
-    		    // Using append avoids such double quoting
-    		    jsonWriter.append(serializedValue);
+    		    jsonWriter.value(property);
     	    }
 	    } catch (Exception e) {
 	        // Don't let errors in serialization prevent the other properties from being serialized.

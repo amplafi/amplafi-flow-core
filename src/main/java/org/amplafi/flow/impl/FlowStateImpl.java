@@ -47,6 +47,7 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
 import org.amplafi.json.JSONWriter;
+import org.amplafi.json.JsonConstruct;
 
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
@@ -1753,8 +1754,15 @@ public class FlowStateImpl implements FlowStateImplementor {
         // security checks.
         // this is an important valid use case for generating a temp api key that is returned via a callback uri not directly
         if ( flowPropertyDefinition.isExportable()) {
-            Object propertyValue = this.getPropertyWithDefinition(this, flowPropertyDefinition);
-            flowPropertyDefinition.serialize(jsonWriter, propertyValue);
+            String rawProperty = this.getRawProperty(this, flowPropertyDefinition);
+            //Only request property from flow state when there is no raw (already serialized) property available. 
+            //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
+            if (rawProperty != null) {
+                jsonWriter.value(JsonConstruct.Parser.toJsonConstruct(rawProperty));
+            } else {
+                Object propertyValue = this.getPropertyWithDefinition(this, flowPropertyDefinition);
+                flowPropertyDefinition.serialize(jsonWriter, propertyValue);
+            }
         }
     }
 
