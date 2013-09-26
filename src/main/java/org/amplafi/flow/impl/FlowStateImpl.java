@@ -1159,14 +1159,6 @@ public class FlowStateImpl implements FlowStateImplementor {
 
 
 
-    /**
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues#clearCached(String, java.lang.String)
-     */
-    @Override
-    public void clearCached(String namespace, String key) {
-        setCached(namespace, key, null);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCached(String namespace, String key) {

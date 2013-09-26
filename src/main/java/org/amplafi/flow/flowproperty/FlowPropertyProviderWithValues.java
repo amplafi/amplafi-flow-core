@@ -87,5 +87,4 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
      */
     boolean isPropertyValueSet(String key);
 
-    void clearCached(String namespace, String key);
 }
