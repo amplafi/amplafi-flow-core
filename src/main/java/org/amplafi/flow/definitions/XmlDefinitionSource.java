@@ -22,7 +22,6 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
@@ -146,7 +145,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             Node child = children.item(index);
             String nodeName = child.getNodeName();
             if (PROPERTY.equals(nodeName)) {
-                flowGroup.addPropertyDefinition(parseProperty(child, PropertyScope.global));
+                flowGroup.addPropertyDefinitions(parseProperty(child, PropertyScope.global));
             } else if (DEFINITION.equals(nodeName)) {
                 FlowImplementor flow = parseFlow(child);
                 this.flows.put(flow.getFlowPropertyProviderName(), flow);
@@ -214,7 +213,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             case Node.ELEMENT_NODE:
                 String nodeName = child.getNodeName();
                 if (PROPERTY.equals(nodeName)) {
-                    flow.addPropertyDefinition(parseProperty(child, PropertyScope.flowLocal));
+                    flow.addPropertyDefinitions(parseProperty(child, PropertyScope.flowLocal));
                 } else if (ACTIVITY.equals(nodeName)) {
                     flow.addActivity(parseStep(child, false));
                 } else if (TRANSITION.equals(nodeName)) {
@@ -289,7 +288,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             switch(child.getNodeType()) {
             case Node.ELEMENT_NODE:
                 if (PROPERTY.equals(child.getNodeName())) {
-                    flowActivity.addPropertyDefinition(parseProperty(child, PropertyScope.activityLocal));
+                    flowActivity.addPropertyDefinitions(parseProperty(child, PropertyScope.activityLocal));
                 } else {
                     throw new FlowException("element is unknown "+child);
                 }
@@ -344,7 +343,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
         return flowActivity;
     }
 
-    private FlowPropertyDefinitionImplementor parseProperty(Node flowPropertyDefinitionNode, PropertyScope propertyScope) {
+    private FlowPropertyDefinitionBuilder parseProperty(Node flowPropertyDefinitionNode, PropertyScope propertyScope) {
         NamedNodeMap attributes = flowPropertyDefinitionNode.getAttributes();
         String name = getNameAttribute(attributes);
         // TODO : use the FlowPropertyDefinitionBuilder
@@ -376,7 +375,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 throw new FlowException(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
             }
         }
-        return flowPropertyDefinition.toFlowPropertyDefinition();
+        return flowPropertyDefinition;
     }
 
     /**
