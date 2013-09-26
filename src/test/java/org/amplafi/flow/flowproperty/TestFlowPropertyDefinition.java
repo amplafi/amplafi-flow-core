@@ -285,8 +285,7 @@ public class TestFlowPropertyDefinition {
             flowActivity.setFlowPropertyProviderName(activityName);
             String name= propertyScope+"_"+propertyUsage;
             String externalInitial = "ext_"+name;
-            FlowPropertyDefinitionImplementor flowPropertyDefinition = new FlowPropertyDefinitionBuilder(name).initAccess(propertyScope, propertyUsage).toFlowPropertyDefinition();
-            flowActivity.addPropertyDefinitions(flowPropertyDefinition);
+            flowActivity.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(name).initAccess(propertyScope, propertyUsage));
             initialFlowState.put(name, externalInitial);
             flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
         }

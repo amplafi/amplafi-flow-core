@@ -230,8 +230,7 @@ public class TestFlows {
     public void testConversion() {
         Map<String, String> initialFlowState = new HashMap<String, String>();
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo", Long.class).toFlowPropertyDefinition();
-        flow.addPropertyDefinitions(definition);
+        flow.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("foo", Long.class));
         FlowActivityImpl fa1 = new FlowActivityImpl();
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
