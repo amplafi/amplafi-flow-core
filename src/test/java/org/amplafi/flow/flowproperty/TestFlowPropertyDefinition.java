@@ -659,11 +659,9 @@ public class TestFlowPropertyDefinition {
     public void testEnumHandling() {
         Map<String, String> initialFlowState = FlowUtils.INSTANCE.createState("foo", SampleEnum.EXTERNAL);
         FlowImplementor flow = new FlowImpl(FLOW_TYPE);
-        FlowPropertyDefinitionImplementor definition = new FlowPropertyDefinitionBuilder("foo", SampleEnum.class).toFlowPropertyDefinition();
-        flow.addPropertyDefinitions(definition);
+        flow.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("foo", SampleEnum.class));
         FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
-        definition = new FlowPropertyDefinitionBuilder("fa1fp", SampleEnum.class).setInitial(SampleEnum.EMAIL.name()).toFlowPropertyDefinition();
-        fa1.addPropertyDefinitions(definition);
+        fa1.addPropertyDefinitions(new FlowPropertyDefinitionBuilder("fa1fp", SampleEnum.class).setInitial(SampleEnum.EMAIL.name()));
         flow.addActivity(fa1);
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         flowTestingUtils.getFlowTranslatorResolver().resolveFlow(flow);
@@ -757,7 +755,7 @@ public class TestFlowPropertyDefinition {
         flowTestingUtils.getFlowDefinitionsManager().addFactoryFlowPropertyDefinitionProvider(factoryFlowPropertyDefinitionProvider);
         String propertyName = "propertyName";
 
-        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
+        FlowPropertyDefinitionBuilder flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
             .initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProviderWithValues>() {
 
             @SuppressWarnings("unchecked")
@@ -780,7 +778,7 @@ public class TestFlowPropertyDefinition {
         		// not checking so sure.
         		return true;
         	}
-        }).toFlowPropertyDefinition();
+        });
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
@@ -800,7 +798,7 @@ public class TestFlowPropertyDefinition {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         String propertyName = "propertyName";
 
-        FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
+        FlowPropertyDefinitionBuilder flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)
         .initFlowPropertyValueProvider(new FlowPropertyValueProvider<FlowPropertyProvider>() {
 
             @SuppressWarnings("unchecked")
@@ -820,7 +818,7 @@ public class TestFlowPropertyDefinition {
         		// not checking so sure.
         		return true;
         	}
-        }).toFlowPropertyDefinition();
+        });
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
         flowActivity0.addPropertyDefinitions(flowLocalProperty);
