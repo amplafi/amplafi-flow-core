@@ -77,7 +77,8 @@ public class TestFlowStateMorphing {
     @Test
     public void testNegativeStateFlowMorphing() {
         FlowActivityImpl fa1 = createFA("FA-1");
-        fa1.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate());
+        FlowPropertyDefinitionImplementor morphFlowFPD = new FlowPropertyDefinitionBuilder(FS_MORPH_FLOW, Boolean.class).initAutoCreate().toFlowPropertyDefinition();
+        fa1.addPropertyDefinitions(morphFlowFPD);
 
         FlowActivityImpl fa2 = createFA("FA-2");
         FlowActivityImpl fa3 = createFA("FA-3");

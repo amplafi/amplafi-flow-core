@@ -135,7 +135,7 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
      * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(FlowPropertyDefinitionImplementor)
      */
     @Deprecated // use FBDB
-    private void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
+    protected void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {
         if ( flowPropertyDefinition == null ) {
             return;
         }
