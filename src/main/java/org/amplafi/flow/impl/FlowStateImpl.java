@@ -1758,7 +1758,12 @@ public class FlowStateImpl implements FlowStateImplementor {
             //Only request property from flow state when there is no raw (already serialized) property available. 
             //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
             if (rawProperty != null) {
-                jsonWriter.value(JsonConstruct.Parser.toJsonConstruct(rawProperty));
+                JsonConstruct jsonConstruct = JsonConstruct.Parser.toJsonConstruct(rawProperty);
+                if (jsonConstruct != null) {
+                    jsonWriter.value(jsonConstruct);
+                } else {
+                    jsonWriter.append(rawProperty);
+                }
             } else {
                 Object propertyValue = this.getPropertyWithDefinition(this, flowPropertyDefinition);
                 flowPropertyDefinition.serialize(jsonWriter, propertyValue);
