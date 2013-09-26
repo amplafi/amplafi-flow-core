@@ -73,9 +73,9 @@ public class TestFlowTransitions {
             FlowActivityImpl fa1 = new FlowActivityImpl().initInvisible(false);
             flow.addActivity(fa1);
             FlowPropertyDefinitionImplementor definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
-            fa1.addPropertyDefinition(new FlowPropertyDefinitionBuilder(definition).initFlowPropertyValueProvider(
+            fa1.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(definition).initFlowPropertyValueProvider(
                 new AddToMapFlowPropertyValueProvider<FlowPropertyProvider, String, FlowTransition>(new FlowTransition("foo", FLOW_TYPE_2, "foo",
-                    TransitionType.alternate, null))).toFlowPropertyDefinition());
+                    TransitionType.alternate, null))));
             definition = fa1.getFlowPropertyDefinition(FSFLOW_TRANSITIONS);
             assertNotNull(definition);
             FlowManagement baseFlowManagement = getFlowManagement(flow);
