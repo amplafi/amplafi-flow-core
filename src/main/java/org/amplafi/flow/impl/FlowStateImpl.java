@@ -1747,13 +1747,14 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public void serializeSinglePropertyValue(JSONWriter jsonWriter) {
         String singlePropertyName = flow.getSinglePropertyName();
-        FlowPropertyDefinition flowPropertyDefinition = this.getFlowPropertyDefinition(singlePropertyName);
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = this.getFlowPropertyDefinition(singlePropertyName);
         // TODO : SECURITY : HACK This important security check to make sure that secure properties are not released
         // to users. This security check needs to built in to the flow code itself. We must not rely on the renderer to do
         // security checks.
         // this is an important valid use case for generating a temp api key that is returned via a callback uri not directly
         if ( flowPropertyDefinition.isExportable()) {
-            flowPropertyDefinition.serialize(jsonWriter, this.getProperty(singlePropertyName));
+            Object propertyValue = this.getPropertyWithDefinition(this, flowPropertyDefinition);
+            flowPropertyDefinition.serialize(jsonWriter, propertyValue);
         }
     }
 
