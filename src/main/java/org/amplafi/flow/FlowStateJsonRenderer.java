@@ -18,11 +18,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonConstruct;
 import org.amplafi.json.JsonRenderer;
-import org.apache.commons.lang.ObjectUtils;
-
 import static com.sworddance.util.CUtilities.*;
 
 
@@ -38,8 +35,6 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
     public static final String FS_CURRENT_ACTIVITY_BY_NAME = "fsCurrentActivityByName";
     public static final String FS_COMPLETE = "fsComplete";
 
-//    private FlowManagement flowManagement;
-
     @Override
     public Class<FlowState> getClassToRender() {
         return FlowState.class;
@@ -47,18 +42,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 
     @Override
     public IJsonWriter toJson(IJsonWriter jsonWriter, FlowState flowState) {
-//        jsonWriter.object();
-//        try {
-//            jsonWriter.key(FS_COMPLETE).value(flowState.isCompleted());
-//            if (flowState.isActive()) {
-//                jsonWriter.key(FS_CURRENT_ACTIVITY_BY_NAME).value(flowState.getCurrentActivityByName());
-//            }
-//            jsonWriter.keyValueIfNotBlankValue(FS_LOOKUP_KEY, flowState.getLookupKey());
-
-            renderState(jsonWriter, flowState);
-//        } finally {
-//            jsonWriter.endObject();
-//        }
+        renderState(jsonWriter, flowState);
         return jsonWriter;
     }
 
@@ -68,7 +52,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
         if ( isNotEmpty(propertyDefinitionsMap) ) {
             Collection<FlowPropertyDefinition> propertyDefinitions = propertyDefinitionsMap.values();
             for (FlowPropertyDefinition flowPropertyDefinition : propertyDefinitions) {
-            	if (flowState.isPropertySet(flowPropertyDefinition.getName()) && 
+                if (flowState.isPropertySet(flowPropertyDefinition.getName()) &&
             	        flowPropertyDefinition.isExportable() &&
             	        flowPropertyDefinition.getPropertyUsage().isOutputedProperty()) {
             		renderProperty(jsonWriter, flowState, flowPropertyDefinition);
@@ -88,7 +72,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 	        // already serialized values? However, need to check to see if this would skip error checking
 	        // when property was passed as part of the request.
     	    Object property = flowState.getRawProperty(propertyName);
-    	    //Only request property from flow state when there is no raw (already serialized) property available. 
+    	    //Only request property from flow state when there is no raw (already serialized) property available.
     	    //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
     	    if (property == null) {
     	        //Only get the value if not serialized yet.
@@ -118,24 +102,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
      */
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
-//        JSONObject jsonObject = (JSONObject) value;
-//        String lookupKey = jsonObject.getString(FS_LOOKUP_KEY);
-//        // TODO apply any changes back to the flowState?
-//        FlowState flowState = getFlowManagement().getFlowState(lookupKey);
-//        return (K) flowState;
         throw new UnsupportedOperationException();
     }
 
-//    /**
-//     * @param flowManagement the flowManagement to set
-//     */
-//    public void setFlowManagement(FlowManagement flowManagement) {
-//        this.flowManagement = flowManagement;
-//    }
-//    /**
-//     * @return the flowManagement
-//     */
-//    public FlowManagement getFlowManagement() {
-//        return flowManagement;
-//    }
 }

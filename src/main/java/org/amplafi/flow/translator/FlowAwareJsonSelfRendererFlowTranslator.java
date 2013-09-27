@@ -28,6 +28,7 @@ import com.sworddance.util.ApplicationIllegalStateException;
  * @author patmoore
  *
  */
+@Deprecated // narrow use case that needs to be handled outside
 public class FlowAwareJsonSelfRendererFlowTranslator extends AbstractFlowTranslator {
 
     /**
