@@ -46,9 +46,6 @@ import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.ReportAllValidationResult;
-import org.amplafi.json.JSONWriter;
-import org.amplafi.json.JsonConstruct;
-
 import com.sworddance.util.NotNullIterator;
 import com.sworddance.util.RandomKeyGenerator;
 import com.sworddance.util.map.NamespaceMapKey;
@@ -1743,32 +1740,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     @Override
     public boolean isSinglePropertyFlow() {
         return flow.isSinglePropertyFlow();
-    }
-
-    @Override
-    public void serializeSinglePropertyValue(JSONWriter jsonWriter) {
-        String singlePropertyName = flow.getSinglePropertyName();
-        FlowPropertyDefinitionImplementor flowPropertyDefinition = this.getFlowPropertyDefinition(singlePropertyName);
-        // TODO : SECURITY : HACK This important security check to make sure that secure properties are not released
-        // to users. This security check needs to built in to the flow code itself. We must not rely on the renderer to do
-        // security checks.
-        // this is an important valid use case for generating a temp api key that is returned via a callback uri not directly
-        if ( flowPropertyDefinition.isExportable()) {
-            String rawProperty = this.getRawProperty(this, flowPropertyDefinition);
-            //Only request property from flow state when there is no raw (already serialized) property available. 
-            //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
-            if (rawProperty != null) {
-                JsonConstruct jsonConstruct = JsonConstruct.Parser.toJsonConstruct(rawProperty);
-                if (jsonConstruct != null) {
-                    jsonWriter.value(jsonConstruct);
-                } else {
-                    jsonWriter.append(rawProperty);
-                }
-            } else {
-                Object propertyValue = this.getPropertyWithDefinition(this, flowPropertyDefinition);
-                flowPropertyDefinition.serialize(jsonWriter, propertyValue);
-            }
-        }
     }
 
     @Override

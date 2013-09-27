@@ -21,7 +21,6 @@ import java.util.Map;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
-import org.amplafi.json.JSONWriter;
 
 
 
@@ -299,11 +298,8 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      * @param map
      */
     public void setAllProperties(Map<?,?> map);
-    /**
-     * TO_TIRIS : comment this please
-     * @return
-     */
+    @Deprecated // need to reduce interface
 	public boolean isPersisted();
+	@Deprecated // special case need must be removed.
     public boolean isSinglePropertyFlow();
-    public void serializeSinglePropertyValue(JSONWriter jsonWriter);
 }

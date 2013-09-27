@@ -15,6 +15,7 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowExecutionException;
+import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
@@ -22,6 +23,7 @@ import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;
@@ -54,7 +56,7 @@ public class JsonFlowRenderer implements FlowRenderer {
             renderError(flowState, errorMessage, exception, writer);
         } else {
             if ( flowState.isSinglePropertyFlow() ) {
-                flowState.serializeSinglePropertyValue(jsonWriter);
+                serializeSinglePropertyValue((FlowStateImplementor) flowState, jsonWriter);
             } else {
                 // HACK : NEED SECURITY CHECKS to make sure only visible values are exported.
                 // TODO : filter by ExternalPropertyAccessRestriction.isReadable() on each property
@@ -69,6 +71,31 @@ public class JsonFlowRenderer implements FlowRenderer {
                 }
             } catch (IOException e) {
                 throw new FlowExecutionException(e);
+            }
+        }
+    }
+    private void serializeSinglePropertyValue(FlowStateImplementor flowState, JSONWriter jsonWriter) {
+        FlowImplementor flow = flowState.getFlow();
+        String singlePropertyName = flow.getSinglePropertyName();
+        FlowPropertyDefinitionImplementor flowPropertyDefinition = flowState.getFlowPropertyDefinition(singlePropertyName);
+        // TODO : SECURITY : HACK This important security check to make sure that secure properties are not released
+        // to users. This security check needs to built in to the flow code itself. We must not rely on the renderer to do
+        // security checks.
+        // this is an important valid use case for generating a temp api key that is returned via a callback uri not directly
+        if ( flowPropertyDefinition.isExportable()) {
+            String rawProperty = flowState.getRawProperty(flowState, flowPropertyDefinition);
+            //Only request property from flow state when there is no raw (already serialized) property available.
+            //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
+            if (rawProperty != null) {
+                JsonConstruct jsonConstruct = JsonConstruct.Parser.toJsonConstruct(rawProperty);
+                if (jsonConstruct != null) {
+                    jsonWriter.value(jsonConstruct);
+                } else {
+                    jsonWriter.append(rawProperty);
+                }
+            } else {
+                Object propertyValue = flowState.getPropertyWithDefinition(flowState, flowPropertyDefinition);
+                flowPropertyDefinition.serialize(jsonWriter, propertyValue);
             }
         }
     }
