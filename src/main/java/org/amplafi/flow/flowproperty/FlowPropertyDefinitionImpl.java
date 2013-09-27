@@ -37,8 +37,6 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JsonSelfRenderer;
 
 import com.sworddance.util.NotNullIterator;
 
@@ -278,11 +276,11 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
     @Override
-    public <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value) {
+    public <T, W> W serialize(W outputWriter, T value) {
         try {
-            return this.dataClassDefinition.serialize(this, jsonWriter, value);
+            return this.dataClassDefinition.serialize(this, outputWriter, value);
         } catch (FlowPropertySerializationNotPossibleException e) {
-            return jsonWriter;
+            return outputWriter;
         }
     }
     @Override
@@ -505,11 +503,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
     @Override
     public boolean isSaveBack() {
-        if (this.saveBack != null) {
-            return getBoolean(this.saveBack);
-        } else {
-            return getDataClassDefinition().isCollection() || JsonSelfRenderer.class.isAssignableFrom(getDataClassDefinition().getDataClass());
-        }
+        return getBoolean(this.saveBack);
     }
 
     @Override
@@ -843,20 +837,4 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
         return result;
     }
-    @Override
-	public IJsonWriter toJson(IJsonWriter jsonWriter) {
-		jsonWriter.object();
-		jsonWriter.keyValue("name", this.getName());
-		jsonWriter.keyValue("type", this.getDataClass().getSimpleName());
-		jsonWriter.keyValue("req", this.getPropertyRequired());
-		jsonWriter.endObject();
-		return jsonWriter;
-	}
-
-	@Override
-	public <T> T fromJson(Object object) {
-		return null;
-	}
-
-
 }

@@ -20,6 +20,13 @@ import org.amplafi.json.IJsonWriter;
 
 
 /**
+ * Implementers inject the services that the FlowPropertyDefinitions ( and their supporting {@link FlowPropertyValueProvider}, et.al. need )
+ *
+ * Implementers tend to be a shim between the dependency injection framework used and the flow code.
+ *
+ * TODO : can we do the service injection at a higher level?
+ * current issue is that the injection happens when a flow is run.
+ *
  * Implementations determine which {@link FlowTranslator} should be used
  * for a given {@link FlowPropertyDefinition}.
  *
@@ -50,6 +57,10 @@ public interface FlowTranslatorResolver {
     FlowTranslator<?> resolve(Class<?> clazz);
     void resolveFlow(Flow flow);
 
+    // needed only for case when flow translator is not given a outputWriter
+    // this is a really rare case - MapFlowTranslator seems to be about the only good example
+    // we should be able to get rid of this.
+    @Deprecated
     IJsonWriter getJsonWriter();
 
     /**

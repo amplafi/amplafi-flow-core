@@ -194,7 +194,11 @@ public class JsonFlowRenderer implements FlowRenderer {
                     final FlowPropertyDefinition definition = entry.getValue();
                     //Only describe properties that can be set from a client.
                     if (definition.getPropertyUsage().isExternallySettable() && definition.isExportable()) {
-                        definition.toJson(jsonWriter);
+                        jsonWriter.object();
+                        jsonWriter.keyValue("name", definition.getName());
+                        jsonWriter.keyValue("type", definition.getDataClass().getSimpleName());
+                        jsonWriter.keyValue("req", definition.getPropertyRequired());
+                        jsonWriter.endObject();
                     }
                 }
                 jsonWriter.endArray();

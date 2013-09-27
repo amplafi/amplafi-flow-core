@@ -86,20 +86,23 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     @Override
-    public final IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object) {
-        if ( jsonWriter == null ) {
+    public final <W> W serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, W outputWriter, T object) {
+        IJsonWriter jsonWriter;
+        if ( outputWriter == null ) {
             jsonWriter = getJsonWriter();
+        } else {
+            jsonWriter = (IJsonWriter) outputWriter;
         }
 
         if ( object == null ) {
             // if jsonWriter is expecting a value ( because it just had a key set ) then we need to serialize a null.
             // TODO: investigate serializing a null.
-            return jsonWriter;
+            return (W) jsonWriter;
         } else if ( this.isSerializedForm(object.getClass())) {
             // already in a serialized form? (we hope )
-            return jsonWriter.value(object);
+            return (W) jsonWriter.value(object);
         } else {
-            return doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
+            return (W) doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
         }
     }
     /**

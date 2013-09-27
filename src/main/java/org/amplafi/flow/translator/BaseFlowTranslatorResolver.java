@@ -35,10 +35,8 @@ import org.amplafi.json.JsonRenderer;
 
 import com.sworddance.beans.MapByClass;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 
-import static org.apache.commons.collections.CollectionUtils.*;
 
 /**
  * Intended to be a stateless singleton service that will provide {@link FlowTranslator} to {@link org.amplafi.flow.FlowPropertyDefinition}
@@ -49,6 +47,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 
     private FlowDefinitionsManager flowDefinitionsManager;
     private Map<Class<?>, FlowTranslator<?>> translators;
+    @Deprecated // we want to eliminate dependencies on the json package.
     private Map<Class<?>, JsonRenderer<?>> jsonRenderers;
     private Log log;
     private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
@@ -192,7 +191,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     public void resolve(FlowPropertyProvider flowPropertyProvider) {
         if ( flowPropertyProvider != null && (!(flowPropertyProvider instanceof Resolvable) || !((Resolvable)flowPropertyProvider).isResolved() )) {
             Map<String, FlowPropertyDefinition> propertyDefinitions = flowPropertyProvider.getPropertyDefinitions();
-            if ( MapUtils.isNotEmpty(propertyDefinitions)) {
+            if ( propertyDefinitions != null && !propertyDefinitions.isEmpty()) {
                 Collection<FlowPropertyDefinition> values = propertyDefinitions.values();
                 initAndResolveCollection(flowPropertyProvider.getFlowPropertyProviderFullName()+"("+flowPropertyProvider.getClass().getName()+").", values);
             }
@@ -216,7 +215,7 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      */
     public void setFlowTranslators(List<FlowTranslator<?>> flowTranslatorsList) {
         this.flowTranslators.clear();
-        if ( isNotEmpty(flowTranslatorsList)) {
+        if ( flowTranslatorsList != null && !flowTranslatorsList.isEmpty()) {
             this.flowTranslators.addAll(flowTranslatorsList);
         }
     }

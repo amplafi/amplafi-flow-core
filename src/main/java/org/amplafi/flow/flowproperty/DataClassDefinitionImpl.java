@@ -108,12 +108,14 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         return (T) this.getFlowTranslator().deserialize(flowPropertyProvider, flowPropertyDefinition, this, value);
     }
     @Override
-    public <T> Object serialize(FlowPropertyDefinition flowPropertyDefinition, T value) {
+    public <T> String serialize(FlowPropertyDefinition flowPropertyDefinition, T value) {
         if ( value == null) {
             return null;
         } else {
             IJsonWriter jsonWriter = this.serialize(flowPropertyDefinition, null, value);
             String strV = jsonWriter.toString();
+
+            // HACK : remove this special casing so this class will have no dependencies on the serialization mechanism
             // TODO: trimming quotes is probably not needed anymore - CharSequenceFlowTranslator uses unquote...
             if (strV != null && strV.startsWith("\"") && strV.endsWith("\"")) {
                 // trim off unneeded " that appear when handling simple objects.
@@ -124,8 +126,8 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     }
     @Override
     @SuppressWarnings("unchecked")
-    public <T> IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, IJsonWriter jsonWriter, T value) {
-        return this.getFlowTranslator().serialize(flowPropertyDefinition, this, jsonWriter, value);
+    public <T, W> W serialize(FlowPropertyDefinition flowPropertyDefinition, W outputWriter, T value) {
+        return (W) this.getFlowTranslator().serialize(flowPropertyDefinition, this, outputWriter, value);
     }
 
     /**

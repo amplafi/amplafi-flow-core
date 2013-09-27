@@ -20,11 +20,12 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 /**
  * Translate object to/from the flow state.
+ *
+ * FlowTranslator implementations are best thought of as a shim interface between the flow code and the prefered serialization library.
  *
  * FlowTranslator are intended to be singletons and injected as a service.
  *
@@ -34,6 +35,7 @@ import org.amplafi.json.JsonRenderer;
  * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
  *
  * FlowTranslators have db transactions available.
+ *
  * @param <T> the type to translate.
  */
 public interface FlowTranslator <T>{
@@ -50,11 +52,11 @@ public interface FlowTranslator <T>{
      * version. If so the object passed in should be returned.
      * @param flowPropertyDefinition TODO
      * @param dataClassDefinition TODO
-     * @param jsonWriter write a version of an object.
+     * @param outputWriter write a version of an object.
      * @param object
-     * @return the jsonWriter.
+     * @return outputWriter
      */
-    IJsonWriter serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, T object);
+    <W> W serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, W outputWriter, T object);
 
     T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
             throws FlowException;
@@ -66,7 +68,7 @@ public interface FlowTranslator <T>{
      * If so then the class used store serialized form must be accepted.
      * @param differentClass
      * @return true if differentClass is a subclass of {@link #getTranslatedClass()}
-     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition , DataClassDefinition , IJsonWriter, Object)}
+     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition, DataClassDefinition, Object, Object)
      */
     boolean isAssignableFrom(Class<?> differentClass);
 
@@ -93,5 +95,7 @@ public interface FlowTranslator <T>{
      */
     List<Class<?>> getDeserializedFormClasses();
 
+    @Deprecated // need to remove reference to specific serialization mechanism
+    // only really used in BaseFlowTranslatorResolver to construct a JsonWriter
     JsonRenderer<T> getJsonRenderer();
 }

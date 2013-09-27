@@ -70,7 +70,7 @@ public class MapFlowTranslator<K,V> extends AbstractFlowTranslator<Map<? extends
     }
 
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Map<? extends K, ? extends V> map) {
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Map<? extends K, ? extends V> map) {
         jsonWriter.object();
         try {
             if ( MapUtils.isNotEmpty(map) ) {

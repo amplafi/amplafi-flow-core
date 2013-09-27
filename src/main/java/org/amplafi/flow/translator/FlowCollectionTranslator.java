@@ -55,7 +55,7 @@ public abstract class FlowCollectionTranslator<C extends Iterable<? extends T>, 
         }
     }
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, C object) {
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, C object) {
         jsonWriter.array();
         try {
             for(T element: object) {

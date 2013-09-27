@@ -20,8 +20,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JsonSelfRenderer;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -42,7 +40,7 @@ import org.amplafi.json.JsonSelfRenderer;
  *
  * A {@link FlowPropertyDefinition} is conceptual a {@link FlowPropertyExpectation} that has all attributes defined ( dataclass, name, et.al.)
  */
-public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSelfRenderer {
+public interface FlowPropertyDefinition extends FlowPropertyExpectation {
 
     /**
      * merge the information from source into this FlowPropertyDefinition.
@@ -140,7 +138,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation, JsonSel
      */
     List<Object> getObjectsNeedingToBeWired();
 
-    <T> IJsonWriter serialize(IJsonWriter jsonWriter, T value);
+    <T, W> W serialize(W outputWriter, T value);
 
     <T> String serialize(T object);
     <V> V deserialize(FlowPropertyProvider flowPropertyProvider, Object serializedObject) throws FlowException;
