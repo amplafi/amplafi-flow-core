@@ -12,11 +12,13 @@
  * License.
  */
 
-package org.amplafi.flow;
+package org.amplafi.flow.translator;
 
 import java.util.Collection;
 import java.util.Map;
 
+import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.FlowState;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonConstruct;
 import org.amplafi.json.JsonRenderer;

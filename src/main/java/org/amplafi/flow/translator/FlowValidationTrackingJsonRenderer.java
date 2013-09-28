@@ -12,34 +12,35 @@
  * License.
  */
 
-package org.amplafi.flow.validation;
+package org.amplafi.flow.translator;
 
+import org.amplafi.flow.validation.FlowValidationTracking;
 import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JsonRenderer;
 
 
 /**
- * Used to render as a json object the flow validation result.
+ * JsonRender to render validation results. This is used at least initially in the api code.
  *
- * @see FlowValidationTrackingJsonRenderer
  * @author Patrick Moore
  */
-public class FlowValidationResultJsonRenderer implements JsonRenderer<FlowValidationResult> {
+public class FlowValidationTrackingJsonRenderer implements JsonRenderer<FlowValidationTracking> {
 
-    public static final FlowValidationResultJsonRenderer INSTANCE = new FlowValidationResultJsonRenderer();
+    public static final FlowValidationTrackingJsonRenderer INSTANCE = new FlowValidationTrackingJsonRenderer();
     @Override
-    public Class<FlowValidationResult> getClassToRender() {
-        return FlowValidationResult.class;
+    public Class<FlowValidationTracking> getClassToRender() {
+        return FlowValidationTracking.class;
     }
 
     @Override
-    public IJsonWriter toJson(IJsonWriter jsonWriter, FlowValidationResult flowValidationResult) {
+    public IJsonWriter toJson(IJsonWriter jsonWriter, FlowValidationTracking flowValidationTracking) {
         jsonWriter.object();
-        if ( !flowValidationResult.isValid() ) {
-            jsonWriter.key("flowValidationTracking");
+        jsonWriter.key("key").value(flowValidationTracking.getMessageKey());
+        if ( flowValidationTracking.getMessageParameters() != null ) {
+            jsonWriter.key("parameters");
             jsonWriter.array();
-            for(FlowValidationTracking tracking:flowValidationResult.getTrackings()) {
-                jsonWriter.value(tracking);
+            for(Object parameter: flowValidationTracking.getMessageParameters()) {
+                jsonWriter.value(parameter);
             }
             jsonWriter.endArray();
         }
@@ -50,7 +51,6 @@ public class FlowValidationResultJsonRenderer implements JsonRenderer<FlowValida
      * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
      */
     @Override
-    @SuppressWarnings("unused")
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {
         throw new UnsupportedOperationException();
     }

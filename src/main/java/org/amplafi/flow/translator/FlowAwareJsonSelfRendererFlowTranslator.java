@@ -15,7 +15,6 @@
 package org.amplafi.flow.translator;
 
 import org.amplafi.flow.DataClassDefinition;
-import org.amplafi.flow.FlowAwareJsonSelfRenderer;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;

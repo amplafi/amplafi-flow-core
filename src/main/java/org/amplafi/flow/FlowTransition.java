@@ -37,6 +37,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
+// TODO : remove JsonSelfRenderer implementation
 public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
 
     private static final String INITIAL_VALUES = "initialValues";

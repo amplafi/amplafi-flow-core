@@ -1,4 +1,4 @@
-package org.amplafi.flow.impl;
+package org.amplafi.flow.translator;
 
 import static com.sworddance.util.CUtilities.isNotEmpty;
 
@@ -20,10 +20,10 @@ import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowState;
-import org.amplafi.flow.FlowStateJsonRenderer;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
+import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;

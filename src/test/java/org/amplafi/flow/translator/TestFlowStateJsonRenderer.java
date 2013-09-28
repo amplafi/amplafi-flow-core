@@ -12,19 +12,17 @@
  * License.
  */
 
-package org.amplafi.flow;
+package org.amplafi.flow.translator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowTestingUtils;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowStateImpl;
-import org.amplafi.flow.FlowStateJsonRenderer;
-import org.amplafi.flow.validation.FlowValidationResultJsonRenderer;
-import org.amplafi.flow.validation.FlowValidationTrackingJsonRenderer;
 import org.amplafi.json.JSONStringer;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.renderers.MapJsonRenderer;
