@@ -47,7 +47,7 @@ public class LongFlowTranslator extends AbstractFlowTranslator<Long> {
     }
 
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Long object) {
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Long object) {
         return jsonWriter.value(object);
     }
 

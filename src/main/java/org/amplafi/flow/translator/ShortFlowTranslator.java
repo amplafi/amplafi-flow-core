@@ -48,7 +48,7 @@ public class ShortFlowTranslator extends AbstractFlowTranslator<Short> {
     }
 
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Short object) {
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, Short object) {
         jsonWriter.value(object);
         return jsonWriter;
     }

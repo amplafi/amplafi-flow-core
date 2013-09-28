@@ -41,7 +41,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, TimeZone object) {
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter, TimeZone object) {
         toJson(jsonWriter, object);
         return jsonWriter;
     }
