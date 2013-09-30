@@ -132,7 +132,6 @@ public abstract class BaseFlowPropertyProvider<FPP extends FlowPropertyProvider>
     /**
      * method used by hivemind to add in properties
      * @param flowPropertyDefinition
-     * @see org.amplafi.flow.flowproperty.FlowPropertyProviderImplementor#addPropertyDefinition(FlowPropertyDefinitionImplementor)
      */
     @Deprecated // use FBDB
     protected void addPropertyDefinition(FlowPropertyDefinitionImplementor flowPropertyDefinition) {

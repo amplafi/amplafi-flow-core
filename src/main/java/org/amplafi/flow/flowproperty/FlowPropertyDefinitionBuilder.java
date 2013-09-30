@@ -388,7 +388,7 @@ public class FlowPropertyDefinitionBuilder {
             return false;
         }
     }
-    /**
+    /*
      * borrowed from FlowActivityImpl: we should have multiple FPVPs
      *
      * This handles the linking of {@link ChainedFlowPropertyValueProvider}.

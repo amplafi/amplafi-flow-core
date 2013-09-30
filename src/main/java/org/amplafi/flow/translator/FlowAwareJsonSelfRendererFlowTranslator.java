@@ -39,10 +39,10 @@ public class FlowAwareJsonSelfRendererFlowTranslator extends AbstractFlowTransla
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition , org.amplafi.json.IJsonWriter, java.lang.Object)
+     * @see org.amplafi.flow.translator.FlowTranslator#serialize(org.amplafi.flow.FlowPropertyDefinition, org.amplafi.flow.DataClassDefinition , java.lang.Object, java.lang.Object)
      */
     @Override
-    public IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter,
+    protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, IJsonWriter jsonWriter,
         Object object) {
         return jsonWriter.value(object);
     }
