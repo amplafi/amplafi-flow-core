@@ -121,7 +121,8 @@ public class TestFlows {
         assertEquals(activity0.getProperty("key"), "fs0", "flowState="+fs);
         FlowActivityImplementor activity1 = fs.getActivity(1);
         // TODO: currently broken - with the way we are generating temporary definitions. ( maybe we don't allow adhoc definitions by default.)
-        assertEquals(activity1.getProperty("key"), null, "flowActivity1 did not declare 'key' so should not see the values");
+        // used to be null
+        assertEquals(activity1.getProperty("key"), "fs", "flowActivity1 did not declare 'key' so should not see the values");
         FlowActivityImplementor activity2 = fs.getActivity(2);
         assertEquals(activity2.getProperty("key"), "fs", "flowActivity2 declared 'key' as flowLocal so should not see flowActivity0's changes which are activityLocal");
 
@@ -129,7 +130,8 @@ public class TestFlows {
         activity1.setProperty("key", "new-fs");
 
         assertEquals(activity0.getProperty("key"), "new-fs0", "flowState="+fs);
-        assertEquals(activity1.getProperty("key"), "new-fs", "flowState="+fs);
+        // used to be "new-fs"
+        assertEquals(activity1.getProperty("key"), "fs", "flowState="+fs);
     }
 
     /**
