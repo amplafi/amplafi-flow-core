@@ -431,7 +431,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      * Copy from property any fields not already set.
      *
      * TODO: Need to check {@link PropertyScope}!! How to handle activityLocal/flowLocals???
-     * TODO: NOTE that merge explicitly is allowed to violate the {@link #templateFlowPropertyDefinition} lockdown rules
      * @param property
      * @return true if there is no conflict in the dataClass, true if
      *         this.dataClass cannot be assigned by previous.dataClass

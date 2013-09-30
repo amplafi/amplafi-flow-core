@@ -37,7 +37,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
  * {@link FlowPropertyDefinitionProvider} is also usually implemented by FlowPropertyValueProvider, However, the separation must exist because
  * there are valid reasons to have a property defined but not provided, or to have several providers that depend on the context
  *
- * More information about properties can be found in {@FlowPropertyDefinitionProvider}.
+ * More information about properties can be found in {@link FlowPropertyDefinitionProvider}.
  * To persist a property, don't do it in here, make sure to check {@link FlowPropertyValuePersister}
  *
  * TODO: enable FlowPropertyValueProvider to be registered so they can be singletons with needed services injected vis the DI framework.
