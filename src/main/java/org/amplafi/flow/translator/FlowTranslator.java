@@ -68,7 +68,7 @@ public interface FlowTranslator <T>{
      * If so then the class used store serialized form must be accepted.
      * @param differentClass
      * @return true if differentClass is a subclass of {@link #getTranslatedClass()}
-     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition, DataClassDefinition, Object, Object)
+     * or a subclass of the type returned by {@link #serialize(FlowPropertyDefinition, DataClassDefinition, Object, Object)}
      */
     boolean isAssignableFrom(Class<?> differentClass);
 

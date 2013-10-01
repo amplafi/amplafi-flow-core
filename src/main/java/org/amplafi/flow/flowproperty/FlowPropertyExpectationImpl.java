@@ -261,8 +261,6 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     /**
      *
      * @param sourceFlowPropertyExpectation
-     * @param defaultFlowPropertyExpectation values used if sourceFlowPropertyExpectation does not have a value
-     * the exception are the {@link FlowPropertyValueChangeListener}s which are combined.
      */
     public FlowPropertyExpectationImpl(FlowPropertyExpectation sourceFlowPropertyExpectation) {
        this.name =
