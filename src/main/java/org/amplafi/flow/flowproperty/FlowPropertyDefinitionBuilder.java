@@ -134,6 +134,11 @@ public class FlowPropertyDefinitionBuilder {
      * 3) the property will not be altered.
      */
     public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
+    
+    /**
+     * Allows to optionally include properties in final flow state. The property only goes out if it was accessed before flow finish.  
+     */
+    public static List<FlowPropertyExpectation> API_OPTIONAL_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.optional, PropertyScope.flowLocal, PropertyUsage.io, ExternalPropertyAccessRestriction.readonly));
     /**
      * The property is available for edit or if missing can be created.
      */
