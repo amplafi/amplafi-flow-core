@@ -74,7 +74,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
         }
     }
     /**
-     * in {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} after a chain of {@link FlowPropertyDefinition#isNamed()} checks determine
+     * in {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} after a chain of {@link FlowPropertyDefinition#isNamed(Class)} or {@link FlowPropertyDefinition#isNamed(String)}checks determine
      * which property (of the possible many) that this {@link FlowPropertyValueProvider} is handling.
      * @param flowPropertyDefinition
      */

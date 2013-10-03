@@ -134,7 +134,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
 
     /**
      * This is the cumulative set of objects that need to be wired with services.
-     * @return
+     * @return list of objects that need to be wired
      */
     List<Object> getObjectsNeedingToBeWired();
 

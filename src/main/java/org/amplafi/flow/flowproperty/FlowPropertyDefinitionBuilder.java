@@ -134,9 +134,9 @@ public class FlowPropertyDefinitionBuilder {
      * 3) the property will not be altered.
      */
     public static List<FlowPropertyExpectation> API_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.initialize, ExternalPropertyAccessRestriction.readonly));
-    
+
     /**
-     * Allows to optionally include properties in final flow state. The property only goes out if it was accessed before flow finish.  
+     * Allows to optionally include properties in final flow state. The property only goes out if it was accessed before flow finish.
      */
     public static List<FlowPropertyExpectation> API_OPTIONAL_RETURN_VALUE = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.optional, PropertyScope.flowLocal, PropertyUsage.io, ExternalPropertyAccessRestriction.readonly));
     /**
@@ -291,7 +291,7 @@ public class FlowPropertyDefinitionBuilder {
     * <li>any value providers to values that are expected to exist are removed.
     * </ol>
     * @param flowTranslatorResolver
-    * @return
+    * @return the generated FlowPropertyDefinitionImplementor
     */
    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(this.toCompleteFlowPropertyExpectation());
@@ -507,7 +507,7 @@ public class FlowPropertyDefinitionBuilder {
 
     /**
      * @param flowActivityPhase the phase at which the property must be able to supply a value.
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder initPropertyRequired(FlowActivityPhase flowActivityPhase) {
         this.propertyRequired= flowActivityPhase;
@@ -539,7 +539,7 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * Convience wrapper to define a {@link FlowPropertyValueProvider} that returns a constant.
      * @param defaultObject
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder initDefaultObject(Object defaultObject) {
         if ( defaultObject instanceof FlowPropertyValueProvider<?>) {
@@ -566,7 +566,7 @@ public class FlowPropertyDefinitionBuilder {
      * TODO: maybe this class ignoring to just strings?
      *
      * @param dataClass
-     * @return
+     * @return this
      */
     public FlowPropertyDefinitionBuilder setDataClass(Class<? extends Object> dataClass) {
         if ( this.getDataClassDefinition() == null) {
@@ -583,11 +583,9 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     // problematic as DataClassDefinitionImpl could be altered.
-
     public DataClassDefinitionImpl getDataClassDefinition() {
         return this.dataClassDefinition;
     }
-
 
     public FlowPropertyValuePersister<FlowPropertyProvider> getFlowPropertyValuePersister() {
         return this.flowPropertyValuePersister;
