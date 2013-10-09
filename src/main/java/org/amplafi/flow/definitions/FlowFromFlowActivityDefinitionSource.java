@@ -1,12 +1,11 @@
 package org.amplafi.flow.definitions;
 
-import static com.sworddance.util.CUtilities.put;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
@@ -28,9 +27,16 @@ public class FlowFromFlowActivityDefinitionSource implements DefinitionSource<Fl
         if ( capitalizedFlowActivityName.endsWith("FlowActivity")) {
             capitalizedFlowActivityName = capitalizedFlowActivityName.substring(0, capitalizedFlowActivityName.lastIndexOf("FlowActivity"));
         }
+        return this.add(capitalizedFlowActivityName, flowActivityImplementor);
+    }
+    public FlowFromFlowActivityDefinitionSource add(String capitalizedFlowActivityName, FlowActivityImplementor flowActivityImplementor) {
         FlowImpl flow = new FlowImpl(capitalizedFlowActivityName);
         flow.addActivity(flowActivityImplementor);
-        put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
+        if ( this.flows.containsKey(flow.getFlowPropertyProviderFullName())) {
+            // early check to help spot issues.
+            throw new FlowExecutionException(flow.getFlowPropertyProviderFullName() + " defined twice");
+        }
+        this.flows.put(flow.getFlowPropertyProviderFullName(), flow);
         return this;
     }
 
