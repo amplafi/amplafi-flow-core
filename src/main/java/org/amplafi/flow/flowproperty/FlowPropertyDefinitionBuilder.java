@@ -145,6 +145,10 @@ public class FlowPropertyDefinitionBuilder {
     public static List<FlowPropertyExpectation> CREATE_OR_EDIT = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.finish, PropertyScope.flowLocal, PropertyUsage.createsIfMissing, ExternalPropertyAccessRestriction.noRestrictions));
     public static List<FlowPropertyExpectation> IO = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.io, null));
     public static List<FlowPropertyExpectation> REQUIRED_INPUT_CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.activate, null, PropertyUsage.consume, null));
+
+    /**
+     * An optional api parameter.
+     */
     public static List<FlowPropertyExpectation> OPTIONAL_INPUT = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(FlowActivityPhase.optional, PropertyScope.flowLocal, PropertyUsage.use, null));
     public static List<FlowPropertyExpectation> CONSUMING = Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(null, null, PropertyUsage.consume, null));
     /**
