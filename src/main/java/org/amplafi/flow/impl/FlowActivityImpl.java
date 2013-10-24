@@ -53,7 +53,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyProviderWithValues;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.flowproperty.PropertyUsage;
-import org.amplafi.flow.validation.ExceptionTracking;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationResultProvider;
@@ -753,18 +752,14 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
         FlowStateImplementor flowStateImplementor = getFlowStateImplementor();
         T result;
-        try {
-            if (flowStateImplementor != null) {
-            	result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
-            } else {
-            	//There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return
-            	//default object in the case.
-            	result = (T) flowPropertyDefinition.getDefaultObject(this);
-            }
-    		return result;
-        } catch (ClassCastException e) {
-            throw new FlowValidationException(this.getFlowState(), key, new ExceptionTracking(key,e));
+        if (flowStateImplementor != null) {
+            result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
+        } else {
+            //There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return
+            //default object in the case.
+            result = (T) flowPropertyDefinition.getDefaultObject(this);
         }
+        return result;
     }
     /**
      * @param key
@@ -786,7 +781,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
             }
         }
         if (flowManagement != null && flowPropertyDefinition != null &&!flowPropertyDefinition.isFlowTranslatorSet()) {
-        	getFlowManagement().getFlowTranslatorResolver().resolve(null, flowPropertyDefinition);
+            getFlowManagement().getFlowTranslatorResolver().resolve(null, flowPropertyDefinition);
         }
         return flowPropertyDefinition;
     }
