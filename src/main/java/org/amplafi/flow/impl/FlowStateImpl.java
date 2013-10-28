@@ -1738,11 +1738,6 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
-    public boolean isSinglePropertyFlow() {
-        return flow.isSinglePropertyFlow();
-    }
-
-    @Override
     public String toString() {
         return this.lookupKey + " [type:" + this.flowTypeName + "]; current Activity="+this.getCurrentActivity()+"; flowStateMap="+this.flowValuesMap;
     }

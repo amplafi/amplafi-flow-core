@@ -77,8 +77,4 @@ public interface FlowImplementor extends Flow, FlowPropertyProviderImplementor, 
     int indexOf(FlowActivity activity);
     void refresh();
     boolean isActivatable();
-
-    boolean isSinglePropertyFlow();
-
-    String getSinglePropertyName();
 }

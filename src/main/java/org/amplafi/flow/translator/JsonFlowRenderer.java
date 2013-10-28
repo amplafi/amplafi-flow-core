@@ -15,7 +15,6 @@ import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowExecutionException;
-import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowRenderer;
@@ -55,7 +54,8 @@ public class JsonFlowRenderer implements FlowRenderer {
         if (errorMessage != null || exception != null) {
             renderError(flowState, errorMessage, exception, writer);
         } else {
-            if ( flowState.isSinglePropertyFlow() ) {
+            boolean singlePropertyFlow = flowState.getFlowPropertyDefinition(FlowConstants.FSSINGLE_PROPERTY_NAME) != null;
+            if ( singlePropertyFlow ) {
                 serializeSinglePropertyValue((FlowStateImplementor) flowState, jsonWriter);
             } else {
                 // HACK : NEED SECURITY CHECKS to make sure only visible values are exported.
@@ -75,8 +75,7 @@ public class JsonFlowRenderer implements FlowRenderer {
         }
     }
     private void serializeSinglePropertyValue(FlowStateImplementor flowState, JSONWriter jsonWriter) {
-        FlowImplementor flow = flowState.getFlow();
-        String singlePropertyName = flow.getSinglePropertyName();
+        String singlePropertyName = flowState.getProperty(FlowConstants.FSSINGLE_PROPERTY_NAME);
         FlowPropertyDefinitionImplementor flowPropertyDefinition = flowState.getFlowPropertyDefinition(singlePropertyName);
         // TODO : SECURITY : HACK This important security check to make sure that secure properties are not released
         // to users. This security check needs to built in to the flow code itself. We must not rely on the renderer to do
@@ -85,7 +84,7 @@ public class JsonFlowRenderer implements FlowRenderer {
         if ( flowPropertyDefinition.isExportable()) {
             String rawProperty = flowState.getRawProperty(flowState, flowPropertyDefinition);
             //Only request property from flow state when there is no raw (already serialized) property available.
-            //Avoids re-serealization overhead and allows JsonSelfRenderers not to implement from json.
+            //Avoids re-serialization overhead and allows JsonSelfRenderers not to implement from json.
             if (rawProperty != null) {
                 JsonConstruct jsonConstruct = JsonConstruct.Parser.toJsonConstruct(rawProperty);
                 if (jsonConstruct != null) {

@@ -286,7 +286,6 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
      */
     FlowValuesMap getExportedValuesMap();
 
-
     /**
      * @param possibleReferencedState
      * @return true if this flowState references possibleReferencedState
@@ -300,6 +299,4 @@ public interface FlowState extends ListIterator<FlowActivity>, Serializable, Ite
     public void setAllProperties(Map<?,?> map);
     @Deprecated // need to reduce interface
 	public boolean isPersisted();
-	@Deprecated // special case need must be removed.
-    public boolean isSinglePropertyFlow();
 }

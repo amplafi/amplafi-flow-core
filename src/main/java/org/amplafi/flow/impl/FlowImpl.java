@@ -26,7 +26,6 @@ import java.util.Map;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
-import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
@@ -482,14 +481,4 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     protected List<PropertyScope> getLocalPropertyScopes() {
         return LOCAL_PROPERTY_SCOPES;
     }
-
-	@Override
-	public boolean isSinglePropertyFlow() {
-		return flowState.getFlowPropertyDefinition(FlowConstants.FSSINGLE_PROPERTY_NAME) != null;
-	}
-
-	@Override
-	public String getSinglePropertyName() {
-		return flowState.getProperty(FlowConstants.FSSINGLE_PROPERTY_NAME);
-	}
 }
