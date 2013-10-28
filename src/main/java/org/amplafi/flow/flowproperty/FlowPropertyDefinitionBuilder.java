@@ -201,116 +201,141 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyDefinitionBuilder(Class<? extends Object> dataClass) {
         this(toPropertyName(dataClass), dataClass);
     }
+
     /**
-    *
-    * @return {@link FlowPropertyExpectation} - only explicitly supplied fields are set.
-    */
-   public FlowPropertyExpectation toFlowPropertyExpectation() {
-       return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
-           flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(), dataClassDefinition, this.propertiesDependentOn, this.initial);
-   }
-   /**
-    * Used to generate the {@link FlowPropertyDefinition}
-    * @return {@link FlowPropertyExpectation} with all fields supplied a value ( using defaults as needed)
-    */
-   public FlowPropertyExpectation toCompleteFlowPropertyExpectation() {
+     * @return {@link FlowPropertyExpectation} - only explicitly supplied fields are set.
+     */
+    public FlowPropertyExpectation toFlowPropertyExpectation() {
+        return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
+            flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(),
+            dataClassDefinition, this.propertiesDependentOn, this.initial);
+    }
 
-       FlowActivityPhase propertyRequired = getPropertyRequired();
-       if ( propertyRequired == null ) {
-           propertyRequired = FlowActivityPhase.optional;
-       }
-       PropertyScope propertyScope = this.getPropertyScope();
-       if ( propertyScope == null) {
-           propertyScope = PropertyScope.flowLocal;
-       }
-       FlowPropertyValuePersister flowPropertyValuePersister= this.getFlowPropertyValuePersister();
-       ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
-       PropertyUsage propertyUsage = this.getPropertyUsage();
-       if ( propertyUsage == null) {
-           // TODO: should default be different if there is a persister?
-           // also what about externalPropertyAccessRestriction?
-           // or should we just have simple defaults.
-           propertyUsage = PropertyUsage.use;
-       }
-       if ( externalPropertyAccessRestriction == null) {
-           if ( !propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
-               // not outputted nor set externally then by default internal
-               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noAccess;
-           } else if ( !propertyUsage.isExternallySettable()) {
-               // is not allowed to set
-               externalPropertyAccessRestriction =ExternalPropertyAccessRestriction.readonly;
-           } else if ( !propertyUsage.isOutputedProperty()) {
-               // cannot read externally but can be set externally ( something like a password )
-               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.writeonly;
-           } else {
-               // can be read/write externally
-               externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noRestrictions;
-           }
-       }
-       DataClassDefinitionImpl dataClassDefinition = this.getDataClassDefinition();
-       if ( dataClassDefinition == null) {
-           dataClassDefinition = new DataClassDefinitionImpl();
-       }
+    /**
+     * Used to generate the {@link FlowPropertyDefinition}
+     *
+     * @return {@link FlowPropertyExpectation} with all fields supplied a value ( using defaults as
+     *         needed)
+     */
+    public FlowPropertyExpectation toCompleteFlowPropertyExpectation() {
 
-       if ( propertyUsage.getAltersProperty() == Boolean.FALSE) {
-           // read-only properties MUST not have a persister.
-           flowPropertyValuePersister = null;
-       }
+        FlowActivityPhase propertyRequired = getPropertyRequired();
+        if (propertyRequired == null) {
+            propertyRequired = FlowActivityPhase.optional;
+        }
+        PropertyScope propertyScope = this.getPropertyScope();
+        if (propertyScope == null) {
+            propertyScope = PropertyScope.flowLocal;
+        }
+        FlowPropertyValuePersister flowPropertyValuePersister = this.getFlowPropertyValuePersister();
+        ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
+        PropertyUsage propertyUsage = this.getPropertyUsage();
+        if (propertyUsage == null) {
+            // TODO: should default be different if there is a persister?
+            // also what about externalPropertyAccessRestriction?
+            // or should we just have simple defaults.
+            propertyUsage = PropertyUsage.use;
+        }
+        if (externalPropertyAccessRestriction == null) {
+            if (!propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
+                // not outputted nor set externally then by default internal
+                externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noAccess;
+            } else if (!propertyUsage.isExternallySettable()) {
+                // is not allowed to set
+                externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.readonly;
+            } else if (!propertyUsage.isOutputedProperty()) {
+                // cannot read externally but can be set externally ( something like a password )
+                externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.writeonly;
+            } else {
+                // can be read/write externally
+                externalPropertyAccessRestriction = ExternalPropertyAccessRestriction.noRestrictions;
+            }
+        }
+        DataClassDefinitionImpl dataClassDefinition = this.getDataClassDefinition();
+        if (dataClassDefinition == null) {
+            dataClassDefinition = new DataClassDefinitionImpl();
+        }
 
-       Boolean autoCreate = this.getAutoCreate();
-       if ( autoCreate == null) {
-           // see note on #initAutoCreate()
-           // also if propertyRequired = activate / then we shouldn't create the property
-           // because it was expected to already be created.
-           if (!dataClassDefinition.isCollection() ) {
-               Class<?> dataClass = dataClassDefinition.getDataClass();
-               if (dataClass.isPrimitive() ) {
-                   autoCreate = true;
-               } else if (dataClass.isInterface() || dataClass.isEnum()) {
-                   autoCreate = false;
-               }
-           } else {
-               // shouldn't a collection object be automatically created?
-           }
-       }
-       Boolean saveBack = getSaveBack();
-       if ( saveBack == null) {
-           saveBack = dataClassDefinition.isCollection() || JsonSelfRenderer.class.isAssignableFrom(dataClassDefinition.getDataClass());
-       }
-       return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
-           flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(), dataClassDefinition, propertiesDependentOn, this.initial);
-   }
-   /**
-    * The {@link #toCompleteFlowPropertyExpectation()} is used to create the {@link FlowPropertyDefinition}.
-    * @return the created {@link FlowPropertyDefinitionImplementor} by the builder
-    */
-   public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
-       return toFlowPropertyDefinition(null);
-   }
-   /**
-    * Only public access to the built {@link FlowPropertyDefinition}.
-    * As part of the final construction:
-    * <ol>
-    * <li>any persisters to non-persistent objects are removed.
-    * <li>any value providers to values that are expected to exist are removed.
-    * </ol>
-    * @param flowTranslatorResolver
-    * @return the generated FlowPropertyDefinitionImplementor
-    */
-   public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
-       FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(this.toCompleteFlowPropertyExpectation());
-       if (flowTranslatorResolver != null) {
-           flowTranslatorResolver.resolve(null, flowPropertyDefinition);
-       }
-       return (FPD) flowPropertyDefinition;
-   }
+        if (propertyUsage.getAltersProperty() == Boolean.FALSE) {
+            // read-only properties MUST not have a persister.
+            flowPropertyValuePersister = null;
+        }
 
+        Boolean autoCreate = this.getAutoCreate();
+        if (autoCreate == null) {
+            // see note on #initAutoCreate()
+            // also if propertyRequired = activate / then we shouldn't create the property
+            // because it was expected to already be created.
+            if (!dataClassDefinition.isCollection()) {
+                Class<?> dataClass = dataClassDefinition.getDataClass();
+                if (dataClass.isPrimitive()) {
+                    autoCreate = true;
+                } else if (dataClass.isInterface() || dataClass.isEnum()) {
+                    autoCreate = false;
+                }
+            } else {
+                // shouldn't a collection object be automatically created?
+            }
+        }
+        Boolean saveBack = getSaveBack();
+        if (saveBack == null) {
+            saveBack = dataClassDefinition.isCollection() || JsonSelfRenderer.class.isAssignableFrom(dataClassDefinition.getDataClass());
+        }
+        return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
+            flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(),
+            dataClassDefinition, propertiesDependentOn, this.initial);
+    }
+
+    /**
+     * The {@link #toCompleteFlowPropertyExpectation()} is used to create the
+     * {@link FlowPropertyDefinition}.
+     *
+     * @return the created {@link FlowPropertyDefinitionImplementor} by the builder
+     */
+    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition() {
+        return toFlowPropertyDefinition(null);
+    }
+
+    /**
+     * Only public access to the built {@link FlowPropertyDefinition}. As part of the final
+     * construction:
+     * <ol>
+     * <li>any persisters to non-persistent objects are removed.
+     * <li>any value providers to values that are expected to exist are removed.
+     * </ol>
+     *
+     * @param flowTranslatorResolver
+     * @return the generated FlowPropertyDefinitionImplementor
+     */
+    public <FPD extends FlowPropertyDefinitionImplementor> FPD toFlowPropertyDefinition(FlowTranslatorResolver flowTranslatorResolver) {
+        FlowPropertyDefinitionImpl flowPropertyDefinition = new FlowPropertyDefinitionImpl(this.toCompleteFlowPropertyExpectation());
+        if (flowTranslatorResolver != null) {
+            flowTranslatorResolver.resolve(null, flowPropertyDefinition);
+        }
+        return (FPD) flowPropertyDefinition;
+    }
+
+    /**
+     * just combines the lists.
+     * Simple (could be replaced by generic utility - probably have one just done't want to look now)
+     * @param additionalConfigurationParameters
+     * @return
+     */
+    @SafeVarargs
+    public static List<FlowPropertyExpectation> combine(List<FlowPropertyExpectation>... additionalConfigurationParameters) {
+        List<FlowPropertyExpectation> results = new ArrayList<>();
+        for(List<FlowPropertyExpectation> additionalConfigurationParameter: additionalConfigurationParameters) {
+            results.addAll(additionalConfigurationParameter);
+        }
+        return results;
+    }
     /**
      * used to apply a standard set of expectations to a specific property.
      * @param propertyName
      * @param additionalConfigurationParameters
      * @return a single condensed list of expectations.
      */
+    @SafeVarargs
     public static List<FlowPropertyExpectation> merge(String propertyName, List<FlowPropertyExpectation>... additionalConfigurationParameters) {
         return merge(new FlowPropertyExpectationImpl(propertyName), additionalConfigurationParameters);
     }
@@ -321,12 +346,15 @@ public class FlowPropertyDefinitionBuilder {
      * @param additionalConfigurationParameters
      * @return a single condensed list of expectations.
      */
+    @SafeVarargs
     public static List<FlowPropertyExpectation> merge(FlowPropertyExpectation flowPropertyExpectation, List<FlowPropertyExpectation>... additionalConfigurationParameters) {
         List<FlowPropertyExpectation> results = new ArrayList<>();
         for(List<FlowPropertyExpectation> additionalConfigurationParameter: additionalConfigurationParameters) {
             for(FlowPropertyExpectation expectation: additionalConfigurationParameter) {
-                FlowPropertyExpectation propertyExpectation = new FlowPropertyExpectationImpl(flowPropertyExpectation, expectation);
-                results.add(propertyExpectation);
+                if ( expectation.isApplicable(flowPropertyExpectation)) {
+                    FlowPropertyExpectation propertyExpectation = new FlowPropertyExpectationImpl(flowPropertyExpectation, expectation);
+                    results.add(propertyExpectation);
+                }
             }
         }
         return results;
