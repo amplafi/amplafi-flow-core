@@ -21,6 +21,10 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import com.sworddance.beans.BeanWorker;
 
 /**
+ * SECURITY NOTE: Exposes internals to external api users unless we are careful
+ * IMPORTANT SECURITY TODO: ( Could work iff we insisted that the property name be independent of the property path to get the value )
+ *
+ *
  * Uses reflection to trace to find the property value.
  * if at any point a null is returned then null is returned (no {@link NullPointerException} will be thrown)
  *
@@ -41,26 +45,25 @@ import com.sworddance.beans.BeanWorker;
 public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
     private Object object;
-    private String alternate;
+    private String accessedAsName;
 
     /**
+     * SECURITY : should be mapped independently.
      * Use the {@link FlowPropertyProvider} that is passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} as the starting object to trace for
      * using propertyName.
      *
      * @param propertyName
      */
+    @Deprecated
     public ReflectionFlowPropertyValueProvider(String propertyName) {
         this(null, propertyName, propertyName);
     }
-    public ReflectionFlowPropertyValueProvider(String propertyName, String alternate) {
-        this(null, propertyName, alternate);
+    public ReflectionFlowPropertyValueProvider(String accessedAsName, String mappedToProperty) {
+        this(null, accessedAsName, mappedToProperty);
     }
-    public ReflectionFlowPropertyValueProvider(Object object, String propertyName) {
-        this(object, propertyName, propertyName);
-    }
-    public ReflectionFlowPropertyValueProvider(Object object, String propertyName, String alternate) {
-        super(propertyName);
-        this.alternate = alternate;
+    public ReflectionFlowPropertyValueProvider(Object object, String accessedAsName, String mappedToProperty) {
+        super(mappedToProperty);
+        this.accessedAsName = accessedAsName;
         this.object = object;
     }
 
@@ -97,9 +100,10 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     }
     @Override
     public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        if ( flowPropertyExpectation.isNamed(this.alternate)) {
+        if ( flowPropertyExpectation.isNamed(this.accessedAsName)) {
             return true;
         }
+        // TODO SECURITY: remove following block of code
         for(String complexPropertyName:this.getPropertyNames()) {
             int beginIndex = complexPropertyName.lastIndexOf('.');
             String simplePropertyName = beginIndex < 0?complexPropertyName:complexPropertyName.substring(beginIndex+1);
