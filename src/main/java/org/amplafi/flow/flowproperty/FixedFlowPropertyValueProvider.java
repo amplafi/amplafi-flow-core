@@ -40,6 +40,10 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
 
     private final Object defaultObject;
     private final Class<?> defaultClass;
+    /**
+     * Used to tell difference between null as the value and null as not initialized.
+     * (This is not visible to outside code)
+     */
     private static Object NULL = new Object() {
         @Override
         public String toString() {
@@ -192,6 +196,7 @@ public class FixedFlowPropertyValueProvider implements FlowPropertyValueProvider
 
         return newFixedFlowPropertyValueProvider(flowPropertyDefinition.getDataClassDefinition().getPropertyClass(), flowPropertyDefinition, testAndConfigFlowPropertyDefinition);
     }
+    @SuppressWarnings("unchecked")
     public static <FPP extends FlowPropertyProvider> FixedFlowPropertyValueProvider newFixedFlowPropertyValueProvider(Class<?> defaultClass,
         FlowPropertyDefinitionImplementor flowPropertyDefinition, boolean testAndConfigFlowPropertyDefinition) {
         FixedFlowPropertyValueProvider fixedFlowPropertyValueProvider = null;
