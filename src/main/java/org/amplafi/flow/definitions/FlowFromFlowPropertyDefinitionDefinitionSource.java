@@ -8,6 +8,8 @@ import org.amplafi.flow.FlowPropertyDefinition;
 
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 
+import org.amplafi.flow.FlowConfigurationException;
+import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
@@ -23,7 +25,7 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
 import static com.sworddance.util.CUtilities.*;
 
 /**
- * This class allows you to turn {@link PropertyDefinition} into {@link FlowImplementor}, avoiding the boilerplate of FlowImplementor
+ * This class allows you to turn EACH {@link PropertyDefinition} into its own {@link FlowImplementor}, avoiding the boilerplate of FlowImplementor
  * when you only have a single property to access and no state.
  *
  * TODO: looks like we should be able to refactor some of these methods that create the flow. Bothered by the lack of DRY.
@@ -55,6 +57,10 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
             internalOnly().initDefaultObject(flowPropertyName));
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
+        // TODO: use to reduce impact of the expectations?
+        // otherwise don't we risk exposing internal parameters.
+        //FlowPropertyDefinitionBuilder.merge(new FlowPropertyExpectationImpl(flowPropertyName), additionalConfigurationParameters);
+
         flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
         flow.addActivity(flowActivity);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
@@ -70,8 +76,9 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     public void add(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
         for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
             List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames();
-            ApplicationIllegalArgumentException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
+            FlowConfigurationException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
             for(String flowPropertyName : outputFlowPropertyDefinitionNames) {
+                // TODO : should we apply expectations: readonly?
                 this.add(flowPropertyName, flowPropertyDefinitionProvider, null);
             }
         }

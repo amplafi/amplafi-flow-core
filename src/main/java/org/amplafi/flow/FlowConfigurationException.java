@@ -43,5 +43,16 @@ public class FlowConfigurationException extends FlowException {
     public FlowConfigurationException(String message, Exception exception) {
         super(message, exception);
     }
-
+    /**
+     * @param failMessageParts any number of objects that are concatenated and converted to strings only if message is thrown.
+     * @param validResult if true then return null. Otherwise throw {@link FlowConfigurationException}.
+     * @return null always
+     * @throws FlowConfigurationException if validResult is false.
+     */
+    public static FlowConfigurationException valid(boolean validResult, Object... failMessageParts) {
+        if (!validResult) {
+            throw new FlowConfigurationException(failMessageParts);
+        }
+        return null;
+    }
 }
