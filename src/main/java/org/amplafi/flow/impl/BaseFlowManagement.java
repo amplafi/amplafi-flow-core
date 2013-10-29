@@ -393,7 +393,8 @@ public class BaseFlowManagement implements FlowManagement {
                     } else if (redirect != null) {
                         return redirect.toString();
                     } else if (returnToFlow != null) {
-                        return makeCurrent(returnToFlow);
+                        makeCurrent(returnToFlow);
+                        return returnToFlow.getCurrentPage();
                     } else if (returnToFlowId != null) {
                         getLog()
                             .warn(
@@ -401,7 +402,9 @@ public class BaseFlowManagement implements FlowManagement {
                                     + ") that could not be found.");
                     }
                     if (!sessionFlows.isEmpty()) {
-                        return makeCurrent(sessionFlows.getFirst());
+                        FlowState currentFlow = sessionFlows.getFirst();
+                        makeCurrent(currentFlow);
+                        return currentFlow.getCurrentPage();
                     } else {
                         // no other flows...
                         return fs.getAfterPage();
@@ -430,13 +433,11 @@ public class BaseFlowManagement implements FlowManagement {
      * @see org.amplafi.flow.FlowManagement#makeCurrent(org.amplafi.flow.FlowState)
      */
     @Override
-    public synchronized String makeCurrent(FlowState state) {
+    public synchronized void makeCurrent(FlowState state) {
         if (!this.sessionFlows.isEmpty()) {
             FlowStateImplementor oldFirst = this.sessionFlows.getFirst();
-            if (oldFirst == state) {
-                // state is already the first state.
-                return state.getCurrentPage();
-            } else {
+            if (oldFirst != state) {
+                // state was NOT already the first state.
                 sessionFlows.remove((FlowStateImplementor) state);
                 if (!oldFirst.isNotCurrentAllowed()) {
                     // the formerly first state is only supposed to be active if it is the first state.
@@ -459,7 +460,6 @@ public class BaseFlowManagement implements FlowManagement {
             }
         }
         this.sessionFlows.makeFirst((FlowStateImplementor) state);
-        return state.getCurrentPage();
     }
 
     protected void makeLast(FlowState flowState) {

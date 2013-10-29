@@ -146,9 +146,8 @@ public interface FlowManagement extends FlowStateListener {
 
     /**
      * @param state the {@link FlowState} that should be made the current FlowState.
-     * @return the {@link #getCurrentFlowState()}.{@link FlowState#getCurrentPage()}, null if no current flow.
      */
-    String makeCurrent(FlowState state);
+    void makeCurrent(FlowState state);
 
     Flow getFlowDefinition(String flowTypeName);
 

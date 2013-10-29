@@ -227,6 +227,7 @@ public class FlowPropertyDefinitionBuilder {
         if (propertyScope == null) {
             propertyScope = PropertyScope.flowLocal;
         }
+
         FlowPropertyValuePersister flowPropertyValuePersister = this.getFlowPropertyValuePersister();
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
         PropertyUsage propertyUsage = this.getPropertyUsage();
