@@ -17,7 +17,6 @@ import static com.sworddance.util.CUtilities.*;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -105,20 +104,16 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     public FlowPropertyExpectationImpl(RegisteredStandardClass registeredStandardClassAnnotation) {
         this(null, registeredStandardClassAnnotation.defaultFlowActivityPhase(), null, registeredStandardClassAnnotation.defaultPropertyUsage(), registeredStandardClassAnnotation.defaultExternalPropertyAccessRestriction());
     }
-    public FlowPropertyExpectationImpl(String name, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        this(name, null, null, null, null, null, null, Arrays.asList(flowPropertyValueChangeListener), null, null, null, null, null, null);
-    }
-    public FlowPropertyExpectationImpl(String name, PropertyUsage propertyUsage) {
-        this(name, null, null, propertyUsage, null, null, null, null, null, null, null, null, null, null);
-    }
+
     /**
-     *
+     * @deprecated Use {@link FlowPropertyDefinitionBuilder}
      * @param name
      * @param propertyRequired
      * @param propertyScope
      * @param propertyUsage
      * @param externalPropertyAccessRestriction
      */
+    @Deprecated
     public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, null, null, null, null, null, null, null);
@@ -134,26 +129,7 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
         this(null, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, null, null, null, null, null, null, null);
     }
-    /**
-     *
-     * @param name
-     * @param propertyRequired
-     * @param propertyScope
-     * @param propertyUsage
-     * @param externalPropertyAccessRestriction
-     * @param flowPropertyValueChangeListener
-     */
-    public FlowPropertyExpectationImpl(String name, FlowActivityPhase propertyRequired, PropertyScope propertyScope, PropertyUsage propertyUsage,
-            ExternalPropertyAccessRestriction externalPropertyAccessRestriction, FlowPropertyValueChangeListener flowPropertyValueChangeListener) {
-        this(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction, null, null, Arrays.asList(flowPropertyValueChangeListener), null, null, null, null, null, null);
-    }
-    /**
-     *
-     * @param externalPropertyAccessRestriction
-     */
-    public FlowPropertyExpectationImpl(ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
-        this(null, null, null, null, externalPropertyAccessRestriction, null, null, null, null, null, null, null, null, null);
-    }
+
     /**
      *
      * @param name
@@ -194,18 +170,12 @@ public class FlowPropertyExpectationImpl implements FlowPropertyExpectation {
     }
 
     /**
-     * @param dataClassDefinition the dataClassDefinition to set
-     */
-    public FlowPropertyExpectationImpl(DataClassDefinition dataClassDefinition) {
-        this(null, null,null, null,null, null,null, null,null, null, null, dataClassDefinition, null, null);
-    }
-
-    /**
-     *
+     * @deprecated Only called from {@link FlowPropertyDefinitionBuilder} so we should put there for better control.
      * @param sourceFlowPropertyExpectation
      * @param defaultFlowPropertyExpectation values used if sourceFlowPropertyExpectation does not have a value
      * the exception are the {@link FlowPropertyValueChangeListener}s which are combined.
      */
+    @Deprecated
     public FlowPropertyExpectationImpl(FlowPropertyExpectation sourceFlowPropertyExpectation, FlowPropertyExpectation defaultFlowPropertyExpectation) {
        this.name = sourceFlowPropertyExpectation.getName() !=  null?
            sourceFlowPropertyExpectation.getName() :defaultFlowPropertyExpectation.getName();

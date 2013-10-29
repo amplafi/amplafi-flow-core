@@ -45,7 +45,7 @@ public class TestFlowPropertyValuePersister {
         @Override
         protected void addStandardFlowPropertyDefinitions() {
             super.addStandardFlowPropertyDefinitions();
-            PropertyValuePersister.INSTANCE.defineFlowPropertyDefinitions(this, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(PROPERTY, PropertyUsage.io)));
+            PropertyValuePersister.INSTANCE.defineFlowPropertyDefinitions(this, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(PROPERTY, null, null, PropertyUsage.io, null)));
         }
     }
     private static class PropertyValuePersister extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValuePersister<FlowPropertyProvider> {

@@ -748,14 +748,14 @@ public class TestFlowPropertyDefinition {
      * test to make sure that the provided property is merged correctly
      */
     public void testFlowPropertyDefinitionBuilderMerge() {
-        FlowPropertyExpectation flowPropertyExpectation = new FlowPropertyExpectationImpl("property1", PropertyUsage.suppliesIfMissing);
+        FlowPropertyExpectation flowPropertyExpectation = new FlowPropertyDefinitionBuilder("property1").initPropertyUsage(PropertyUsage.suppliesIfMissing).toFlowPropertyExpectation();
         List<FlowPropertyExpectation> expectations = FlowPropertyDefinitionBuilder.merge(flowPropertyExpectation, FlowPropertyDefinitionBuilder.SECURED, FlowPropertyDefinitionBuilder.WRITE_ONLY);
         for(FlowPropertyExpectation expectation : expectations) {
             assertEquals(expectation.getName(), "property1");
             assertEquals(expectation.getPropertyUsage(), PropertyUsage.suppliesIfMissing);
         }
 
-        FlowPropertyExpectation flowPropertyExpectation2 = new FlowPropertyExpectationImpl("property2", PropertyUsage.suppliesIfMissing);
+        FlowPropertyExpectation flowPropertyExpectation2 = new FlowPropertyDefinitionBuilder("property2").initPropertyUsage(PropertyUsage.suppliesIfMissing).toFlowPropertyExpectation();
         // merge should be empty because expectations has been narrowed to "property1" expectations
         List<FlowPropertyExpectation> expectations2 = FlowPropertyDefinitionBuilder.merge(flowPropertyExpectation2, expectations);
         assertTrue(expectations2.isEmpty());
