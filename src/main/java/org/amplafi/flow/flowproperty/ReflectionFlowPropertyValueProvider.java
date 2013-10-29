@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.FlowPropertyExpectation;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowPropertyDefinition;
 
@@ -42,10 +42,12 @@ import com.sworddance.beans.BeanWorker;
  * @author patmoore
  *
  */
-public class ReflectionFlowPropertyValueProvider extends BeanWorker implements FlowPropertyValueProvider<FlowPropertyProvider> {
+public class ReflectionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProvider> implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
     private Object object;
     private String accessedAsName;
+    private String startingPropertyName;
+    private BeanWorker beanWorker;
 
     /**
      * SECURITY : should be mapped independently.
@@ -62,9 +64,26 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
         this(null, accessedAsName, mappedToProperty);
     }
     public ReflectionFlowPropertyValueProvider(Object object, String accessedAsName, String mappedToProperty) {
-        super(mappedToProperty);
-        this.accessedAsName = accessedAsName;
+        super((Class<FlowPropertyProvider>)(object != null?FlowPropertyProvider.class: FlowPropertyProviderWithValues.class));
         this.object = object;
+        if ( mappedToProperty.endsWith(".")) {
+            throw new FlowConfigurationException("'.' as last character in ", mappedToProperty, "so no property to refer to.");
+        } else if (mappedToProperty.startsWith(".")) {
+            throw new FlowConfigurationException("'.' as first character in ", mappedToProperty, "so no object to dereference");
+        }
+        if ( this.object != null ) {
+            this.beanWorker = new BeanWorker(mappedToProperty);
+        } else {
+            int indexFirst = mappedToProperty.indexOf(".");
+            if (indexFirst == -1) {
+                this.startingPropertyName = mappedToProperty;
+            } else {
+                this.startingPropertyName = mappedToProperty.substring(0, indexFirst);
+                this.beanWorker = new BeanWorker(mappedToProperty.substring(indexFirst+1));
+            }
+        }
+        this.accessedAsName = accessedAsName;
+        super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionBuilder(accessedAsName));
     }
 
     /**
@@ -88,31 +107,23 @@ public class ReflectionFlowPropertyValueProvider extends BeanWorker implements F
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
-        final Object base = this.object==null?flowPropertyProvider:this.object;
-        return (T) getValue(base, this.getPropertyName(0));
-    }
-    /**
-     * @see org.amplafi.flow.FlowPropertyValueProvider#getFlowPropertyProviderClass()
-     */
-    @Override
-    public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
-        return FlowPropertyProvider.class;
-    }
-    @Override
-    public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        if ( flowPropertyExpectation.isNamed(this.accessedAsName)) {
-            return true;
-        }
-        // TODO SECURITY: remove following block of code
-        for(String complexPropertyName:this.getPropertyNames()) {
-            int beginIndex = complexPropertyName.lastIndexOf('.');
-            String simplePropertyName = beginIndex < 0?complexPropertyName:complexPropertyName.substring(beginIndex+1);
-            if ( flowPropertyExpectation.isNamed(simplePropertyName)) {
-                return true;
+        check(flowPropertyDefinition);
+        if ( flowPropertyDefinition.isNamed(accessedAsName)) {
+            T returned;
+            if ( this.object != null) {
+                returned = (T) this.beanWorker.getValue(this.object);
+            } else {
+                FlowPropertyProviderWithValues flowPropertyProviderWithValues = (FlowPropertyProviderWithValues) flowPropertyProvider;
+                Object value = flowPropertyProviderWithValues.getProperty(this.startingPropertyName);
+                if ( this.beanWorker == null) {
+                    returned = (T) value;
+                } else {
+                    returned = (T) this.beanWorker.getValue(this.object);
+                }
             }
+            return returned;
+        } else {
+            throw fail(flowPropertyDefinition);
         }
-        return false;
     }
-
-
 }

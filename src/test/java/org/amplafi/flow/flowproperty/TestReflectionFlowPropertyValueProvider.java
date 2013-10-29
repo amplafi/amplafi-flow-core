@@ -13,7 +13,11 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import java.util.Map;
+
 import org.testng.annotations.Test;
+
+import com.sworddance.util.CUtilities;
 
 import static org.testng.Assert.*;
 
@@ -47,7 +51,11 @@ public class TestReflectionFlowPropertyValueProvider {
 
     @SuppressWarnings("unchecked")
     private <T> T get(Object object, String properties) {
-        return (T)new ReflectionFlowPropertyValueProvider(object, properties, properties).get(null, null);
+        ReflectionFlowPropertyValueProvider reflectionFlowPropertyValueProvider = new ReflectionFlowPropertyValueProvider(object, properties, properties);
+        Map<String, FlowPropertyDefinitionBuilder> flowPropertyDefinitions = reflectionFlowPropertyValueProvider.getFlowPropertyDefinitions();
+        Map.Entry<String, FlowPropertyDefinitionBuilder> entry = CUtilities.getFirst(flowPropertyDefinitions);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = entry.getValue();
+        return (T)reflectionFlowPropertyValueProvider.get(null, flowPropertyDefinitionBuilder.toFlowPropertyDefinition());
     }
 
     public static class User {
