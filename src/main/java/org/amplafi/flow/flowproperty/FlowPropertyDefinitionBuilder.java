@@ -89,7 +89,6 @@ public class FlowPropertyDefinitionBuilder {
      * As a result, the property will never return a null.
      */
     private Boolean autoCreate;
-    private Object defaultObject;
 
     /**
      * A set of {@link FlowPropertyExpectation}s that this property definition needs. Note that a {@link FlowPropertyExpectation} can be optional.
@@ -397,15 +396,19 @@ public class FlowPropertyDefinitionBuilder {
             this.addNames(flowPropertyExpectation.getAlternates());
             // should we do the merge?
             this.dataClassDefinition = getFirstNonNull(flowPropertyExpectation.getDataClassDefinition(), this.getDataClassDefinition());
-            // this.defaultObject ( converted to FPVP )
             this.externalPropertyAccessRestriction =getFirstNonNull(flowPropertyExpectation.getExternalPropertyAccessRestriction(), this.getExternalPropertyAccessRestriction() );
             addAllIfNotContains(this.flowPropertyValueChangeListeners, flowPropertyExpectation.getFlowPropertyValueChangeListeners());
-            this.flowPropertyValuePersister = getFirstNonNull(flowPropertyExpectation.getFlowPropertyValuePersister(), this.getFlowPropertyValuePersister());
-            this.flowPropertyValueProvider = getFirstNonNull(flowPropertyExpectation.getFlowPropertyValueProvider(), this.getFlowPropertyValueProvider());
             addAllIfNotContains(this.getPropertiesDependentOn(), flowPropertyExpectation.getPropertiesDependentOn());
             this.propertyRequired = getFirstNonNull(flowPropertyExpectation.getPropertyRequired(), this.getPropertyRequired());
             this.propertyScope = getFirstNonNull(flowPropertyExpectation.getPropertyScope(), this.getPropertyScope());
             this.propertyUsage = getFirstNonNull(flowPropertyExpectation.getPropertyUsage(), this.getPropertyUsage());
+            if ( flowPropertyExpectation.getFlowPropertyValueProvider() != null ) {
+                // NOTE: FlowPropertyValueProvider must be set AFTER propertyUsage to allow clearing out of PropertyUsage
+                this.initFlowPropertyValueProvider(flowPropertyExpectation.getFlowPropertyValueProvider(), false);
+            }
+            if ( flowPropertyExpectation.getFlowPropertyValuePersister() != null ) {
+                this._initFlowPropertyValuePersister(flowPropertyExpectation.getFlowPropertyValuePersister(), false);
+            }
             this.saveBack = getFirstNonNull(flowPropertyExpectation.getSaveBack(), this.getSaveBack());
             this.initial = getFirstNonNull(flowPropertyExpectation.getInitial(), this.getInitial());
         }
@@ -414,9 +417,7 @@ public class FlowPropertyDefinitionBuilder {
     public ExternalPropertyAccessRestriction getExternalPropertyAccessRestriction() {
         return this.externalPropertyAccessRestriction;
     }
-    public Object getDefaultObject() {
-        return this.defaultObject;
-    }
+
     public FlowPropertyDefinitionBuilder initFlowPropertyValuePersister(
         FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister) {
         _initFlowPropertyValuePersister(flowPropertyValuePersister, true);

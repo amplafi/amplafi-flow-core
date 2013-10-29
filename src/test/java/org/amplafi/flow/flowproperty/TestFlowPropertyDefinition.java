@@ -676,7 +676,6 @@ public class TestFlowPropertyDefinition {
 
     private static enum SampleEnum {
         EXTERNAL, EMAIL
-
     }
 
     /**
