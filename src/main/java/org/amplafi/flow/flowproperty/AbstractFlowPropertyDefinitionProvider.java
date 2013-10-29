@@ -43,9 +43,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     // Forcing a fixed order so getting the default first FPD will be consistent (TODO save first FPD explicitly)
     private final LinkedHashMap<String, FlowPropertyDefinitionBuilder> flowPropertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinitionBuilder>();
 
-    protected AbstractFlowPropertyDefinitionProvider() {
-        // for case when definitions are added in later.
-    }
+    /**
+     * Additional flowPropertyDefinitionBuilders can be added with {@link #addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder...)} )
+     * @param flowPropertyDefinitionBuilders can be null or missing.
+     */
     protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilders);
     }
