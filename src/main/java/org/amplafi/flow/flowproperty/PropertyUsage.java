@@ -133,11 +133,13 @@ public enum PropertyUsage {
         use.canBeChangedTo = Arrays.asList(io, suppliesIfMissing, consume, initialize);
         io.canBeChangedTo = Arrays.asList(suppliesIfMissing, consume, initialize);
         suppliesIfMissing.canBeChangedTo = Arrays.asList(initialize);
-        createsIfMissing.canBeChangedTo = Arrays.asList(initialize);
+        createsIfMissing.canBeChangedTo = Arrays.asList(initialize, suppliesIfMissing);
         consume.canBeChangedTo = Arrays.asList();
         initialize.canBeChangedTo = Arrays.asList();
         createAlways.canBeChangedTo = Arrays.asList();
     }
+
+    public static List<PropertyUsage> NO_FLOW_PROPERTY_VALUE_PROVIDERS = Arrays.asList(use, consume);
 
     private PropertyUsage(boolean cleanOnInitialization, boolean outputedProperty, boolean externallySettable) {
         this(cleanOnInitialization,outputedProperty, externallySettable, outputedProperty);
