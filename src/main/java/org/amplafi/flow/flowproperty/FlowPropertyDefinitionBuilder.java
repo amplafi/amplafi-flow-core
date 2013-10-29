@@ -65,7 +65,7 @@ public class FlowPropertyDefinitionBuilder {
 
     // TODO list for a chained series of possible providers
     private FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider;
-    private FlowPropertyValuePersister flowPropertyValuePersister;
+    private FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister;
     private List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners;
 
     private ExternalPropertyAccessRestriction externalPropertyAccessRestriction;
@@ -220,6 +220,9 @@ public class FlowPropertyDefinitionBuilder {
     public FlowPropertyExpectation toCompleteFlowPropertyExpectation() {
 
         FlowActivityPhase propertyRequired = getPropertyRequired();
+        FlowPropertyValuePersister flowPropertyValuePersister = this.getFlowPropertyValuePersister();
+        FlowPropertyValueProvider flowPropertyValueProvider = this.getFlowPropertyValueProvider();
+
         if (propertyRequired == null) {
             propertyRequired = FlowActivityPhase.optional;
         }
@@ -228,14 +231,13 @@ public class FlowPropertyDefinitionBuilder {
             propertyScope = PropertyScope.flowLocal;
         }
 
-        FlowPropertyValuePersister flowPropertyValuePersister = this.getFlowPropertyValuePersister();
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
         PropertyUsage propertyUsage = this.getPropertyUsage();
         if (propertyUsage == null) {
             // TODO: should default be different if there is a persister?
             // also what about externalPropertyAccessRestriction?
             // or should we just have simple defaults.
-            propertyUsage = PropertyUsage.use;
+            propertyUsage = flowPropertyValueProvider != null? PropertyUsage.suppliesIfMissing:PropertyUsage.use;
         }
         if (externalPropertyAccessRestriction == null) {
             if (!propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
@@ -262,6 +264,12 @@ public class FlowPropertyDefinitionBuilder {
             flowPropertyValuePersister = null;
         }
 
+        // if the property must be supplied externally then there can't be a FlowPropertyValueProvider
+        // TODO: would like this condition to be explicitly forced with FlowPropertyExpectation
+        // but we need a way for FlowPropertyExpectation to indicate the null value.
+        if ( (propertyUsage == PropertyUsage.use || propertyUsage == PropertyUsage.consume) ) {
+            flowPropertyValueProvider = null;
+        }
         Boolean autoCreate = this.getAutoCreate();
         if (autoCreate == null) {
             // see note on #initAutoCreate()
@@ -457,15 +465,32 @@ public class FlowPropertyDefinitionBuilder {
     }
      */
 
+    /**
+     * @see #initFlowPropertyValueProvider(FlowPropertyValueProvider, boolean)
+     * Resets this.propertyUsage if this.propertyUsage == use or consume
+     * @param flowPropertyValueProvider
+     * @throws FlowConfigurationException flowPropertyValueProvider does not handle this property.
+     * @return this
+     */
     public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(
         FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider) {
         return initFlowPropertyValueProvider(flowPropertyValueProvider, true);
     }
 
+    /**
+     * Resets this.propertyUsage if this.propertyUsage == use or consume
+     * @param flowPropertyValueProvider
+     * @param failOnNotHandling false if the flowPropertyValueProvider is a generic default that may not apply ( if it doesn't we don't want an exception)
+     * @throws FlowConfigurationException if failOnNotHandling is true and flowPropertyValueProvider does not handle this property.
+     * @return this
+     */
     public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(
-        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) {
+        FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) throws FlowConfigurationException{
         if (flowPropertyValueProvider.isHandling(this.toCompleteFlowPropertyExpectation())) {
             this.flowPropertyValueProvider = flowPropertyValueProvider;
+            if ( this.propertyUsage == PropertyUsage.use || this.propertyUsage == PropertyUsage.consume) {
+                this.propertyUsage = null;
+            }
         } else if ( failOnNotHandling ){
             throw new FlowConfigurationException(flowPropertyValueProvider + " not handling " + this.name);
         }
@@ -473,9 +498,15 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage) {
-        this.initPropertyScope(propertyScope);
-        this.initPropertyUsage(propertyUsage);
-        return this;
+        return this.initPropertyScope(propertyScope)
+                .initPropertyUsage(propertyUsage);
+    }
+
+    public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage,
+        ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
+        return this.initPropertyScope(propertyScope)
+                .initPropertyUsage(propertyUsage)
+                .initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
     }
 
     public FlowPropertyDefinitionBuilder initSensitive() {
@@ -483,16 +514,14 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-    public FlowPropertyDefinitionBuilder initAccess(PropertyScope propertyScope, PropertyUsage propertyUsage,
-        ExternalPropertyAccessRestriction externalPropertyAccessRestriction) {
-        this.initPropertyScope(propertyScope);
-        this.initPropertyUsage(propertyUsage);
-        this.initExternalPropertyAccessRestriction(externalPropertyAccessRestriction);
-        return this;
-    }
-
-    public void mergeDataType(FlowPropertyExpectation source) {
+    /**
+     *
+     * @param source
+     * @return this
+     */
+    public FlowPropertyDefinitionBuilder mergeDataType(FlowPropertyExpectation source) {
         this.getDataClassDefinition().merge(source.getDataClassDefinition());
+        return this;
     }
     /**
      *
@@ -560,7 +589,6 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
-
     public PropertyScope getPropertyScope() {
         return propertyScope;
     }
@@ -570,10 +598,12 @@ public class FlowPropertyDefinitionBuilder {
     }
 
     /**
-     * Convience wrapper to define a {@link FlowPropertyValueProvider} that returns a constant.
+     * Convenience wrapper to define a {@link FlowPropertyValueProvider} that returns a constant.
+     * @see #initFlowPropertyValueProvider(FlowPropertyValueProvider, boolean)
      * @param defaultObject
      * @return this
      */
+    @SuppressWarnings("unchecked")
     public FlowPropertyDefinitionBuilder initDefaultObject(Object defaultObject) {
         if ( defaultObject instanceof FlowPropertyValueProvider<?>) {
             this.initFlowPropertyValueProvider((FlowPropertyValueProvider<FlowPropertyProvider>)defaultObject);
@@ -620,7 +650,7 @@ public class FlowPropertyDefinitionBuilder {
         return this.dataClassDefinition;
     }
 
-    public FlowPropertyValuePersister<FlowPropertyProvider> getFlowPropertyValuePersister() {
+    public FlowPropertyValuePersister<? extends FlowPropertyProvider> getFlowPropertyValuePersister() {
         return this.flowPropertyValuePersister;
     }
 
