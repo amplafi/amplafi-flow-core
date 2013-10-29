@@ -230,14 +230,18 @@ public class FlowPropertyDefinitionBuilder {
             propertyScope = PropertyScope.flowLocal;
         }
 
-        ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
         PropertyUsage propertyUsage = this.getPropertyUsage();
         if (propertyUsage == null) {
             // TODO: should default be different if there is a persister?
             // also what about externalPropertyAccessRestriction?
             // or should we just have simple defaults.
             propertyUsage = flowPropertyValueProvider != null? PropertyUsage.suppliesIfMissing:PropertyUsage.use;
+        } else if ( flowPropertyValueProvider != null && PropertyUsage.NO_FLOW_PROPERTY_VALUE_PROVIDERS.contains(propertyUsage)) {
+            // we can favor PU here because setting with initFlowPropertyValueProvider will clear out the propertyUsage
+            // which means the PU was set *after* the flowPropertyValueProvider
+            flowPropertyValueProvider = null;
         }
+        ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
         if (externalPropertyAccessRestriction == null) {
             if (!propertyUsage.isOutputedProperty() && !propertyUsage.isExternallySettable()) {
                 // not outputted nor set externally then by default internal
@@ -263,12 +267,6 @@ public class FlowPropertyDefinitionBuilder {
             flowPropertyValuePersister = null;
         }
 
-        // if the property must be supplied externally then there can't be a FlowPropertyValueProvider
-        // TODO: would like this condition to be explicitly forced with FlowPropertyExpectation
-        // but we need a way for FlowPropertyExpectation to indicate the null value.
-        if ( (propertyUsage == PropertyUsage.use || propertyUsage == PropertyUsage.consume) ) {
-            flowPropertyValueProvider = null;
-        }
         Boolean autoCreate = this.getAutoCreate();
         if (autoCreate == null) {
             // see note on #initAutoCreate()
@@ -388,6 +386,7 @@ public class FlowPropertyDefinitionBuilder {
 
     /**
      * Copy over/merge flowPropertyExpectation with current information. The passed flowPropertyExpectation is favored over the current settings.
+     * TODO: should we use the various init* methods so that side effects can be triggered.
      * @param flowPropertyExpectation
      */
     public void applyFlowPropertyExpectation(FlowPropertyExpectation flowPropertyExpectation) {
@@ -424,9 +423,17 @@ public class FlowPropertyDefinitionBuilder {
         return this;
     }
 
+    /**
+     * @param flowPropertyValuePersister
+     * @param failOnNotHandling false if the flowPropertyValuePersister is a generic default that may not apply ( if it doesn't we don't want an exception)
+     * @return true if this.flowPropertyValuePersister != null
+     */
     private boolean _initFlowPropertyValuePersister(FlowPropertyValuePersister<? extends FlowPropertyProvider> flowPropertyValuePersister,
-        boolean failOnNotHandling) {
-        if (flowPropertyValuePersister.isHandling(this.toCompleteFlowPropertyExpectation())) {
+        boolean failOnNotHandling) throws FlowConfigurationException {
+        if ( flowPropertyValuePersister == null ) {
+            this.flowPropertyValuePersister = flowPropertyValuePersister;
+            return false;
+        } else if (flowPropertyValuePersister.isHandling(this.toCompleteFlowPropertyExpectation())) {
             this.flowPropertyValuePersister = flowPropertyValuePersister;
             return true;
         } else if ( failOnNotHandling ){
@@ -480,16 +487,19 @@ public class FlowPropertyDefinitionBuilder {
 
     /**
      * Resets this.propertyUsage if this.propertyUsage == use or consume
-     * @param flowPropertyValueProvider
+     * @param flowPropertyValueProvider can be null to remove previous {@link FlowPropertyValueProvider}
      * @param failOnNotHandling false if the flowPropertyValueProvider is a generic default that may not apply ( if it doesn't we don't want an exception)
      * @throws FlowConfigurationException if failOnNotHandling is true and flowPropertyValueProvider does not handle this property.
      * @return this
      */
     public FlowPropertyDefinitionBuilder initFlowPropertyValueProvider(
         FlowPropertyValueProvider<? extends FlowPropertyProvider> flowPropertyValueProvider, boolean failOnNotHandling) throws FlowConfigurationException{
-        if (flowPropertyValueProvider.isHandling(this.toCompleteFlowPropertyExpectation())) {
+        if ( flowPropertyValueProvider == null ) {
             this.flowPropertyValueProvider = flowPropertyValueProvider;
-            if ( this.propertyUsage == PropertyUsage.use || this.propertyUsage == PropertyUsage.consume) {
+        } else if (flowPropertyValueProvider.isHandling(this.toCompleteFlowPropertyExpectation())) {
+            this.flowPropertyValueProvider = flowPropertyValueProvider;
+            // NOTE: we INTENTIONALLY do NOT clear FPVP on setting propertyUsage ( this is intentional ) - see comments in initPropertyUsage
+            if ( PropertyUsage.NO_FLOW_PROPERTY_VALUE_PROVIDERS.contains(this.propertyUsage)) {
                 this.propertyUsage = null;
             }
         } else if ( failOnNotHandling ){
@@ -595,6 +605,9 @@ public class FlowPropertyDefinitionBuilder {
     }
     public FlowPropertyDefinitionBuilder initPropertyUsage(PropertyUsage propertyUsage) {
         this.propertyUsage = propertyUsage;
+        // Note: that we are purposely NOT mirroring the clearing code in initFlowPropertyValueProvider here.
+        // this is because when copying a FlowPropertyExpectation we have an ordering problem (which to set first PU or FPVP?)
+        // also FPVP has the most unique knowledge (PU is just an enum)
         return this;
     }
 

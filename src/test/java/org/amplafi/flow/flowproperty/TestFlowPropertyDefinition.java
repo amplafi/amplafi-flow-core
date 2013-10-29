@@ -760,6 +760,34 @@ public class TestFlowPropertyDefinition {
         assertTrue(expectations2.isEmpty());
     }
     /**
+     * Tests the interactions between {@link PropertyUsage#use} and {@link PropertyUsage#consume} and {@link FlowPropertyValueProvider}
+     * Specifically, if PropertyUsage.use or consume then there can't be a {@link FlowPropertyValueProvider}. Similarly if a
+     * {@link FlowPropertyValueProvider} is set then a previous use/consume setting needs to be removed.
+     */
+    @Test(enabled=TEST_ENABLED)
+    public void testSettingFlowPropertyValueProvider() {
+        for(PropertyUsage propertyUsage: PropertyUsage.NO_FLOW_PROPERTY_VALUE_PROVIDERS) {
+            FlowPropertyDefinitionBuilder definitionBuilder = new FlowPropertyDefinitionBuilder("property1").initPropertyUsage(propertyUsage);
+            assertEquals(definitionBuilder.getPropertyUsage(), propertyUsage);
+            // null FPVP should not affect things.
+            definitionBuilder.initFlowPropertyValueProvider(null, true);
+            assertEquals(definitionBuilder.getPropertyUsage(), propertyUsage);
+            definitionBuilder.initDefaultObject("a value");
+            assertEquals(definitionBuilder.getPropertyUsage(), null);
+            assertNotNull(definitionBuilder.getFlowPropertyValueProvider());
+
+            // now lets reapply the PropertyUsage
+            definitionBuilder.initPropertyUsage(propertyUsage);
+            assertEquals(definitionBuilder.getPropertyUsage(), propertyUsage);
+            // the FPVP will still be present.
+            assertNotNull(definitionBuilder.getFlowPropertyValueProvider());
+            FlowPropertyExpectation flowPropertyExpectation = definitionBuilder.toCompleteFlowPropertyExpectation();
+            // but not when we are forced to chose.
+            assertNull(flowPropertyExpectation.getFlowPropertyValueProvider());
+        }
+    }
+
+    /**
      * Create a standard property and see if that standard property is access and used when the property comes up unexpectedly.
      */
     @Test(enabled=TEST_ENABLED)
