@@ -64,9 +64,12 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
                             // this property is expected to be created at this point. see if we can force the value to be created
                         	// Note: This actually enforces the expectation that the property can in fact be supplied.
                             flowPropertyProvider.getProperty(def.getName());
+                            // we assume that the property can be created ( it was set to autoCreate )
+                            // so if the property is still null then that is the 'set' value.
+                        } else {
+                            MissingRequiredTracking.appendRequiredTrackingIfTrue(flowValidationResult,
+                                true, flowPropertyProvider.getFlowPropertyProviderFullName(),":", def.getName());
                         }
-                        MissingRequiredTracking.appendRequiredTrackingIfTrue(flowValidationResult,
-                                !flowPropertyProvider.isPropertySet(def.getName()), flowPropertyProvider.getFlowPropertyProviderFullName(),":", def.getName());
                     }
                 }
             }
