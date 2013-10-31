@@ -638,6 +638,17 @@ public class FlowPropertyDefinitionBuilder {
         }
         return this;
     }
+
+    /**
+     * This is a derived property.
+     * @param mappedProperty a dotted path to the value to return
+     * @return this
+     */
+    public FlowPropertyDefinitionBuilder initDerivedValue(String mappedProperty) {
+        ReflectionFlowPropertyValueProvider flowPropertyValueProvider = new ReflectionFlowPropertyValueProvider(null, this.getName(), mappedProperty, this);
+        this.initFlowPropertyValueProvider(flowPropertyValueProvider);
+        return this;
+    }
     /**
      * TODO: Note that anything that extends {@link CharSequence} is does not set the class
      * this was to allow configuration from xml where everything is a string ( we want to be able to convert strings to some other class)

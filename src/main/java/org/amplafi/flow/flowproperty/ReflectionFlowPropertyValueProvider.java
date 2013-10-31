@@ -44,61 +44,78 @@ import com.sworddance.beans.BeanWorker;
  */
 public class ReflectionFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProvider> implements FlowPropertyValueProvider<FlowPropertyProvider> {
 
-    private Object object;
-    private String accessedAsName;
+    private final Object object;
+    /**
+     * The property name. defaults to the string before the last '.'
+     */
+    private final String accessedAsName;
+    /**
+     * The string before the first '.'
+     */
     private String startingPropertyName;
     private BeanWorker beanWorker;
+    private BeanWorker beanWorkerIfPropertyFound;
 
     /**
-     * SECURITY : should be mapped independently.
-     * Use the {@link FlowPropertyProvider} that is passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} as the starting object to trace for
-     * using propertyName.
-     *
-     * @param propertyName
+     * @param object
+     * @param accessedAsName
+     * @param mappedToProperty if ends in '.' then accessedAsName is append as the final property to access.
      */
-    @Deprecated
-    public ReflectionFlowPropertyValueProvider(String propertyName) {
-        this(null, propertyName, propertyName);
-    }
-    public ReflectionFlowPropertyValueProvider(String accessedAsName, String mappedToProperty) {
-        this(null, accessedAsName, mappedToProperty);
-    }
     public ReflectionFlowPropertyValueProvider(Object object, String accessedAsName, String mappedToProperty) {
+        this(object, accessedAsName, mappedToProperty, new FlowPropertyDefinitionBuilder(accessedAsName));
+    }
+    /**
+     * @param object
+     * @param accessedAsName
+     * @param mappedToProperty if ends in '.' then accessedAsName is append as the final property to access.
+     * @param flowPropertyDefinitionBuilder for properties that are being built externally.
+     */
+    public ReflectionFlowPropertyValueProvider(Object object, String accessedAsName, String mappedToProperty, FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder) {
         super((Class<FlowPropertyProvider>)(object != null?FlowPropertyProvider.class: FlowPropertyProviderWithValues.class));
         this.object = object;
-        if ( mappedToProperty.endsWith(".")) {
-            throw new FlowConfigurationException("'.' as last character in ", mappedToProperty, "so no property to refer to.");
-        } else if (mappedToProperty.startsWith(".")) {
+        this.accessedAsName = accessedAsName;
+        if (mappedToProperty.startsWith(".")) {
             throw new FlowConfigurationException("'.' as first character in ", mappedToProperty, "so no object to dereference");
         }
-        if ( this.object != null ) {
-            this.beanWorker = new BeanWorker(mappedToProperty);
-        } else {
+        if ( mappedToProperty.endsWith(".")) {
+            mappedToProperty += accessedAsName;
+        }
+        this.beanWorker = new BeanWorker(mappedToProperty);
+        if ( this.object == null) {
+            // may be getting value by dereferencing the FlowPropertyValueProvider supplied in the 'get' or start with a property
+            // and then dereference the property
             int indexFirst = mappedToProperty.indexOf(".");
             if (indexFirst == -1) {
                 this.startingPropertyName = mappedToProperty;
+                this.beanWorkerIfPropertyFound = null;
             } else {
                 this.startingPropertyName = mappedToProperty.substring(0, indexFirst);
-                this.beanWorker = new BeanWorker(mappedToProperty.substring(indexFirst+1));
+                this.beanWorkerIfPropertyFound = new BeanWorker(mappedToProperty.substring(indexFirst+1));
             }
+        } else {
+            flowPropertyDefinitionBuilder.setDataClass(getPropertyType());
         }
-        this.accessedAsName = accessedAsName;
-        super.addFlowPropertyDefinitionImplementators(new FlowPropertyDefinitionBuilder(accessedAsName));
+        // Minor hack - relies on flowPropertyDefinitionBuilder not being replaced different flowPropertyDefinitionBuilder
+        // while creating property with flowPropertyDefinitionBuilder
+        // since this assumption is true ( 2013 Oct 31 ) this not a big deal.
+        // needs flowPropertyDefinitionBuilder so that isHandling() can be answered correctly
+        super.addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilder);
     }
 
-    /**
-     * Used when an object other than the flowPropertyProvider passed in the {@link #get(FlowPropertyProvider, FlowPropertyDefinition)} should be used
-     * as the root for tracing out properties.
-     * @param object
-     */
-    public void setObject(Object object) {
-        this.object = object;
-    }
     /**
      * @return the object
      */
     public Object getObject() {
         return object;
+    }
+
+    public Class<?> getPropertyType() {
+        if ( this.object != null ) {
+            Class<?> dataClass = this.beanWorker.getPropertyType(this.object.getClass());
+            return dataClass;
+        } else {
+            return null;
+        }
     }
     /**
      *
@@ -115,10 +132,15 @@ public class ReflectionFlowPropertyValueProvider extends AbstractFlowPropertyVal
             } else {
                 FlowPropertyProviderWithValues flowPropertyProviderWithValues = (FlowPropertyProviderWithValues) flowPropertyProvider;
                 Object value = flowPropertyProviderWithValues.getProperty(this.startingPropertyName);
-                if ( this.beanWorker == null) {
+                if ( value == null ) {
+                    // no property: use full path starting with the flowPropertyProvider
+                    returned = (T) this.beanWorker.getValue(flowPropertyProviderWithValues);
+                } else if ( this.beanWorkerIfPropertyFound == null) {
+                    // property found but no further derefencing is needed.
                     returned = (T) value;
                 } else {
-                    returned = (T) this.beanWorker.getValue(this.object);
+                    // got property but need more dereferencing.
+                    returned = (T) this.beanWorkerIfPropertyFound.getValue(value);
                 }
             }
             return returned;
