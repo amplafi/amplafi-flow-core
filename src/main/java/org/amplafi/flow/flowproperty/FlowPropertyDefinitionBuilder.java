@@ -644,14 +644,14 @@ public class FlowPropertyDefinitionBuilder {
      *
      * TODO: maybe this class ignoring to just strings?
      *
-     * @param dataClass
+     * @param dataClass (is null allow
      * @return this
      */
     public FlowPropertyDefinitionBuilder setDataClass(Class<? extends Object> dataClass) {
-        if ( this.getDataClassDefinition() == null) {
-            this.dataClassDefinition = new DataClassDefinitionImpl(dataClass);
-        } else {
+        if ( this.getDataClassDefinition() != null) {
             this.getDataClassDefinition().setDataClass(dataClass);
+        } else if (dataClass != null) {
+            this.dataClassDefinition = new DataClassDefinitionImpl(dataClass);
         }
         return this;
     }
