@@ -57,12 +57,6 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
     Object getDefaultObject(FlowPropertyProvider flowPropertyProvider);
 
     /**
-     *
-     * @param flowPropertyProvider
-     * @return true if {@link #getDefaultObject(FlowPropertyProvider)} will return a value
-     */
-    boolean isDefaultObjectAvailable(FlowPropertyProvider flowPropertyProvider);
-    /**
      * NOTE: an property could be cacheOnly AND !isReadOnly() this means the object must be saved before the current tx (request) completes.
      * @return true this means the object cannot be serialized.
      */

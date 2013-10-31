@@ -53,7 +53,6 @@ public interface FlowStateImplementor extends FlowState {
      */
     <T extends FlowActivity> T getActivity(int activityIndex);
 
-
     void setFlowLifecycleState(FlowStateLifecycle flowStateLifecycle);
     /**
      * set the page that the flow should tell the UI to go to when this flow completes.

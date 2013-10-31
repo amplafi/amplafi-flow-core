@@ -55,7 +55,7 @@ public class FlowValidationResultProviderImpl<FPP extends FlowPropertyProviderWi
         if (isNotEmpty(propDefs)) {
             for (FlowPropertyDefinition def : propDefs.values()) {
                 FlowActivityPhase propertyRequired = def.getPropertyRequired();
-				if (propertyRequired != null && propertyRequired == flowActivityPhase) {
+				if (propertyRequired == flowActivityPhase) {
                     if (!flowPropertyProvider.isPropertySet(def.getName())) {
                         // the property is not set
                         // It does make sense for PropertyUsage.consumes.getSetsValue() == Boolean.TRUE because this indicates
