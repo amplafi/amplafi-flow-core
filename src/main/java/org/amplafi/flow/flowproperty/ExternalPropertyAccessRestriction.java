@@ -18,6 +18,7 @@ import org.amplafi.flow.FlowState;
 
 /**
  * Controls GLOBAL external access and visibility to the property from an untrusted source (like a browser or plugin).
+ * Defines the external visibility but does NOT impact the ability of other flows' access.
  *
  * ExternalPropertyAccessRestriction determines if setProperty() or getProperty() are allowed via external clients.
  *
@@ -62,12 +63,15 @@ public enum ExternalPropertyAccessRestriction {
      */
     noAccess(false, false),
     /**
-     * property value is visible external to the user. property value cannot be modified even during the Flow.
+     * property value is visible external to the user. property value is NOT modifiable by <em>external</em> sources even during the Flow.
+     * The property may be changed, set or deleted by the flow itself.
      * The change prohibition during the flow
      * makes this different than {@link PropertyUsage#use}
      */
     readonly(true, false),
     /**
+     * property can be altered but the original value and the alteration is not visible to <em>external</em> sources. The property value can
+     * be made available
      * this is typically used for passwords (or any other security credential )
      * User is allowed to send in the password but not allowed to see stored passwords.
      *

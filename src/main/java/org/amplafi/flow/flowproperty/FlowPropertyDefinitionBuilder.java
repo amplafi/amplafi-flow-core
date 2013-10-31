@@ -269,10 +269,12 @@ public class FlowPropertyDefinitionBuilder {
 
         Boolean autoCreate = this.getAutoCreate();
         if (autoCreate == null) {
-            // see note on #initAutoCreate()
-            // also if propertyRequired = activate / then we shouldn't create the property
-            // because it was expected to already be created.
-            if (!dataClassDefinition.isCollection()) {
+            // see notes on #initAutoCreate()
+            if ( flowPropertyValueProvider != null) {
+                // note that flowPropertyValueProvider has been previously filtered by the PropertyUsage
+                // note that because initDefaultObject() sets a flowPropertyValueProvider that case is handled as well.
+                autoCreate = true;
+            } else if (!dataClassDefinition.isCollection()) {
                 Class<?> dataClass = dataClassDefinition.getDataClass();
                 if (dataClass.isPrimitive()) {
                     autoCreate = true;
