@@ -94,10 +94,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     protected void addFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionBuilder>flowPropertyDefinitionBuilders, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
-            addPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
+            addFlowPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         }
     }
-    protected void addPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
+    protected void addFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = initPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
@@ -156,7 +156,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         if ( this.getFlowPropertyDefinitions() != null) {
             for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: this.getFlowPropertyDefinitions().values()) {
-                addPropertyDefinition(flowPropertyProvider, new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder), additionalConfigurationParameters);
+                addFlowPropertyDefinition(flowPropertyProvider, new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder), additionalConfigurationParameters);
             }
         }
     }

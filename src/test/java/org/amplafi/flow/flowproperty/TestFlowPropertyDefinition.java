@@ -131,12 +131,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-        	@Override
-        	@Deprecated // provide better definition
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		// not checking so sure.
-        		return true;
-        	}
+            @Override
+            @Deprecated // provide better definition
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                // not checking so sure.
+                return true;
+            }
         });
         t = (Boolean) definition.getDefaultObject(new Dummy());
         assertEquals(t, Boolean.TRUE);
@@ -513,12 +513,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-        	@Override
-        	@Deprecated // provide better definition
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		// not checking so sure.
-        		return true;
-        	}
+            @Override
+            @Deprecated // provide better definition
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                // not checking so sure.
+                return true;
+            }
         };
         FlowPropertyDefinitionImplementor flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initFlowPropertyValueProvider(flowPropertyValueProvider).initAccess(PropertyScope.flowLocal,
             PropertyUsage.initialize).toFlowPropertyDefinition();
@@ -569,11 +569,11 @@ public class TestFlowPropertyDefinition {
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider,
                     FlowPropertyDefinition flowPropertyDefinition) {
-            	check(flowPropertyDefinition);
-            	if(flowPropertyDefinition.isNamed(autoCreated)) {
-            	} else {
-            	    throw new FlowConfigurationException("but test should only get the "+autoCreated+" property");
-            	}
+                check(flowPropertyDefinition);
+                if(flowPropertyDefinition.isNamed(autoCreated)) {
+                } else {
+                    throw new FlowConfigurationException("but test should only get the "+autoCreated+" property");
+                }
                 CharSequence value = "ME: "+flowPropertyDefinition.getName();
                 return (T) value;
             }
@@ -582,10 +582,10 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-        	@Override
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		return flowPropertyExpectation.isNamed(autoCreated) || flowPropertyExpectation.isNamed(notAutoCreated);
-        	}
+            @Override
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                return flowPropertyExpectation.isNamed(autoCreated) || flowPropertyExpectation.isNamed(notAutoCreated);
+            }
         };
         FlowPropertyDefinitionImplementor flowNotAutoCreatedProperty = new FlowPropertyDefinitionBuilder(notAutoCreated, Object.class).initAccess(flowLocal,io).
         initFlowPropertyValueProvider(flowPropertyValueProvider).toFlowPropertyDefinition();
@@ -690,11 +690,11 @@ public class TestFlowPropertyDefinition {
         FixedFlowPropertyValueProvider originalProvider = (FixedFlowPropertyValueProvider) flowPropertyDefinitionBuilder.getFlowPropertyValueProvider();
         AbstractFlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider = new AbstractFlowPropertyValueProvider<FlowPropertyProvider>() {
 
-        	@Override
-        	public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
-        		super.defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
-				super.addPropertyDefinition(flowPropertyProvider, noProvider, additionalConfigurationParameters);
-        	}
+            @Override
+            public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
+                super.defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
+                super.addFlowPropertyDefinition(flowPropertyProvider, noProvider, additionalConfigurationParameters);
+            }
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
                 throw new UnsupportedOperationException("should not be called.");
@@ -728,17 +728,17 @@ public class TestFlowPropertyDefinition {
 
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider,  FlowPropertyDefinition flowPropertyDefinition) {
-            	throw fail(flowPropertyDefinition);
+                throw fail(flowPropertyDefinition);
             }
 
             @Override
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-        	@Override
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		return false;
-        	}
+            @Override
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                return false;
+            }
         };
         new FlowPropertyDefinitionBuilder("foo", Object.class).initFlowPropertyValueProvider(flowPropertyValueProvider);
     }
@@ -805,9 +805,9 @@ public class TestFlowPropertyDefinition {
             @Override
             public <T> T get(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
                 // return a non-String value to make sure initialization does not expect a string.
-            	UserObject userObject = flowPropertyProvider.getProperty("user");
-            	assertNotNull(userObject);
-            	assertEquals(userObject.i, 1);
+                UserObject userObject = flowPropertyProvider.getProperty("user");
+                assertNotNull(userObject);
+                assertEquals(userObject.i, 1);
                 return (T) Boolean.TRUE;
             }
 
@@ -815,12 +815,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProviderWithValues> getFlowPropertyProviderClass() {
                 return FlowPropertyProviderWithValues.class;
             }
-        	@Override
-        	@Deprecated // provide better definition
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		// not checking so sure.
-        		return true;
-        	}
+            @Override
+            @Deprecated // provide better definition
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                // not checking so sure.
+                return true;
+            }
         });
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
@@ -855,12 +855,12 @@ public class TestFlowPropertyDefinition {
             public Class<FlowPropertyProvider> getFlowPropertyProviderClass() {
                 return FlowPropertyProvider.class;
             }
-        	@Override
-        	@Deprecated // provide better definition
-        	public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
-        		// not checking so sure.
-        		return true;
-        	}
+            @Override
+            @Deprecated // provide better definition
+            public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+                // not checking so sure.
+                return true;
+            }
         });
         FlowActivityImpl flowActivity0 = newFlowActivity();
         flowActivity0.setFlowPropertyProviderName("activity0");
@@ -920,16 +920,12 @@ public class TestFlowPropertyDefinition {
         public Map<String, FlowPropertyDefinition> getPropertyDefinitions() {
             throw new UnsupportedOperationException();
         }
-
     }
     private static class UserObject {
+        int i;
 
-    	int i;
-
-		public UserObject(int i) {
-			this.i = i;
-		}
-
+        public UserObject(int i) {
+            this.i = i;
+        }
     }
-
 }
