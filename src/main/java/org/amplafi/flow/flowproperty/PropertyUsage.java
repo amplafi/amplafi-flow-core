@@ -43,7 +43,7 @@ public enum PropertyUsage {
     internalState(false, false, false),
     /**
      * read if passed. not created. The original value is not altered even if the flow itself does alter the value.
-     * No {@link org.amplafi.flow.FlowPropertyValueProvider} are allowed
+     * A {@link org.amplafi.flow.FlowPropertyValueProvider} may be provided to have a default value.
      */
     use(false, false, true),
     /**
@@ -64,7 +64,7 @@ public enum PropertyUsage {
      * Similar to {@link #suppliesIfMissing} except that the property may be created.
      * Use case: edit or create flows where the flow is modifying an existing object or creating an new object.
      *
-     * A {@link FlowPropertyValuePersister} must be attached to the property definition.
+     * A {@link org.amplafi.flow.FlowPropertyValuePersister} must be attached to the property definition.
      */
     createsIfMissing(false, true, true),
     /**
@@ -74,6 +74,7 @@ public enum PropertyUsage {
      * altersProperty = true because it sets value to null!
      *
      * Note: consume will set a NULL when completing the flow, so it sets a value but not the value in the flowstate.
+     * A {@link org.amplafi.flow.FlowPropertyValueProvider} may be provided to have a default value.
      */
     consume(true, false, true, Boolean.TRUE),
 
@@ -138,8 +139,6 @@ public enum PropertyUsage {
         initialize.canBeChangedTo = Arrays.asList();
         createAlways.canBeChangedTo = Arrays.asList();
     }
-
-    public static List<PropertyUsage> NO_FLOW_PROPERTY_VALUE_PROVIDERS = Arrays.asList(use, consume);
 
     private PropertyUsage(boolean cleanOnInitialization, boolean outputedProperty, boolean externallySettable) {
         this(cleanOnInitialization,outputedProperty, externallySettable, outputedProperty);

@@ -236,10 +236,6 @@ public class FlowPropertyDefinitionBuilder {
             // also what about externalPropertyAccessRestriction?
             // or should we just have simple defaults.
             propertyUsage = flowPropertyValueProvider != null? PropertyUsage.suppliesIfMissing:PropertyUsage.use;
-        } else if ( flowPropertyValueProvider != null && PropertyUsage.NO_FLOW_PROPERTY_VALUE_PROVIDERS.contains(propertyUsage)) {
-            // we can favor PU here because setting with initFlowPropertyValueProvider will clear out the propertyUsage
-            // which means the PU was set *after* the flowPropertyValueProvider
-            flowPropertyValueProvider = null;
         }
         ExternalPropertyAccessRestriction externalPropertyAccessRestriction = getExternalPropertyAccessRestriction();
         if (externalPropertyAccessRestriction == null) {
@@ -500,10 +496,6 @@ public class FlowPropertyDefinitionBuilder {
             this.flowPropertyValueProvider = flowPropertyValueProvider;
         } else if (flowPropertyValueProvider.isHandling(this.toCompleteFlowPropertyExpectation())) {
             this.flowPropertyValueProvider = flowPropertyValueProvider;
-            // NOTE: we INTENTIONALLY do NOT clear FPVP on setting propertyUsage ( this is intentional ) - see comments in initPropertyUsage
-            if ( PropertyUsage.NO_FLOW_PROPERTY_VALUE_PROVIDERS.contains(this.propertyUsage)) {
-                this.propertyUsage = null;
-            }
         } else if ( failOnNotHandling ){
             throw new FlowConfigurationException(flowPropertyValueProvider + " not handling " + this.name);
         }
