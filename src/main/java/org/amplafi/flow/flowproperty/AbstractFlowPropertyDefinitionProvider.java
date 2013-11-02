@@ -90,14 +90,15 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      *
      * @param flowPropertyProvider
      * @param flowPropertyDefinitionBuilders
-     * @param additionalConfigurationParameters
+     * @param additionalConfigurationParameters most of the time this is null because expectations applied to the master definition usually do not apply to the
+     * dependent properties.
      */
-    protected void addFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionBuilder>flowPropertyDefinitionBuilders, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+    protected void addFlowPropertyExpectations(FlowPropertyProviderImplementor flowPropertyProvider,Collection<FlowPropertyDefinitionBuilder>flowPropertyDefinitionBuilders, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: flowPropertyDefinitionBuilders) {
-            addFlowPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
+            addFlowPropertyExpectation(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         }
     }
-    protected void addFlowPropertyDefinition(FlowPropertyProviderImplementor flowPropertyProvider,
+    protected void addFlowPropertyExpectation(FlowPropertyProviderImplementor flowPropertyProvider,
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         FlowPropertyDefinitionImplementor returnedFlowPropertyDefinition = initPropertyDefinition(flowPropertyProvider, flowPropertyDefinitionBuilder, additionalConfigurationParameters);
         flowPropertyProvider.addPropertyDefinitions(returnedFlowPropertyDefinition);
@@ -156,7 +157,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
         if ( this.getFlowPropertyDefinitions() != null) {
             for(FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder: this.getFlowPropertyDefinitions().values()) {
-                addFlowPropertyDefinition(flowPropertyProvider, new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder), additionalConfigurationParameters);
+                addFlowPropertyExpectation(flowPropertyProvider, new FlowPropertyDefinitionBuilder(flowPropertyDefinitionBuilder), additionalConfigurationParameters);
             }
         }
     }

@@ -693,7 +693,7 @@ public class TestFlowPropertyDefinition {
             @Override
             public void defineFlowPropertyDefinitions(FlowPropertyProviderImplementor flowPropertyProvider, List<FlowPropertyExpectation> additionalConfigurationParameters) {
                 super.defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
-                super.addFlowPropertyDefinition(flowPropertyProvider, noProvider, additionalConfigurationParameters);
+                super.addFlowPropertyExpectation(flowPropertyProvider, noProvider, additionalConfigurationParameters);
             }
             @Override
             public <T> T get(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
