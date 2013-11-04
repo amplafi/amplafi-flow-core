@@ -31,7 +31,7 @@ import com.sworddance.util.CUtilities;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements DataClassDefinition {
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     private FlowTranslator flowTranslator;
     // TODO should be immutable some how or a copy made when used ( otherwise could this end up getting changed?? )
     public static final DataClassDefinitionImpl DEFAULT;
@@ -48,7 +48,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * @param keyClassDefinition
      * @param elementClassDefinition
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public DataClassDefinitionImpl(Class<? extends Map> mapClass, DataClassDefinition keyClassDefinition, DataClassDefinition elementClassDefinition) {
         super(mapClass, keyClassDefinition, elementClassDefinition);
     }
@@ -307,7 +307,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * @param flowTranslator the flowTranslator to set
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public void setFlowTranslator(FlowTranslator flowTranslator) {
         this.flowTranslator = flowTranslator;
     }
@@ -315,7 +315,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
      * @return the flowTranslator
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public FlowTranslator getFlowTranslator() {
         if ( this.flowTranslator == null ) {
             return CharSequenceFlowTranslator.INSTANCE;

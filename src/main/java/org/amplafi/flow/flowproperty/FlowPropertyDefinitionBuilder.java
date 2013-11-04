@@ -353,8 +353,8 @@ public class FlowPropertyDefinitionBuilder {
     @SafeVarargs
     public static List<FlowPropertyExpectation> merge(FlowPropertyExpectation flowPropertyExpectation, List<FlowPropertyExpectation>... additionalConfigurationParameters) {
         List<FlowPropertyExpectation> results = new ArrayList<>();
-        for(List<FlowPropertyExpectation> additionalConfigurationParameter: additionalConfigurationParameters) {
-            for(FlowPropertyExpectation expectation: additionalConfigurationParameter) {
+        for(List<FlowPropertyExpectation> additionalConfigurationParameter: NotNullIterator.<List<FlowPropertyExpectation>>newNotNullIterator(additionalConfigurationParameters)) {
+            for(FlowPropertyExpectation expectation: NotNullIterator.<FlowPropertyExpectation>newNotNullIterator(additionalConfigurationParameter)) {
                 if ( expectation.isApplicable(flowPropertyExpectation)) {
                     FlowPropertyExpectation propertyExpectation = new FlowPropertyExpectationImpl(flowPropertyExpectation, expectation);
                     results.add(propertyExpectation);

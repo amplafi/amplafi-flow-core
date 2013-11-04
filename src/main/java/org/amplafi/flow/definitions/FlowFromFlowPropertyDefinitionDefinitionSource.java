@@ -9,7 +9,6 @@ import org.amplafi.flow.FlowPropertyDefinition;
 import static org.amplafi.flow.FlowConstants.FSSINGLE_PROPERTY_NAME;
 
 import org.amplafi.flow.FlowConfigurationException;
-import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
@@ -20,8 +19,6 @@ import org.amplafi.flow.impl.FlowImpl;
 import org.apache.commons.lang.StringUtils;
 
 import com.sworddance.beans.PropertyDefinition;
-import com.sworddance.util.ApplicationIllegalArgumentException;
-
 import static com.sworddance.util.CUtilities.*;
 
 /**
