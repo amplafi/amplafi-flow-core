@@ -979,6 +979,11 @@ public class FlowStateImpl implements FlowStateImplementor {
     }
 
     @Override
+    public <T> T getPropertyWithDefinition(FlowPropertyDefinition flowPropertyDefinition) {
+        return this.getPropertyWithDefinition(null, (FlowPropertyDefinitionImplementor)flowPropertyDefinition);
+    }
+
+    @Override
     public <T> void setPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor propertyDefinition, T value) {
         Object actual;
         String stringValue = null;

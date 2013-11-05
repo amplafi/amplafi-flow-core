@@ -172,20 +172,20 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
             ((FlowActivityImpl)flowPropertyProvider).addFlowValidationResultProvider((FlowValidationResultProvider<FlowPropertyProviderImplementor>)this);
         }
     }
-    // -------------------------
-    // convenient default method if subclass implements FlowPropertyValuePersister
+    /**
+     * convenient default method if subclass implements FlowPropertyValuePersister
+     * and the persister needs the value ( which is most of the time)
+     */
     protected Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue) {
         throw new UnsupportedOperationException("no method defined");
     }
 
     /**
-     * Kostya: Marked as  deprecated since descendants should opt to override saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object currentValue)
-     * instead.
-     * TODO: PAT: should really be final ( not deprecated)
+     * Most subclasses should override {@link #saveChanges(FlowPropertyProviderWithValues, FlowPropertyDefinition, Object)}
+     * However in a few cases we don't want to trigger property retrieval as part of the save ( we want to see if the value is set at all )
      */
-    @Deprecated
     public Object saveChanges(FlowPropertyProviderWithValues flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
-        Object property = flowPropertyProvider.getProperty(flowPropertyDefinition.getName());
+        Object property = flowPropertyProvider.getPropertyWithDefinition(flowPropertyDefinition);
         return saveChanges(flowPropertyProvider, flowPropertyDefinition, property);
     }
     // ------------------------

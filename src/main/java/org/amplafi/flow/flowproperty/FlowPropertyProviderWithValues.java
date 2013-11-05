@@ -13,6 +13,8 @@
  */
 package org.amplafi.flow.flowproperty;
 
+import org.amplafi.flow.FlowPropertyDefinition;
+
 /**
  * FlowPropertyProviderWithValues are called when external code desires to know the value of a property.
  *
@@ -43,6 +45,7 @@ public interface FlowPropertyProviderWithValues extends FlowPropertyProvider {
     <T> T getProperty(String key);
     <T> T getProperty(String key, Class<? extends T> expected);
     <T> T getProperty(Class<? extends T> expected);
+    <T> T getPropertyWithDefinition(FlowPropertyDefinition flowPropertyDefinition);
     /**
      * @param key
      * @return the serialized form of the property

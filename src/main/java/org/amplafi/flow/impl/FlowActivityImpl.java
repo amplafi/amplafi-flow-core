@@ -741,19 +741,26 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
         getTx().delete(entity);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> boolean flushIfNeeded(T... entities) {
         return getTx().flushIfNeeded(entities);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> T getProperty(String key, Class<? extends T> expected) {
         // doing the FlowPropertyDefinition here so that the flow doesn't create a global property.
         FlowPropertyDefinitionImplementor flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, expected, null);
+        T result = getPropertyWithDefinition(flowPropertyDefinition);
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getPropertyWithDefinition(FlowPropertyDefinition flowPropertyDefinition) {
         FlowStateImplementor flowStateImplementor = getFlowStateImplementor();
         T result;
         if (flowStateImplementor != null) {
-            result = (T) flowStateImplementor.getPropertyWithDefinition(this, flowPropertyDefinition);
+            result = (T) flowStateImplementor.getPropertyWithDefinition(this, (FlowPropertyDefinitionImplementor)flowPropertyDefinition);
         } else {
             //There is no flow state yet, i.e. we're in the middle of 'describe' request. Let's just return
             //default object in the case.
