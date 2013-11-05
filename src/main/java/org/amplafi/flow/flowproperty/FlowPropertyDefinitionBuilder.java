@@ -431,7 +431,7 @@ public class FlowPropertyDefinitionBuilder {
         if ( flowPropertyValuePersister == null ) {
             this.flowPropertyValuePersister = flowPropertyValuePersister;
             return false;
-        } else if (flowPropertyValuePersister.isHandling(this.toCompleteFlowPropertyExpectation())) {
+        } else if (flowPropertyValuePersister.isPersisting(this.toCompleteFlowPropertyExpectation())) {
             this.flowPropertyValuePersister = flowPropertyValuePersister;
             return true;
         } else if ( failOnNotHandling ){

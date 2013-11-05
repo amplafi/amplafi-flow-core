@@ -60,7 +60,7 @@ public class TestFlowPropertyValuePersister {
         }
 
         @Override
-        public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {
+        public boolean isPersisting(FlowPropertyExpectation flowPropertyExpectation) {
             return true;
         }
 

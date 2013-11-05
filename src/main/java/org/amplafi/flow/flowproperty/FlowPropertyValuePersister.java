@@ -40,5 +40,12 @@ public interface FlowPropertyValuePersister<T extends FlowPropertyProvider> {
      */
     Object saveChanges(T flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
-	boolean isHandling(FlowPropertyExpectation flowPropertyExpectation);
+    /**
+     * A FlowPropertyValueProvider may not persist everything that it provides.
+     * For example, properties that are default values.
+     *
+     * @param flowPropertyExpectation
+     * @return
+     */
+	boolean isPersisting(FlowPropertyExpectation flowPropertyExpectation);
 }
