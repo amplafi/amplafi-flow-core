@@ -66,6 +66,10 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         return this.flowPropertyDefinitions;
     }
 
+    protected FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String name) {
+        return getFlowPropertyDefinitions().get(name);
+    }
+
     public Set<String> getFlowPropertyDefinitionNames() {
         return getFlowPropertyDefinitions().keySet();
     }
@@ -105,7 +109,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
     }
 
     public FlowPropertyDefinitionBuilder getFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
-        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowPropertyDefinitions().get(propertyName);
+        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = this.getFlowPropertyDefinitionBuilder(propertyName);
         if ( flowPropertyDefinitionBuilder == null || (dataClass != null && !flowPropertyDefinitionBuilder.isAssignableFrom(dataClass))) {
             return null;
         } else {
@@ -168,7 +172,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
      */
     protected void handleFlowValidationResultProvider(FlowPropertyProviderImplementor flowPropertyProvider) {
         // HACK - we need ability to provide this for FlowStateImpl and to use interfaces.
-        if ( flowPropertyProvider instanceof FlowActivityImpl) {
+        if ( flowPropertyProvider instanceof FlowActivityImpl && this instanceof FlowValidationResultProvider) {
             ((FlowActivityImpl)flowPropertyProvider).addFlowValidationResultProvider((FlowValidationResultProvider<FlowPropertyProviderImplementor>)this);
         }
     }

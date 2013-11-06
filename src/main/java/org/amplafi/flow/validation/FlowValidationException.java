@@ -32,6 +32,7 @@ import com.sworddance.util.NotNullIterator;
  * Exception thrown when there is a problem detected with the data already in the {@link org.amplafi.flow.FlowState},
  * or being passed into the flow to be saved. For example, trying to save a person's name in a property
  * expecting a number.
+ * Exception for all exceptions that are likely caused by bad input i.e. USER level errors.
  *
  */
 public class FlowValidationException extends FlowException {

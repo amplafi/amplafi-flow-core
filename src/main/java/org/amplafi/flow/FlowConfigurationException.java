@@ -1,12 +1,13 @@
 package org.amplafi.flow;
 
 /**
- * Exception to throw if the flow is cannot be properly constructed.
+ * Exception thrown if there is an error defining flows, flow activities or flow properties
  * @author patmoore
  *
  */
 public class FlowConfigurationException extends FlowException {
 
+    private static final long serialVersionUID = 1L;
     /**
      * @param exception
      */

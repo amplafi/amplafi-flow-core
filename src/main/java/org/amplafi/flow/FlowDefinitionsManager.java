@@ -17,6 +17,7 @@ package org.amplafi.flow;
 import java.util.Collection;
 
 import org.amplafi.flow.definitions.DefinitionSource;
+import org.amplafi.flow.definitions.FlowDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
 
@@ -33,7 +34,8 @@ public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor
      */
     void addDefinition(FlowImplementor flow);
 
-    void addDefinitions(DefinitionSource... definitionSource);
+    @SuppressWarnings("unchecked")
+    void addDefinitions(DefinitionSource<? extends FlowDefinition>... definitionSource);
 
     FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowManagement;
@@ -39,8 +40,6 @@ import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
-import com.sworddance.util.ApplicationIllegalArgumentException;
 
 import static org.amplafi.flow.FlowConstants.*;
 import static org.amplafi.flow.flowproperty.PropertyScope.*;
@@ -232,7 +231,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
         } else {
             for(FlowActivityImplementor existing: activities) {
                 if (existing.isFlowPropertyProviderNameSet() && activity.isFlowPropertyProviderNameSet() && StringUtils.equalsIgnoreCase(existing.getFlowPropertyProviderName(), activity.getFlowPropertyProviderName())) {
-                    throw new ApplicationIllegalArgumentException(this.getFlowPropertyProviderName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
+                    throw new FlowConfigurationException(this.getFlowPropertyProviderName()+": A FlowActivity with the same name has already been added to this flow. existing="+existing+" new="+activity);
                 }
             }
         }
@@ -266,7 +265,7 @@ public class FlowImpl extends BaseFlowPropertyProvider<FlowImplementor> implemen
     protected <T> FlowPropertyDefinition getFlowPropertyDefinitionWithCreate(String key, Class<T> expected, T sampleValue) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinition(key);
         if (flowPropertyDefinition == null) {
-            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition((FlowImplementor)getFlow(), key, expected, sampleValue);
+            flowPropertyDefinition = getFlowManagement().createFlowPropertyDefinition(this, key, expected, sampleValue);
         }
         return flowPropertyDefinition;
     }

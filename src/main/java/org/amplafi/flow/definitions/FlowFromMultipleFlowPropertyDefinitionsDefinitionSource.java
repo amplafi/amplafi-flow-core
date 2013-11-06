@@ -1,7 +1,5 @@
 package org.amplafi.flow.definitions;
 
-import static com.sworddance.util.CUtilities.put;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,7 +49,7 @@ public class FlowFromMultipleFlowPropertyDefinitionsDefinitionSource implements 
             flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, combinedAdditionalConfigurationParameters);
         }
         flow.addActivity(flowActivity);
-        put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
+        this.flows.put(flow.getFlowPropertyProviderFullName(), flow);
     }
 
     /**

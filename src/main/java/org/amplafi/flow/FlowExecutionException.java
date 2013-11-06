@@ -1,7 +1,7 @@
 package org.amplafi.flow;
 
 /**
- * The flow experience an exception while executed.
+ * The flow experienced an exception caused by programming bug while executed.
  *
  * Used to wrap up runtime exceptions
  * @author patmoore

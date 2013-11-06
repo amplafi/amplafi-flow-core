@@ -16,7 +16,6 @@ package org.amplafi.flow;
 import static com.sworddance.util.ApplicationIllegalStateException.checkState;
 import static org.apache.commons.lang.StringUtils.join;
 /**
- * Base Exception for all exceptions that are like caused by bad input i.e. USER level errors.
  * For example, missing data.
  *
  * @author patmoore

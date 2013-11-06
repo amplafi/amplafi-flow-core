@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.amplafi.flow.FlowActivityImplementor;
+import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowGroup;
 import org.amplafi.flow.FlowImplementor;
@@ -29,7 +30,6 @@ import org.amplafi.flow.impl.FlowGroupImpl;
 import org.amplafi.flow.impl.FlowImpl;
 import org.amplafi.flow.impl.TransitionFlowActivity;
 import com.sworddance.util.AbstractXmlParser;
-import com.sworddance.util.ApplicationGeneralException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -173,11 +173,11 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 clazz = (Class<FlowImplementor>) Class.forName(className);
                 flow = clazz.newInstance();
             } catch (ClassNotFoundException e) {
-                throw new ApplicationGeneralException(e);
+                throw new FlowConfigurationException(e);
             } catch (InstantiationException e) {
-                throw new ApplicationGeneralException(e);
+                throw new FlowConfigurationException(e);
             } catch (IllegalAccessException e) {
-                throw new ApplicationGeneralException(e);
+                throw new FlowConfigurationException(e);
             }
             flow.setFlowPropertyProviderName(name);
         }
@@ -203,7 +203,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             } else if ("not-current-allowed".equals(nodeName)) {
                 flow.setNotCurrentAllowed(booleanValue);
             } else {
-                throw new IllegalArgumentException("attribute is unknown "+attribute);
+                throw new FlowConfigurationException("attribute is unknown "+attribute);
             }
         }
         NodeList children = flowNode.getChildNodes();
@@ -279,7 +279,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
             } else if ( "nextFlow".equals(nodeName)) {
                 ((TransitionFlowActivity)flowActivity).setNextFlowType(nodeValue);
             } else {
-                throw new FlowException("attribute is unknown "+attribute);
+                throw new FlowConfigurationException("attribute is unknown "+attribute);
             }
         }
         NodeList children = flowActivityImplementorNode.getChildNodes();
@@ -290,7 +290,7 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 if (PROPERTY.equals(child.getNodeName())) {
                     flowActivity.addPropertyDefinitions(parseProperty(child, PropertyScope.activityLocal));
                 } else {
-                    throw new FlowException("element is unknown "+child);
+                    throw new FlowConfigurationException("element is unknown "+child);
                 }
                 break;
             case Node.TEXT_NODE:
@@ -328,11 +328,11 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 clazz = (Class<FlowActivityImplementor>) Class.forName(className);
                 flowActivity = clazz.newInstance();
             } catch (ClassNotFoundException e) {
-                throw new FlowException(e);
+                throw new FlowConfigurationException(e);
             } catch (InstantiationException e) {
-                throw new FlowException(e);
+                throw new FlowConfigurationException(e);
             } catch (IllegalAccessException e) {
-                throw new FlowException(e);
+                throw new FlowConfigurationException(e);
             }
         } else if(transition) {
             flowActivity = new TransitionFlowActivity();
@@ -365,14 +365,14 @@ public class XmlDefinitionSource extends AbstractXmlParser implements Definition
                 try {
                     dataClass = Class.forName(nodeValue, true, this.getClass().getClassLoader());
                 } catch (ClassNotFoundException e) {
-                    throw new FlowException(e);
+                    throw new FlowConfigurationException(e);
                 }
                 flowPropertyDefinition.setDataClass(dataClass);
             } else if ("usage".equals(nodeName)) {
                 PropertyUsage propertyUsage = PropertyUsage.valueOf(nodeValue);
                 flowPropertyDefinition.initPropertyUsage(propertyUsage);
             } else {
-                throw new FlowException(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
+                throw new FlowConfigurationException(nodeName, ": unknown attribute on ", flowPropertyDefinitionNode);
             }
         }
         return flowPropertyDefinition;
