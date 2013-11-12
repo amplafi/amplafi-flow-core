@@ -14,6 +14,7 @@ import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;
 import org.amplafi.flow.FlowConstants;
+import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowExecutionException;
 import org.amplafi.flow.FlowManagement;
 import org.amplafi.flow.FlowPropertyDefinition;
@@ -26,6 +27,7 @@ import org.amplafi.flow.impl.FlowStateImplementor;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;
+import org.amplafi.json.IJsonWriter;
 import org.amplafi.json.JSONWriter;
 import org.amplafi.json.JsonConstruct;
 import org.amplafi.json.renderers.IterableJsonOutputRenderer;
@@ -120,20 +122,29 @@ public class JsonFlowRenderer implements FlowRenderer {
                 FlowValidationException e = (FlowValidationException) exception;
                 Map<String, FlowValidationResult> validationResult = CUtilities.createMap("flow-result", e.getFlowValidationResult());
                 writeValidationResult(jsonWriter, validationResult);
+            } else if ( exception instanceof FlowException) {
+                FlowException flowException = (FlowException) exception;
+                jsonWriter.keyValueIfNotBlankValue("exception", flowException.getMessage());
+
+                IJsonWriter jsonWriterForLog = getFlowStateWriter();
+                FlowStateJsonRenderer.INSTANCE.toJson(jsonWriterForLog, flowException.getFlowState());
+
+                getLog().error("A FlowException terminated flow execution:"+jsonWriterForLog, flowException);
             } else if (exception != null){
                 jsonWriter.keyValueIfNotBlankValue("exception", exception.getMessage());
-                getLog().error("A non-FlowValidationException terminated flow execution.", exception);
+                getLog().error("A non-FlowException terminated flow execution.", exception);
             }
             jsonWriter.endObject();
             writer.append(jsonWriter.toString());
         } catch (IOException e) {
-            throw new FlowExecutionException(e);
+            getLog().error("While doing a renderError", e);
         } catch (Exception e) {
             try {
                 writer.append("{" +ServicesConstants.ERROR + ": 'Failed to render flow state. Cause: "+ e.getMessage() + "'}");
                 getLog().error("Failed to render flow state.", e);
             } catch (IOException e1) {
-                throw new FlowExecutionException(e1);
+                // we are writing to a stringwriter so for it to have a IOException...
+                getLog().fatal("renderError: things are really ugly",e1);
             }
         }
     }
