@@ -369,10 +369,13 @@ public class FlowPropertyDefinitionBuilder {
      * expectations have their values applied to flowPropertyDefinition in the order they are
      * encountered.
      *
+     * @see #applyFlowPropertyExpectation(FlowPropertyExpectation)
+     *
      * @param additionalConfigurationParameters a list because order matters.
      * @return this
      */
-    public FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(List<FlowPropertyExpectation>... additionalConfigurationParameters) {
+    @SafeVarargs
+    public final FlowPropertyDefinitionBuilder applyFlowPropertyExpectations(List<FlowPropertyExpectation>... additionalConfigurationParameters) {
         for (List<FlowPropertyExpectation> additionalConfigurationParameterList : NotNullIterator.<List<FlowPropertyExpectation>> newNotNullIterator(additionalConfigurationParameters)) {
             for (FlowPropertyExpectation flowPropertyExpectation : NotNullIterator.<FlowPropertyExpectation> newNotNullIterator(additionalConfigurationParameterList)) {
                 this.applyFlowPropertyExpectation(flowPropertyExpectation);
@@ -385,20 +388,30 @@ public class FlowPropertyDefinitionBuilder {
     /**
      * Copy over/merge flowPropertyExpectation with current information. The passed flowPropertyExpectation is favored over the current settings.
      * TODO: should we use the various init* methods so that side effects can be triggered.
-     * @param flowPropertyExpectation
+     * @param flowPropertyExpectation any fields set in this expectation will override the previously set expectation.
      */
     public void applyFlowPropertyExpectation(FlowPropertyExpectation flowPropertyExpectation) {
         if ( isApplicable(flowPropertyExpectation)) {
             this.autoCreate = getFirstNonNull(flowPropertyExpectation.getAutoCreate(), this.autoCreate);
             this.addNames(flowPropertyExpectation.getAlternates());
             // should we do the merge?
-            this.dataClassDefinition = getFirstNonNull(flowPropertyExpectation.getDataClassDefinition(), this.getDataClassDefinition());
-            this.externalPropertyAccessRestriction =getFirstNonNull(flowPropertyExpectation.getExternalPropertyAccessRestriction(), this.getExternalPropertyAccessRestriction() );
+            if ( flowPropertyExpectation.getDataClassDefinition() != null ) {
+                this.dataClassDefinition = flowPropertyExpectation.getDataClassDefinition();
+            }
+            if ( flowPropertyExpectation.getExternalPropertyAccessRestriction() != null ) {
+                this.initExternalPropertyAccessRestriction(flowPropertyExpectation.getExternalPropertyAccessRestriction());
+            }
             addAllIfNotContains(this.flowPropertyValueChangeListeners, flowPropertyExpectation.getFlowPropertyValueChangeListeners());
             addAllIfNotContains(this.getPropertiesDependentOn(), flowPropertyExpectation.getPropertiesDependentOn());
-            this.propertyRequired = getFirstNonNull(flowPropertyExpectation.getPropertyRequired(), this.getPropertyRequired());
-            this.propertyScope = getFirstNonNull(flowPropertyExpectation.getPropertyScope(), this.getPropertyScope());
-            this.propertyUsage = getFirstNonNull(flowPropertyExpectation.getPropertyUsage(), this.getPropertyUsage());
+            if ( flowPropertyExpectation.getPropertyRequired() != null) {
+                this.initPropertyRequired(flowPropertyExpectation.getPropertyRequired());
+            }
+            if ( flowPropertyExpectation.getPropertyScope() != null ) {
+                this.initPropertyScope(flowPropertyExpectation.getPropertyScope());
+            }
+            if ( flowPropertyExpectation.getPropertyUsage() != null) {
+                this.initPropertyUsage(flowPropertyExpectation.getPropertyUsage());
+            }
             if ( flowPropertyExpectation.getFlowPropertyValueProvider() != null ) {
                 // NOTE: FlowPropertyValueProvider must be set AFTER propertyUsage to allow clearing out of PropertyUsage
                 this.initFlowPropertyValueProvider(flowPropertyExpectation.getFlowPropertyValueProvider(), false);
@@ -406,8 +419,12 @@ public class FlowPropertyDefinitionBuilder {
             if ( flowPropertyExpectation.getFlowPropertyValuePersister() != null ) {
                 this._initFlowPropertyValuePersister(flowPropertyExpectation.getFlowPropertyValuePersister(), false);
             }
-            this.saveBack = getFirstNonNull(flowPropertyExpectation.getSaveBack(), this.getSaveBack());
-            this.initial = getFirstNonNull(flowPropertyExpectation.getInitial(), this.getInitial());
+            if ( flowPropertyExpectation.getSaveBack()!= null) {
+                this.initSaveBack(flowPropertyExpectation.getSaveBack());
+            }
+            if ( flowPropertyExpectation.getInitial()!= null) {
+                this.initial = flowPropertyExpectation.getInitial();
+            }
         }
     }
 

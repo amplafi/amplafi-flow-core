@@ -30,7 +30,6 @@ public interface FlowPropertyDefinitionImplementor extends FlowPropertyDefinitio
     FlowPropertyDefinition initialize();
 
     <FA extends FlowPropertyProvider> void setFlowPropertyValueProvider(FlowPropertyValueProvider<FA> flowPropertyValueProvider);
-    Object clone();
 
     /**
      * @return collection of property that if changed should invalidate this property.

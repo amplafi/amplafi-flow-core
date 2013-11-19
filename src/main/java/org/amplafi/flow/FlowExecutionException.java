@@ -18,4 +18,10 @@ public class FlowExecutionException extends FlowException {
     public FlowExecutionException(Exception exception) {
         super(exception);
     }
+    /**
+     * @param messages
+     */
+    public FlowExecutionException(Object... messages) {
+        super(messages);
+    }
 }

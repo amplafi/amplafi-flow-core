@@ -47,6 +47,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
      * @param source
      * @return true if merge was successful.
      */
+    @Deprecated // use FlowPropertyDefinitionBuilder
     boolean merge(FlowPropertyDefinition source);
 
     /**

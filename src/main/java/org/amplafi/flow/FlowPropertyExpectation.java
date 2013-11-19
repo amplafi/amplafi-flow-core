@@ -58,7 +58,7 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
      * For more complex type definitions, such as collections and maps, this
      * @return
      */
-    DataClassDefinition getDataClassDefinition();
+    <DC extends DataClassDefinition> DC getDataClassDefinition();
 
     /**
      * @return how the property is being used.

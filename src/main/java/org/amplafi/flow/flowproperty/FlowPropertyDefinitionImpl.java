@@ -110,7 +110,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private Set<FlowPropertyExpectation> propertiesDependentOn;
 
-    public FlowPropertyDefinitionImpl(FlowPropertyExpectation clone) {
+    protected FlowPropertyDefinitionImpl(FlowPropertyExpectation clone) {
         // TODO : validate there is a name
         this.name = clone.getName();
         if ( isBlank(this.name) ) {
@@ -124,7 +124,9 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         this.autoCreate = clone.getAutoCreate();
         this.flowPropertyValueProvider = clone.getFlowPropertyValueProvider();
         this.flowPropertyValuePersister = clone.getFlowPropertyValuePersister();
-        this.initial =clone.getInitial();
+        if ( clone.getInitial() != null) {
+            this.initial =clone.getInitial();
+        }
         if (clone.getExternalPropertyAccessRestriction() != null) {
             this.externalPropertyAccessRestriction =clone.getExternalPropertyAccessRestriction();
         }
@@ -144,7 +146,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     @Override
     public Object getDefaultObject(FlowPropertyProvider flowPropertyProvider) {
         Object value = null;
-        FlowPropertyValueProvider<? extends FlowPropertyProvider> propertyValueProvider = getDefaultFlowPropertyValueProviderToUse();
+        FlowPropertyValueProvider<? extends FlowPropertyProvider> propertyValueProvider = this.flowPropertyValueProvider;
         if ( propertyValueProvider != null) {
             // 6 may 2012 - PATM - I forgot exact reason for this check. I believe it was for case where 2 different FlowActivities defined
             // property with same name. This was important for proper interpretation of the serialized property.
@@ -153,7 +155,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
             // that the only the original flowactivity could get the default.
             Class<? extends FlowPropertyProvider> expected = propertyValueProvider.getFlowPropertyProviderClass();
             if ( !(expected == null || expected.isAssignableFrom(flowPropertyProvider.getClass()))) {
-                throw new FlowConfigurationException(
+                throw new FlowExecutionException(
                     this,": expected a ", expected, " but got a ", flowPropertyProvider.getClass());
             }
             try {
@@ -172,17 +174,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         // TODO -- do we want to set the default object? or recalculate it each time?
         // might be important if the default object is to get modified or if a FPD is shared.
         return value;
-    }
-
-    /**
-     * @return
-     */
-    private FlowPropertyValueProvider<? extends FlowPropertyProvider> getDefaultFlowPropertyValueProviderToUse() {
-      if (this.flowPropertyValueProvider != null ) {
-            return this.flowPropertyValueProvider;
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -242,7 +233,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
     @Override
     public boolean isDefaultAvailable() {
-        return this.getDefaultFlowPropertyValueProviderToUse() != null;
+        return this.flowPropertyValueProvider != null;
     }
 
     @Override
@@ -475,12 +466,6 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
         // TODO : determine how to handle propertyRequired / PropertyUsage/PropertyScope/ExternalPropertyAccessRestriction which vary between different FAs in the same Flow.
         return noMergeConflict;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public FlowPropertyDefinitionImpl clone() {
-        return new FlowPropertyDefinitionImpl(this);
     }
 
     @Override
