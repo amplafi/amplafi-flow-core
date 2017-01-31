@@ -27,7 +27,7 @@ import com.sworddance.core.Emptyable;
  *
  * Keys are federated (i.e. namespace.key) ({@link FlowValueMapKey})
  *
- * Federated keys allow each flow INSTANC and each flowActivity INSTANCE to have a unique namespace.
+ * Federated keys allow each flow INSTANCE and each flowActivity INSTANCE to have a unique namespace.
  * Flows can call other flows and need to know that other flows in the call stack will not interfer with
  * the caller flows values.
  * When calling another flow, the calling flow needs to pass values to the called flows. It is too burdensome / impossible for the flow that is setting the values
@@ -52,6 +52,7 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      * FlowValueMap is expected to do any needed conversions to the FlowValueMapKey used (? what about put operations ? )
      * @see java.util.Map#get(java.lang.Object)
      */
+    @Override
     V get(Object key);
 
     V get(Object namespace, Object key);
@@ -74,6 +75,7 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      *
      * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
+    @Override
     V put(K key, V value);
     /**
      * Removes the key.
@@ -87,6 +89,7 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      *
      * @see java.util.Map#containsKey(java.lang.Object)
      */
+    @Override
     boolean containsKey(Object key);
 
     /**
@@ -104,6 +107,7 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
 
     Map<String, String> getAsStringMap(boolean trimEmptyBlank, boolean preserveNamespace);
 
+    @Override
     int size();
 
 }

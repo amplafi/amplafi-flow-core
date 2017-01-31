@@ -1,5 +1,47 @@
 Amplafi-flow-core is an API framework that offers these benefits:
 
+Needs:
+
+===========================================================
+
+First pass:
+
+  Multi-step web entry:
+     - mapping data to key value map
+     - being able to resume or share work in progress.
+         
+  In progress changes not committed to the db.
+  
+  cancelled changes don't need to be rolled back.
+  
+  two separate users simulatenously editing don't see partial changes.
+  
+========================================================
+ 
+Second pass:
+
+ DRY - doing one thing and discovered that I want to share pieces from another flow.
+Second cut:
+   subtasks: 
+      i.e. for example, a user is doing an operation -- check out - but now we need to interrupt to ask for credit card information if we don't have it.
+      
+   
+
+Consistent serialization
+
+Third cut: 
+
+ 1. Multi-step web entry:
+    1. must store entered data including changes to existing objects *without* altering the database.
+    1. all changes applied only when the user completes all the steps.
+    1. allow user to refresh their browser
+    1. allow a user to send a link to their in-progress changes so that someone else can help complete the changes. ( For example, a manager approving a vacation request ) 
+    1. allow a user to logout and relogin to resume the work in progress.
+ 1. Data serialization of work-in-progress handled consistently by the framework.
+ 1. Security considerations:
+    1. Type safety enforced. All parameters are typed and verified.
+    1. Security attacks that could prevented with  
+
  1. Self-describing api calls and parameters
  1. Enforced read-only parameters ( so security issues in a api call (flow) do not allow for database changes )
  1. Enforced data visibility ( can internal parameters be seen? )

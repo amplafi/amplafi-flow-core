@@ -3,7 +3,7 @@ package org.amplafi.flow;
 import java.io.Writer;
 
 /**
- * Implementations render the flow output for at the conclusion of processing a flow request.
+ * Implementations render the flowstate output at the conclusion of processing a flow request.
  * @author patmoore
  *
  */

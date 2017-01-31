@@ -22,7 +22,7 @@ public interface PossibleDynamic {
     /**
      * @return true if the implementor wants the property to be dynamically refreshed.
      * (From the UI perspective this means that the field binded to the property will be submitted via AJAX
-     * just after the field looses focus in the UI)
+     * just after the field loses focus in the UI)
      */
     boolean isDynamic();
 }
