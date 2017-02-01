@@ -83,7 +83,7 @@ public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence
      * @param key
      * @return the object formerly at the key.
      */
-    public V remove(Object namespace, Object key) ;
+    public V removeFromNamespace(Object namespace, Object key) ;
 
     /**
      *

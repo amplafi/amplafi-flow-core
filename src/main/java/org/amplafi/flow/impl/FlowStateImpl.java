@@ -383,7 +383,7 @@ public class FlowStateImpl implements FlowStateImplementor {
                     }
                     if ( namespace != null ) {
                         // exclude the global namespace as we clear because global values may not be altered by this property ( propertyUsage.isCopyBackOnFlowSuccess() may be false )
-                        exportValueMap.remove(namespace, key);
+                        exportValueMap.removeFromNamespace(namespace, key);
                         if ( flowCompletingExport) {
                             remove(namespace, key);
                         }
@@ -1063,7 +1063,7 @@ public class FlowStateImpl implements FlowStateImplementor {
         setCached(namespace, key, null);
     }
     protected void remove(String namespace, String key) {
-        getFlowValuesMap().remove(namespace, key);
+        getFlowValuesMap().removeFromNamespace(namespace, key);
         // in other way wrong cached value returns in next get request
         setCached(namespace, key, null);
     }

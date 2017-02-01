@@ -86,7 +86,7 @@ public class DefaultFlowValuesMap implements FlowValuesMap<FlowValueMapKey, Stri
         return getAsStringMap(false, true);
     }
     @Override
-    public String remove(Object namespace, Object key) {
+    public String removeFromNamespace(Object namespace, Object key) {
         return map.remove(toKey(namespace, key));
     }
 
