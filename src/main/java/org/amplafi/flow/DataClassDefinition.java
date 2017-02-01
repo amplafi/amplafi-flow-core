@@ -21,7 +21,7 @@ import com.sworddance.beans.PropertyDefinition;
  * Handles the issues around data structure for the {@link FlowPropertyDefinition}.
  * This way {@link FlowPropertyDefinition}  focuses on required status, name, etc. and DataClassDefinition
  * focuses just on the way the data is structured.
- * <p/>
+ * 
  * Allows the FlowDefinitionProperty structure to be a middling complex chain of nested collections.
  *
  * @author patmoore

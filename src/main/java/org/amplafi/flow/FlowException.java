@@ -27,7 +27,7 @@ public class FlowException extends RuntimeException {
     private FlowState flowState;
 
     public FlowException(FlowState flowState) {
-    	this.flowState = flowState;
+        this.flowState = flowState;
     }
 
     public FlowException(Exception exception) {
@@ -51,24 +51,24 @@ public class FlowException extends RuntimeException {
         return flowState;
     }
 
-	/**
-	 * Only allowed to be called when a flow state wasn't yet set.
-	 *
-	 * @param flowState
-	 */
-	public void setFlowState(FlowState flowState) {
-		checkState(!isFlowStateSet(), "Trying to override non-null flowState");
-		this.flowState = flowState;
-	}
+    /**
+     * Only allowed to be called when a flow state wasn't yet set.
+     *
+     * @param flowState
+     */
+    public void setFlowState(FlowState flowState) {
+        checkState(!isFlowStateSet(), "Trying to override non-null flowState");
+        this.flowState = flowState;
+    }
 
-	public boolean isFlowStateSet() {
-		return flowState != null;
-	}
+    public boolean isFlowStateSet() {
+        return flowState != null;
+    }
 
-	public static FlowException notNull(Object notNull, FlowState flowState, Object...messages) {
-	    if (notNull == null) {
-	        throw new FlowException(flowState, join(messages));
-	    }
-	    return null;
-	}
+    public static FlowException notNull(Object notNull, FlowState flowState, Object...messages) {
+        if (notNull == null) {
+            throw new FlowException(flowState, join(messages));
+        }
+        return null;
+    }
 }
