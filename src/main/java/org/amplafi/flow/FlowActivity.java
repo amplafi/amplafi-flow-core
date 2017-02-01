@@ -81,9 +81,9 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
     boolean isActivatable();
     /**
      * called when a flow is started. Subclasses should override this method to
-     * initialize the FlowState with default values if needed. <p/> The
+     * initialize the FlowState with default values if needed. The
      * FlowState's initialState has been set. So all properties should be
-     * checked first to see if they have already been set. <p/> No database
+     * checked first to see if they have already been set. No database
      * modifications should occur in this method.
      */
     void initializeFlow();
@@ -132,7 +132,7 @@ public interface FlowActivity extends FlowPropertyProviderWithValues, FlowProvid
 
     /**
      * called when the FlowActivity is marked as a Flow's finishingActivity.
-     * <p/> called after all FlowActivities' {@link #saveChanges()} have been
+     * called after all FlowActivities' {@link #saveChanges()} have been
      * called.
      * @param currentNextFlowState TODO
      *

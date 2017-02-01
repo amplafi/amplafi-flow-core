@@ -703,7 +703,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * Return the raw string value representation of the value indexed by key.
      * This should be used only rarely, as it bypasses all of the normal
-     * property processing code. <p/> Permissible uses include cases are rare
+     * property processing code. Permissible uses include cases are rare
      * and does not include retrieving a String property.
      *
      * @param key
