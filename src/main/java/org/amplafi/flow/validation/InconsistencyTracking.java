@@ -21,7 +21,7 @@ package org.amplafi.flow.validation;
  * coexist (male and pregnant) or that are simply invalid (negative age).
  * In all cases, a description of each field participating in this tracking
  * should be provided.
- * <p/>
+ *
  * The generated message of this tracking will stem from the key
  * "InconsistencyTracking.[detailKey]" (where detailKey is specified by user)
  * and will use the rest of the parameters passed in the constructor.

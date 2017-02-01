@@ -18,16 +18,16 @@ import java.net.URI;
 
 /**
  * {@link org.amplafi.flow.validation.FlowValidationTracking Tracking} for missing required values.
- * <p/>
+ * 
  * A required field has a null value.
- * <p/>
+ *
  * The generated message of this tracking will stem from the key "MissingRequiredTracking" and the
  * parameter passed in the constructor.
  */
 public class MissingRequiredTracking extends SimpleValidationTracking {
-	
+    
     private URI redirectUri;
-	/**
+    /**
      * @param params The missing field
      */
     public MissingRequiredTracking(Object... params) {
@@ -35,18 +35,18 @@ public class MissingRequiredTracking extends SimpleValidationTracking {
     }
     
     public MissingRequiredTracking(URI redirectUri, Object... params) {
-    	this(params);
-    	this.redirectUri = redirectUri;
+        this(params);
+        this.redirectUri = redirectUri;
     }
     /**
      * Helps describing 'missing value' problems.
-    *
-    * @param flowValidationResult keeps track of validation results
-    * @param missingRequiredValue if true then the property is *NOT set correctly and we need
-    *        a {@link MissingRequiredTracking}.
-    * @param properties missing property's name
+     *
+     * @param flowValidationResult keeps track of validation results
+     * @param missingRequiredValue if true then the property is *NOT set correctly and we need
+     *        a {@link MissingRequiredTracking}.
+     * @param properties missing property's name
      * @return flowValidationResult
-    */
+     */
     public static FlowValidationResult appendRequiredTrackingIfTrue(FlowValidationResult flowValidationResult, boolean missingRequiredValue, Object... properties) {
        return appendRequiredTrackingIfTrue(flowValidationResult, missingRequiredValue, null, properties);
     }
@@ -56,10 +56,10 @@ public class MissingRequiredTracking extends SimpleValidationTracking {
             flowValidationResult.addTracking(new MissingRequiredTracking(redirectUri, properties));
         }
         return flowValidationResult;
-     }
+    }
 
-	@Override
-	public URI getRedirectUri() {
-		return redirectUri;
-	}
+    @Override
+    public URI getRedirectUri() {
+        return redirectUri;
+    }
 }
