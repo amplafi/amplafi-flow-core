@@ -100,8 +100,8 @@ public class FlowUtils {
     }
     /**
      * Utility to create the initial state to be used when starting flows.
-     * Users should supply a list of key-value object pairs.<p/>
-     * If a value is null, nothing is added to the map.<p/>
+     * Users should supply a list of key-value object pairs.
+     * If a value is null, nothing is added to the map.
      *
      * Before being added to the map, toString() is called on all objects.
      * {@link java.util.List Lists} are a special case - toString() is called
