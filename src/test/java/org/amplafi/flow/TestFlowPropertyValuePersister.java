@@ -1,7 +1,7 @@
 package org.amplafi.flow;
 
 import java.util.Arrays;
-import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.BaseFlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyExpectationImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
@@ -48,7 +48,7 @@ public class TestFlowPropertyValuePersister {
             PropertyValuePersister.INSTANCE.defineFlowPropertyDefinitions(this, Arrays.<FlowPropertyExpectation>asList(new FlowPropertyExpectationImpl(PROPERTY, null, null, PropertyUsage.io, null)));
         }
     }
-    private static class PropertyValuePersister extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValuePersister<FlowPropertyProvider> {
+    private static class PropertyValuePersister extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyValuePersister<FlowPropertyProvider> {
         public static final PropertyValuePersister INSTANCE = new PropertyValuePersister();
 
         PropertyValuePersister() {

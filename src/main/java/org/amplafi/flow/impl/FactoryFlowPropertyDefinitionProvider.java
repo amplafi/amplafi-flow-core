@@ -9,7 +9,7 @@ import static org.amplafi.flow.flowproperty.PropertyUsage.use;
 
 import java.net.URI;
 import org.amplafi.flow.FlowTransition;
-import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.BaseFlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
@@ -37,7 +37,7 @@ import com.sworddance.util.ApplicationIllegalStateException;
  * @author patmoore
  *
  */
-public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionBuilderProvider {
+public class FactoryFlowPropertyDefinitionProvider extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyDefinitionBuilderProvider {
 
     @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(

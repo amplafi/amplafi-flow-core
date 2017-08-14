@@ -25,7 +25,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  * @param <FPP>
  *
  */
-public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyValueProvider<FPP> {
+public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowPropertyProvider> extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyValueProvider<FPP> {
     private final Class<FPP> flowPropertyProviderClass;
 
     protected AbstractFlowPropertyValueProvider(Class<FPP>flowPropertyProviderClass, FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {

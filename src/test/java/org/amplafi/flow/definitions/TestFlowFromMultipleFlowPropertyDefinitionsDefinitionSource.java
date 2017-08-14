@@ -8,7 +8,7 @@ import java.util.Map;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.BaseFlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import org.testng.annotations.Test;
@@ -41,17 +41,17 @@ public class TestFlowFromMultipleFlowPropertyDefinitionsDefinitionSource {
         assertNotNull(propertyDefinitions.get("FPDP3_3"));
     }
 
-    private class FPDP1 extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionBuilderProvider {
+    private class FPDP1 extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyDefinitionBuilderProvider {
         FPDP1() {
             super(new FlowPropertyDefinitionBuilder("FPDP1_1"));
         }
     }
-    private class FPDP2 extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionBuilderProvider {
+    private class FPDP2 extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyDefinitionBuilderProvider {
         FPDP2() {
             super(new FlowPropertyDefinitionBuilder("FPDP2_1"), new FlowPropertyDefinitionBuilder("FPDP2_2"));
         }
     }
-    private class FPDP3 extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionBuilderProvider {
+    private class FPDP3 extends BaseFlowPropertyDefinitionBuilderProvider implements FlowPropertyDefinitionBuilderProvider {
         FPDP3() {
             super(new FlowPropertyDefinitionBuilder("FPDP3_1"), new FlowPropertyDefinitionBuilder("FPDP3_2"), new FlowPropertyDefinitionBuilder("FPDP3_3"));
         }

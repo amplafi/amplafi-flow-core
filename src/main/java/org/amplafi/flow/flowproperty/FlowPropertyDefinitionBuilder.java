@@ -52,6 +52,8 @@ import com.sworddance.util.map.ConcurrentInitializedMap;
  *
  * TODO: remove initDefaultObject() Handles some common use cases
  *
+ * @see FlowPropertyDefinitionBuilderProvider
+ *
  * @author patmoore
  */
 public class FlowPropertyDefinitionBuilder {
@@ -600,7 +602,7 @@ public class FlowPropertyDefinitionBuilder {
 
     public FlowPropertyDefinitionBuilder addPropertiesDependentOn(FlowPropertyExpectation... propertiesDependentOn) {
         if ( this.propertiesDependentOn == null) {
-            this.propertiesDependentOn = new HashSet<FlowPropertyExpectation>();
+            this.propertiesDependentOn = new HashSet<>();
         }
         addAllIfNotContains(this.getPropertiesDependentOn(),propertiesDependentOn);
         return this;
@@ -740,7 +742,7 @@ public class FlowPropertyDefinitionBuilder {
     }
     public FlowPropertyDefinitionBuilder addNames(String... alternateNames) {
         if ( this.getAlternates() == null) {
-            this.alternates = new HashSet<String>();
+            this.alternates = new HashSet<>();
         }
         addAllIfNotContains(this.getAlternates(), alternateNames);
         if ( this.getAlternates().isEmpty()) {
@@ -750,7 +752,7 @@ public class FlowPropertyDefinitionBuilder {
     }
     public FlowPropertyDefinitionBuilder addNames(Collection<String> alternateNames) {
         if ( this.getAlternates() == null) {
-            this.alternates = new HashSet<String>();
+            this.alternates = new HashSet<>();
         }
         addAllIfNotContains(this.getAlternates(), alternateNames);
         if ( this.getAlternates().isEmpty()) {
@@ -850,7 +852,7 @@ public class FlowPropertyDefinitionBuilder {
 //     * @param flowPropertyDefinitionBuilder will be modified (make sure not modifying the master definition)
 //     * @param additionalConfigurationParameters
 //     */
-//    // BROKEN : borrowed code from AbstractFlowPropertyDefinitionProvider ( bad assumptions about this )
+//    // BROKEN : borrowed code from BaseFlowPropertyDefinitionBuilderProvider ( bad assumptions about this )
 //    protected FlowPropertyDefinitionImplementor initPropertyDefinition(
 //        FlowPropertyProviderImplementor flowPropertyProvider,
 //        FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder, List<FlowPropertyExpectation> additionalConfigurationParameters) {

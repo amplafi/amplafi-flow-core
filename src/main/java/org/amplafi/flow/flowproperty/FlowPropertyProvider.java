@@ -18,7 +18,7 @@ import java.util.Map;
 import org.amplafi.flow.FlowPropertyDefinition;
 
 /**
- * Implementers manage a map of {@link FlowPropertyDefinition}s
+ * Implementers manage a map of *built* {@link FlowPropertyDefinition}s, usually built by {@link FlowPropertyDefinitionBuilder}s.
  *
  * NOTE: use of this interface needs clarification wrt to the FlowPropertyValueProvider interface.
  * Specifically, FlowPropertyProvider implementors:
@@ -27,6 +27,9 @@ import org.amplafi.flow.FlowPropertyDefinition;
  * 3. store values in a cache.
  *
  * probably this interface must have the get/set value methods here rather than on a subinterface.
+ * @see FlowPropertyDefinitionBuilder
+ * @see FlowPropertyDefinitionBuilderProvider
+ *
  * @author patmoore
  *
  */

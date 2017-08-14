@@ -24,6 +24,11 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 
 
 /**
+ * Use of FlowPropertyDefinitionBuilderProvider allows:
+ * 1. {@link FlowPropertyDefinition}s to be incrementally constructed.
+ * 2. standard definitions of {@link FlowPropertyDefinitionBuilder} to construct different {@link FlowPropertyDefinition} (for example,
+ *   a {@link FlowPropertyDefinition} that is readonly or persistable.)
+ *
  * holds map of {@link FlowPropertyDefinitionBuilder}s (not {@link FlowPropertyDefinition}s).
  * Converting to FlowPropertyDefinitions forced all the unspecified attributes to be defined.
  * But in the FlowPropertyDefinitionBuilderProvider we are not yet ready to make that decision. We need to wait until putting the

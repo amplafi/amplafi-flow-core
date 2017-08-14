@@ -39,15 +39,15 @@ import com.sworddance.util.NotNullIterator;
  * @author patmoore
  *
  */
-public abstract class AbstractFlowPropertyDefinitionProvider {
+public class BaseFlowPropertyDefinitionBuilderProvider {
     // Forcing a fixed order so getting the default first FPD will be consistent (TODO save first FPD explicitly)
-    private final LinkedHashMap<String, FlowPropertyDefinitionBuilder> flowPropertyDefinitions = new LinkedHashMap<String, FlowPropertyDefinitionBuilder>();
+    private final LinkedHashMap<String, FlowPropertyDefinitionBuilder> flowPropertyDefinitions = new LinkedHashMap<>();
 
     /**
      * Additional flowPropertyDefinitionBuilders can be added with {@link #addFlowPropertyDefinitionImplementators(FlowPropertyDefinitionBuilder...)} )
      * @param flowPropertyDefinitionBuilders can be null or missing.
      */
-    protected AbstractFlowPropertyDefinitionProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
+    protected BaseFlowPropertyDefinitionBuilderProvider(FlowPropertyDefinitionBuilder...flowPropertyDefinitionBuilders) {
         addFlowPropertyDefinitionImplementators(flowPropertyDefinitionBuilders);
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         return getFlowPropertyDefinitions().keySet();
     }
     public List<String> getOutputFlowPropertyDefinitionNames() {
-        List<String> outputFlowPropertyDefinitionNames = new ArrayList<String>();
+        List<String> outputFlowPropertyDefinitionNames = new ArrayList<>();
         for(FlowPropertyDefinitionBuilder flowPropertyDefinition : this.getFlowPropertyDefinitions().values()) {
             if ( flowPropertyDefinition.isOutputedProperty()) {
                 outputFlowPropertyDefinitionNames.add(flowPropertyDefinition.getName());
