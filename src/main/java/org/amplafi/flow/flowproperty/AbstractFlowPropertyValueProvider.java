@@ -124,7 +124,7 @@ public abstract class AbstractFlowPropertyValueProvider<FPP extends FlowProperty
     /**
      *
      * @param flowPropertyExpectation
-     * @return true if this {@link FlowPropertyDefinitionProvider} handles the {@link FlowPropertyDefinition}.
+     * @return true if this {@link FlowPropertyDefinitionBuilderProvider} handles the {@link FlowPropertyDefinition}.
      */
     @Override
     public boolean isHandling(FlowPropertyExpectation flowPropertyExpectation) {

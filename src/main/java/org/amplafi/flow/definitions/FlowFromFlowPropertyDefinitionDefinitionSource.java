@@ -12,7 +12,7 @@ import org.amplafi.flow.FlowConfigurationException;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.PropertyUsage;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
@@ -38,16 +38,16 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
     }
 
     /**
-     * {@link FlowPropertyDefinitionProvider} can supply multiple properties. {@link #add(FlowPropertyDefinitionProvider...)} creates flows from
-     * {@link FlowPropertyDefinitionProvider#getOutputFlowPropertyDefinitionNames()} property list (if supplied) or the first property
+     * {@link FlowPropertyDefinitionBuilderProvider} can supply multiple properties. {@link #add(FlowPropertyDefinitionBuilderProvider...)} creates flows from
+     * {@link FlowPropertyDefinitionBuilderProvider#getOutputFlowPropertyDefinitionNames()} property list (if supplied) or the first property
      * defined.
      *
      * Using this add() method allows the other properties to also be accessed in their own flow.
      * @param flowPropertyName
-     * @param flowPropertyDefinitionProvider
+     * @param flowPropertyDefinitionBuilderProvider
      * @param additionalConfigurationParameters
      */
-    public void add(String flowPropertyName, FlowPropertyDefinitionProvider flowPropertyDefinitionProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
+    public void add(String flowPropertyName, FlowPropertyDefinitionBuilderProvider flowPropertyDefinitionBuilderProvider, List<FlowPropertyExpectation>additionalConfigurationParameters) {
         String capitalizedFlowPropertyName = StringUtils.capitalize(flowPropertyName);
         FlowImpl flow = new FlowImpl(capitalizedFlowPropertyName);
         flow.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(FSSINGLE_PROPERTY_NAME).
@@ -58,7 +58,7 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
         // otherwise don't we risk exposing internal parameters.
         //FlowPropertyDefinitionBuilder.merge(new FlowPropertyExpectationImpl(flowPropertyName), additionalConfigurationParameters);
 
-        flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
+        flowPropertyDefinitionBuilderProvider.defineFlowPropertyDefinitions(flowActivity, additionalConfigurationParameters);
         flow.addActivity(flowActivity);
         put(this.flows, flow.getFlowPropertyProviderFullName(), flow);
     }
@@ -70,13 +70,13 @@ public class FlowFromFlowPropertyDefinitionDefinitionSource implements Definitio
      *
      * @param flowPropertyDefinitionProviders
      */
-    public void add(FlowPropertyDefinitionProvider... flowPropertyDefinitionProviders) {
-        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider :flowPropertyDefinitionProviders) {
-            List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionProvider.getOutputFlowPropertyDefinitionNames();
-            FlowConfigurationException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionProvider.getClass(), " has no output properties defined.");
+    public void add(FlowPropertyDefinitionBuilderProvider... flowPropertyDefinitionProviders) {
+        for(FlowPropertyDefinitionBuilderProvider flowPropertyDefinitionBuilderProvider :flowPropertyDefinitionProviders) {
+            List<String> outputFlowPropertyDefinitionNames = flowPropertyDefinitionBuilderProvider.getOutputFlowPropertyDefinitionNames();
+            FlowConfigurationException.valid(isNotEmpty(outputFlowPropertyDefinitionNames), flowPropertyDefinitionBuilderProvider.getClass(), " has no output properties defined.");
             for(String flowPropertyName : outputFlowPropertyDefinitionNames) {
                 // TODO : should we apply expectations: readonly?
-                this.add(flowPropertyName, flowPropertyDefinitionProvider, null);
+                this.add(flowPropertyName, flowPropertyDefinitionBuilderProvider, null);
             }
         }
     }

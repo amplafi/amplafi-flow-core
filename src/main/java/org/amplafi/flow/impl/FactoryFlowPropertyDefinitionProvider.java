@@ -12,7 +12,7 @@ import org.amplafi.flow.FlowTransition;
 import org.amplafi.flow.flowproperty.AbstractFlowPropertyDefinitionProvider;
 import org.amplafi.flow.flowproperty.CancelTextFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.FlowTransitionFlowPropertyValueProvider;
 import org.amplafi.flow.flowproperty.MessageFlowPropertyValueProvider;
 
@@ -30,14 +30,14 @@ import com.sworddance.util.ApplicationIllegalStateException;
  * Used to provide standard flow properties that are used every where.
  *
  * TODO: In order for the properties defined here to work completely, the FlowStateImpl.initializeFlowProperty() method must also look at the properties defined
- * implicitly by FactoryFlowPropertyDefinitionProviders and other FlowPropertyDefinitionProvider that supply system/application-wide default definitions.
+ * implicitly by FactoryFlowPropertyDefinitionProviders and other FlowPropertyDefinitionBuilderProvider that supply system/application-wide default definitions.
  * Currently properties defined in FactoryFlowPropertyDefinitionProviders are not getting their initial state correctly copied over from the initialFlowState when a flow is
  * started.
  *
  * @author patmoore
  *
  */
-public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionProvider {
+public class FactoryFlowPropertyDefinitionProvider extends AbstractFlowPropertyDefinitionProvider implements FlowPropertyDefinitionBuilderProvider {
 
     @Deprecated // most of these properties are related to UI so they should be able to be moved out and eventually removed
     public static final FactoryFlowPropertyDefinitionProvider FLOW_INSTANCE = new FactoryFlowPropertyDefinitionProvider(

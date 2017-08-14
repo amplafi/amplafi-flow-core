@@ -33,7 +33,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.sworddance.util.NotNullIterator;
 /**
- * Used to help configure properties created by {@link FlowPropertyDefinitionProvider}s.
+ * Used to help configure properties created by {@link FlowPropertyDefinitionBuilderProvider}s.
  *
  * @author patmoore
  *

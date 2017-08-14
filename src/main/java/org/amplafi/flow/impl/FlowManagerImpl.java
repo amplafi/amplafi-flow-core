@@ -15,6 +15,7 @@
 package org.amplafi.flow.impl;
 
 import java.util.Collection;
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +47,15 @@ public class FlowManagerImpl implements FlowManager {
     private transient Set<FlowStateListener> flowStateListeners = Collections.synchronizedSet(new HashSet<FlowStateListener>());
     private Log log;
 
+    public FlowManagerImpl() {
+
+    }
+
+    @Inject
+    public FlowManagerImpl(FlowTranslatorResolver flowTranslatorResolver, FlowDefinitionsManager flowDefinitionsManager) {
+        this.setFlowTranslatorResolver(flowTranslatorResolver);
+        this.setFlowDefinitionsManager(flowDefinitionsManager);
+    }
     /**
      * @see org.amplafi.flow.FlowManager#getInstanceFromDefinition(java.lang.String)
      */

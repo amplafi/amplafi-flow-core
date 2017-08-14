@@ -27,7 +27,7 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author patmoore
  *
  */
-public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivityImplementor> implements FlowPropertyDefinitionProvider {
+public class CancelTextFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowActivityImplementor> implements FlowPropertyDefinitionBuilderProvider {
     public static final FlowPropertyDefinitionBuilder CANCEL_TEXT = new FlowPropertyDefinitionBuilder(FSCANCEL_TEXT).initAccess(flowLocal, use);
 	public static final CancelTextFlowPropertyValueProvider INSTANCE = new CancelTextFlowPropertyValueProvider();
 

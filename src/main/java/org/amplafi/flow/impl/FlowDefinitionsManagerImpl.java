@@ -28,7 +28,7 @@ import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.definitions.DefinitionSource;
 import org.amplafi.flow.definitions.XmlDefinitionSource;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.ApplicationIllegalStateException;
 import com.sworddance.util.CUtilities;
@@ -45,15 +45,15 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     private ConcurrentMap<String, FlowImplementor> flowDefinitions;
     private List<String> flowsFilenames;
 
-    private List<FlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders;
+    private List<FlowPropertyDefinitionBuilderProvider> factoryFlowPropertyDefinitionBuilderProviders;
 
     private Log log;
     public FlowDefinitionsManagerImpl() {
         flowDefinitions = new ConcurrentHashMap<String, FlowImplementor>();
         flowsFilenames = new CopyOnWriteArrayList<String>();
-        factoryFlowPropertyDefinitionProviders = new CopyOnWriteArrayList<FlowPropertyDefinitionProvider>();
-        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.FLOW_INSTANCE);
-        this.addFactoryFlowPropertyDefinitionProvider(FactoryFlowPropertyDefinitionProvider.FLOW_ACTIVITY_INSTANCE);
+        factoryFlowPropertyDefinitionBuilderProviders = new CopyOnWriteArrayList<FlowPropertyDefinitionBuilderProvider>();
+        this.addFactoryFlowPropertyDefinitionBuilderProvider(FactoryFlowPropertyDefinitionProvider.FLOW_INSTANCE);
+        this.addFactoryFlowPropertyDefinitionBuilderProvider(FactoryFlowPropertyDefinitionProvider.FLOW_ACTIVITY_INSTANCE);
     }
 
     /**
@@ -125,19 +125,19 @@ public class FlowDefinitionsManagerImpl implements FlowDefinitionsManager {
     }
 
     @Override
-    public void addFactoryFlowPropertyDefinitionProvider(FlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider) {
-        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProvider);
+    public void addFactoryFlowPropertyDefinitionBuilderProvider(FlowPropertyDefinitionBuilderProvider factoryFlowPropertyDefinitionBuilderProvider) {
+        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionBuilderProviders, factoryFlowPropertyDefinitionBuilderProvider);
     }
     @Override
-    public void addFactoryFlowPropertyDefinitionProviders(Collection<FlowPropertyDefinitionProvider> factoryFlowPropertyDefinitionProviders) {
-        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionProviders, factoryFlowPropertyDefinitionProviders);
+    public void addFactoryFlowPropertyDefinitionBuilderProviders(Collection<FlowPropertyDefinitionBuilderProvider> factoryFlowPropertyDefinitionBuilderProviders) {
+        CUtilities.addAllIfNotContains(this.factoryFlowPropertyDefinitionBuilderProviders, factoryFlowPropertyDefinitionBuilderProviders);
     }
 
     @Override
     public FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass) {
         FlowPropertyDefinitionBuilder flowPropertyDefinitionBuilder = null;
-        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider: this.factoryFlowPropertyDefinitionProviders) {
-            flowPropertyDefinitionBuilder = flowPropertyDefinitionProvider.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
+        for(FlowPropertyDefinitionBuilderProvider flowPropertyDefinitionBuilderProvider: this.factoryFlowPropertyDefinitionBuilderProviders) {
+            flowPropertyDefinitionBuilder = flowPropertyDefinitionBuilderProvider.getFlowPropertyDefinitionBuilder(propertyName, dataClass);
             if ( flowPropertyDefinitionBuilder != null ) {
                 break;
             }

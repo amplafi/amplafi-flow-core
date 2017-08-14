@@ -795,7 +795,7 @@ public class TestFlowPropertyDefinition {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         FactoryFlowPropertyDefinitionProvider factoryFlowPropertyDefinitionProvider = new FactoryFlowPropertyDefinitionProvider();
         factoryFlowPropertyDefinitionProvider.addStandardPropertyDefinition("user", UserObject.class);
-        flowTestingUtils.getFlowDefinitionsManager().addFactoryFlowPropertyDefinitionProvider(factoryFlowPropertyDefinitionProvider);
+        flowTestingUtils.getFlowDefinitionsManager().addFactoryFlowPropertyDefinitionBuilderProvider(factoryFlowPropertyDefinitionProvider);
         String propertyName = "propertyName";
 
         FlowPropertyDefinitionBuilder flowLocalProperty = new FlowPropertyDefinitionBuilder(propertyName, Boolean.class).initAccess(flowLocal,initialize)

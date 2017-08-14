@@ -13,7 +13,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  *
  * @param <V>
  */
-public class OneOfManyFlowPropertyValueProvider<V> extends AbstractFlowPropertyValueProvider<FlowPropertyProviderWithValues> implements FlowPropertyDefinitionProvider, FlowPropertyValueProvider<FlowPropertyProviderWithValues> {
+public class OneOfManyFlowPropertyValueProvider<V> extends AbstractFlowPropertyValueProvider<FlowPropertyProviderWithValues> implements FlowPropertyDefinitionBuilderProvider, FlowPropertyValueProvider<FlowPropertyProviderWithValues> {
 
     private List<Object> alternativeProperties;
     public OneOfManyFlowPropertyValueProvider(Class<? extends V> baseClass, Object...alternativeProperties) {

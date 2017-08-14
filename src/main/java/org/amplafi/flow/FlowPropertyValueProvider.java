@@ -14,7 +14,7 @@
 
 package org.amplafi.flow;
 
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
 
@@ -34,10 +34,10 @@ import org.amplafi.flow.flowproperty.FlowPropertyValuePersister;
  * <li>FlowActivities can just focus on what will be done with the properties, not how the properties are initialized.</li>
  * <li>Details about when the properties are initialized and how are encapsulated.</li>
  * </ul>
- * {@link FlowPropertyDefinitionProvider} is also usually implemented by FlowPropertyValueProvider, However, the separation must exist because
+ * {@link FlowPropertyDefinitionBuilderProvider} is also usually implemented by FlowPropertyValueProvider, However, the separation must exist because
  * there are valid reasons to have a property defined but not provided, or to have several providers that depend on the context
  *
- * More information about properties can be found in {@link FlowPropertyDefinitionProvider}.
+ * More information about properties can be found in {@link FlowPropertyDefinitionBuilderProvider}.
  * To persist a property, don't do it in here, make sure to check {@link FlowPropertyValuePersister}
  *
  * TODO: enable FlowPropertyValueProvider to be registered so they can be singletons with needed services injected vis the DI framework.

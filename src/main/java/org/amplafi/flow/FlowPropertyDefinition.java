@@ -64,7 +64,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
     boolean isCacheOnly();
 
     /**
-     * A {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider} may provide a {@link org.amplafi.flow.flowproperty.FlowPropertyValuePersister}
+     * A {@link org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider} may provide a {@link org.amplafi.flow.flowproperty.FlowPropertyValuePersister}
      * but the created {@link FlowPropertyDefinition} may often times be used in situations where the changes to the property should not be
      * persisted.
      *

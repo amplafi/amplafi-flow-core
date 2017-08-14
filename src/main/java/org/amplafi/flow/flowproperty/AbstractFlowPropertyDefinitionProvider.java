@@ -34,8 +34,8 @@ import com.sworddance.util.ApplicationIllegalArgumentException;
 import com.sworddance.util.NotNullIterator;
 
 /**
- * support methods for {@link FlowPropertyDefinitionProvider} implementations.
- * Since this class does not implement any methods in {@link FlowPropertyDefinitionProvider} this class does not implement {@link FlowPropertyDefinitionProvider}.
+ * support methods for {@link FlowPropertyDefinitionBuilderProvider} implementations.
+ * Since this class does not implement any methods in {@link FlowPropertyDefinitionBuilderProvider} this class does not implement {@link FlowPropertyDefinitionBuilderProvider}.
  * @author patmoore
  *
  */
@@ -135,9 +135,9 @@ public abstract class AbstractFlowPropertyDefinitionProvider {
         if ( !returnedFlowPropertyDefinition.isReadOnly()) {
         	// only set persisters on non-read-only objects.
             FlowPropertyValuePersister<?> flowPropertyValuePersister = returnedFlowPropertyDefinition.getFlowPropertyValuePersister();
-            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider && flowPropertyValuePersister != this){
+            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionBuilderProvider && flowPropertyValuePersister != this){
                 // TODO: note: infinite loop possibilities here if 2 different objects have mutually dependent FPDs
-                ((FlowPropertyDefinitionProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
+                ((FlowPropertyDefinitionBuilderProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
             }
         }
         return returnedFlowPropertyDefinition;

@@ -26,7 +26,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 /**
  * holds map of {@link FlowPropertyDefinitionBuilder}s (not {@link FlowPropertyDefinition}s).
  * Converting to FlowPropertyDefinitions forced all the unspecified attributes to be defined.
- * But in the FlowPropertyDefinitionProvider we are not yet ready to make that decision. We need to wait until putting the
+ * But in the FlowPropertyDefinitionBuilderProvider we are not yet ready to make that decision. We need to wait until putting the
  * properties on a specific {@link FlowPropertyProvider} ( and the additional {@link FlowPropertyExpectation}s can be applied )
  * before forcing all the unspecified attributes to a concrete setting.
  *
@@ -42,10 +42,10 @@ import org.amplafi.flow.FlowPropertyValueProvider;
  * @author patmoore
  *
  */
-public interface FlowPropertyDefinitionProvider {
+public interface FlowPropertyDefinitionBuilderProvider {
 
     /**
-     * Add to the flowPropertyProvider the definitions supplied by this FlowPropertyDefinitionProvider
+     * Add to the flowPropertyProvider the definitions supplied by this FlowPropertyDefinitionBuilderProvider
      *
      * TODO: the wiring has not happened on this object when the define is called
      * @param flowPropertyProvider

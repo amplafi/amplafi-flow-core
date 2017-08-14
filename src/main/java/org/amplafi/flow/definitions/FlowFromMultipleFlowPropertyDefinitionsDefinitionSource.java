@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.amplafi.flow.FlowImplementor;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 import org.amplafi.flow.impl.FlowActivityImpl;
 import org.amplafi.flow.impl.FlowImpl;
 
@@ -30,8 +30,8 @@ public class FlowFromMultipleFlowPropertyDefinitionsDefinitionSource implements 
     }
 
     /**
-     * {@link FlowPropertyDefinitionProvider} can supply multiple properties. {@link #add(FlowPropertyDefinitionProvider...)} creates flows from
-     * {@link FlowPropertyDefinitionProvider#getOutputFlowPropertyDefinitionNames()} property list (if supplied) or the first property
+     * {@link FlowPropertyDefinitionBuilderProvider} can supply multiple properties. {@link #add(FlowPropertyDefinitionBuilderProvider...)} creates flows from
+     * {@link FlowPropertyDefinitionBuilderProvider#getOutputFlowPropertyDefinitionNames()} property list (if supplied) or the first property
      * defined.
      *
      * Using this add() method allows the other properties to also be accessed in their own flow.
@@ -40,13 +40,13 @@ public class FlowFromMultipleFlowPropertyDefinitionsDefinitionSource implements 
      * @param additionalConfigurationParameters
      */
     @SafeVarargs
-    public final void add(String flowName, List<? extends FlowPropertyDefinitionProvider> flowPropertyDefinitionProviders, List<FlowPropertyExpectation>...additionalConfigurationParameters) {
+    public final void add(String flowName, List<? extends FlowPropertyDefinitionBuilderProvider> flowPropertyDefinitionBuilderProviders, List<FlowPropertyExpectation>...additionalConfigurationParameters) {
         FlowImpl flow = new FlowImpl(flowName);
 
         FlowActivityImpl flowActivity = new FlowActivityImpl("FA");
         List<FlowPropertyExpectation> combinedAdditionalConfigurationParameters = FlowPropertyDefinitionBuilder.combine(additionalConfigurationParameters);
-        for(FlowPropertyDefinitionProvider flowPropertyDefinitionProvider: flowPropertyDefinitionProviders) {
-            flowPropertyDefinitionProvider.defineFlowPropertyDefinitions(flowActivity, combinedAdditionalConfigurationParameters);
+        for(FlowPropertyDefinitionBuilderProvider flowPropertyDefinitionBuilderProvider: flowPropertyDefinitionBuilderProviders) {
+            flowPropertyDefinitionBuilderProvider.defineFlowPropertyDefinitions(flowActivity, combinedAdditionalConfigurationParameters);
         }
         flow.addActivity(flowActivity);
         this.flows.put(flow.getFlowPropertyProviderFullName(), flow);

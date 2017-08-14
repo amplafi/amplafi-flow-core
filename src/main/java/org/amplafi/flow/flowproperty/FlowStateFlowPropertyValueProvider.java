@@ -25,7 +25,7 @@ import static org.amplafi.flow.FlowConstants.*;
  * @author patmoore
  *
  */
-public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProviderImplementor> implements FlowPropertyDefinitionProvider {
+public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValueProvider<FlowPropertyProviderImplementor> implements FlowPropertyDefinitionBuilderProvider {
 
     public static final FlowStateFlowPropertyValueProvider INSTANCE = new FlowStateFlowPropertyValueProvider();
 

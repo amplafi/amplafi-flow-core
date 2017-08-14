@@ -16,14 +16,14 @@ package org.amplafi.flow.definitions;
 import java.util.Map;
 
 import org.amplafi.flow.FlowActivity;
-import org.amplafi.flow.flowproperty.FlowPropertyDefinitionProvider;
+import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 
 /**
  * Implementers will provide Flow definitions.
  * 
  * A definition source is a String key mapped collection of F that extends {@link FlowDefinition}. They allow you to package
  * flow definitions in a convenient way and then handle the results as a whole. Example usages are, creating a bulk converter of 
- * {@link FlowPropertyDefinitionProvider}, {@link FlowActivity} or XMLs into flows. follow the type hierarchy with ctrl+t for 
+ * {@link FlowPropertyDefinitionBuilderProvider}, {@link FlowActivity} or XMLs into flows. follow the type hierarchy with ctrl+t for 
  * DefinitionSource to learn the types of converters that are available
  *
  * TODO(pat) should be namespace owner.

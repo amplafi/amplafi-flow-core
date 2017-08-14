@@ -865,9 +865,9 @@ public class FlowPropertyDefinitionBuilder {
 //            // only set persisters on non-read-only objects.
 //            FlowPropertyValuePersister<?> flowPropertyValuePersister = returnedFlowPropertyDefinition.getFlowPropertyValuePersister();
 //            // BROKEN ( 'this' is not a FPVP ...)
-//            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionProvider /*&& flowPropertyValuePersister != this*/){
+//            if ( flowPropertyValuePersister instanceof FlowPropertyDefinitionBuilderProvider /*&& flowPropertyValuePersister != this*/){
 //                // TODO: note: infinite loop possibilities here if 2 different objects have mutually dependent FPDs
-//                ((FlowPropertyDefinitionProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
+//                ((FlowPropertyDefinitionBuilderProvider)flowPropertyValuePersister).defineFlowPropertyDefinitions(flowPropertyProvider, additionalConfigurationParameters);
 //            }
 //        }
 //        return returnedFlowPropertyDefinition;
