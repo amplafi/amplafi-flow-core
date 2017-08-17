@@ -7,3 +7,5 @@
 
 pom.xml.versionsBackup
 /amplafi-flow-core.iml
+.idea
+*.iml
