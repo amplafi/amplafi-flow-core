@@ -18,11 +18,10 @@ import org.amplafi.flow.translator.FlowTranslator;
 import com.sworddance.beans.PropertyDefinition;
 
 /**
- * Handles the issues around data structure for the {@link FlowPropertyDefinition}.
- * This way {@link FlowPropertyDefinition}  focuses on required status, name, etc. and DataClassDefinition
- * focuses just on the way the data is structured.
- * 
- * Allows the FlowDefinitionProperty structure to be a middling complex chain of nested collections.
+ * Handles the issues around data structure for the {@link FlowPropertyDefinition}. This way
+ * {@link FlowPropertyDefinition} focuses on required status, name, etc. and DataClassDefinition
+ * focuses just on the way the data is structured. Allows the FlowDefinitionProperty structure to be
+ * a middling complex chain of nested collections.
  *
  * @author patmoore
  */
@@ -42,7 +41,9 @@ public interface DataClassDefinition extends PropertyDefinition {
      * @return the flowTranslator
      */
     FlowTranslator getFlowTranslator();
+
     void setFlowTranslator(FlowTranslator flowTranslator);
+
     boolean isFlowTranslatorSet();
 
     /**
@@ -59,6 +60,7 @@ public interface DataClassDefinition extends PropertyDefinition {
      * @return true if the data class has been explicitly defined.
      */
     boolean isDataClassDefined();
+
     /**
      * @param dataClass
      */
@@ -77,8 +79,8 @@ public interface DataClassDefinition extends PropertyDefinition {
     /**
      * @param flowPropertyDefinition
      * @param value
-     * @return true the string can be converted to the dataClass
-     * TODO: should really only need to be defined in the FlowTranslator.
+     * @return true the string can be converted to the dataClass TODO: should really only need to be
+     *         defined in the FlowTranslator.
      */
     boolean isDeserializable(FlowPropertyDefinition flowPropertyDefinition, Object value);
 
@@ -89,6 +91,7 @@ public interface DataClassDefinition extends PropertyDefinition {
 
     @Override
     DataClassDefinition getElementPropertyDefinition();
+
     @Override
     DataClassDefinition getKeyPropertyDefinition();
 
@@ -99,9 +102,17 @@ public interface DataClassDefinition extends PropertyDefinition {
 
     /**
      * Checks to see that there is no conflict between the two DataClassDefinition
+     *
      * @param dataClassDefinition
      * @return true if dataClassDefinition can be merged with this.
      */
     boolean isMergable(DataClassDefinition dataClassDefinition);
-    public boolean isAssignableFrom(Class<?> clazz);
+
+    /**
+     * @param clazz
+     * @return true if objects of 'clazz' can be stored in the structure defined by this
+     *         DataClassDefinition. The attached {@link FlowTranslator} will be checked
+     *         to see if conversion is possible.
+     */
+    boolean isAssignableFrom(Class<?> clazz);
 }

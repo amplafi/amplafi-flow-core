@@ -326,12 +326,12 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
 
     /**
      * @param clazz
-     * @return true if objects of 'clazz' can be stored in the structure defined by this.
+     * @return true if objects of 'clazz' can be stored in the structure defined by this DataClassDefinition
      */
     @Override
     @SuppressWarnings("unchecked")
     public boolean isAssignableFrom(Class<?> clazz) {
-        return getFlowTranslator().isAssignableFrom(clazz);
+        return this.getPropertyClass().isAssignableFrom(clazz) || getFlowTranslator().isAssignableFrom(clazz);
     }
 
     @Override

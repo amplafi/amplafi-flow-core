@@ -25,7 +25,7 @@ import org.amplafi.json.JsonRenderer;
 /**
  * Translate object to/from the flow state.
  *
- * FlowTranslator implementations are best thought of as a shim interface between the flow code and the prefered serialization library.
+ * FlowTranslator implementations are best thought of as a shim interface between the flow code and the preferred serialization library.
  *
  * FlowTranslator are intended to be singletons and injected as a service.
  *

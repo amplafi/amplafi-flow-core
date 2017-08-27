@@ -37,6 +37,12 @@ public interface FlowDefinitionsManager extends DefinitionSource<FlowImplementor
     @SuppressWarnings("unchecked")
     void addDefinitions(DefinitionSource<? extends FlowDefinition>... definitionSource);
 
+    /**
+     *
+     * @param propertyName
+     * @param dataClass propertyType returned must be of this type
+     * @return
+     */
     FlowPropertyDefinitionBuilder getFactoryFlowPropertyDefinitionBuilder(String propertyName, Class<?> dataClass);
 
     void addFactoryFlowPropertyDefinitionBuilderProvider(FlowPropertyDefinitionBuilderProvider factoryFlowPropertyDefinitionBuilderProvider);
