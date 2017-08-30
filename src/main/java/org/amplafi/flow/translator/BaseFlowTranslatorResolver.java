@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.Flow;
@@ -47,18 +48,14 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
 
     private FlowDefinitionsManager flowDefinitionsManager;
     private Map<Class<?>, FlowTranslator<?>> translators;
-    @Deprecated // we want to eliminate dependencies on the json package.
-    private Map<Class<?>, JsonRenderer<?>> jsonRenderers;
     private Log log;
-    private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<FlowTranslator<?>>();
+    private List<FlowTranslator<?>> flowTranslators  = new CopyOnWriteArrayList<>();
 
     public BaseFlowTranslatorResolver() {
 
     }
     public void initializeService() {
-        translators = new MapByClass<FlowTranslator<?>>();
-
-        jsonRenderers = new MapByClass<JsonRenderer<?>>();
+        translators = new MapByClass<>();
         this.addStandardFlowTranslators();
         for(FlowTranslator<?> flowTranslator: getFlowTranslators() ) {
             addFlowTranslator(flowTranslator);
@@ -102,10 +99,6 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
      * @param clazz
      */
     public void addFlowTranslator(FlowTranslator<?> flowTranslator, Class<?> clazz) {
-        JsonRenderer<?> jsonRenderer = flowTranslator.getJsonRenderer();
-        if ( jsonRenderer != null) {
-            this.jsonRenderers.put(clazz, jsonRenderer);
-        }
         translators.put(clazz, flowTranslator);
     }
     /**
@@ -207,7 +200,9 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     }
     @Override
     public IJsonWriter getJsonWriter() {
-        IJsonWriter writer = new JSONStringer(new MapByClass<JsonRenderer<?>>(this.jsonRenderers));
+        Map<Class<?>,JsonRenderer<?>>jsonRenderers = this.translators.values().stream().map(translator -> translator.getJsonRenderer())
+                .collect(Collectors.toMap(jsonRenderer -> jsonRenderer.getClassToRender(), jsonRenderer -> jsonRenderer));
+        IJsonWriter writer = new JSONStringer(new MapByClass<>(jsonRenderers));
         return writer;
     }
     /**

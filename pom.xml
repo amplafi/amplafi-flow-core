@@ -17,7 +17,10 @@
     <scm>
         <developerConnection>scm:git:${github-base}${project.artifactId}.git</developerConnection>
     </scm>
-
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
     <build>
         <defaultGoal>deploy</defaultGoal>
     </build>
