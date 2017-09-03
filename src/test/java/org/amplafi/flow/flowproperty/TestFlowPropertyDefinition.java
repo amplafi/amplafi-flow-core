@@ -287,7 +287,7 @@ public class TestFlowPropertyDefinition {
             String externalInitial = "ext_"+name;
             flowActivity.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(name).initAccess(propertyScope, propertyUsage));
             initialFlowState.put(name, externalInitial);
-            flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
+            flowTestingUtils.addNamedFlowDefinition(flowTypeName, flowActivity);
         }
 
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
@@ -415,7 +415,7 @@ public class TestFlowPropertyDefinition {
             FlowActivityImpl flowActivity = newFlowActivity();
             flowActivity.setFlowPropertyProviderName(activityName);
 
-            flowTestingUtils.addFlowDefinition(flowTypeName, flowActivity);
+            flowTestingUtils.addNamedFlowDefinition(flowTypeName, flowActivity);
             namespace = flowLocalProperty.getNamespaceKey(null, flowActivity);
             assertEquals(namespace, flowTypeName);
             namespace = activityLocalProperty.getNamespaceKey(null, flowActivity);

@@ -73,7 +73,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     // dependencies required by alternative FPVP may never be needed because the FPVP is never called.
     private transient FlowPropertyValueProvider<FlowPropertyProvider> flowPropertyValueProvider;
     private transient FlowPropertyValuePersister<FlowPropertyProvider> flowPropertyValuePersister;
-    private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<FlowPropertyValueChangeListener>();
+    private transient List<FlowPropertyValueChangeListener> flowPropertyValueChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * on {@link FlowActivity#passivate(boolean, FlowStepDirection)} the object should be saved
@@ -119,7 +119,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         // TODO : validate there are data types (but need to allow for the String.class being the data type)
         this.dataClassDefinition = (DataClassDefinition) clone.getDataClassDefinition().clone();
         if (isNotEmpty(clone.getAlternates())) {
-            this.alternates = new HashSet<String>(clone.getAlternates());
+            this.alternates = new HashSet<>(clone.getAlternates());
         }
         this.autoCreate = clone.getAutoCreate();
         this.flowPropertyValueProvider = clone.getFlowPropertyValueProvider();
@@ -343,7 +343,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     }
     @Override
     public Set<String> getAllNames() {
-        Set<String> allNames = new LinkedHashSet<String>();
+        Set<String> allNames = new LinkedHashSet<>();
         allNames.add(this.getName());
         if ( this.alternates != null) {
             allNames.addAll(getAlternates());
@@ -431,7 +431,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
         if ( isNotEmpty(source.alternates)) {
             if (this.alternates == null ) {
-                this.alternates = new HashSet<String>(source.alternates);
+                this.alternates = new HashSet<>(source.alternates);
             } else {
                 this.alternates.addAll(source.alternates);
             }
@@ -529,7 +529,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
     @Override
     public List<Object> getObjectsNeedingToBeWired() {
-        List<Object> objectsNeedingToBeWired = new ArrayList<Object>();
+        List<Object> objectsNeedingToBeWired = new ArrayList<>();
         addAllNotNull(objectsNeedingToBeWired, getFlowPropertyValueChangeListeners());
         addAllNotNull(objectsNeedingToBeWired, getTranslator(), getElementFlowTranslator(), getKeyFlowTranslator(), getFlowPropertyValuePersister(), getFlowPropertyValueProvider());
         return objectsNeedingToBeWired;
@@ -633,7 +633,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
     @Override
     public String getNamespaceKey(FlowState flowState, FlowPropertyProvider flowPropertyProvider) {
         if( flowPropertyProvider == null) {
-            return this.getNamespaceKey(flowState);
+            return this.getNamespaceKeyByFlowState(flowState);
         } else if ( flowPropertyProvider instanceof FlowActivity) {
             return this.getNamespaceKey((FlowActivity)flowPropertyProvider);
         } else if ( flowPropertyProvider instanceof FlowState) {
@@ -664,7 +664,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         case flowLocal:
         case requestFlowLocal:
             if ( flow.getFlowState() != null) {
-                return getNamespaceKey(flow.getFlowState());
+                return getNamespaceKeyByFlowState(flow.getFlowState());
             } else {
                 return flow.getFlowPropertyProviderName();
             }
@@ -675,7 +675,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
 
-    private String getNamespaceKey(FlowState flowState) {
+    private String getNamespaceKeyByFlowState(FlowState flowState) {
         switch (this.getPropertyScope()) {
         case activityLocal:
             throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
@@ -710,7 +710,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
 
     private List<String> getNamespaceKeySearchList(FlowImplementor flow, boolean forceAll) {
         //TODO have hierarchy of namespaces
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(getNamespaceKey(flow));
         if ( getPropertyUsage().isExternallySettable() || forceAll) {
             switch(this.getPropertyScope()) {
@@ -735,8 +735,8 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private List<String> getNamespaceKeySearchList(FlowState flowState, boolean forceAll) {
         //TODO have hierarchy of namespaces
-        List<String> list = new ArrayList<String>();
-        list.add(getNamespaceKey(flowState));
+        List<String> list = new ArrayList<>();
+        list.add(getNamespaceKeyByFlowState(flowState));
         switch (this.getPropertyScope()) {
         case activityLocal:
             throw new IllegalStateException(this + ":" + this.getPropertyScope() + " cannot be used when supplying only a FlowState");
@@ -777,7 +777,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
      */
     private List<String> getNamespaceKeySearchList(FlowActivity flowActivity, boolean forceAll) {
         //TODO have hierarchy of namespaces
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(getNamespaceKey(flowActivity));
         if ( getPropertyUsage().isExternallySettable() || forceAll) {
             switch(this.getPropertyScope()) {

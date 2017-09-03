@@ -30,7 +30,7 @@ public class TestOneOfManyFlowPropertyValueProvider {
                     );
         OneOfManyFlowPropertyValueProvider oneOfManyFlowPropertyValueProvider = new OneOfManyFlowPropertyValueProvider("prop", String.class, "prop1", "prop2");
         oneOfManyFlowPropertyValueProvider.defineFlowPropertyDefinitions(activity);
-        flowTestingUtils.addFlowDefinition("foo", activity);
+        flowTestingUtils.addNamedFlowDefinition("foo", activity);
         FlowState flowState= flowTestingUtils.getFlowManagement().startFlowState("foo", false, null);
         assertNull(flowState.getProperty("prop"), "should not be set");
 

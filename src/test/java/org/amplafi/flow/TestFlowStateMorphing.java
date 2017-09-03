@@ -83,7 +83,7 @@ public class TestFlowStateMorphing {
         FlowActivityImpl fa2 = createFA("FA-2");
         FlowActivityImpl fa3 = createFA("FA-3");
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.addFlowDefinition(FIRST_FLOW, fa1,fa2,fa3);
+        flowTestingUtils.addNamedFlowDefinition(FIRST_FLOW, fa1,fa2,fa3);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowStateImplementor flowState = flowManagement.startFlowState(FIRST_FLOW, true, null, false);

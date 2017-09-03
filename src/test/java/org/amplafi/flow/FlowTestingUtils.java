@@ -91,7 +91,7 @@ public class FlowTestingUtils {
 
     public <T extends FlowActivityImplementor> String addFlowDefinition(T...flowActivities) {
         String flowTypeName = "testflow"+counter.incrementAndGet()+":"+System.nanoTime();
-        return this.addFlowDefinition(flowTypeName, flowActivities);
+        return this.addNamedFlowDefinition(flowTypeName, flowActivities);
     }
 
     /**
@@ -128,7 +128,7 @@ public class FlowTestingUtils {
     public <T extends FlowActivityImplementor> T initActivity(Class<T> clazz) {
         return initActivity(clazz, null);
     }
-    public String addFlowDefinition(String flowTypeName, FlowActivityImplementor... activities) {
+    public String addNamedFlowDefinition(String flowTypeName, FlowActivityImplementor... activities) {
         final FlowImplementor def = new FlowImpl(flowTypeName, activities);
         getFlowDefinitionsManager().addDefinitions(def);
         return flowTypeName;

@@ -31,7 +31,7 @@ public class TestTransitionFlowActivity {
     public void testDup() {
     	 FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
          TransitionFlowActivity obj = new TransitionFlowActivity();
-         flowTestingUtils.addFlowDefinition("foo", obj);
+         flowTestingUtils.addNamedFlowDefinition("foo", obj);
          assertTrue(obj.getClass().isInstance(obj.dup()));
     }
 
@@ -41,7 +41,7 @@ public class TestTransitionFlowActivity {
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
         TransitionFlowActivity obj = new TransitionFlowActivity();
         String flowTypeName = "foo";
-        flowTestingUtils.addFlowDefinition(flowTypeName, obj);
+        flowTestingUtils.addNamedFlowDefinition(flowTypeName, obj);
         Map<String, String> initialFlowState = null;
         FlowState flowState = flowTestingUtils.getFlowManagement().startFlowState(flowTypeName, false, initialFlowState);
         assertTrue(flowState.isCompleted());

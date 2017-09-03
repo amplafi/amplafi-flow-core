@@ -172,7 +172,7 @@ public class TestFlowTransitions {
         flowActivity1.addPropertyDefinitions(new FlowPropertyDefinitionBuilder(initializedByFirst).initPropertyUsage(PropertyUsage.initialize));
 
         FlowTestingUtils flowTestingUtils = new FlowTestingUtils();
-        flowTestingUtils.addFlowDefinition("first", flowActivity1, new TransitionFlowActivity(null, "second", TransitionType.normal));
+        flowTestingUtils.addNamedFlowDefinition("first", flowActivity1, new TransitionFlowActivity(null, "second", TransitionType.normal));
 
         FlowActivityImpl flowActivity2 = new FlowActivityImpl().initInvisible(false);
         // this property name is unknown to "first" flow so "first" flow should not affect this property value at all.
@@ -185,7 +185,7 @@ public class TestFlowTransitions {
         String opaqueSecondFlowProperty = "secondFlowProperty";
         flowActivity2.addPropertyDefinitions(flowPropertyDefinition_secondflow_prop0, new FlowPropertyDefinitionBuilder(opaqueSecondFlowProperty,
             String.class).initPropertyScope(flowLocal).initPropertyUsage(PropertyUsage.io));
-        flowTestingUtils.addFlowDefinition("second", flowActivity2);
+        flowTestingUtils.addNamedFlowDefinition("second", flowActivity2);
         FlowManagement flowManagement = flowTestingUtils.getFlowManagement();
 
         FlowStateImplementor flowState = flowManagement.startFlowState("first", true, FlowUtils.INSTANCE.createState(privatePropertyForSecondFlow,
