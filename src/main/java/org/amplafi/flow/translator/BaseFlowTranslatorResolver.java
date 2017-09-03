@@ -200,9 +200,14 @@ public class BaseFlowTranslatorResolver implements FlowTranslatorResolver {
     }
     @Override
     public IJsonWriter getJsonWriter() {
-        Map<Class<?>,JsonRenderer<?>>jsonRenderers = this.translators.values().stream().map(translator -> translator.getJsonRenderer())
-                .collect(Collectors.toMap(jsonRenderer -> jsonRenderer.getClassToRender(), jsonRenderer -> jsonRenderer));
-        IJsonWriter writer = new JSONStringer(new MapByClass<>(jsonRenderers));
+        MapByClass<JsonRenderer<?>>jsonRenderers = this.translators.values().stream()
+                .filter(translator -> translator.getJsonRenderer() != null)
+                .map(translator -> translator.getJsonRenderer())
+                .collect(Collectors.toMap(jsonRenderer -> jsonRenderer.getClassToRender(),
+                    jsonRenderer -> jsonRenderer,
+                    (first, last) -> last, MapByClass::new)
+                    );
+        IJsonWriter writer = new JSONStringer(jsonRenderers);
         return writer;
     }
     /**
