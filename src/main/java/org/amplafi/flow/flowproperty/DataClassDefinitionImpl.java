@@ -331,7 +331,8 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     @Override
     @SuppressWarnings("unchecked")
     public boolean isAssignableFrom(Class<?> clazz) {
-        return this.getPropertyClass().isAssignableFrom(clazz) || getFlowTranslator().isAssignableFrom(clazz);
+        return (this.getPropertyClass() != null && this.getPropertyClass().isAssignableFrom(clazz))
+                || (getFlowTranslator() != null && getFlowTranslator().isAssignableFrom(clazz));
     }
 
     @Override
