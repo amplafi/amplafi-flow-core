@@ -21,7 +21,6 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.json.JsonSelfRenderer;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.sworddance.util.AbstractParameterizedCallableImpl;
 import com.sworddance.util.NotNullIterator;
@@ -918,7 +917,6 @@ public class FlowPropertyDefinitionBuilder {
     }
     @Override
     public String toString() {
-        ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-        return toStringBuilder.toString();
+        return super.toString();
     }
 }
