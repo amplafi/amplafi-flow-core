@@ -209,7 +209,7 @@ public class TestFlowTransitions {
             "nextFlowState=" + nextFlowState);
         assertEquals(nextFlowState.getProperty(opaqueSecondFlowProperty, String.class), opaqueValuePassedFromFirstToSecond, "looking at="
             + opaqueSecondFlowProperty + "  nextFlowState=" + nextFlowState);
-        assertEquals(nextFlowState.getProperty(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="
+        assertEquals((boolean)nextFlowState.getProperty(privatePropertyForSecondFlow), Boolean.parseBoolean(privatePropertyValueInSecondFlow), "looking at="
             + privatePropertyForSecondFlow + "  nextFlowState=" + nextFlowState);
         assertEquals(nextFlowState.getRawProperty((String) null, initializedByFirst), propertyValueInitializedByFirst, "nextFlowState="
             + nextFlowState);
