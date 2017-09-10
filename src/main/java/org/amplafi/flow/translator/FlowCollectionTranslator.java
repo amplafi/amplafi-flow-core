@@ -18,10 +18,10 @@ import java.util.Collection;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONArray;
+import org.amplafi.flow.json.JsonRenderer;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONArray;
-import org.amplafi.json.JsonRenderer;
 import org.apache.commons.lang.ObjectUtils;
 
 

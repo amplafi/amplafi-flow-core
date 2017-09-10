@@ -16,7 +16,7 @@ package org.amplafi.flow.translator;
 
 import java.net.URI;
 
-import org.amplafi.json.renderers.UriJsonRenderer;
+import org.amplafi.flow.json.renderers.UriJsonRenderer;
 
 /**
  *

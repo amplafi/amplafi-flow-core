@@ -15,14 +15,14 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.json.IJsonWriter;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.json.IJsonWriter;
 
 
 /**
  * Implementers inject the services that the FlowPropertyDefinitions ( and their supporting {@link FlowPropertyValueProvider}, et.al. need )
  *
- * Implementers tend to be a shim between the dependency injection framework used and the flow code.
+ * Implementers are a shim between the dependency injection framework used and the flow code.
  *
  * TODO : can we do the service injection at a higher level?
  * current issue is that the injection happens when a flow is run.

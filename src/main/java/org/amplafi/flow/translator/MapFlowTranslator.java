@@ -20,9 +20,9 @@ import java.util.Map;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONObject;
-import org.amplafi.json.renderers.MapJsonRenderer;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONObject;
+import org.amplafi.flow.json.renderers.MapJsonRenderer;
 import org.apache.commons.collections.MapUtils;
 
 import com.sworddance.util.ApplicationIllegalStateException;

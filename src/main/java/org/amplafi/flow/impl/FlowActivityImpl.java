@@ -124,6 +124,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     /**
      * subclasses should override to add their standard definitions.
      */
+    @Deprecated // change to be a supplier of FPD.
     protected void addStandardFlowPropertyDefinitions() {
         // See note in FactoryFlowPropertyDefinitionProvider for what needs to be changed in order for these explicit property definitions to be removed.
         this.addPropertyDefinitions(

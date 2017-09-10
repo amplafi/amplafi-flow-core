@@ -30,9 +30,13 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.Resolvable;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONStringer;
-import org.amplafi.json.JsonRenderer;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONStringer;
+import org.amplafi.flow.json.JsonRenderer;
+import org.amplafi.flow.json.translator.FlowAwareJsonSelfRendererFlowTranslator;
+import org.amplafi.flow.json.translator.JSONArrayFlowTranslator;
+import org.amplafi.flow.json.translator.JSONObjectFlowTranslator;
+import org.amplafi.flow.json.translator.JsonSelfRendererFlowTranslator;
 
 import com.sworddance.beans.MapByClass;
 

@@ -16,10 +16,10 @@ package org.amplafi.flow.translator;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONObject;
+import org.amplafi.flow.json.JSONStringer;
 import org.amplafi.flow.validation.FlowValidationException;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONObject;
-import org.amplafi.json.JSONStringer;
 import org.apache.commons.lang.ObjectUtils;
 
 public class CharSequenceFlowTranslator<T> extends AbstractFlowTranslator<T> {

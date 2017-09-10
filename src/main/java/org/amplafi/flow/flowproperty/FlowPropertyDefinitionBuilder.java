@@ -19,8 +19,8 @@ import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.json.JsonSelfRenderer;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.json.JsonSelfRenderer;
 
 import com.sworddance.util.AbstractParameterizedCallableImpl;
 import com.sworddance.util.NotNullIterator;

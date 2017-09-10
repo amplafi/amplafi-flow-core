@@ -20,7 +20,7 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.JsonRenderer;
+import org.amplafi.flow.json.JsonRenderer;
 
 /**
  * Translate object to/from the flow state.

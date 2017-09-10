@@ -19,8 +19,8 @@ import java.util.Set;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.renderers.IterableJsonOutputRenderer;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.renderers.IterableJsonOutputRenderer;
 
 
 public class SetFlowTranslator<T> extends FlowCollectionTranslator<Set<? extends T>, T> {

@@ -14,13 +14,12 @@
 
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.translator.FlowValidationResultJsonRenderer;
-import org.amplafi.flow.translator.FlowValidationTrackingJsonRenderer;
+import org.amplafi.flow.json.FlowValidationResultJsonRenderer;
+import org.amplafi.flow.json.FlowValidationTrackingJsonRenderer;
+import org.amplafi.flow.json.JSONStringer;
+import org.amplafi.flow.json.JSONWriter;
 import org.amplafi.flow.validation.FlowValidationTracking;
 import org.amplafi.flow.validation.ReportAllValidationResult;
-import org.amplafi.json.JSONStringer;
-import org.amplafi.json.JSONWriter;
-
 import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;

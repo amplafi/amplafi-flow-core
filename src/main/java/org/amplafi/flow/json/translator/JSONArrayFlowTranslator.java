@@ -11,29 +11,30 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow.translator;
+package org.amplafi.flow.json.translator;
 
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONObject;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONArray;
+import org.amplafi.flow.translator.AbstractFlowTranslator;
 import org.amplafi.flow.validation.FlowValidationException;
 
-public class JSONObjectFlowTranslator extends AbstractFlowTranslator<JSONObject> {
+public class JSONArrayFlowTranslator extends AbstractFlowTranslator<JSONArray> {
     @Override
     public Class<?> getTranslatedClass() {
-        return JSONObject.class;
+        return JSONArray.class;
     }
 
     @Override
     @SuppressWarnings("unused")
     protected IJsonWriter doSerialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition,
-        IJsonWriter jsonWriter, JSONObject object) {
+        IJsonWriter jsonWriter, JSONArray object) {
         // empty json are appended as null but here we want to preserve them, so write them as {}
         if (object!=null && object.equals(null)) {
-            jsonWriter.object();
-            jsonWriter.endObject();
+            jsonWriter.array();
+            jsonWriter.endArray();
             return jsonWriter;
         }
         return jsonWriter.value(object);
@@ -41,8 +42,8 @@ public class JSONObjectFlowTranslator extends AbstractFlowTranslator<JSONObject>
 
     @Override
     @SuppressWarnings("unused")
-    protected JSONObject doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition,
+    protected JSONArray doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition,
                                        DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {
-        return JSONObject.toJsonObject(serializedObject);
+        return JSONArray.toJsonArray(serializedObject);
     }
 }

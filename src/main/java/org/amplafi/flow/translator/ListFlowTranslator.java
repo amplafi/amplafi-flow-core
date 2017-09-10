@@ -19,7 +19,7 @@ import java.util.List;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.renderers.IterableJsonOutputRenderer;
+import org.amplafi.flow.json.renderers.IterableJsonOutputRenderer;
 
 
 public class ListFlowTranslator<T> extends FlowCollectionTranslator<List<? extends T>, T> {

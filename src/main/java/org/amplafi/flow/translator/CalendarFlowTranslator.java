@@ -16,7 +16,7 @@ package org.amplafi.flow.translator;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.amplafi.json.renderers.CalendarJsonRenderer;
+import org.amplafi.flow.json.renderers.CalendarJsonRenderer;
 
 
 public class CalendarFlowTranslator extends AbstractFlowTranslator<Calendar> {

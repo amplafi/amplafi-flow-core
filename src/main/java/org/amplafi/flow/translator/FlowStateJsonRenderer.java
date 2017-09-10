@@ -19,9 +19,10 @@ import java.util.Map;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowState;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JsonConstruct;
-import org.amplafi.json.JsonRenderer;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JsonConstruct;
+import org.amplafi.flow.json.JsonRenderer;
+
 import static com.sworddance.util.CUtilities.*;
 
 
@@ -100,7 +101,7 @@ public class FlowStateJsonRenderer implements JsonRenderer<FlowState> {
 	}
 
     /**
-     * @see org.amplafi.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
+     * @see org.amplafi.flow.json.JsonRenderer#fromJson(java.lang.Class, java.lang.Object, Object...)
      */
     @Override
     public <K> K fromJson(Class<K> clazz, Object value, Object... parameters) {

@@ -15,7 +15,8 @@ package org.amplafi.flow.translator;
 
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
-import org.amplafi.json.JSONObject;
+import org.amplafi.flow.json.JSONObject;
+import org.amplafi.flow.json.translator.JSONObjectFlowTranslator;
 
 /**
  * Test {@link JSONObjectFlowTranslator}.

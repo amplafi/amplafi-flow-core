@@ -1,4 +1,4 @@
-package org.amplafi.flow.translator;
+package org.amplafi.flow.json;
 
 import static com.sworddance.util.CUtilities.isNotEmpty;
 
@@ -24,13 +24,14 @@ import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.ServicesConstants;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionImplementor;
 import org.amplafi.flow.impl.FlowStateImplementor;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONWriter;
+import org.amplafi.flow.json.JsonConstruct;
+import org.amplafi.flow.json.renderers.IterableJsonOutputRenderer;
+import org.amplafi.flow.translator.FlowStateJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationTracking;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONWriter;
-import org.amplafi.json.JsonConstruct;
-import org.amplafi.json.renderers.IterableJsonOutputRenderer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

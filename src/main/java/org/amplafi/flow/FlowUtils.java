@@ -22,7 +22,7 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
-import org.amplafi.json.JSONStringer;
+import org.amplafi.flow.json.JSONStringer;
 import org.apache.commons.lang.ObjectUtils;
 
 

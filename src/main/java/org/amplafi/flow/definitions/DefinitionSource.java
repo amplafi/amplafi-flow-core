@@ -20,10 +20,10 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 
 /**
  * Implementers will provide Flow definitions.
- * 
+ *
  * A definition source is a String key mapped collection of F that extends {@link FlowDefinition}. They allow you to package
- * flow definitions in a convenient way and then handle the results as a whole. Example usages are, creating a bulk converter of 
- * {@link FlowPropertyDefinitionBuilderProvider}, {@link FlowActivity} or XMLs into flows. follow the type hierarchy with ctrl+t for 
+ * flow definitions in a convenient way and then handle the results as a whole. Example usages are, creating a bulk converter of
+ * {@link FlowPropertyDefinitionBuilderProvider}, {@link FlowActivity} or XMLs into flows. follow the type hierarchy with ctrl+t for
  * DefinitionSource to learn the types of converters that are available
  *
  * TODO(pat) should be namespace owner.
@@ -38,13 +38,21 @@ public interface DefinitionSource<F extends FlowDefinition> {
      * @param flowTypeName the name of the flow.
      * @return the Flow definition. null if {@link #isFlowDefined(String)} returns false.
      */
-    F getFlowDefinition(String flowTypeName);
+    default F getFlowDefinition(String flowTypeName) {
+        if (flowTypeName != null && isFlowDefined(flowTypeName)) {
+            return getFlowDefinitions().get(flowTypeName);
+        } else {
+            return null;
+        }
+    }
     /**
      * does this DefinitionSource have a definition for a flow with supplied name.
      * @param flowTypeName the name of the flow
      * @return true if definition exists.
      */
-    boolean isFlowDefined(String flowTypeName);
+    default boolean isFlowDefined(String flowTypeName) {
+        return getFlowDefinitions().containsKey(flowTypeName);
+    };
 
     /**
      * Returns all defined flows, keyed by their name.

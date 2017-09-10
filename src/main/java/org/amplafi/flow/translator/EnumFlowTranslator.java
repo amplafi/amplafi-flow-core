@@ -14,7 +14,7 @@
 
 package org.amplafi.flow.translator;
 
-import org.amplafi.json.renderers.EnumJsonRenderer;
+import org.amplafi.flow.json.renderers.EnumJsonRenderer;
 
 /**
  * @author patmoore

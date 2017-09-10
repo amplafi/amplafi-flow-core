@@ -3,12 +3,13 @@ package org.amplafi.flow.translator;
 import org.testng.annotations.Test;
 import org.testng.annotations.DataProvider;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
-import org.amplafi.json.JsonSelfRenderer;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.JSONObject;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.JSONObject;
+import org.amplafi.flow.json.JsonSelfRenderer;
+import org.amplafi.flow.json.translator.JsonSelfRendererFlowTranslator;
 
 /**
- * Test {@link org.amplafi.flow.translator.JsonSelfRendererFlowTranslator}.
+ * Test {@link org.amplafi.flow.json.translator.JsonSelfRendererFlowTranslator}.
  * @author Andreas Andreou
  */
 public class TestJsonSelfRendererFlowTranslator extends AbstractTestFlowTranslators {

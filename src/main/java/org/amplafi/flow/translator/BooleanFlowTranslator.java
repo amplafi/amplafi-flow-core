@@ -15,7 +15,7 @@
 package org.amplafi.flow.translator;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.json.renderers.BooleanJsonRenderer;
+import org.amplafi.flow.json.renderers.BooleanJsonRenderer;
 
 
 /**

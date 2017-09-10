@@ -16,10 +16,10 @@ package org.amplafi.flow.translator;
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.json.IJsonWriter;
+import org.amplafi.flow.json.renderers.NumberJsonRenderer;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.InconsistencyTracking;
-import org.amplafi.json.IJsonWriter;
-import org.amplafi.json.renderers.NumberJsonRenderer;
 
 
 

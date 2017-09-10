@@ -21,9 +21,9 @@ import java.util.NavigableMap;
 
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
+import org.amplafi.flow.json.IJsonWriter;
 import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.translator.FlowTranslator;
-import org.amplafi.json.IJsonWriter;
 
 import com.sworddance.beans.PropertyDefinitionImpl;
 import com.sworddance.util.CUtilities;
