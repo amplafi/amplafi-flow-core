@@ -22,7 +22,6 @@ import static org.apache.commons.lang.StringUtils.*;
 
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
-import org.amplafi.flow.json.JSONStringer;
 import org.apache.commons.lang.ObjectUtils;
 
 
@@ -42,7 +41,7 @@ public class FlowUtils {
      * @return list of strings in <em>key='value'</em> form
      */
     private List<String> createInitialValues(Map<String, String> map) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for(Map.Entry<String, String> entry: map.entrySet()) {
             addInitialValues(result, entry.getKey(), entry.getValue());
         }
@@ -113,7 +112,7 @@ public class FlowUtils {
      * @return the map with the state info, or an empty map if no arguments passed
      */
     public Map<String, String> createState(Object...objects) {
-        Map<String, String> ret = new LinkedHashMap<String, String>();
+        Map<String, String> ret = new LinkedHashMap<>();
         if (objects==null) {
             return ret;
         }

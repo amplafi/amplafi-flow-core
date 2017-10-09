@@ -30,11 +30,11 @@
             <artifactId>amplafi-sworddance</artifactId>
             <version>${amplafi-sworddance-build}</version>
         </dependency>
-        <dependency>
+<!--         <dependency>
             <groupId>org.amplafi</groupId>
             <artifactId>amplafi-json</artifactId>
             <version>${amplafi-json-build}</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>

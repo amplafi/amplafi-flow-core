@@ -15,8 +15,8 @@
 package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.json.IJsonWriter;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.SerializationWriter;
 
 
 /**
@@ -61,7 +61,7 @@ public interface FlowTranslatorResolver {
     // this is a really rare case - MapFlowTranslator seems to be about the only good example
     // we should be able to get rid of this.
     @Deprecated
-    IJsonWriter getJsonWriter();
+    <W extends SerializationWriter> SerializationWriter getJsonWriter();
 
     /**
      * @param flowPropertyProvider

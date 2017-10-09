@@ -15,12 +15,6 @@ package org.amplafi.flow;
 
 import java.util.Map;
 
-import org.amplafi.flow.json.IJsonWriter;
-import org.amplafi.flow.json.JSONObject;
-import org.amplafi.flow.json.JSONStringer;
-import org.amplafi.flow.json.JsonSelfRenderer;
-import org.amplafi.flow.json.renderers.EnumJsonRenderer;
-import org.amplafi.flow.json.renderers.MapJsonRenderer;
 import org.amplafi.flow.launcher.ContinueFlowLauncher;
 import org.amplafi.flow.launcher.FlowLauncher;
 import org.amplafi.flow.launcher.MorphFlowLauncher;
@@ -141,7 +135,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
     }
 
     @Override
-    public IJsonWriter toJson(IJsonWriter jsonWriter) {
+    public SerializationWriter toJson(SerializationWriter jsonWriter) {
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());

@@ -5,7 +5,7 @@ import java.io.Writer;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowManagement;
-import org.amplafi.flow.FlowRenderer;
+import org.amplafi.flow.FlowStateRenderer;
 import org.amplafi.flow.FlowState;
 
 /**
@@ -14,7 +14,7 @@ import org.amplafi.flow.FlowState;
  * @author Konstantin Burov
  *
  */
-public class HandledFlowRenderer implements FlowRenderer {
+public class HandledFlowRenderer implements FlowStateRenderer {
 
 
 	@Override

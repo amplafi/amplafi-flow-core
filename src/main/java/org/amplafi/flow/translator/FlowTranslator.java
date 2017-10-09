@@ -20,7 +20,6 @@ import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslatorResolver;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
-import org.amplafi.flow.json.JsonRenderer;
 
 /**
  * Translate object to/from the flow state.
@@ -32,7 +31,8 @@ import org.amplafi.flow.json.JsonRenderer;
  * Sometimes it is desired to have a generic FlowTranslator that can customize at runtime for the specific class. Such FlowTranslator should extends {@link InstanceSpecificFlowTranslator}.
  *
  * FlowTranslators are registered with the {@link FlowTranslatorResolver}
- * TODO! {@link JsonRenderer} and FlowTranslators are very overlapping ... at some point reconcile!
+ * FlowTranslators are intended to manage the serialization of complex objects, whereas FlowRenderers are intended for primitives: String, Integer, Date, etc.
+ * Furthermore FlowTranslators should expect the FlowRenderers to be changed during their lifetime to support alternative location to serialize/deserialize to.
  *
  * FlowTranslators have db transactions available.
  *
@@ -95,7 +95,7 @@ public interface FlowTranslator <T>{
      */
     List<Class<?>> getDeserializedFormClasses();
 
-    @Deprecated // need to remove reference to specific serialization mechanism
+//    @Deprecated // need to remove reference to specific serialization mechanism
     // only really used in BaseFlowTranslatorResolver to construct a JsonWriter
-    JsonRenderer<T> getJsonRenderer();
+//    JsonRenderer<T> getJsonRenderer();
 }
