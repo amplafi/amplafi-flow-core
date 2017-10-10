@@ -15,6 +15,8 @@ package org.amplafi.flow;
 
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.SerializationWriter;
+
 import com.sworddance.beans.PropertyDefinition;
 
 /**
@@ -33,7 +35,7 @@ public interface DataClassDefinition extends PropertyDefinition {
 
     <T> String serialize(FlowPropertyDefinition flowPropertyDefinition, T value);
 
-    <T, W> W serialize(FlowPropertyDefinition flowPropertyDefinition, W outputWriter, T value);
+    <T, W extends SerializationWriter> W serialize(FlowPropertyDefinition flowPropertyDefinition, W outputWriter, T value);
 
     <T> T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, Object value);
 

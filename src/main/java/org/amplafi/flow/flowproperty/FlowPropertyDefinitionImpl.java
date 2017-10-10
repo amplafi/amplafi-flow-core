@@ -37,6 +37,7 @@ import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowState;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.SerializationWriter;
 
 import com.sworddance.util.NotNullIterator;
 
@@ -255,7 +256,7 @@ public class FlowPropertyDefinitionImpl implements FlowPropertyDefinitionImpleme
         }
     }
     @Override
-    public <T, W> W serialize(W outputWriter, T value) {
+    public <T, W extends SerializationWriter> W serialize(W outputWriter, T value) {
         try {
             return this.dataClassDefinition.serialize(this, outputWriter, value);
         } catch (FlowPropertySerializationNotPossibleException e) {

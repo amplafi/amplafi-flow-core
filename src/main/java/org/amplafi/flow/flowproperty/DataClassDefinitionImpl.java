@@ -125,7 +125,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     }
     @Override
     @SuppressWarnings("unchecked")
-    public <T, W> W serialize(FlowPropertyDefinition flowPropertyDefinition, W outputWriter, T value) {
+    public <T, W extends SerializationWriter> W serialize(FlowPropertyDefinition flowPropertyDefinition, W outputWriter, T value) {
         return (W) this.getFlowTranslator().serialize(flowPropertyDefinition, this, outputWriter, value);
     }
 

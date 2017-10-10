@@ -20,6 +20,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.PropertyScope;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.SerializationWriter;
 
 /**
  * Defines a property that will be assigned as part of a {@link Flow} or
@@ -133,7 +134,7 @@ public interface FlowPropertyDefinition extends FlowPropertyExpectation {
      */
     List<Object> getObjectsNeedingToBeWired();
 
-    <T, W> W serialize(W outputWriter, T value);
+    <T, W extends SerializationWriter> W serialize(W outputWriter, T value);
 
     <T> String serialize(T object);
     <V> V deserialize(FlowPropertyProvider flowPropertyProvider, Object serializedObject) throws FlowException;
