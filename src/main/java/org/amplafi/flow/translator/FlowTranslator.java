@@ -56,7 +56,7 @@ public interface FlowTranslator <T>{
      * @param object
      * @return outputWriter
      */
-    <W> W serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, W outputWriter, T object);
+    <W extends SerializationWriter> W serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, W outputWriter, T object);
 
     T deserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject)
             throws FlowException;

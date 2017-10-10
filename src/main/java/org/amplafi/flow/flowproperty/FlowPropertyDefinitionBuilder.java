@@ -19,7 +19,7 @@ import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;
 import org.amplafi.flow.FlowStepDirection;
 import org.amplafi.flow.FlowTranslatorResolver;
-import org.amplafi.flow.json.JsonSelfRenderer;
+import org.amplafi.flow.FlowSelfRenderer;
 import org.amplafi.flow.translator.FlowTranslator;
 
 import com.sworddance.util.AbstractParameterizedCallableImpl;
@@ -284,7 +284,7 @@ public class FlowPropertyDefinitionBuilder {
         }
         Boolean saveBack = getSaveBack();
         if (saveBack == null) {
-            saveBack = dataClassDefinition.isCollection() || JsonSelfRenderer.class.isAssignableFrom(dataClassDefinition.getDataClass());
+            saveBack = dataClassDefinition.isCollection() || FlowSelfRenderer.class.isAssignableFrom(dataClassDefinition.getDataClass());
         }
         return new FlowPropertyExpectationImpl(name, propertyRequired, propertyScope, propertyUsage, externalPropertyAccessRestriction,
             flowPropertyValueProvider, flowPropertyValuePersister, flowPropertyValueChangeListeners, saveBack, autoCreate, getAlternates(),

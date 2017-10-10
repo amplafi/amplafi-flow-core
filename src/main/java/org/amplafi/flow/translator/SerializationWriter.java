@@ -19,7 +19,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException If the value is out of sequence.
      */
-    SerializationWriter append(String s) throws IllegalStateException;
+    <W extends SerializationWriter> W append(String s) throws IllegalStateException;
 
     /**
      * Begin appending a new array. All values until the balancing <code>endArray</code> will be
@@ -31,7 +31,7 @@ public interface SerializationWriter {
      *             wrong place (for example as a key or after the end of the outermost array or
      *             object).
      */
-    SerializationWriter array() throws IllegalStateException;
+    <W extends SerializationWriter> W array() throws IllegalStateException;
 
     /**
      * End an array. This method most be called to balance calls to <code>array</code>.
@@ -39,7 +39,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException If incorrectly nested.
      */
-    SerializationWriter endArray() throws IllegalStateException;
+    <W extends SerializationWriter> W endArray() throws IllegalStateException;
 
     /**
      * End an object. This method most be called to balance calls to <code>object</code>.
@@ -47,7 +47,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException If incorrectly nested.
      */
-    SerializationWriter endObject() throws IllegalStateException;
+    <W extends SerializationWriter> W endObject() throws IllegalStateException;
 
     /**
      * Append a key. The key will be associated with the next value. In an object, every value must
@@ -80,7 +80,7 @@ public interface SerializationWriter {
     //        }
     //        throw new IllegalStateException("Misplaced key.");
     //    }
-    <K> SerializationWriter key(K o) throws IllegalStateException;
+    <K, W extends SerializationWriter> W key(K o) throws IllegalStateException;
 
     /**
      * render key(key).value(value) if value is not a blank string.
@@ -89,7 +89,7 @@ public interface SerializationWriter {
      * @param value
      * @return this
      */
-    <K> SerializationWriter keyValueIfNotBlankValue(K key, String value);
+    <K, W extends SerializationWriter> W keyValueIfNotBlankValue(K key, String value);
 
     /**
      * render key(key).value(value) if value is not null.
@@ -98,7 +98,7 @@ public interface SerializationWriter {
      * @param value
      * @return this
      */
-    <K, V> SerializationWriter keyValueIfNotNullValue(K key, V value);
+    <K, V, W extends SerializationWriter> W keyValueIfNotNullValue(K key, V value);
 
     /**
      * @param <K>
@@ -107,7 +107,7 @@ public interface SerializationWriter {
      * @param value
      * @return this
      */
-    <K, V> SerializationWriter keyValue(K key, V value);
+    <K, V, W extends SerializationWriter> W keyValue(K key, V value);
 
     /**
      * @return true if creating an {@link JSONObject} and expecting a key.
@@ -124,7 +124,7 @@ public interface SerializationWriter {
      *             wrong place (for example as a key or after the end of the outermost array or
      *             object).
      */
-    SerializationWriter object() throws IllegalStateException;
+    <W extends SerializationWriter> W object() throws IllegalStateException;
 
     /**
      * @return true if an array is currently being created.
@@ -148,7 +148,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException
      */
-    SerializationWriter value(boolean b) throws IllegalStateException;
+    <W extends SerializationWriter> W value(boolean b) throws IllegalStateException;
 
     /**
      * Append a double value.
@@ -157,7 +157,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException If the number is not finite.
      */
-    SerializationWriter value(double d) throws IllegalStateException;
+    <W extends SerializationWriter> W value(double d) throws IllegalStateException;
 
     /**
      * Append a long value.
@@ -166,7 +166,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException
      */
-    SerializationWriter value(long l) throws IllegalStateException;
+    <W extends SerializationWriter> W value(long l) throws IllegalStateException;
 
     /**
      * Append an object value.
@@ -177,7 +177,7 @@ public interface SerializationWriter {
      * @return this
      * @throws IllegalStateException If the value is out of sequence.
      */
-    <T> SerializationWriter value(T o) throws IllegalStateException;
+    <T, W extends SerializationWriter> W value(T o) throws IllegalStateException;
 
     /**
      * add a renderer to handle different different classes of objects.
@@ -188,5 +188,4 @@ public interface SerializationWriter {
     void addRenderer(Class<?> name, FlowRenderer<?> renderer);
 
     void addRenderer(FlowRenderer<?> renderer);
-
 }

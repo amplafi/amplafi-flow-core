@@ -61,7 +61,7 @@ public interface FlowTranslatorResolver {
     // this is a really rare case - MapFlowTranslator seems to be about the only good example
     // we should be able to get rid of this.
     @Deprecated
-    <W extends SerializationWriter> SerializationWriter getJsonWriter();
+    <W extends SerializationWriter> SerializationWriter getSerializationWriter();
 
     /**
      * @param flowPropertyProvider

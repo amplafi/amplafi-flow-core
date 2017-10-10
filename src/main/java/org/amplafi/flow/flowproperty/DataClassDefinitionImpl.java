@@ -21,9 +21,8 @@ import java.util.NavigableMap;
 
 import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.json.IJsonWriter;
-import org.amplafi.flow.translator.CharSequenceFlowTranslator;
 import org.amplafi.flow.translator.FlowTranslator;
+import org.amplafi.flow.translator.SerializationWriter;
 
 import com.sworddance.beans.PropertyDefinitionImpl;
 import com.sworddance.util.CUtilities;
@@ -112,8 +111,8 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         if ( value == null) {
             return null;
         } else {
-            IJsonWriter jsonWriter = this.serialize(flowPropertyDefinition, null, value);
-            String strV = jsonWriter.toString();
+            SerializationWriter serializationWriter = this.serialize(flowPropertyDefinition, null, value);
+            String strV = serializationWriter.toString();
 
             // HACK : remove this special casing so this class will have no dependencies on the serialization mechanism
             // TODO: trimming quotes is probably not needed anymore - CharSequenceFlowTranslator uses unquote...

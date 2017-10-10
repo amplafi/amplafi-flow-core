@@ -19,6 +19,7 @@ import org.amplafi.flow.launcher.ContinueFlowLauncher;
 import org.amplafi.flow.launcher.FlowLauncher;
 import org.amplafi.flow.launcher.MorphFlowLauncher;
 import org.amplafi.flow.launcher.StartFromDefinitionFlowLauncher;
+import org.amplafi.flow.translator.SerializationWriter;
 
 import com.sworddance.util.map.MapKeyed;
 
@@ -32,7 +33,7 @@ import static org.apache.commons.lang.StringUtils.*;
  *
  */
 // TODO : remove JsonSelfRenderer implementation
-public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
+public class FlowTransition implements FlowSelfRenderer<FlowTransition>, MapKeyed<String> {
 
     private static final String INITIAL_VALUES = "initialValues";
 
@@ -128,7 +129,7 @@ public class FlowTransition implements JsonSelfRenderer, MapKeyed<String> {
         this.label = json.optString(LABEL);
         this.nextFlow = json.optString(NEXT_FLOW);
         this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
-        this.transitionType = (TransitionType) EnumJsonRenderer.INSTANCE.fromJson(TransitionType.class, json.opt(TRANSITION_TYPE));
+        this.transitionType = (TransitionType) EnumFlowRenderer.INSTANCE.fromJson(TransitionType.class, json.opt(TRANSITION_TYPE));
         this.transitionCompletionMessage = json.optString(TRANSITION_COMPLETION_MESSAGE);
         this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
         return (T) this;
