@@ -101,7 +101,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
             // already in a serialized form? (we hope )
             return (W) jsonWriter.value(object);
         } else {
-            return (W) doSerialize(flowPropertyDefinition, dataClassDefinition, (SerializationWriter) jsonWriter, object);
+            return doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
         }
     }
     /**
