@@ -1,6 +1,4 @@
-package org.amplafi.flow;
-
-import org.amplafi.flow.translator.SerializationWriter;
+package org.amplafi.flow.translator;
 
 public interface FlowRenderer<T> {
     <W extends SerializationWriter> W toSerialization(W serializationWriter, T o);

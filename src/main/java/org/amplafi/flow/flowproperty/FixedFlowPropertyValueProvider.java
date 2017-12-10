@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowPropertyExpectation;
 import org.amplafi.flow.FlowPropertyValueProvider;

@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.sworddance.util.CUtilities.*;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowActivityPhase;

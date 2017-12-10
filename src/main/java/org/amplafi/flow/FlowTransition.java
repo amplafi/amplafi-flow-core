@@ -123,7 +123,7 @@ public class FlowTransition implements FlowSelfRenderer<FlowTransition>, MapKeye
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T fromJson(Object object) {
+    public <T> T fromSerialization(Object object) {
         JSONObject json = JSONObject.toJsonObject(object);
         this.key = json.optString(KEY);
         this.label = json.optString(LABEL);
@@ -136,7 +136,7 @@ public class FlowTransition implements FlowSelfRenderer<FlowTransition>, MapKeye
     }
 
     @Override
-    public SerializationWriter toJson(SerializationWriter jsonWriter) {
+    public <W extends SerializationWriter> W toSerialization(W jsonWriter) {
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
         jsonWriter.keyValueIfNotNullValue(LABEL, getLabel());

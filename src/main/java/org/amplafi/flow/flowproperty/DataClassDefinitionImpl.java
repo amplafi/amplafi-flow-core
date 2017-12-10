@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.flow.translator.SerializationWriter;

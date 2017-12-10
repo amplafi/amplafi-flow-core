@@ -23,7 +23,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilderProvider;
 
 
 /**
- * FlowDefinitionsManager handles flow definitions.
+ * FlowDefinitionsManager stories the flow definitions.
  *
  * @author Patrick Moore
  */

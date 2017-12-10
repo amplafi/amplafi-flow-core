@@ -15,10 +15,10 @@ package org.amplafi.flow.translator;
 
 import java.util.List;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 
 /**
@@ -94,8 +94,4 @@ public interface FlowTranslator <T>{
      * @return list of forms that this FlowTranslator can deserialize to.
      */
     List<Class<?>> getDeserializedFormClasses();
-
-//    @Deprecated // need to remove reference to specific serialization mechanism
-    // only really used in BaseFlowTranslatorResolver to construct a JsonWriter
-//    JsonRenderer<T> getJsonRenderer();
 }

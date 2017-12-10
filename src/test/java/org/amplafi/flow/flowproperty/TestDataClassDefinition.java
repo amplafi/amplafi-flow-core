@@ -13,7 +13,6 @@
  */
 package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.testng.annotations.Test;
 

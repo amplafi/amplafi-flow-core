@@ -11,9 +11,9 @@
  * the specific language governing permissions and limitations under the
  * License.
  */
-package org.amplafi.flow;
+package org.amplafi.flow.flowproperty;
 
-import org.amplafi.flow.flowproperty.FlowPropertyProvider;
+import org.amplafi.flow.FlowPropertyDefinition;
 import org.amplafi.flow.translator.FlowTranslator;
 import org.amplafi.flow.translator.SerializationWriter;
 

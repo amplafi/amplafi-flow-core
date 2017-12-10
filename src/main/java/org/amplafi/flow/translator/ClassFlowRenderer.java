@@ -13,8 +13,6 @@
  */
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowRenderer;
-
 /**
  * @author patmoore
  *

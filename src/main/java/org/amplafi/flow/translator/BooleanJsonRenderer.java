@@ -15,8 +15,6 @@ package org.amplafi.flow.translator;
 
 import java.util.Objects;
 
-import org.amplafi.flow.FlowRenderer;
-
 public class BooleanJsonRenderer implements FlowRenderer<Boolean> {
 
     public static final BooleanJsonRenderer INSTANCE = new BooleanJsonRenderer();

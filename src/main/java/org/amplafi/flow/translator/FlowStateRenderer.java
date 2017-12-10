@@ -1,6 +1,10 @@
-package org.amplafi.flow;
+package org.amplafi.flow.translator;
 
 import java.io.Writer;
+
+import org.amplafi.flow.Flow;
+import org.amplafi.flow.FlowManagement;
+import org.amplafi.flow.FlowState;
 
 /**
  * Implementations render the flowstate output at the conclusion of processing a flow request.

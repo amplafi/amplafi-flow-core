@@ -5,8 +5,8 @@ import java.io.Writer;
 import org.amplafi.flow.Flow;
 import org.amplafi.flow.FlowConstants;
 import org.amplafi.flow.FlowManagement;
-import org.amplafi.flow.FlowStateRenderer;
 import org.amplafi.flow.FlowState;
+import org.amplafi.flow.translator.FlowStateRenderer;
 
 /**
  * A renderer which does nothing, for everything is handled by some external code.

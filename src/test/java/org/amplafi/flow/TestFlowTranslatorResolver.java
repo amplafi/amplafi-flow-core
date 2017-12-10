@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.DataClassDefinitionImpl;
 import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;

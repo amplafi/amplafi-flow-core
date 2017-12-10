@@ -1,7 +1,5 @@
 package org.amplafi.flow.translator;
 
-import org.amplafi.flow.FlowRenderer;
-
 /**
  * default implementation to output {@link Enum}.
  * @author Patrick Moore

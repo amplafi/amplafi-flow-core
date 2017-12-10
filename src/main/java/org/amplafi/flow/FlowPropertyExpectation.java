@@ -16,6 +16,7 @@ package org.amplafi.flow;
 import java.util.List;
 import java.util.Set;
 
+import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.ExternalPropertyAccessRestriction;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.flowproperty.FlowPropertyValueChangeListener;

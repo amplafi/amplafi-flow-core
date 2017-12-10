@@ -17,8 +17,7 @@ package org.amplafi.flow.translator;
 import java.util.TimeZone;
 
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowRenderer;
-import org.amplafi.flow.DataClassDefinition;
+import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 
@@ -78,7 +77,7 @@ public class TimezoneFlowTranslator extends AbstractFlowTranslator<TimeZone> imp
     }
 
     /**
-     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
+     * @see org.amplafi.flow.translator.AbstractFlowTranslator#doDeserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.flowproperty.DataClassDefinition, java.lang.Object)
      */
     @Override
     protected TimeZone doDeserialize(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, Object serializedObject) throws FlowValidationException {

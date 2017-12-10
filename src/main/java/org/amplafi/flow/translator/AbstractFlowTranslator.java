@@ -18,11 +18,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.amplafi.flow.DataClassDefinition;
 import org.amplafi.flow.FlowException;
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowRenderer;
 import org.amplafi.flow.FlowTranslatorResolver;
+import org.amplafi.flow.flowproperty.DataClassDefinition;
 import org.amplafi.flow.flowproperty.FlowPropertyProvider;
 import org.amplafi.flow.validation.FlowValidationException;
 import org.apache.commons.collections.list.SetUniqueList;
@@ -43,9 +42,6 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     private List<Class<?>> deserializedFormClasses = SetUniqueList.decorate(new ArrayList<Class<?>>());
     private boolean flowTranslatorJsonRenderer;
     private FlowRenderer<T> flowRenderer;
-
-//    @SuppressWarnings("unchecked")
-//    protected static final FlowTranslator<CharSequence> DEFAULT_FLOW_TRANSLATOR = CharSequenceFlowTranslator.INSTANCE;
 
     @SuppressWarnings("unchecked")
     protected AbstractFlowTranslator(AbstractFlowTranslator<?> flowTranslator) {
@@ -70,7 +66,7 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
     }
 
     /**
-     * @see org.amplafi.flow.translator.FlowTranslator#deserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.DataClassDefinition, java.lang.Object)
+     * @see org.amplafi.flow.translator.FlowTranslator#deserialize(FlowPropertyProvider , org.amplafi.flow.FlowPropertyDefinition , org.amplafi.flow.flowproperty.DataClassDefinition, java.lang.Object)
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -86,22 +82,15 @@ public abstract class AbstractFlowTranslator<T> implements FlowTranslator<T> {
 
     @Override
     public final <W extends SerializationWriter> W serialize(FlowPropertyDefinition flowPropertyDefinition, DataClassDefinition dataClassDefinition, W outputWriter, T object) {
-        W jsonWriter;
-        if ( outputWriter == null ) {
-            jsonWriter = getSerializationWriter();
-        } else {
-            jsonWriter = outputWriter;
-        }
-
         if ( object == null ) {
             // if jsonWriter is expecting a value ( because it just had a key set ) then we need to serialize a null.
             // TODO: investigate serializing a null.
-            return jsonWriter;
+            return outputWriter;
         } else if ( this.isSerializedForm(object.getClass())) {
             // already in a serialized form? (we hope )
-            return (W) jsonWriter.value(object);
+            return outputWriter.value(object);
         } else {
-            return doSerialize(flowPropertyDefinition, dataClassDefinition, jsonWriter, object);
+            return doSerialize(flowPropertyDefinition, dataClassDefinition, outputWriter, object);
         }
     }
     /**
