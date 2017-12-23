@@ -67,13 +67,13 @@ public class FlowUtils {
         if ( value instanceof String ) {
             strV = (String) value;
         } else if ( value != null ) {
-            JSONStringer stringer = new JSONStringer();
-            stringer.value(value);
-            strV = stringer.toString();
-            if (strV.startsWith("\"") && strV.endsWith("\"")) {
-                // trim off unneeded " that appear when handling simple objects.
-                strV = strV.substring(1, strV.length()-1);
-            }
+//            JSONStringer stringer = new JSONStringer();
+//            stringer.value(value);
+//            strV = stringer.toString();
+//            if (strV.startsWith("\"") && strV.endsWith("\"")) {
+//                // trim off unneeded " that appear when handling simple objects.
+//                strV = strV.substring(1, strV.length()-1);
+//            }
         }
         return strV;
     }

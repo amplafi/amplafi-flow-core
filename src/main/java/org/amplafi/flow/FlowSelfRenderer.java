@@ -1,5 +1,6 @@
 package org.amplafi.flow;
 
+import org.amplafi.flow.translator.FlowRenderer;
 import org.amplafi.flow.translator.SerializationWriter;
 
 public interface FlowSelfRenderer<E> extends FlowRenderer<E> {

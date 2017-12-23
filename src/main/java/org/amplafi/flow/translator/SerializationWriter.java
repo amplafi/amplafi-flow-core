@@ -8,7 +8,7 @@
  */
 package org.amplafi.flow.translator;
 
-public interface SerializationWriter {
+public interface SerializationWriter extends FlowRendererProvider {
 
     /**
      * Append a value.

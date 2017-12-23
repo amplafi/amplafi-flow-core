@@ -124,14 +124,14 @@ public class FlowTransition implements FlowSelfRenderer<FlowTransition>, MapKeye
     @SuppressWarnings("unchecked")
     @Override
     public <T> T fromSerialization(Object object) {
-        JSONObject json = JSONObject.toJsonObject(object);
-        this.key = json.optString(KEY);
-        this.label = json.optString(LABEL);
-        this.nextFlow = json.optString(NEXT_FLOW);
-        this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
-        this.transitionType = (TransitionType) EnumFlowRenderer.INSTANCE.fromJson(TransitionType.class, json.opt(TRANSITION_TYPE));
-        this.transitionCompletionMessage = json.optString(TRANSITION_COMPLETION_MESSAGE);
-        this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
+//        JSONObject json = JSONObject.toJsonObject(object);
+//        this.key = json.optString(KEY);
+//        this.label = json.optString(LABEL);
+//        this.nextFlow = json.optString(NEXT_FLOW);
+//        this.nextFlowType = json.optString(NEXT_FLOW_TYPE);
+//        this.transitionType = (TransitionType) EnumFlowRenderer.INSTANCE.fromJson(TransitionType.class, json.opt(TRANSITION_TYPE));
+//        this.transitionCompletionMessage = json.optString(TRANSITION_COMPLETION_MESSAGE);
+//        this.initialValues = MapJsonRenderer.INSTANCE.fromJson(Map.class, json.opt(INITIAL_VALUES));
         return (T) this;
     }
 
