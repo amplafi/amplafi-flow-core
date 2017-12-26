@@ -30,11 +30,6 @@
             <artifactId>amplafi-sworddance</artifactId>
             <version>${amplafi-sworddance-build}</version>
         </dependency>
-<!--         <dependency>
-            <groupId>org.amplafi</groupId>
-            <artifactId>amplafi-json</artifactId>
-            <version>${amplafi-json-build}</version>
-        </dependency> -->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -48,6 +43,11 @@
             <artifactId>commons-logging</artifactId>
         </dependency>
  
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

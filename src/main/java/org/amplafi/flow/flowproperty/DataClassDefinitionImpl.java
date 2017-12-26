@@ -31,12 +31,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements DataClassDefinition {
     @SuppressWarnings({ "rawtypes" })
     private FlowTranslator flowTranslator;
-    // TODO should be immutable some how or a copy made when used ( otherwise could this end up getting changed?? )
-    public static final DataClassDefinitionImpl DEFAULT;
-    static {
-        DEFAULT = new DataClassDefinitionImpl(String.class);
-        DEFAULT.setFlowTranslator(CharSequenceFlowTranslator.INSTANCE);
-    }
+
     public DataClassDefinitionImpl() {
     }
 
@@ -268,7 +263,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         if ( isKeyPropertyDefinitionSet()) {
             return getKeyPropertyDefinition();
         } else if ( isMap() ){
-            return DEFAULT;
+            return null;
         } else {
             return null;
         }
@@ -287,7 +282,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
         if ( isElementPropertyDefinitionSet() ) {
             return getElementPropertyDefinition();
         } else if ( isCollection()){
-            return DEFAULT;
+            return null;
         } else {
             return null;
         }
@@ -315,11 +310,7 @@ public class DataClassDefinitionImpl extends PropertyDefinitionImpl implements D
     @Override
     @SuppressWarnings({ "rawtypes" })
     public FlowTranslator getFlowTranslator() {
-        if ( this.flowTranslator == null ) {
-            return CharSequenceFlowTranslator.INSTANCE;
-        } else {
-            return flowTranslator;
-        }
+        return this.flowTranslator;
     }
 
     /**
