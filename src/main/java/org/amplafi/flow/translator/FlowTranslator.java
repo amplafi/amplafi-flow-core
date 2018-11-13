@@ -38,7 +38,7 @@ import org.amplafi.flow.flowproperty.FlowPropertyProvider;
  *
  * @param <T> the type to translate.
  */
-public interface FlowTranslator <T>{
+public interface FlowTranslator<T>{
     /**
      *
      * @return The class returned by {@link FlowTranslator#deserialize(FlowPropertyProvider, FlowPropertyDefinition, DataClassDefinition, Object)}

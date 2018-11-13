@@ -14,6 +14,7 @@
 package org.amplafi.flow.impl;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.amplafi.flow.FlowActivity;
 import org.amplafi.flow.FlowManagement;
@@ -32,9 +33,9 @@ public interface FlowStateImplementor extends FlowState {
 
     <T> T getPropertyWithDefinition(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinitionImplementor flowPropertyDefinition);
 
-    String getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
+    <T> Optional<T> getRawProperty(FlowPropertyProvider flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition);
 
-    String getRawProperty(String namespace, String key);
+    <T> Optional<T> getRawProperty(String namespace, String key);
 
     /**
      * @param flowPropertyProvider
@@ -80,7 +81,14 @@ public interface FlowStateImplementor extends FlowState {
     void setCached(String namespace, String key, Object value);
     void setCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider, Object value);
 
-    <T> T getCached(String namespace, String key);
+    <T> Optional<T> getCached(String namespace, String key);
+    /**
+     * @param <T>
+     * @param flowPropertyDefinition
+     * @param flowPropertyProvider
+     * @return cached value
+     */
+    <T> Optional<T> getCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider);
 
     /**
      * @param flowManagement The flowManagement to set.
@@ -88,14 +96,6 @@ public interface FlowStateImplementor extends FlowState {
     void setFlowManagement(FlowManagement flowManagement);
 
     void setFlowValuesMap(FlowValuesMap flowValuesMap);
-
-    /**
-     * @param <T>
-     * @param flowPropertyDefinition
-     * @param flowPropertyProvider
-     * @return cached value
-     */
-    <T> T getCached(FlowPropertyDefinitionImplementor flowPropertyDefinition, FlowPropertyProvider flowPropertyProvider);
 
     /**
      * This bypasses ALL security checks. It *must* be only used for cases when the values are known to be safe. (i.e.

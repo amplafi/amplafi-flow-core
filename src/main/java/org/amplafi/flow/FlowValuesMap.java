@@ -46,7 +46,7 @@ import com.sworddance.core.Emptyable;
  * @param <V> extends CharSequence the value class.
  *
  */
-public interface FlowValuesMap<K extends FlowValueMapKey, V extends CharSequence> extends Emptyable, Map<K,V> {
+public interface FlowValuesMap<K extends FlowValueMapKey, V> extends Emptyable, Map<K,V> {
 
     /**
      * FlowValueMap is expected to do any needed conversions to the FlowValueMapKey used (? what about put operations ? )

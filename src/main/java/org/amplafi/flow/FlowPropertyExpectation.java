@@ -14,6 +14,7 @@
 package org.amplafi.flow;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.amplafi.flow.flowproperty.DataClassDefinition;
@@ -97,5 +98,5 @@ public interface FlowPropertyExpectation extends MapKeyed<String> {
     Set<FlowPropertyExpectation> getPropertiesDependentOn();
     FlowPropertyExpectation merge(FlowPropertyExpectation flowPropertyExpectation);
     boolean isAssignableFrom(Class<?> suggestedClass);
-    String getInitial();
+    Optional<Object> getInitial();
 }

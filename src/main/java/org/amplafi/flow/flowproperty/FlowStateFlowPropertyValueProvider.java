@@ -15,10 +15,11 @@ package org.amplafi.flow.flowproperty;
 
 
 import org.amplafi.flow.FlowPropertyDefinition;
-import org.amplafi.flow.FlowState;
 import org.amplafi.flow.impl.FlowStateImplementor;
 
 import static org.amplafi.flow.FlowConstants.*;
+
+import java.util.Optional;
 
 /**
  * FlowPropertyValueProvider that does flowState lookup.
@@ -39,8 +40,10 @@ public class FlowStateFlowPropertyValueProvider extends AbstractFlowPropertyValu
     @Override
     public <T> T get(FlowPropertyProviderImplementor flowPropertyProvider, FlowPropertyDefinition flowPropertyDefinition) {
         FlowStateImplementor flowStateImplementor = flowPropertyProvider.getFlowState();
-        String lookupKey = flowStateImplementor.getRawProperty(flowPropertyProvider, flowPropertyDefinition);
-        FlowState flowState = flowStateImplementor.getFlowManagement().getFlowState(lookupKey);
-        return (T) flowState;
+        // HACK should be 'deserialized'
+        Optional<String> optLookupKey = flowStateImplementor.getRawProperty(flowPropertyProvider, flowPropertyDefinition);
+        return (T) optLookupKey.map(lookupKey ->
+                    flowStateImplementor.getFlowManagement().getFlowState(lookupKey)
+                ).orElse(null);
     }
 }

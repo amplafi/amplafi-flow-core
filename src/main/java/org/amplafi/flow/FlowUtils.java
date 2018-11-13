@@ -24,8 +24,6 @@ import org.amplafi.flow.flowproperty.FlowPropertyDefinitionBuilder;
 import org.amplafi.flow.impl.DefaultFlowValuesMapKey;
 import org.apache.commons.lang.ObjectUtils;
 
-
-
 /**
  *
  */
@@ -112,6 +110,7 @@ public class FlowUtils {
      * @return the map with the state info, or an empty map if no arguments passed
      */
     public Map<String, String> createState(Object...objects) {
+        // for test cases
         Map<String, String> ret = new LinkedHashMap<>();
         if (objects==null) {
             return ret;

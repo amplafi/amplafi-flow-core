@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,6 +58,7 @@ import org.amplafi.flow.validation.FlowValidationException;
 import org.amplafi.flow.validation.FlowValidationResult;
 import org.amplafi.flow.validation.FlowValidationResultProvider;
 import org.amplafi.flow.validation.ReportAllValidationResult;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -691,14 +693,16 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
     @Override
     // Duplicated in FlowStateImpl
     public boolean isPropertyValueSet(String key) {
-        return getRawProperty(key) != null;
+        return getRawProperty(key).isPresent();
     }
 
     @Deprecated
     @Override
     public boolean isPropertyBlank(String key) {
-        String v = getRawProperty(key);
-        return isBlank(v);
+        return getRawProperty(key)
+                .filter(value -> value instanceof String)
+                .map(value -> StringUtils.isBlank((String)value))
+                .orElse(false);
     }
 
     /**
@@ -711,7 +715,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @return raw string property.
      */
     @Override
-    public String getRawProperty(String key) {
+    public Optional<Object> getRawProperty(String key) {
         FlowPropertyDefinition flowPropertyDefinition = getFlowPropertyDefinitionWithCreate(key, null, null);
         if (flowPropertyDefinition == null) {
             //Looks like flow state wasn't initialized yet, nothing to return..
@@ -724,7 +728,7 @@ public class FlowActivityImpl extends BaseFlowPropertyProviderWithValues<FlowAct
      * @param flowPropertyDefinition
      * @return the property as a string not converted to the object.
      */
-    protected String getRawProperty(FlowPropertyDefinition flowPropertyDefinition) {
+    protected Optional<Object> getRawProperty(FlowPropertyDefinition flowPropertyDefinition) {
         if ( isInstance()) {
             return getFlowStateImplementor().getRawProperty(this, flowPropertyDefinition);
         } else {

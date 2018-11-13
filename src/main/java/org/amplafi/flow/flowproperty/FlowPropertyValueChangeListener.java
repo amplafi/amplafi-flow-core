@@ -14,6 +14,7 @@
 package org.amplafi.flow.flowproperty;
 
 import java.util.EventListener;
+import java.util.Optional;
 
 import org.amplafi.flow.FlowPropertyDefinition;
 
@@ -38,5 +39,6 @@ public interface FlowPropertyValueChangeListener extends EventListener {
      * @return what the value should be. Usually just return the value
      *         parameter. By default should be 'value'.
      */
-    String propertyChange(FlowPropertyProvider flowPropertyProvider, String namespace, FlowPropertyDefinition flowPropertyDefinition, String newValue, String oldValue);
+    <T> Optional<T> propertyChange(FlowPropertyProvider flowPropertyProvider, String namespace, FlowPropertyDefinition flowPropertyDefinition,
+            Optional<T> newValue, Optional<T> oldValue);
 }
