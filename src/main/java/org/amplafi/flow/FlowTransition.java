@@ -136,6 +136,21 @@ public class FlowTransition implements FlowSelfRenderer<FlowTransition>, MapKeye
     }
 
     @Override
+    public <K> K fromSerialization(Class<K> clazz, Object value, Object... parameters) {
+        return null;
+    }
+
+    @Override
+    public Class<? extends FlowTransition> getClassToRender() {
+        return null;
+    }
+
+    @Override
+    public <W extends SerializationWriter> W toSerialization(W serializationWriter, FlowTransition o) {
+        return null;
+    }
+
+    @Override
     public <W extends SerializationWriter> W toSerialization(W jsonWriter) {
         jsonWriter.object();
         jsonWriter.keyValueIfNotNullValue(KEY, getMapKey());
